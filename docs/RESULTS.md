@@ -95,10 +95,22 @@ present in the GT bag (order ignored) instead of by sequence alignment:
 | bg_01 (Bulgarian, clean order) | 770 | 0.772 | **0.890** | 90.5% | **94.0%** |
 | bg_02 (Bulgarian) | 687 | 0.731 | **0.856** | 78.9% | **90.1%** |
 
-Order-robust AUROC is **0.86–0.89 across all three, all above the 0.80 bar**,
-and recognition (order-free word accuracy) is **79–94%**. The confidence
-backbone separates errors and recognition is good — on English too.
-(Reproduce: `python -m tools.gate1_order_robust_probe`.)
+Order-robust AUROC is **0.86–0.89 across all three, all above the 0.80 bar**.
+Note the bracketing: seq-AUROC is an order-depressed *lower* bound; ms-AUROC is
+an *upper* bound (bag membership over-credits garbage tokens that collide with
+common GT words), so the true English AUROC sits between 0.75 and 0.87 — the
+point is only that it is **not** the sub-0.80 the harness reports. The
+unassailable proof is elsewhere: **bg_01 in correct order gives sequence AUROC
+0.881 (adaptive), bg_02 0.932 — the harness's own metric, no caveat** (see
+below). (Reproduce: `python -m tools.gate1_order_robust_probe`.)
+
+Recognition (order-free word accuracy) also exposes a real gap: **Bulgarian 90–94%
+vs English 79%**. The English shortfall is genuine recognition, not layout — the
+coin book's dense reference lines (`KM# 77.1-77.17`, auction lot strings, italic
+small-caps captions) are what Tesseract misses. That is fine and expected: those
+are exactly the low-confidence words the flag / patch / second-opinion machinery
+(CLAUDE.md) exists to catch, so it validates the architecture rather than
+undermining it.
 
 ### Headline result: Bulgarian (the clean datapoint)
 
@@ -117,9 +129,13 @@ dewarp/split exist.
 
 ### Engineering conclusion
 
-Recognition quality and confidence calibration are **good enough to build on**
-(Bulgarian ~87% raw word acc; order-robust AUROC 0.86–0.89 all languages
-measured). The failure mode Gate 1 actually exposed is **reading-order scramble
+Recognition quality and confidence calibration are **good enough to build on**:
+Bulgarian ~87% raw word acc with **clean-order sequence AUROC 0.881–0.932**
+(the un-caveated proof), and English confidence still separates once order is
+removed. English body recognition is the weaker end (79% order-free) and its
+dense reference lines drag it down — precisely the case the confidence-flag +
+second-opinion design targets. The failure mode Gate 1 actually exposed is
+**reading-order scramble
 on complex layouts (figure sidebars, multi-block pages)** — the remit of Gate 2
 (fuse/split/dewarp) and Gate 4 layout/reading-order, not a reason to swap the
 OCR engine. **Proceed to Gate 2.** Keep the Tesseract backbone (per CLAUDE.md).

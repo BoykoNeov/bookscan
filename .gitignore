@@ -31,3 +31,6 @@ Thumbs.db
 
 # Raw capture drop folder (originals copied into testset/ with canonical ids)
 /1/
+
+# Stray browser/drive downloads (never commit into the anchor repo)
+drive-download-*.zip

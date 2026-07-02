@@ -1,0 +1,30 @@
+# Runtime pipeline output (per CLAUDE.md: jobs/ is gitignored)
+/jobs/
+
+# Model weights / downloaded checkpoints
+/models/
+*.onnx
+*.pt
+*.pth
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Test-set derived artifacts (source images are tracked; debug overlays are regenerable)
+/testset/debug/*.png

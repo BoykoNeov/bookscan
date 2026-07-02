@@ -1,0 +1,59 @@
+# bookscan configuration — paths, languages, thresholds, model choices.
+# Every stage and tool reads settings from here (never hard-code paths).
+
+# --- Tesseract (Stage 05 backbone + Gate 1 harness) ---
+tesseract:
+  # Windows default install path. Override if installed elsewhere.
+  binary: "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+  # Directory holding *.traineddata (use tessdata_best for eng/bul/ita/deu).
+  tessdata_dir: "C:\\Program Files\\Tesseract-OCR\\tessdata"
+  oem: 1        # LSTM only
+  psm: 3        # fully automatic page segmentation, no OSD
+
+# --- Languages (OCR priority order) ---
+# Tesseract lang codes; the 3-letter code is what -l expects.
+languages:
+  default: eng
+  supported:
+    - code: eng      # English
+    - code: bul      # Bulgarian (Cyrillic)
+    - code: ita      # Italian
+    - code: deu      # German
+
+# --- Adaptive confidence / uncertainty (Stage 06) ---
+# NOTE: thresholds are adaptive PER DOCUMENT, never a single global cutoff.
+# These are the knobs the adaptive logic tunes around, not fixed gates.
+uncertainty:
+  # Default fraction of words to flag when using per-document adaptive threshold.
+  flag_rate: 0.10
+  # Cross-engine disagreement is an independent trigger for "uncertain".
+  disagreement_is_trigger: true
+  # Selectable output mode: flag | best_guess | patch
+  default_mode: flag
+
+# --- Second-opinion engines (never the sole text/confidence source) ---
+engines:
+  easyocr:
+    enabled_for: [bul]   # Cyrillic second opinion
+    langs: [bg, en]
+
+# --- Models (loaded lazily per stage; VRAM released on CLI exit) ---
+models:
+  layout: doclayout-yolo
+  dewarp: uvdoc
+  dewarp_partial: doctr++
+
+# --- Reconstruction (Stage 07) ---
+reconstruct:
+  fonts:
+    # Noto covering Latin + Cyrillic; embed into the PDF.
+    - Noto Serif
+    - Noto Sans
+  strip_running_headers: true   # user toggle
+  strip_page_numbers: true      # user toggle
+
+# --- Paths ---
+paths:
+  jobs: "jobs"
+  testset: "testset"
+  results: "docs/RESULTS.md"

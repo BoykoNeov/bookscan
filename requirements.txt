@@ -1,0 +1,24 @@
+# bookscan Python dependencies (Python 3.11+).
+# Pin loosely for now; tighten once Gate 1 is proven.
+
+# --- Shared schema ---
+pydantic>=2.6
+
+# --- Config / IO ---
+pyyaml>=6.0
+Pillow>=10.0          # image IO / normalization (Stage 00)
+
+# --- OCR + Gate 1 harness ---
+pytesseract>=0.3.10   # optional convenience; harness may call tesseract via subprocess
+opencv-python>=4.9    # preprocessing, split, fuse, dewarp helpers
+rapidfuzz>=3.6        # word/char alignment + edit distance for accuracy metrics
+jiwer>=3.0            # WER alignment ops (alternative to rapidfuzz editops)
+matplotlib>=3.8       # confidence histograms / debug plots
+numpy>=1.26
+
+# --- Second-opinion OCR (Bulgarian) ---
+easyocr>=1.7
+
+# --- Later gates (kept here for a single install surface; unused until then) ---
+# rawpy>=0.19         # Stage 00 RAW decode
+# weasyprint>=61      # Stage 07 HTML -> PDF

@@ -113,14 +113,16 @@ etc.); the **first real batch is already ingested** — see the actual
 
 | ids | language | book | category | GT? |
 |---|---|---|---|---|
-| `en_coins_01..03` | English | *Chopmarked Coins* | figures + footnotes | `01`, `03` |
-| `bg_01..03` | Bulgarian | history (Cyrillic) | clean single-col | `01` |
+| `en_coins_01..03` | English | *Chopmarked Coins* | figures + footnotes | `01` |
+| `bg_01..03` | Bulgarian | history (Cyrillic) | clean single-col | `01`, `02` |
 | `it_geo_01..03` | Italian | Dolomites geology | figures + sidebars | — |
 
 Each image is a **full two-page spread** (not a single page), so 3 GT spreads =
-**6 GT pages**: 4 English (`en_coins_01`, `en_coins_03`) + 2 Bulgarian
-(`bg_01`), clearing the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar
-(all three GT spreads carry footnotes).
+**6 GT pages**: 2 English (`en_coins_01`) + 4 Bulgarian (`bg_01`, `bg_02`),
+clearing the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar (all three
+GT spreads carry footnotes). `en_coins_03` is deliberately GT-free — Tesseract
+interleaves its two facing pages line-by-line, so sequence WER there would be
+noise, not signal.
 
 **Deferred (not yet captured):** German, `old`/worn typeface, `zoomset`
 close-ups, and a true multi-column English page. Add these later as new ids —

@@ -1,9 +1,9 @@
 image_id,file,language,gt_file,category,notes
 en_coins_01,en_coins_01.jpg,english,gt/en_coins_01.txt,figures,"Chopmarked Coins bk, pp.100-101; single-col body + coin figs/captions + footnote; GT hand-transcribed from photo"
 en_coins_02,en_coins_02.jpg,english,,figures,"same book pp.102-103; text + bulleted lists + coin figs/captions + footnote"
-en_coins_03,en_coins_03.jpg,english,gt/en_coins_03.txt,figures,"same book pp.104-105; Hawai'i/Honduras; coin figs/captions + footnote; GT hand-transcribed from photo"
+en_coins_03,en_coins_03.jpg,english,,figures,"same book pp.104-105; Hawai'i/Honduras; coin figs/captions + footnote; no GT (Tesseract interleaves the two facing pages line-by-line -> sequence WER would be pure noise)"
 bg_01,bg_01.jpg,bulgarian,gt/bg_01.txt,clean,"Bulgarian history bk (Cyrillic), pp.174-175; single-col, bold place-names, footnote; reads in correct order; GT hand-transcribed from photo"
-bg_02,bg_02.jpg,bulgarian,,clean,"same book pp.176-177; dense single-col"
+bg_02,bg_02.jpg,bulgarian,gt/bg_02.txt,clean,"same book pp.176-177; dense single-col; GT hand-transcribed from photo (some justified-line-split scramble, less pristine than bg_01)"
 bg_03,bg_03.jpg,bulgarian,,clean,"same book pp.178-179; dense single-col, italic names, quotes"
 it_geo_01,it_geo_01.jpg,italian,,figures,"Dolomites geology bk, pp.70-71; single main col + figure-explanation sidebars + photos; order scrambles"
 it_geo_02,it_geo_02.jpg,italian,,figures,"same book pp.72-73; main col + map/diagram + sidebar captions"

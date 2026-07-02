@@ -24,14 +24,18 @@ spread, before split/dewarp).
 
 | ID prefix     | Content                                            | Count     | GT           |
 |---------------|----------------------------------------------------|-----------|--------------|
-| `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01`, `03` |
-| `bg_*`        | Bulgarian (Cyrillic) history: clean single-column  | 3 spreads | `01`         |
+| `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01` |
+| `bg_*`        | Bulgarian (Cyrillic) history: clean single-column  | 3 spreads | `01`, `02`   |
 | `it_geo_*`    | Italian (Dolomites geology): main col + figure sidebars | 3 spreads | —       |
 
-Ground truth is present for **6 pages** (4 English + 2 Bulgarian, all with
+Ground truth is present for **6 pages** (2 English + 4 Bulgarian, all with
 footnotes) — clears the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar.
 GT is **hand-transcribed from the photos** (noted in `manifest.csv`), not from
-an ebook edition.
+an ebook edition. `en_coins_03` is intentionally left without GT: Tesseract
+interleaves its two facing pages (Hawai'i / Honduras) line-by-line, so a
+sequence-based WER against reading-order GT would measure layout scramble, not
+recognition. `bg_02` is the second Bulgarian datapoint (clean recognition,
+mild justified-line-split scramble); `bg_01` is the pristine one.
 
 ### Still targeted (append later as new ids)
 

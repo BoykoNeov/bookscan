@@ -86,7 +86,8 @@ def find_tesseract(cfg: dict) -> str | None:
 def tesseract_version(binary: str) -> str:
     try:
         out = subprocess.run(
-            [binary, "--version"], capture_output=True, text=True, timeout=30
+            [binary, "--version"], capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=30,
         )
         first = (out.stdout or out.stderr).splitlines()[0].strip()
         # e.g. "tesseract v5.4.0.20240606" -> "5.4.0.20240606"
@@ -121,7 +122,10 @@ def run_tesseract(
         if tessdata_dir and Path(tessdata_dir).exists():
             cmd += ["--tessdata-dir", tessdata_dir]
         cmd += ["tsv"]
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+        # Tesseract emits UTF-8; force it or Windows cp1252 crashes on Cyrillic
+        # / accented Latin output (headline languages bul/ita/deu).
+        proc = subprocess.run(cmd, capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=300)
         if proc.returncode != 0:
             raise RuntimeError(
                 f"tesseract failed (code {proc.returncode}): {proc.stderr.strip()}"
@@ -360,6 +364,14 @@ def write_report(
 
     verdict = interpret(by_lang)
     lines.append(f"\nVerdict: {verdict}\n")
+    lines.append(
+        "> Caveat: confidence is labeled per raw Tesseract word (1:1 with the "
+        "conf value), while WER uses hyphen-joined text. Line-end hyphenations "
+        "(e.g. `encyclo-`+`pedia` vs GT `encyclopedia`) therefore count as two "
+        "HIGH-confidence wrong tokens, which inflates WER and depresses AUROC on "
+        "hyphen-heavy pages. A borderline MIXED verdict on real English pages "
+        "may be this artifact rather than genuine OCR failure.\n"
+    )
 
     report_path.parent.mkdir(parents=True, exist_ok=True)
     header = ""

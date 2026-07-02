@@ -33,9 +33,17 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Configure the Tesseract binary path and `tessdata` dir in
-[`config.yaml`](config.yaml). Install `eng`, `bul`, `ita`, `deu` traineddata
-(from `tessdata_best`).
+Install Tesseract 5, then build the language-data dir (downloads
+`eng`/`bul`/`ita`/`deu` from `tessdata_best` and copies Tesseract's output
+configs so TSV works):
+
+```bash
+# Windows: winget install --id UB-Mannheim.TesseractOCR
+python -m tools.setup_tessdata
+```
+
+Adjust the Tesseract binary path in [`config.yaml`](config.yaml) if it isn't at
+the Windows default.
 
 ## Commands
 

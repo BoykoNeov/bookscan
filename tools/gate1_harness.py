@@ -63,6 +63,17 @@ def load_config(path: Path) -> dict:
         return yaml.safe_load(f)
 
 
+def resolve_tessdata_dir(cfg: dict) -> str | None:
+    """Absolute tessdata dir; relative config paths resolve against repo root."""
+    raw = cfg.get("tesseract", {}).get("tessdata_dir")
+    if not raw:
+        return None
+    p = Path(raw)
+    if not p.is_absolute():
+        p = REPO_ROOT / p
+    return str(p) if p.exists() else None
+
+
 def find_tesseract(cfg: dict) -> str | None:
     """Return a working tesseract binary path, or None if unavailable."""
     cand = cfg.get("tesseract", {}).get("binary")
@@ -78,8 +89,8 @@ def tesseract_version(binary: str) -> str:
             [binary, "--version"], capture_output=True, text=True, timeout=30
         )
         first = (out.stdout or out.stderr).splitlines()[0].strip()
-        # e.g. "tesseract 5.3.3" -> "5.3.3"
-        return first.split()[-1] if first else "?"
+        # e.g. "tesseract v5.4.0.20240606" -> "5.4.0.20240606"
+        return first.split()[-1].lstrip("v") if first else "?"
     except Exception:
         return "?"
 
@@ -231,7 +242,7 @@ def evaluate_image(
     preprocess: str, image_id: str, category: str, debug_dir: Path,
 ) -> ImageResult:
     tcfg = cfg.get("tesseract", {})
-    tessdata = tcfg.get("tessdata_dir")
+    tessdata = resolve_tessdata_dir(cfg)
     oem, psm = int(tcfg.get("oem", 1)), int(tcfg.get("psm", 3))
 
     gray = to_gray(image_bgr)

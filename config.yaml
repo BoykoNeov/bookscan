@@ -5,8 +5,10 @@
 tesseract:
   # Windows default install path. Override if installed elsewhere.
   binary: "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
-  # Directory holding *.traineddata (use tessdata_best for eng/bul/ita/deu).
-  tessdata_dir: "C:\\Program Files\\Tesseract-OCR\\tessdata"
+  # Directory holding *.traineddata (tessdata_best for eng/bul/ita/deu).
+  # Relative paths resolve against the repo root; this dir is gitignored
+  # (see models/ in .gitignore) — re-download from tessdata_best if missing.
+  tessdata_dir: "models/tessdata_best"
   oem: 1        # LSTM only
   psm: 3        # fully automatic page segmentation, no OSD
 

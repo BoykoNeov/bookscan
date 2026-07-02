@@ -14,21 +14,38 @@ anchor.
   one paragraph per line, hyphenated line-breaks joined. Hand-typed or copied
   from an ebook edition of the same book.
 
-## Required composition (Gate 1)
+## Composition
 
-| ID prefix       | Content                                                  | Count      |
-|-----------------|----------------------------------------------------------|------------|
-| `en_clean_*`    | modern English book, clean single/double column          | 5 spreads  |
-| `bg_*`          | Bulgarian (Cyrillic) pages                                | 3 spreads  |
-| `it_*`          | Italian pages                                            | 2 spreads  |
-| `de_*`          | German pages                                             | 2 spreads  |
-| `en_multicol_*` | multi-column or footnote-heavy English page              | 2 spreads  |
-| `en_figures_*`  | pages with images + captions                             | 2 spreads  |
-| `old_*`         | older book / worn typeface                               | 2 spreads  |
-| `zoomset_*`     | 1 full-spread anchor + 4 quadrant close-ups (same spread)| 3–4 sets   |
+Each image is a **full two-page spread** (the pipeline's Stage 02 does the
+gutter split; Gate 1 deliberately measures raw Tesseract on the captured
+spread, before split/dewarp).
 
-Ground truth required for **≥5 pages** (≥2 English, ≥1 Bulgarian, ≥1 with
-footnotes).
+### Captured so far (first batch)
+
+| ID prefix     | Content                                            | Count     | GT           |
+|---------------|----------------------------------------------------|-----------|--------------|
+| `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01`, `03` |
+| `bg_*`        | Bulgarian (Cyrillic) history: clean single-column  | 3 spreads | `01`         |
+| `it_geo_*`    | Italian (Dolomites geology): main col + figure sidebars | 3 spreads | —       |
+
+Ground truth is present for **6 pages** (4 English + 2 Bulgarian, all with
+footnotes) — clears the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar.
+GT is **hand-transcribed from the photos** (noted in `manifest.csv`), not from
+an ebook edition.
+
+### Still targeted (append later as new ids)
+
+| ID prefix     | Content                                                   | Count    |
+|---------------|-----------------------------------------------------------|----------|
+| `de_*`        | German pages                                               | 2 spreads |
+| `en_multicol_*` | a genuine multi-column English page                     | 2 spreads |
+| `old_*`       | older book / worn typeface                                 | 2 spreads |
+| `zoomset_*`   | 1 full-spread anchor + 4 quadrant close-ups (same spread)  | 3–4 sets |
+
+**Reading-order note:** Bulgarian spreads OCR in correct order (two clean
+single columns). English/Italian spreads have figure-caption sidebars that make
+raw Tesseract scramble reading order — a Stage 02/04 layout problem, not a
+recognition one; it inflates WER on those spreads.
 
 ## Layout
 

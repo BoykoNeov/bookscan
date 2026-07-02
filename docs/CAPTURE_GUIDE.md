@@ -12,9 +12,30 @@ python -m tools.gate1_harness --testset testset/ --report docs/RESULTS.md
 
 ---
 
+## 0. Which app
+
+Your phone's **built-in Camera app, plain Photo mode**. Nothing special, no
+extra install. Just:
+
+- **iPhone:** default Camera, **Photo** mode. Turn **Live Photo off**; ideally
+  set Formats → *Most Compatible* (JPEG) so ingest is trivial.
+- **Android:** default Camera, **Photo** mode.
+- **NOT a scanner app** and **NOT "Document/Scan" mode** (Adobe Scan, Microsoft
+  Lens, CamScanner, Apple Notes / Google Drive scan). Those auto-crop,
+  binarize, sharpen and force-flatten — exactly the preprocessing the pipeline
+  is supposed to own. Feeding it a pre-"scanned" image contaminates the
+  baseline. Plain photo only; the pipeline does the flattening later.
+
+**These don't need to be studio shots.** Real handheld photos in ordinary
+indoor light — a bit of page curl, a gentle angle, a soft shadow — are the
+*design target*, not a problem to eliminate. The checklist below improves a
+Gate-1 baseline at the margin; it is not a bar you must clear before shooting.
+The first real testset (`en_coins_*`, `bg_*`, `it_geo_*`) was shot exactly this
+way and reads fine.
+
 ## 1. How to shoot a page (the 60-second checklist)
 
-**Light — the #1 factor.**
+**Light — helps, but don't chase perfection.**
 - Bright, **even, diffuse** light. Best: near a window with indirect daylight,
   or two lamps at ~45° from the left and right.
 - **Kill glare.** No single overhead point light on glossy/coated pages — it
@@ -84,27 +105,35 @@ capture the rest without GT (they still get word counts + confidence overlays).
   per-category table).
 - `notes` — anything (book title, edition, lighting).
 
-A ready-to-paste, pre-populated version is in
-[`../testset/manifest_template.csv`](../testset/manifest_template.csv): shoot &
-rename your photos to the listed `file` names (or edit the names), fill GT for
-the 5 flagged rows, then copy it over `testset/manifest.csv`.
+A ready-to-paste template is in
+[`../testset/manifest_template.csv`](../testset/manifest_template.csv). Note the
+template still lists the *aspirational* composition (German, `old`, `zoomset`,
+etc.); the **first real batch is already ingested** — see the actual
+[`../testset/manifest.csv`](../testset/manifest.csv). What we shot:
 
-The template covers the spec's composition:
+| ids | language | book | category | GT? |
+|---|---|---|---|---|
+| `en_coins_01..03` | English | *Chopmarked Coins* | figures + footnotes | `01`, `03` |
+| `bg_01..03` | Bulgarian | history (Cyrillic) | clean single-col | `01` |
+| `it_geo_01..03` | Italian | Dolomites geology | figures + sidebars | — |
 
-| category | ids | GT? |
-|---|---|---|
-| clean English | `en_clean_01..05` | `01`, `02` |
-| Bulgarian | `bg_01..03` | `01` |
-| Italian | `it_01..02` | — |
-| German | `de_01..02` | `01` |
-| multi-column / footnotes | `en_multicol_01..02` | `01` (the footnote page) |
-| figures + captions | `en_figures_01..02` | — |
-| old / worn typeface | `old_01..02` | — |
-| zoomset (anchor + 4 quads) | `zoomset_01_{anchor,q1..q4}` ×3–4 sets | — |
+Each image is a **full two-page spread** (not a single page), so 3 GT spreads =
+**6 GT pages**: 4 English (`en_coins_01`, `en_coins_03`) + 2 Bulgarian
+(`bg_01`), clearing the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar
+(all three GT spreads carry footnotes).
 
-That's 5 GT pages: 3 English (`en_clean_01`, `en_clean_02`, `en_multicol_01`),
-1 Bulgarian (`bg_01`), 1 German (`de_01`) — with the footnote requirement met by
-`en_multicol_01`.
+**Deferred (not yet captured):** German, `old`/worn typeface, `zoomset`
+close-ups, and a true multi-column English page. Add these later as new ids —
+the set is append-only.
+
+**Reading-order caveat (Gate 2 preview).** Tesseract reads the Bulgarian
+spreads in correct order (two clean single columns → left page then right).
+But on the English coin pages and the Italian geology pages, the figure-caption
+**sidebars** (Italian: one main text column with side blocks explaining each
+figure) create false column boundaries, so raw Tesseract splices caption text
+into the body flow and scrambles reading order. That inflates WER on those
+spreads — it is a *layout* problem for Stage 02/04 to fix, not a recognition
+failure. Judge raw OCR quality on `bg_*` and on the confidence-AUROC number.
 
 ---
 

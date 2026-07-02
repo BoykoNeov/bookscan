@@ -28,3 +28,6 @@ Thumbs.db
 
 # Test-set derived artifacts (source images are tracked; debug overlays are regenerable)
 /testset/debug/*.png
+
+# Raw capture drop folder (originals copied into testset/ with canonical ids)
+/1/

@@ -1,0 +1,34 @@
+image_id,file,language,gt_file,category,notes
+en_clean_01,en_clean_01.jpg,english,gt/en_clean_01.txt,clean,GT page
+en_clean_02,en_clean_02.jpg,english,gt/en_clean_02.txt,clean,GT page
+en_clean_03,en_clean_03.jpg,english,,clean,
+en_clean_04,en_clean_04.jpg,english,,clean,
+en_clean_05,en_clean_05.jpg,english,,clean,
+bg_01,bg_01.jpg,bulgarian,gt/bg_01.txt,clean,GT page
+bg_02,bg_02.jpg,bulgarian,,clean,
+bg_03,bg_03.jpg,bulgarian,,clean,
+it_01,it_01.jpg,italian,,clean,
+it_02,it_02.jpg,italian,,clean,
+de_01,de_01.jpg,german,gt/de_01.txt,clean,GT page
+de_02,de_02.jpg,german,,clean,
+en_multicol_01,en_multicol_01.jpg,english,gt/en_multicol_01.txt,multicol,GT page - footnote-heavy
+en_multicol_02,en_multicol_02.jpg,english,,multicol,
+en_figures_01,en_figures_01.jpg,english,,figures,
+en_figures_02,en_figures_02.jpg,english,,figures,
+old_01,old_01.jpg,english,,old,worn typeface / older book
+old_02,old_02.jpg,english,,old,worn typeface / older book
+zoomset_01_anchor,zoomset_01_anchor.jpg,english,,zoomset,full spread anchor
+zoomset_01_q1,zoomset_01_q1.jpg,english,,zoomset,top-left quadrant
+zoomset_01_q2,zoomset_01_q2.jpg,english,,zoomset,top-right quadrant
+zoomset_01_q3,zoomset_01_q3.jpg,english,,zoomset,bottom-left quadrant
+zoomset_01_q4,zoomset_01_q4.jpg,english,,zoomset,bottom-right quadrant
+zoomset_02_anchor,zoomset_02_anchor.jpg,english,,zoomset,full spread anchor
+zoomset_02_q1,zoomset_02_q1.jpg,english,,zoomset,top-left quadrant
+zoomset_02_q2,zoomset_02_q2.jpg,english,,zoomset,top-right quadrant
+zoomset_02_q3,zoomset_02_q3.jpg,english,,zoomset,bottom-left quadrant
+zoomset_02_q4,zoomset_02_q4.jpg,english,,zoomset,bottom-right quadrant
+zoomset_03_anchor,zoomset_03_anchor.jpg,english,,zoomset,full spread anchor
+zoomset_03_q1,zoomset_03_q1.jpg,english,,zoomset,top-left quadrant
+zoomset_03_q2,zoomset_03_q2.jpg,english,,zoomset,top-right quadrant
+zoomset_03_q3,zoomset_03_q3.jpg,english,,zoomset,bottom-left quadrant
+zoomset_03_q4,zoomset_03_q4.jpg,english,,zoomset,bottom-right quadrant

@@ -350,3 +350,26 @@ Findings (per-image; the mean is carried by one image so read the rows, not the 
 
 > Same N=3 humility as the classical run: 3 GT spreads, mean still carried by bg_02 — read the rows. UVDoc is the config default and wins on this evidence; revisit as the GT set grows. Full-res is preserved: the grid is predicted at 488x712 but grid_sample runs on the full-resolution page (Stage 06 patch crops come from this output).
 
+
+## Gate 3 layout A/B — 2026-07-03, tesseract 5.4.0.20240606, layout=auto
+
+Same recognized words reordered two ways (whole = Tesseract native order; layout = Stage 04 blocks in XY-Cut reading order) — isolates READING ORDER from recognition. Split+dewarp (UVDoc auto) identical across arms. Δ = layout − whole. All blocks kept incl. header/page-number (GT includes them).
+
+| image | lang | whole WER | layout WER | ΔWER | whole CER | layout CER | ΔCER | arm | blocks | orphans |
+|---|---|---|---|---|---|---|---|---|---|---|
+| en_coins_01 | eng | 12.0% | 12.0% | +0.0 pp | 6.7% | 6.7% | +0.0 pp | doclayout | 25 | 1.1% |
+| bg_01 | bul | 3.7% | 3.5% | -0.1 pp | 1.5% | 1.4% | -0.0 pp | doclayout | 13 | 0.7% |
+| bg_02 | bul | 1.7% | 1.7% | +0.0 pp | 0.3% | 0.3% | +0.0 pp | doclayout | 7 | 0.0% |
+| **mean** | — | 5.8% | 5.8% | -0.0 pp | 2.8% | 2.8% | -0.0 pp | — | — | — |
+
+Findings (per-image; read the rows, not the mean — N=3 GT):
+- **Reading order is NEUTRAL (non-regression) on all three GT pages:** en_coins_01 Δ0.0pp, bg_01 -0.1pp, bg_02 0.0pp. Stage 04's explicit XY-Cut order matches Tesseract's native order on these pages — it does not scramble the clean single-column controls, and it neither helps nor hurts the figure page.
+- **Why NEUTRAL, not a win — and this is the real finding:** none of the GT pages is reading-order-hard AFTER Stage 02 split. Stage 02 already removed the cross-gutter facing-page interleave (the Gate 1 scramble); within each single half-page these GT pages are single-column-stacked, so Tesseract's own psm-3 order is already correct. There is NO post-split GT page where Tesseract's order fails, so a reading-order WIN cannot be demonstrated on the current GT. That is a GT-COVERAGE limit, not a stage weakness — the win case is multi-column/sidebar, which has no GT.
+- **A real bug was found and fixed via this A/B** (recorded for mechanism honesty): the first cut REGRESSED en_coins_01 (+10.2pp, then +1.0pp after an intra-block-order fix). Root cause traced by diffing the two linearizations: DocLayout-YOLO does not box the italic footnote line, so its 8 words become ORPHAN singleton cells; the XY-Cut tie-break base case sorted them y-PRIMARY, and jittery OCR-box tops (2704-2717px on a ~24px line) scrambled same-line words (`Eastern Exchange` -> `Exchange Eastern`). Fixed by grouping the tie-break into reading ROWS by vertical OVERLAP (size-relative, so a line of jittery words groups but two tall stacked blocks do not — a fixed row-tolerance instead regressed bg_01 +7.5pp by collapsing stacked blocks). After the fix all GT pages are neutral.
+- **Detection quality (debug overlays) is excellent** on every page including the no-GT complex ones: figures, captions, running headers, page numbers, titles and sidebars are all correctly boxed and typed (see testset/debug/*_04layout.png). Orphan rate 0-1.1% — detection covers nearly all text.
+- **Multi-column (UNPROVEN, qualitative only):** it_geo_01 left reads headers -> diagram -> heading -> main column (full) -> right sidebar LAST — a standard, plausibly-correct two-column linearization (XY-Cut split the main column from the sidebar at their ~37px gutter; the overlay's crossing arrow is a centroid-connector artifact, not a scramble). But with NO GT this is NOT certified — it is the gate's open question.
+
+Verdict: **PASS on the measurable scope** (detection proven; reading order non-regressive on all GT; overlays visibly correct), with the headline **multi-column reading-order IMPROVEMENT UNPROVEN** — no GT page exercises a post-split order failure, so no win can be shown yet.
+
+> N=3 GT spreads, none multi-column. Proves figure/caption/footnote + header/page-number ordering on one single-column page (en_coins_01) + non-regression on two clean single-column pages (bg_01, bg_02). Multi-column order is exercised only qualitatively (testset/debug/*_04layout.png: it_geo_*, en_coins_02) and stays UNPROVEN until multi-column reading-order GT is hand-typed. See docs/GATE3_SPEC.md.
+

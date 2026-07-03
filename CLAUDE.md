@@ -23,9 +23,9 @@ Italian, German**.
 ## Current status
 
 <!-- UPDATE THIS SECTION AS WORK PROGRESSES -->
-- [ ] Gate 1: OCR quality harness (see `docs/GATE1_SPEC.md`) — IN PROGRESS
-- [ ] Gate 2: fusion + split + dewarp improve OCR accuracy
-- [ ] Gate 3: layout + reading order correct on complex pages
+- [x] Gate 1: OCR quality harness (see `docs/GATE1_SPEC.md`) — DONE
+- [x] Gate 2: fusion + split + dewarp improve OCR accuracy — DONE
+- [ ] Gate 3: layout + reading order correct on complex pages — IN PROGRESS
 - [ ] Gate 4: end-to-end re-typeset PDF reads correctly
 - [ ] Gate 5: server + Android app
 

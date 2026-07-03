@@ -55,6 +55,14 @@ dewarp:
   # against the repo root. Missing -> Stage 03 falls back to classical.
   uvdoc_ckpt: "models/uvdoc/best_model.pkl"
 
+# --- Stage 04 layout + reading order ---
+layout:
+  # DocLayout-YOLO checkpoint (~40 MB), gitignored under models/. Download from
+  # HF 'juliozhao/DocLayout-YOLO-DocStructBench'
+  # (doclayout_yolo_docstructbench_imgsz1024.pt). Relative paths resolve against
+  # the repo root. Missing -> Stage 04 falls back to classical (flagged).
+  yolo_ckpt: "models/doclayout_yolo/doclayout_yolo_docstructbench_imgsz1024.pt"
+
 # --- Reconstruction (Stage 07) ---
 reconstruct:
   fonts:

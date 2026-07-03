@@ -23,6 +23,13 @@ numpy>=1.26
 torch>=2.6             # weights_only=True default is relied on for the checkpoint
 torchvision>=0.21
 
+# --- Stage 04 layout: DocLayout-YOLO detector (GPU) ---
+# Checkpoint (~40 MB) is gitignored; fetch into models/doclayout_yolo/ from HF
+# 'juliozhao/DocLayout-YOLO-DocStructBench'. NB this pulls opencv-python-headless
+# alongside opencv-python — harmless here (pipeline only writes images, no GUI).
+doclayout-yolo>=0.0.4
+huggingface_hub>=0.20   # checkpoint download
+
 # --- Second-opinion OCR (Bulgarian) ---
 easyocr>=1.7
 

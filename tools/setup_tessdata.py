@@ -28,6 +28,11 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 LANGS = ("eng", "bul", "ita", "deu")
+# osd.traineddata is not a `-l` language, but Stage 00 (ingest) orientation
+# detection runs Tesseract OSD (--psm 0), which needs it in the SAME
+# --tessdata-dir the pipeline/harness point at. Fetch it alongside the langs so
+# one tessdata dir serves recognition AND orientation. See tools/normalize.py.
+OSD = "osd"
 TESSDATA_BEST = "https://github.com/tesseract-ocr/tessdata_best/raw/main"
 
 
@@ -68,7 +73,7 @@ def main(argv: list[str] | None = None) -> int:
     dst.mkdir(parents=True, exist_ok=True)
     print(f"target: {dst}")
 
-    for lang in LANGS:
+    for lang in (*LANGS, OSD):
         out = dst / f"{lang}.traineddata"
         if out.exists() and not args.force:
             print(f"  keep {lang}.traineddata ({out.stat().st_size/1e6:.1f} MB)")

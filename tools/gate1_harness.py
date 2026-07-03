@@ -34,6 +34,7 @@ import cv2
 import numpy as np
 import yaml
 
+from tools import normalize as NORM
 from tools import ocr_metrics as M
 
 # --------------------------------------------------------------------------
@@ -419,6 +420,7 @@ def run_testset(binary: str, cfg: dict, testset: Path, report: Path,
                 variants: list[str]) -> list[ImageResult]:
     rows = read_manifest(testset)
     debug_dir = testset / "debug"
+    tessdata = resolve_tessdata_dir(cfg)   # for OSD in the shared ingest helper
     tver = tesseract_version(binary)
     run_date = datetime.date.today().isoformat()
     all_results: list[ImageResult] = []
@@ -429,7 +431,15 @@ def run_testset(binary: str, cfg: dict, testset: Path, report: Path,
             if not img_file.exists():
                 print(f"  ! missing image: {img_file}", file=sys.stderr)
                 continue
-            image = cv2.imread(str(img_file), cv2.IMREAD_COLOR)
+            # Route through the SHARED ingest helper (Stage 00 uses the same one)
+            # so the harness and the pipeline feed Tesseract identically-oriented
+            # pixels. This replaces a bare cv2.imread that applied the testset's
+            # (misleading) EXIF orientation and fed Tesseract a sideways spread.
+            try:
+                image, _oi = NORM.load_upright_bgr(img_file, binary, tessdata)
+            except Exception as e:  # noqa: BLE001 — never let one image kill a run
+                print(f"  ! unreadable: {img_file} ({e})", file=sys.stderr)
+                continue
             if image is None:
                 print(f"  ! unreadable: {img_file}", file=sys.stderr)
                 continue

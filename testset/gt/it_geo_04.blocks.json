@@ -1,0 +1,62 @@
+{
+  "image_id": "it_geo_04",
+  "gt_type": "block_reading_order",
+  "schema_version": 1,
+  "book": "Dolomites geology (same book as it_geo_01..03)",
+  "pages": "86-87",
+  "language": "italian",
+  "validated_by": "repo owner (hand-confirmed segmentation + order 2026-07-03; B8-placement + caption/figure grouping corrected against the photo 2026-07-03)",
+  "grading": {
+    "unit": "per subpage",
+    "why": "Stage 02 gutter-splits the spread into left.png (p.86) + right.png (p.87); Stage 04 computes reading_order 0..n-1 independently per subpage. There is NO single spread-level ordering to grade against.",
+    "anchor_match": "Match each GT anchor to a detected block by text overlap ANYWHERE in the block, not by exact prefix. OCR will garble the first words on this rotated, colored-background page.",
+    "primary_invariants": "Per the owner, the load-bearing assertions are (1) correct segmentation into these blocks, (2) correct type per block, (3) each caption attached to its figure (B8->B5, B7->B6). Exact linear reading order is SECONDARY — the owner considers precise sequence low-priority as long as captions stay grouped with figures. Weight the metric accordingly.",
+    "metric_todo": "The harness is WER-only today. A sequence-order metric (block-order match / Kendall-tau over matched blocks, plus a caption<->figure grouping check) still has to be written; this fixture UNBLOCKS that proof but does not by itself constitute it."
+  },
+  "subpages": {
+    "left": {
+      "page_number": 86,
+      "stripped": [
+        {"type": "page_number", "anchor": "86"},
+        {"type": "header", "anchor": "3. Le piattaforme carbonatiche e i bacini post-vulcanici"}
+      ],
+      "reading_order": [
+        {"order": 0, "id": "B5",  "type": "figure",    "anchor": null,
+         "desc": "Fig. 20 photo (Nuvolau landscape), large, top-left. Its caption is B8, in the rightmost (gutter-side) column of THIS same left subpage."},
+        {"order": 1, "id": "B6L", "type": "figure",    "anchor": "LAGAZUOI PICCOLO",
+         "desc": "LEFT fragment of the cross-gutter Fig. 21 panorama, top-right (gutter side). Continues as B6R on the right subpage; the red overthrust fault line runs across both fragments."},
+        {"order": 2, "id": "B9",  "type": "paragraph", "anchor": "nuo verso sud, sul versante est della dorsale del Pelsa"},
+        {"order": 3, "id": "B10", "type": "paragraph", "anchor": "tettoniche che impediscono ricostruzioni paleoambientali"},
+        {"order": 4, "id": "B8",  "type": "caption",   "anchor": "A lato: Figura 20 La piattaforma cassiana del Nuvolau",
+         "desc": "Caption for Fig. 20 (B5). Rightmost / gutter-side column of the left subpage; italic, ends 'Foto di T. Abba'. Same subpage as its figure."}
+      ]
+    },
+    "right": {
+      "page_number": 87,
+      "stripped": [
+        {"type": "header", "anchor": "3. Le piattaforme carbonatiche e i bacini post-vulcanici"},
+        {"type": "page_number", "anchor": "87"}
+      ],
+      "reading_order": [
+        {"order": 0, "id": "B6R", "type": "figure",    "anchor": "LAGAZUOI GRANDE",
+         "desc": "RIGHT fragment of the cross-gutter Fig. 21 panorama (LAGAZUOI GRANDE / COL DEI BOS / CIME DI FANES / CASTELLETTO / TOFANA DI ROZES). In-figure geo labels (TVZ/DPR/HKS/DCS/SCS + place names) stay INSIDE the figure, not extracted as body words."},
+        {"order": 1, "id": "B7",  "type": "caption",   "anchor": "Sopra: Figura 21 Ampia veduta dei monti a nord del Passo Falzarego",
+         "desc": "Caption for the Fig. 21 panorama (B6 = B6L+B6R). Leftmost / gutter-side column of the right subpage; italic, ends 'Foto di M. Ghion'. Sits under the right fragment B6R."},
+        {"order": 2, "id": "B11", "type": "paragraph", "anchor": "è il rosso (a volte con tonalità verso il giallo)"},
+        {"order": 3, "id": "B12", "type": "paragraph", "anchor": "rilievi è impostata sulle clinostratificazioni"}
+      ]
+    }
+  },
+  "document_order_gate4": {
+    "order": ["B5", "B8", "B6", "B7", "B9", "B10", "B11", "B12"],
+    "note": "The owner-validated whole-document linear order for Gate-4 reflow (each figure floated with its caption as a unit, then the continuous prose). B5+B8 = Fig. 20 with its caption (both on the left subpage); B6+B7 = Fig. 21 panorama (B6=B6L+B6R stitched) with its caption. This is the reflow target, NOT the Stage-04 per-subpage XY-Cut target above (same data, two different consumers)."
+  },
+  "notes": [
+    "CROSS-GUTTER FIGURE: B6 (Fig. 21 panorama) is ONE physical photo split by the spine into B6L (left subpage, LAGAZUOI PICCOLO) + B6R (right subpage, LAGAZUOI GRANDE). This fixture grades reading ORDER + grouping only; cross-page figure stitching is a separate Stage 01/02 capability with its own proof.",
+    "NO CROSS-PAGE CAPTION (corrected 2026-07-03): both captions sit on the same subpage as their figure. B8 (Fig. 20 caption) is in the rightmost/gutter column of the LEFT subpage, with its figure B5. B7 (Fig. 21 caption) is in the leftmost/gutter column of the RIGHT subpage, under the right fragment B6R. The two captions flank the spine (the two central columns of the spread).",
+    "CAPTION<->FIGURE GROUPING is the owner's key invariant: keep B8 with B5 and B7 with B6, regardless of exact linear position. Precise reading order is explicitly secondary here.",
+    "PROSE CONTINUITY: body is one continuous flow B9->B10->B11->B12, verified by text joining across the breaks: '...di scaglie'|'tettoniche...', '...il loro colore tipico'|'è il rosso...', '...L'ossatura di questi'|'rilievi è impostata...'.",
+    "HARD FEATURES this page exercises: ~90 degree rotation, tan text background + red fault lines over the photo, two repeated running headers to de-dup/strip, 3-column body per subpage (2 prose columns + 1 gutter-side caption column), figure-internal annotation labels.",
+    "GT COVERS block segmentation + type + caption/figure grouping + per-subpage reading order ONLY. NOT verbatim text; there is no WER ground truth for this page (deliberate — WER conflates layout scramble with recognition on figure-sidebar spreads)."
+  ]
+}

@@ -8,3 +8,4 @@ bg_03,bg_03.jpg,bulgarian,,clean,"same book pp.178-179; dense single-col, italic
 it_geo_01,it_geo_01.jpg,italian,,figures,"Dolomites geology bk, pp.70-71; single main col + figure-explanation sidebars + photos; order scrambles"
 it_geo_02,it_geo_02.jpg,italian,,figures,"same book pp.72-73; main col + map/diagram + sidebar captions"
 it_geo_03,it_geo_03.jpg,italian,,figures,"same book pp.74-75; large photos + 2-up caption sidebars"
+it_geo_04,it_geo_04.jpg,italian,gt/it_geo_04.blocks.json,multicol,"same book pp.86-87; genuine multi-column (2 prose cols + gutter-side caption col per subpage) + cross-gutter Fig.21 panorama; each caption on same subpage as its figure; BLOCK-ORDER GT (not verbatim text); ~90deg rotation, tan bg, sofa capture; owner-validated 2026-07-03"

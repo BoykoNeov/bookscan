@@ -13,6 +13,16 @@ anchor.
 - Ground truth lives in `gt/<image_id>.txt`: exact page text in reading order,
   one paragraph per line, hyphenated line-breaks joined. Hand-typed or copied
   from an ebook edition of the same book.
+- **Block-order GT** (a second, distinct GT type) lives in
+  `gt/<image_id>.blocks.json`: per-subpage block **segmentation + type +
+  reading order**, anchored by first-words (no verbatim text, no bboxes). This
+  is the ground truth for the Stage-04 reading-order / multi-column proof —
+  WER is deliberately NOT used for it (WER on figure-sidebar spreads conflates
+  layout scramble with recognition). Graded **per subpage** (Stage 02 splits
+  the spread first) by matching each anchor to a detected block via text
+  overlap. First fixture: `it_geo_04` (owner-validated). Note: this UNBLOCKS
+  the reading-order proof; the sequence-order metric itself still has to be
+  written.
 
 ## Composition
 
@@ -26,7 +36,7 @@ spread, before split/dewarp).
 |---------------|----------------------------------------------------|-----------|--------------|
 | `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01` |
 | `bg_*`        | Bulgarian (Cyrillic) history: clean single-column  | 3 spreads | `01`, `02`   |
-| `it_geo_*`    | Italian (Dolomites geology): main col + figure sidebars | 3 spreads | —       |
+| `it_geo_*`    | Italian (Dolomites geology): main col + figure sidebars | 4 spreads | `04` (block-order) |
 
 Ground truth is present for **6 pages** (2 English + 4 Bulgarian, all with
 footnotes) — clears the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar.

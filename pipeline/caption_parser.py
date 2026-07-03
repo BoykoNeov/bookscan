@@ -20,10 +20,14 @@ SCOPE / HONEST LIMIT (empirically grounded on it_geo_06, 2026-07-03):
 - Caption TYPING + number extraction is robust and is the durable win here.
 - Caption->figure pairing BY NUMBER needs each FIGURE's number too. The only
   textual source is the in-photo corner label ("25/26/27/28") routed into the
-  figure block. On it_geo_06 those labels do NOT survive OCR — every detected
-  figure block is empty text — so the C26->F26 trap is NOT textually solvable on
-  this fixture. That is a figure-OCR / detector-under-segmentation limit, not a
-  parser gap. ``pair_by_number`` is built and unit-tested so it pairs correctly
+  figure block. What was VERIFIED on it_geo_06 (2026-07-03): every detected
+  figure block is EMPTY text, i.e. no figure-number signal reaches the figure
+  blocks via center-routing. (A stray "26" could in principle have OCR'd and
+  routed into another column or dropped as an orphan — not separately checked —
+  but it could not be attributed to F26 anyway while the three cliff figures are
+  merged into one detector box.) Either way the C26->F26 trap is NOT textually
+  solvable on this fixture: a figure-OCR / detector-under-segmentation limit, not
+  a parser gap. ``pair_by_number`` is built and unit-tested so it pairs correctly
   the moment a figure number IS available; on the current detector it yields no
   pairs on it_geo_06 (reported by the eval, never asserted away).
 

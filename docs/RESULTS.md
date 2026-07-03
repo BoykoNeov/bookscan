@@ -595,7 +595,13 @@ the routed OCR text was dumped for all four fixtures before a regex was written.
 | it_geo_04 | 1/2 → **2/2** | 7/8 → **8/8** | 1 | 0 |
 | it_geo_05 | 1/2 → 1/2 | 6/6 → 6/6 | 0 | 0 |
 
-- **Robust typing win, zero regressions.** Every fixture reaches N/N type accuracy;
+- **Robust typing win, zero regressions — provable, not just observed.** On every
+  fixture `n_promoted` EQUALS the type-accuracy delta (06 +6, 07 +1, 04 +1, 05 +0).
+  Since a promotion can only land on a `paragraph`/`other` block, promoting a GT
+  non-caption would LOWER accuracy and promoting an unmatched block would make
+  `n_promoted` exceed the delta; equality on all four means every promotion
+  provably landed on a real matched GT caption — no hidden false positive is
+  arithmetically possible. Every fixture reaches N/N type accuracy;
   the parser promotes exactly the mistyped-paragraph captions and NO body prose.
   The start-anchoring guard was verified against the real non-caption text that
   mentions a figure mid-sentence — it_geo_06 right `...ricoprirla (fig. 28). La
@@ -614,11 +620,21 @@ on the number; pairing does — which is why the pairing claim is gated below.
 **Pairing by number — figure-side blind on the current detector (honest limit).**
 `pair_by_number` (caption N ↔ figure N) needs each FIGURE's number too; the only
 textual source is the in-photo corner label (`25/26/27/28`) routed into the
-figure block. On ALL four fixtures every detected figure block is EMPTY text — the
-corner labels do NOT survive OCR — so figure numbers recovered = 0 and number-keyed
-pairs recovered = 0/N on each. The C26→F26 discrimination that it_geo_06 was built
-to test is therefore NOT textually solvable on this fixture: a figure-OCR /
-detector-under-segmentation limit, not a parser gap. The pairing LOGIC is proven
+figure block. What was verified on ALL four fixtures: every detected figure block
+is EMPTY text — no figure-number signal reaches the figure blocks via center-
+routing — so figure numbers recovered = 0 and number-keyed pairs recovered = 0/N
+on each. (A stray corner digit could in principle have OCR'd and routed into
+another column or dropped as an orphan — not separately checked — but on it_geo_06
+it could not be attributed to F26 anyway while the three cliff figures are merged
+into one detector box.) The C26→F26 discrimination that it_geo_06 was built to
+test is therefore NOT textually solvable on this fixture: a figure-OCR /
+detector-under-segmentation limit, not a parser gap. **This is the owner's #1
+priority (grouping > order) and it remains UNMET on the real page** — Task #4
+delivers the prerequisite (typed + numbered captions) and localizes the remaining
+blocker to figure under-segmentation + corner-label OCR (the next lever).
+The it_geo_06 GT's `document_order_gate4` reflow target (which this parser
+ultimately feeds) is therefore left DEFERRED — ungradeable until the figure side
+is separable — not silently skipped. The pairing LOGIC is proven
 by unit test with synthetic figure numbers (defeats the geometric trap:
 C26→F26 regardless of geometry) and correctly yields `{}` when figure numbers are
 `None` (the real case). So the parser delivers the caption side (typed + numbered,

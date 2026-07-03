@@ -573,3 +573,58 @@ Stage 04 block structure graded DIRECTLY against the per-subpage block-order GT 
 | right.png | 13/13 (100%) | 13/13 (100%) | +1.00 | +0.38 (n=13) | — | 16 | — |
 
 **Segmentation** 28/30 GT blocks matched. **Type** 27/28 matched blocks correctly typed. **Grouping** 1/1 captions associate to their partner figure (0/1 also typed 'caption'); but only 1/1 on a subpage with >=2 figures (the rest are single-figure: association POSSIBLE, not discriminated).
+
+## Gate-4 "Figura NN" caption parser — 2026-07-03, tesseract 5.4.0.20240606
+
+New pure module `pipeline/caption_parser.py` + a **parser arm** in
+`tools/layout_order_eval.py` (shown ALONGSIDE the detector-only numbers, so the
+gain is measured not asserted). The parser re-types a `paragraph`/`other` block
+as `caption` iff its OCR text STARTS with a figure keyword + number (`Figura NN`,
+optional directional prefix `In questa pagina:` / `Sopra:` / `A lato:`); it never
+demotes a block and never touches `figure` blocks. Motivation: the DocLayout-YOLO
+detector types real captions as `paragraph` (0/6 on it_geo_06), which breaks the
+Gate-4 caption↔figure float (keyed on caption TYPE). Empirically grounded first:
+the routed OCR text was dumped for all four fixtures before a regex was written.
+
+**Caption typing (detector → +parser), over the graded caption/matched blocks:**
+
+| fixture | captions typed `caption` | type acc over matched blocks | promoted | false positives |
+|---|---|---|---|---|
+| it_geo_06 | 0/6 → **6/6** | 6/12 → **12/12** | 6 | 0 |
+| it_geo_07 | 0/1 → **1/1** | 27/28 → **28/28** | 1 | 0 |
+| it_geo_04 | 1/2 → **2/2** | 7/8 → **8/8** | 1 | 0 |
+| it_geo_05 | 1/2 → 1/2 | 6/6 → 6/6 | 0 | 0 |
+
+- **Robust typing win, zero regressions.** Every fixture reaches N/N type accuracy;
+  the parser promotes exactly the mistyped-paragraph captions and NO body prose.
+  The start-anchoring guard was verified against the real non-caption text that
+  mentions a figure mid-sentence — it_geo_06 right `...ricoprirla (fig. 28). La
+  loro base...` and it_geo_05 right `...tettonica piuttosto intensa (fig. 4)...`
+  are correctly NOT promoted; the it_geo_07 `N)`-prefixed schema-step paragraphs
+  (`1) Triassico...`) have no keyword and are ignored. it_geo_05 with 0 promotions
+  holding at 6/6 is the clean non-regression control.
+- **it_geo_05 C2 stays unrecovered (1/2)** — it is a caption embedded INSIDE the
+  Fig.2 map's figure bbox (swallowed by the detector), and the parser deliberately
+  never re-types figure blocks. Correct honest behavior, not a parser miss.
+
+**Number extraction is OCR-fragile even when the keyword is clean:** on it_geo_07
+the keyword read `Figura` but the number `31` OCR'd as `3`. Typing does not depend
+on the number; pairing does — which is why the pairing claim is gated below.
+
+**Pairing by number — figure-side blind on the current detector (honest limit).**
+`pair_by_number` (caption N ↔ figure N) needs each FIGURE's number too; the only
+textual source is the in-photo corner label (`25/26/27/28`) routed into the
+figure block. On ALL four fixtures every detected figure block is EMPTY text — the
+corner labels do NOT survive OCR — so figure numbers recovered = 0 and number-keyed
+pairs recovered = 0/N on each. The C26→F26 discrimination that it_geo_06 was built
+to test is therefore NOT textually solvable on this fixture: a figure-OCR /
+detector-under-segmentation limit, not a parser gap. The pairing LOGIC is proven
+by unit test with synthetic figure numbers (defeats the geometric trap:
+C26→F26 regardless of geometry) and correctly yields `{}` when figure numbers are
+`None` (the real case). So the parser delivers the caption side (typed + numbered,
+ready for Gate-4 reflow) and honestly reports the figure side as blocked upstream.
+
+Tests: `pipeline/tests/test_caption_parser.py` (13) — real OCR strings, the
+mid-sentence non-regression guards, multilingual keyword table (Italian validated;
+en/de/bg provided but NOT fixture-validated), `figurano`/`figurative` false-match
+guard, number-garble tolerance, and the pairing trap. Full suite 79 green.

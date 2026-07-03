@@ -205,3 +205,25 @@ associates B7→B6R correctly via nearest-figure geometry (it does not depend on
 caption type), so the geometry needed for the Gate-4 float is proven present; only
 the type-keyed trigger is unsafe. This is the load-bearing takeaway from the
 `it_geo_04` type miss and aligns with the owner's "grouping > exact order" priority.
+
+**Update 2026-07-03 — the TEXTUAL half of that Gate-4 trigger is now built
+(`pipeline/caption_parser.py`, Task #4).** The detector under-types captions far
+more widely than B7: on it_geo_06 ALL 6 captions are typed `paragraph` (0/6),
+plus C31 on it_geo_07 and one on it_geo_04. The parser re-types a
+`paragraph`/`other` block as `caption` iff its OCR text STARTS with a figure
+keyword + number (`Figura NN`, optional directional prefix), never demoting a
+block or touching figures. Measured across all four block-order fixtures (parser
+arm in `tools/layout_order_eval`, RESULTS.md 2026-07-03): caption typing
+0/6→6/6 (it_geo_06), 0/1→1/1 (it_geo_07), 1/2→2/2 (it_geo_04), type accuracy
+reaches N/N on every fixture with **zero false-positive promotions** (start-
+anchoring rejects mid-sentence `(fig. 28)` body prose and `N)` schema-step
+paragraphs). This is the primary caption-typing lever; the *geometric* signal
+above (narrow+figure-adjacent) remains the complementary fallback for captions
+with NO printed keyword (e.g. B7's tall gutter column, or a figure-embedded
+caption like it_geo_05 C2 that the textual parser deliberately leaves to the
+figure block). **Caption→figure pairing BY NUMBER is built but figure-side-blind
+on the current detector** — the in-photo corner labels (`25/26/27/28`) do not
+survive OCR (every detected figure block is empty text), so number-keyed pairing
+recovers 0/N on every fixture; the C26→F26 trap stays blocked upstream on figure
+under-segmentation + figure-label OCR, not on the pairing logic (which is unit-
+proven on synthetic figure numbers). See RESULTS.md and `caption_parser` docstring.

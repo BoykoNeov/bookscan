@@ -74,6 +74,7 @@ from tools.gate1_harness import (
 from tools.dewarp_ab import split_halves, dewarp_halves, lang_code
 from tools.layout_ab import ocr_words, _word_box, _center_in
 from pipeline import stage04_layout as S4
+from pipeline import caption_parser as CP
 from pipeline.page_model import BBox
 
 # Fraction of a GT anchor's tokens that must be present in a detected block's
@@ -286,6 +287,13 @@ class SubpageGrade:
     n_det_blocks: int
     n_header_det: int                  # detected header+page_number blocks
     n_stripped_gt: int
+    # --- Figura-NN parser arm (additive; detector numbers above are untouched) ---
+    type_ok_parser: dict[str, bool] = field(default_factory=dict)  # type_ok after re-typing
+    caption_typed_parser: dict[str, bool] = field(default_factory=dict)  # caption_id -> typed ok
+    n_promoted: int = 0                # paragraph/other blocks the parser re-typed caption
+    n_fig_numbers: int = 0            # detected figures whose corner-label number OCR'd
+    n_pairs_by_number: int = 0        # GT (cap,fig) pairs recovered by number-keyed pairing
+    n_pairs_gt: int = 0               # GT pairs on this subpage (denominator)
 
     @property
     def seg_recall(self) -> float:
@@ -380,12 +388,54 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
             sub_pairs = [pr for pr in pairs if pr.get("subpage") == sub]
             groups = grouping_eval(sub_pairs, matched, det)
 
+            # ---- Figura-NN parser arm (pipeline.caption_parser) -------------
+            # Re-type paragraph/other/list blocks whose OCR text starts with a
+            # caption header ("Figura NN"); NEVER demote a block or touch figures.
+            # Then recompute type accuracy and caption-typed flags so the parser's
+            # effect on typing is MEASURED next to the detector baseline above.
+            promoted: set[int] = set()
+            cap_numbers: dict[int, int] = {}     # det.idx -> parsed caption number
+            for d in det:
+                if d.btype in ("paragraph", "other", "list"):
+                    ref = CP.parse_caption(d.text, lang)
+                    if ref is not None:
+                        promoted.add(d.idx)
+                        cap_numbers[d.idx] = ref.number
+
+            def eff_type(di: int) -> str:
+                return "caption" if (det[di].btype == "caption" or di in promoted) else det[di].btype
+
+            type_ok_parser = {gid: eff_type(di) == by_id[gid]["type"]
+                              for gid, di in matched.items()}
+            caption_typed_parser = {
+                g.caption_id: (g.caption_id in matched
+                               and eff_type(matched[g.caption_id]) == "caption")
+                for g in groups}
+
+            # Number-keyed pairing arm: caption numbers (parsed) vs figure numbers
+            # (corner labels routed into figure blocks). On the current detector +
+            # it_geo_06 the figure blocks are empty -> no figure numbers -> pairs {}.
+            fig_numbers: dict[str, int | None] = {}
+            for gid, di in matched.items():
+                if by_id[gid]["type"] == "figure":
+                    fig_numbers[gid] = CP.figure_number(det[di].text)
+            cap_num_by_gid = {gid: cap_numbers[di]
+                              for gid, di in matched.items() if di in cap_numbers}
+            num_pairs = CP.pair_by_number(cap_num_by_gid, fig_numbers)
+            gt_pair_map = {pr["caption"]: pr["figure"] for pr in sub_pairs}
+            pairs_ok = sum(1 for c, f in num_pairs.items()
+                           if gt_pair_map.get(c) == f)
+
             n_header = sum(1 for d in det if d.btype in ("header", "page_number"))
             grade.subpages.append(SubpageGrade(
                 name=name, n_gt=len(gt_blocks), matched=matched, misses=misses,
                 type_ok=type_ok, tau_layout=tau_layout, tau_native=tau_native,
                 n_native=len(nat), groups=groups, n_det_blocks=len(det),
                 n_header_det=n_header, n_stripped_gt=len(gsub.get("stripped", [])),
+                type_ok_parser=type_ok_parser, caption_typed_parser=caption_typed_parser,
+                n_promoted=len(promoted),
+                n_fig_numbers=sum(1 for v in fig_numbers.values() if v is not None),
+                n_pairs_by_number=pairs_ok, n_pairs_gt=len(sub_pairs),
             ))
     finally:
         if det_model is not None:
@@ -446,6 +496,34 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
              f"but only {discriminated}/{len(all_groups)} on a subpage with >=2 "
              f"figures (the rest are single-figure: association POSSIBLE, not "
              f"discriminated).")
+
+    # --- Figura-NN parser arm --------------------------------------------------
+    typ_p = sum(sum(s.type_ok_parser.values()) for s in grade.subpages)
+    typ_p_tot = sum(len(s.type_ok_parser) for s in grade.subpages)
+    typed_p = sum(1 for s in grade.subpages
+                  for v in s.caption_typed_parser.values() if v)
+    promoted = sum(s.n_promoted for s in grade.subpages)
+    fig_nums = sum(s.n_fig_numbers for s in grade.subpages)
+    pairs_by_num = sum(s.n_pairs_by_number for s in grade.subpages)
+    pairs_gt = sum(s.n_pairs_gt for s in grade.subpages)
+    L.append("")
+    L.append("**Figura-NN parser arm** (`pipeline.caption_parser`, shown ALONGSIDE "
+             "the detector-only numbers above — improvement is measured, not asserted). "
+             "The parser re-types a paragraph/other block as `caption` iff its OCR text "
+             "starts with a figure keyword+number (`Figura NN`, optional directional "
+             "prefix); it never demotes a block or touches figures.")
+    L.append(f"- **Caption typing:** detector {typed}/{len(all_groups)} vs "
+             f"**parser {typed_p}/{len(all_groups)}** captions typed `caption` "
+             f"({promoted} paragraph blocks promoted). "
+             f"**Type accuracy over matched blocks:** detector {typ}/{typ_tot} vs "
+             f"**parser {typ_p}/{typ_p_tot}**.")
+    pair_note = ("Figure numbers do NOT survive OCR here (figure blocks empty), so the "
+                 "number-keyed C→F pairing has no figure-side signal — the caption side "
+                 "is typed+numbered but pairing stays detector-under-segmentation-limited "
+                 "(honest scope, see caption_parser docstring)." if fig_nums == 0 else "")
+    L.append(f"- **Pairing by number:** figure corner labels recovered from OCR = "
+             f"{fig_nums} → number-keyed pairs recovered {pairs_by_num}/{pairs_gt}. "
+             f"{pair_note}")
     return "\n".join(L) + "\n"
 
 
@@ -459,6 +537,10 @@ def grade_to_json(grade: ImageGrade) -> dict:
             "tau_layout": s.tau_layout, "tau_native": s.tau_native,
             "n_native": s.n_native, "n_det_blocks": s.n_det_blocks,
             "n_header_det": s.n_header_det, "n_stripped_gt": s.n_stripped_gt,
+            "type_ok_parser": s.type_ok_parser,
+            "caption_typed_parser": s.caption_typed_parser,
+            "n_promoted": s.n_promoted, "n_fig_numbers": s.n_fig_numbers,
+            "n_pairs_by_number": s.n_pairs_by_number, "n_pairs_gt": s.n_pairs_gt,
             "groups": [{
                 "caption": g.caption_id, "figure": g.figure_id,
                 "caption_typed_ok": g.caption_typed_ok, "nearest_ok": g.nearest_ok,

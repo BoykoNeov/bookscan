@@ -1,6 +1,11 @@
 # Scope — Stage 04 figure separation (splitting under-segmented figure boxes)
 
-**Status:** scoped, not started. **Date:** 2026-07-03. **Fixture:** it_geo_06 (the
+**Status:** **Phase A BUILT** (2026-07-03) — `split_merged_figures` in
+`stage04_layout`, horizontal seams only; proven on it_geo_06 (figures left 3→4,
+right 1→2; seg-recall 7/8→8/8 and 5/6→6/6), zero false-splits on it_geo_04/05/07,
+6 new unit tests, full suite 84 green. Results + the honest grouping-arm annotation
+in `docs/RESULTS.md`. **Phase B (right L-shape H-then-V + caption ejection) not
+started.** **Date scoped:** 2026-07-03. **Fixture:** it_geo_06 (the
 grouping fixture). **Grounding:** empirical probe of the real DocLayout-YOLO output
 + crops + a corner-label OCR spike (artifacts in
 `M:\claud_projects\temp\bookscan_fig_sep\`). **N=1** — tuned to one page.

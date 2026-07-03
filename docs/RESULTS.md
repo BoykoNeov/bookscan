@@ -644,3 +644,59 @@ Tests: `pipeline/tests/test_caption_parser.py` (13) — real OCR strings, the
 mid-sentence non-regression guards, multilingual keyword table (Italian validated;
 en/de/bg provided but NOT fixture-validated), `figurano`/`figurative` false-match
 guard, number-garble tolerance, and the pairing trap. Full suite 79 green.
+
+---
+
+## Stage 04 figure separation (Phase A) — 2026-07-03, DocLayout-YOLO + seam split
+
+Built `split_merged_figures` in `stage04_layout` (see `docs/FIGURE_SEPARATION_SCOPE.md`):
+under-segmented `figure` detections are cut at interior **full-width page-background
+gutters** (a seam = a run of rows each ≥ `fig_seam_bg_frac` background, ≥
+`fig_seam_min_frac` of the box tall; sub-boxes tightened to their non-seam extent).
+Runs between NMS and reading-order in `dets_to_blocks`; NMS re-runs afterward to
+reconcile a sub-box against the detector's partial-figure duplicate. Page-background
+color is **sampled per subpage** from the outer margins (median HSV, dropping
+near-black dewarp pad + saturated photo bleed) — not hard-coded cream. Phase A =
+horizontal seams only; the right L-shape (H-then-V + caption ejection) is Phase B.
+
+**it_geo_06 (the grouping fixture) — `fig_split` OFF vs ON, real detector:**
+
+| subpage | figure boxes | seg-recall | tau (Stage04) | grouping (geometric arm) |
+|---|---|---|---|---|
+| left  OFF | 3 (F26 unmatched) | 7/8 (88%) | +0.14 | C25→F25 assoc; C26/C27/C28 MISS |
+| left  ON  | **4** (F25/F27/F28/F26) | **8/8 (100%)** | **+1.00** | C25→F25 MISS; rest MISS |
+| right OFF | 1 (F30 unmatched, 1fig) | 5/6 (83%) | +1.00 | C29→F29 assoc/1fig; C30→F30 MISS/1fig |
+| right ON  | **2** (F29/F30) | **6/6 (100%)** | +0.87 | C29→F29 MISS; C30→F30 assoc (now ≥2-fig, DISCRIMINATED) |
+
+Split sub-boxes hug the GT bands tightly (left: y271–1049 / 1091–1926 / 1973–2809 vs
+GT 262–1052 / 1052–1902 / 1902–2812). **seg-recall improved on BOTH subpages** (F26,
+F30 now match by rank); **tau jumped +0.14→+1.00** on the left (splitting the tall
+box also unscrambled the text-block order — a bonus). No new params leak into the
+forbidden OCR-threshold class (these are layout-geometry heuristics like the XY-cut
+gaps).
+
+**Regression guard — single-figure fixtures (it_geo_04 / 05 / 07):** figure-box count
+is **identical OFF==ON** on every subpage (04: 1/1, 1/1; 05: 1/1, 1/1; 07: 4/4, 4/4).
+Zero false-splits — the over-split guard (full-span seam + sampled-margin color)
+holds; a single photo has no full-width cream band inside it, so its dets are
+byte-identical and order/type/tau cannot move.
+
+**Honest annotation (grouping row is NOT cleanly evaluated post-split).** The eval's
+geometric grouping arm matches GT→detected figures by **reading-order RANK**. The
+split perturbs it_geo_06's figure order — F26 (top-right plate) moves from last
+(column-major) to ro=3, because splitting the tall box removes the vertical
+continuity XY-cut used to keep the columns separate, exposing a spurious full-width
+H-gap at y≈1049–1091 that groups F25+F26 into one top band. So on this ≥2-figure
+page the rank match assigns 3-of-4 GT figure IDs to the wrong detected box, and two
+pairs flip **assoc→MISS** (C25, C29) as the "nearest" tall box disappears. This is a
+**cosmetic artifact on a row that is MISS-by-design** (the C26→F27 edge-gap trap this
+fixture was built around): figure spatial order is owner-SECONDARY, and nothing
+load-bearing consumes it — **tau excludes figures**, **Gate-4 reflow is number-grouped
+(`document_order_gate4`)**, and **`pair_by_number` matches by number, not rank**. The
+number-keyed grouping path (the real one) is **unchanged at 0/6** and still owed to
+**#2 (corner-label OCR)** — spike showed 2/5 clean, feasible-but-not-free. Two
+principled follow-ups (own commits, not this one): move the eval's figure matching
+rank→**bbox-overlap** now that per-figure boxes + approximate GT bboxes exist (changes
+the grading contract — owner call), and XY-Cut++ axis selection (prefer the larger
+gap: the 50px V-gap beats the 42px H-gap here) to restore column-major order (its own
+full regression pass).

@@ -68,6 +68,16 @@ DEFAULTS = {
     "nms_iou": 0.45,             # class-agnostic NMS: merge boxes overlapping >= this
     "contain_frac": 0.80,        # drop a box this-fraction-contained in a stronger one
     "xy_gap_frac": 0.012,        # min projection gap (frac of the cut dimension) = a separator
+    # Figure separation (split under-segmented merged figure boxes at full-width
+    # page-background gutters — see split_merged_figures). Phase A: horizontal only.
+    "fig_split": True,           # enable splitting of merged figure detections
+    "fig_bg_sample_frac": 0.03,  # subpage margin strip width (frac) to sample page-bg color
+    "fig_bg_htol": 18,           # page-bg HSV match tolerance: hue (circular, 0..180)
+    "fig_bg_stol": 60,           #   saturation
+    "fig_bg_vtol": 60,           #   value
+    "fig_seam_bg_frac": 0.90,    # a seam row must be >= this fraction page-background
+    "fig_seam_min_frac": 0.012,  # min seam-run height (frac of box H) to cut on
+    "fig_min_subbox_frac": 0.06, # each sub-box must be >= this frac of the original area
     # Classical fallback:
     "cls_col_gap_frac": 0.06,    # min vertical valley width (frac of W) to call a column boundary
     "cls_row_gap_frac": 0.012,   # min horizontal gap (frac of H) between blocks in a column
@@ -202,6 +212,107 @@ def nms_and_dedup(dets: list[RawDet], p: dict) -> list[RawDet]:
     return kept
 
 
+def _page_bg_hsv(bgr: np.ndarray, p: dict) -> np.ndarray:
+    """Robust page-background color (median HSV) sampled from the subpage's outer
+    margins. Drops near-black pixels (dewarp padding, V<=40) and saturated pixels
+    (S>=90, i.e. photo bleed) before the median so the estimate is the warm,
+    low-saturation page cream — NOT hard-coded (advisor: the sofa shot's lighting
+    drifts, so measure it per page)."""
+    h, w = bgr.shape[:2]
+    m = max(4, int(min(h, w) * p["fig_bg_sample_frac"]))
+    strips = [bgr[:m, :], bgr[-m:, :], bgr[:, :m], bgr[:, -m:]]
+    px = np.concatenate([s.reshape(-1, 3) for s in strips], axis=0)
+    hsv = cv2.cvtColor(px.reshape(-1, 1, 3), cv2.COLOR_BGR2HSV
+                       ).reshape(-1, 3).astype(np.int32)
+    keep = (hsv[:, 2] > 40) & (hsv[:, 1] < 90)
+    return np.median(hsv[keep] if keep.any() else hsv, axis=0)
+
+
+def _bg_mask(bgr: np.ndarray, bg: np.ndarray, p: dict) -> np.ndarray:
+    """Per-pixel 'is page background' mask: within tolerance of ``bg`` in HSV
+    (hue distance is circular). Photo content — blue sky, green grass, textured
+    rock — never matches the warm low-saturation cream, so this is specific."""
+    hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV).astype(np.int32)
+    dh = np.minimum(np.abs(hsv[..., 0] - bg[0]), 180 - np.abs(hsv[..., 0] - bg[0]))
+    ds = np.abs(hsv[..., 1] - bg[1])
+    dv = np.abs(hsv[..., 2] - bg[2])
+    return (dh < p["fig_bg_htol"]) & (ds < p["fig_bg_stol"]) & (dv < p["fig_bg_vtol"])
+
+
+def _runs_true(mask_1d: np.ndarray) -> list[tuple[int, int]]:
+    """(start,end) spans of consecutive True in a 1-D boolean mask."""
+    runs: list[tuple[int, int]] = []
+    i, n = 0, len(mask_1d)
+    while i < n:
+        if not mask_1d[i]:
+            i += 1
+            continue
+        j = i
+        while j < n and mask_1d[j]:
+            j += 1
+        runs.append((i, j))
+        i = j
+    return runs
+
+
+def _hsplit_figure(box: BBox, bgr: np.ndarray, bg: np.ndarray, p: dict
+                   ) -> list[BBox]:
+    """Split ONE figure box horizontally at interior full-width page-background
+    seams (a seam = a run of rows each >= ``fig_seam_bg_frac`` background, at
+    least ``fig_seam_min_frac`` of the box tall). Content bands between seams are
+    tightened to their non-seam extent so each sub-box hugs its photo. Returns
+    >=2 sub-boxes only if the cut is real (each >= ``fig_min_subbox_frac`` of the
+    original area); otherwise ``[box]`` unchanged — a single photo has no
+    full-width cream band inside it, so it never over-splits (the over-split guard
+    is full-span + sampled-margin together)."""
+    x, y, w, h = box.x, box.y, box.w, box.h
+    crop = bgr[max(0, y):y + h, max(0, x):x + w]
+    if crop.size == 0 or crop.shape[0] < 4 or crop.shape[1] < 4:
+        return [box]
+    rowfrac = _bg_mask(crop, bg, p).mean(axis=1)
+    seam = rowfrac >= p["fig_seam_bg_frac"]
+    min_seam = max(8, int(p["fig_seam_min_frac"] * h))
+    interior = [(a, b) for (a, b) in _runs_true(seam)
+                if b - a >= min_seam and a > 0 and b < crop.shape[0]]
+    if not interior:
+        return [box]
+    cuts = [0] + [(a + b) // 2 for (a, b) in interior] + [crop.shape[0]]
+    area0 = w * h
+    subs: list[BBox] = []
+    for lo, hi in zip(cuts, cuts[1:]):
+        nz = np.where(~seam[lo:hi])[0]          # non-seam (content) rows in band
+        if nz.size == 0:
+            continue
+        t0, t1 = lo + int(nz[0]), lo + int(nz[-1]) + 1
+        if w * (t1 - t0) >= p["fig_min_subbox_frac"] * area0:
+            subs.append(BBox(x=x, y=y + t0, w=w, h=t1 - t0))
+    return subs if len(subs) >= 2 else [box]
+
+
+def split_merged_figures(dets: list[RawDet], bgr: np.ndarray, p: dict
+                         ) -> list[RawDet]:
+    """Replace under-segmented ``figure`` detections with per-figure boxes cut at
+    full-width page-background gutters (Phase A: horizontal seams). Non-figure
+    dets and un-splittable figures pass through unchanged; split sub-boxes inherit
+    the parent's confidence. Caller should re-run ``nms_and_dedup`` afterwards to
+    reconcile a sub-box against any partial-figure duplicate the detector emitted.
+    See docs/FIGURE_SEPARATION_SCOPE.md."""
+    if not p.get("fig_split", True):
+        return dets
+    bg = _page_bg_hsv(bgr, p)
+    out: list[RawDet] = []
+    for d in dets:
+        if d.label != "figure":
+            out.append(d)
+            continue
+        subs = _hsplit_figure(d.bbox, bgr, bg, p)
+        if len(subs) == 1:
+            out.append(d)
+        else:
+            out.extend(RawDet(label="figure", bbox=b, conf=d.conf) for b in subs)
+    return out
+
+
 def _separators(intervals: list[tuple[float, float]], min_gap: float
                 ) -> list[list[int]]:
     """Group interval indices by gaps along one axis.
@@ -315,11 +426,20 @@ def _map_abandon(bbox: BBox, page_h: int) -> BlockType:
     return BlockType.OTHER
 
 
-def dets_to_blocks(dets: list[RawDet], page_w: int, page_h: int, p: dict
-                   ) -> list[Block]:
+def dets_to_blocks(dets: list[RawDet], page_w: int, page_h: int, p: dict,
+                   bgr: np.ndarray | None = None) -> list[Block]:
     """NMS the raw detections, type them, order by XY-Cut, emit page_model.Block
-    with reading_order set (0-based, reading sequence)."""
+    with reading_order set (0-based, reading sequence).
+
+    When ``bgr`` (the subpage image) is supplied, under-segmented figure boxes are
+    split at full-width page-background gutters (``split_merged_figures``) between
+    the NMS and ordering steps, then NMS is re-run to reconcile a split sub-box
+    against any partial-figure duplicate. The classical arm passes ``bgr=None``
+    (it can't type figures, so there is nothing to split)."""
     dets = nms_and_dedup(dets, p)
+    if bgr is not None and p.get("fig_split", True):
+        dets = split_merged_figures(dets, bgr, p)
+        dets = nms_and_dedup(dets, p)     # reconcile split boxes vs partial dupes
     if not dets:
         return []
     boxes = [d.bbox for d in dets]
@@ -516,7 +636,9 @@ def layout_page(bgr: np.ndarray, cfg: dict, p: dict, warnings: list[str],
         raw, note = detect_classical(bgr, p)
         arm = "classical"
 
-    blocks = dets_to_blocks(raw, w, h, p)
+    # Figure-splitting only for the neural arm (only it types figures); classical
+    # gets bgr=None so a merged-figure split is never attempted on its untyped boxes.
+    blocks = dets_to_blocks(raw, w, h, p, bgr=(bgr if arm == "doclayout" else None))
 
     if not blocks:
         note = (note + "; " if note else "") + "no blocks detected — emitting a " \

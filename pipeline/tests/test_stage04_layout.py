@@ -11,15 +11,36 @@ the latter). Run with pytest, or directly:
 
 from __future__ import annotations
 
+import numpy as np
+
 from pipeline.page_model import BBox, BlockType
 from pipeline.stage04_layout import (
     DEFAULTS, RawDet, _map_abandon, _reading_rows, dets_to_blocks,
-    nms_and_dedup, xy_cut_order,
+    nms_and_dedup, split_merged_figures, xy_cut_order,
 )
 
 
 def _b(x: int, y: int, w: int, h: int) -> BBox:
     return BBox(x=x, y=y, w=w, h=h)
+
+
+# Synthetic page for the figure-split tests: a cream page (warm, low-saturation,
+# high-value — like the real book paper) with strongly-colored "photo" bands, so
+# the background mask cleanly separates page from photo. BGR.
+_CREAM = (200, 215, 225)
+_BLUE = (180, 60, 40)
+_GREEN = (40, 160, 40)
+
+
+def _stacked_photos_page(w=400, h=600) -> np.ndarray:
+    """Two photos (blue over green) separated by a FULL-WIDTH cream gutter, on a
+    cream page. The figure box (20,50,360,490) spans both photos + the gutter."""
+    img = np.zeros((h, w, 3), np.uint8)
+    img[:] = _CREAM
+    img[50:250, 20:380] = _BLUE       # top photo
+    # rows 250..290 stay cream = the full-width gutter seam
+    img[290:540, 20:380] = _GREEN     # bottom photo
+    return img
 
 
 def test_two_column_reading_order():
@@ -98,6 +119,57 @@ def test_dets_to_blocks_orders_and_types():
     assert [b.reading_order for b in blocks] == [0, 1, 2]
     assert [b.type for b in blocks] == [
         BlockType.HEADER, BlockType.FIGURE, BlockType.PARAGRAPH]
+
+
+def test_split_merged_figure_at_full_width_gutter():
+    """A merged figure spanning two photos + a full-width page-background gutter
+    splits into two sub-boxes, each hugging its photo (not the gutter)."""
+    img = _stacked_photos_page()
+    dets = [RawDet(label="figure", bbox=_b(20, 50, 360, 490), conf=0.4)]
+    out = split_merged_figures(dets, img, DEFAULTS)
+    assert len(out) == 2 and all(d.label == "figure" for d in out)
+    top, bot = sorted(out, key=lambda d: d.bbox.y)
+    # sub-boxes tightened to the photo bands (~50..250 and ~290..540), gutter excluded
+    assert 45 <= top.bbox.y <= 60 and 240 <= top.bbox.y2 <= 260
+    assert 285 <= bot.bbox.y <= 300 and 530 <= bot.bbox.y2 <= 545
+    assert all(d.conf == 0.4 for d in out)          # sub-boxes inherit parent conf
+
+
+def test_single_photo_figure_never_splits():
+    """A figure over ONE solid photo (no internal full-width cream band) is passed
+    through unchanged — the over-split guard (full-span + sampled margin)."""
+    img = _stacked_photos_page()
+    solid = [RawDet(label="figure", bbox=_b(20, 50, 360, 200), conf=0.5)]  # top photo only
+    out = split_merged_figures(solid, img, DEFAULTS)
+    assert len(out) == 1 and out[0].bbox.h == 200
+
+
+def test_split_leaves_non_figures_untouched():
+    img = _stacked_photos_page()
+    dets = [
+        RawDet(label="plain text", bbox=_b(20, 50, 360, 490), conf=0.9),
+        RawDet(label="figure_caption", bbox=_b(20, 560, 360, 30), conf=0.8),
+    ]
+    out = split_merged_figures(dets, img, DEFAULTS)
+    assert [d.label for d in out] == ["plain text", "figure_caption"]
+
+
+def test_fig_split_disabled_is_noop():
+    img = _stacked_photos_page()
+    dets = [RawDet(label="figure", bbox=_b(20, 50, 360, 490), conf=0.4)]
+    p = dict(DEFAULTS, fig_split=False)
+    assert len(split_merged_figures(dets, img, p)) == 1
+
+
+def test_dets_to_blocks_splits_when_image_supplied():
+    """End-to-end through dets_to_blocks: the merged figure becomes two FIGURE
+    blocks when bgr is supplied, one when it is not (bgr=None => no split)."""
+    img = _stacked_photos_page()
+    dets = [RawDet(label="figure", bbox=_b(20, 50, 360, 490), conf=0.4)]
+    with_img = dets_to_blocks(dets, 400, 600, DEFAULTS, bgr=img)
+    without = dets_to_blocks(dets, 400, 600, DEFAULTS, bgr=None)
+    assert sum(b.type == BlockType.FIGURE for b in with_img) == 2
+    assert sum(b.type == BlockType.FIGURE for b in without) == 1
 
 
 def _run() -> int:

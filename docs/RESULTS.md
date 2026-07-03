@@ -199,3 +199,8 @@ Overlays in `jobs/<id>/debug/02_split.png`. Unit tests:
 - **Single-page discrimination is unvalidated** — the testset has no single-page
   capture, so the `valley_ratio` single/split boundary is only checked on
   synthetic data. Append a single-page test image.
+- **Off-center gutter is unexercised.** The search window is fixed at 30–70% of
+  width; all 9 testset gutters fall near center (±100 px). A strongly tilted or
+  unequal-width spread could put the true gutter outside the window, and the
+  detector would then pick a wrong in-window minimum with a confident-looking
+  ratio. Widen/adapt the window (or key off dewarp) when such a capture exists.

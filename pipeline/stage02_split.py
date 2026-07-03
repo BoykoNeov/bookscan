@@ -290,6 +290,12 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     # Write artifacts.
     out_dir = page_dir / "02_split"
     out_dir.mkdir(parents=True, exist_ok=True)
+    # Clear the other branch's stale images so a re-run's folder reflects ONLY
+    # this run (stage contract). Otherwise flipping single<->split leaves a
+    # phantom page for any downstream stage that globs instead of reading the
+    # split.json pages manifest.
+    for stale in ("left.png", "right.png", "single.png"):
+        (out_dir / stale).unlink(missing_ok=True)
     subpages: list[SubPage] = []
     for name, img, box in pieces:
         cv2.imwrite(str(out_dir / name), img)

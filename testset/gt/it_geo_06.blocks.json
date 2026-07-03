@@ -5,7 +5,8 @@
   "book": "Il Veneto tra Giurassico e Cretaceo (ch.7; same book/series as it_geo_01..04)",
   "pages": "188-189",
   "language": "italian",
-  "validated_by": "repo owner (segmentation + type + caption/figure grouping hand-confirmed against the photo 2026-07-03; per-subpage reading_order = spatial column-major, owner-delegated to author, order is SECONDARY here)",
+  "validated_by": "repo owner (segmentation + type + caption/figure grouping hand-confirmed against the photo 2026-07-03; per-subpage reading_order = spatial column-major, owner-delegated to author, order is SECONDARY here); visually re-confirmed via confirmation sheet 2026-07-03. Owner note: some cliff-photo bboxes are slightly truncated at the BOTTOM in the overlay — a capture artifact of the non-flat, colorful, slightly-skewed sofa shot (a hard case), not a GT error (bboxes overlay-only; grading ignores them).",
+  "bbox_note": "Each block carries an approximate `bbox` [x,y,w,h] in Stage-02/03 dewarped HALF-page pixel coords, for the validation overlay ONLY. Grading matches by anchor/rank and IGNORES these bboxes. The three cliff figures F25/F27/F28 are drawn as the top/middle/bottom thirds of the single merged detector box (their true separate extents).",
   "grading": {
     "unit": "per subpage",
     "why": "Stage 02 gutter-splits the spread into left.png (p.188) + right.png (p.189); Stage 04 computes reading_order per subpage independently.",
@@ -29,21 +30,21 @@
         {"type": "header", "anchor": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana"}
       ],
       "reading_order": [
-        {"order": 0, "id": "F25", "type": "figure",  "anchor": null,
+        {"order": 0, "id": "F25", "type": "figure",  "anchor": null, "bbox": [203, 262, 1358, 790],
          "desc": "Fig. 25 cliff photo, TOP-LEFT of the figure column (in-photo corner label '25'). Caption is C25."},
-        {"order": 1, "id": "F27", "type": "figure",  "anchor": null,
+        {"order": 1, "id": "F27", "type": "figure",  "anchor": null, "bbox": [203, 1052, 1358, 850],
          "desc": "Fig. 27 cliff photo, MIDDLE-LEFT (corner label '27'). Caption is C27. Physically contiguous with F25/F28 -> the detector merges all three."},
-        {"order": 2, "id": "F28", "type": "figure",  "anchor": null,
+        {"order": 2, "id": "F28", "type": "figure",  "anchor": null, "bbox": [203, 1902, 1358, 910],
          "desc": "Fig. 28 cliff photo, BOTTOM-LEFT (corner label '28'). Caption is C28."},
-        {"order": 3, "id": "F26", "type": "figure",  "anchor": null,
+        {"order": 3, "id": "F26", "type": "figure",  "anchor": null, "bbox": [1611, 253, 498, 622],
          "desc": "Fig. 26 fossils PLATE, TOP-RIGHT (above the caption stack; corner label '26'). Its caption C26 is the 2nd in the stack. This is the number-keyed-grouping trap."},
-        {"order": 4, "id": "C25", "type": "caption", "anchor": "In questa pagina: Figura 25 La Maiolica, affiorante lungo il Lago del Corlo",
+        {"order": 4, "id": "C25", "type": "caption", "anchor": "In questa pagina: Figura 25 La Maiolica, affiorante lungo il Lago del Corlo", "bbox": [1608, 1267, 459, 181],
          "desc": "Caption for F25. Gutter-side column, top; ends 'Foto di T. Abba'."},
-        {"order": 5, "id": "C26", "type": "caption", "anchor": "Figura 26 Fossili della Maiolica rinvenuti sul Monte Grappa Essi sono due brachiopodi",
+        {"order": 5, "id": "C26", "type": "caption", "anchor": "Figura 26 Fossili della Maiolica rinvenuti sul Monte Grappa Essi sono due brachiopodi", "bbox": [1604, 1480, 467, 631],
          "desc": "Caption for F26 (top-right fossils). Long, lists ammonites a)..g); ends 'Foto di D. Giordano'."},
-        {"order": 6, "id": "C27", "type": "caption", "anchor": "Figura 27 Il Calcare di Soccher, affiorante nella localita Pieve di Castellavazzo, presso Longarone",
+        {"order": 6, "id": "C27", "type": "caption", "anchor": "Figura 27 Il Calcare di Soccher, affiorante nella localita Pieve di Castellavazzo, presso Longarone", "bbox": [1605, 2139, 442, 218],
          "desc": "Caption for F27; ends 'Foto di M. Ghion'."},
-        {"order": 7, "id": "C28", "type": "caption", "anchor": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella localita di Cornolade",
+        {"order": 7, "id": "C28", "type": "caption", "anchor": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella localita di Cornolade", "bbox": [1595, 2398, 441, 429],
          "desc": "Caption for F28; mentions Maiolica (MAI); ends 'Foto di M. Ghion'."}
       ]
     },
@@ -54,17 +55,17 @@
         {"type": "page_number", "anchor": "189"}
       ],
       "reading_order": [
-        {"order": 0, "id": "F29", "type": "figure",    "anchor": null,
+        {"order": 0, "id": "F29", "type": "figure",    "anchor": null, "bbox": [154, 279, 1554, 1000],
          "desc": "Fig. 29 mountain-landscape photo, top of the subpage. Caption C29."},
-        {"order": 1, "id": "C29", "type": "caption",   "anchor": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Maiolica",
+        {"order": 1, "id": "C29", "type": "caption",   "anchor": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Maiolica", "bbox": [156, 1487, 440, 720],
          "desc": "Caption for F29. Gutter-side column, upper; ends 'Foto di T. Abba'."},
-        {"order": 2, "id": "F30", "type": "figure",    "anchor": null,
+        {"order": 2, "id": "F30", "type": "figure",    "anchor": null, "bbox": [636, 1400, 1072, 800],
          "desc": "Fig. 30 rocky detrito close-up. OVERLAPS the body text column (the 'image overlapping the column' case). Caption C30. Detector merges F29+F30."},
-        {"order": 3, "id": "C30", "type": "caption",   "anchor": "A lato: Figura 30 La Maiolica e una roccia geliva che tipicamente si sgretola",
+        {"order": 3, "id": "C30", "type": "caption",   "anchor": "A lato: Figura 30 La Maiolica e una roccia geliva che tipicamente si sgretola", "bbox": [154, 2239, 439, 581],
          "desc": "Caption for F30. Gutter-side column, lower; ends 'Foto di T. Abba'."},
-        {"order": 4, "id": "P1",  "type": "paragraph", "anchor": "sfrangiavano interdigitandosi con i depositi bacinali. Ad esempio, il Calcare del Fadalto ha uno spessore",
+        {"order": 4, "id": "P1",  "type": "paragraph", "anchor": "sfrangiavano interdigitandosi con i depositi bacinali. Ad esempio, il Calcare del Fadalto ha uno spessore", "bbox": [636, 2221, 529, 592],
          "desc": "Body prose, LEFT of the two bottom columns. Continues into P2."},
-        {"order": 5, "id": "P2",  "type": "paragraph", "anchor": "arriva al Santoniano, nel Cretaceo superiore (85 milioni di anni fa)",
+        {"order": 5, "id": "P2",  "type": "paragraph", "anchor": "arriva al Santoniano, nel Cretaceo superiore (85 milioni di anni fa)", "bbox": [1193, 2225, 519, 465],
          "desc": "Body prose, RIGHT bottom column; continues P1 (one flow, verified by text-join across the column break)."}
       ]
     }

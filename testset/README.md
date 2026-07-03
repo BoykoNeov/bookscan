@@ -20,12 +20,25 @@ anchor.
   WER is deliberately NOT used for it (WER on figure-sidebar spreads conflates
   layout scramble with recognition). Graded **per subpage** (Stage 02 splits
   the spread first) by matching each anchor to a detected block via text
-  overlap. First fixture: `it_geo_04` (owner-validated, reading-order). Second:
-  `it_geo_06` (owner-validated, **grouping**) — the first page with **≥2 figures
-  sharing one column** (LEFT subpage: 4 figures + a 4-caption stack), so
-  caption↔figure grouping is genuinely *discriminated*, and it exposes the
-  detector's figure-merge + caption-mistyping gap. Graded by
-  `tools/layout_order_eval.py` (the sequence-order + grouping metric).
+  overlap. Block-order fixtures (all owner-validated 2026-07-03), each isolating
+  a distinct layout failure mode:
+  - `it_geo_04` — **reading-order**: genuine multi-column (2 prose cols + gutter
+    caption col) + cross-gutter panorama. The first multi-column proof.
+  - `it_geo_05` — **embedded caption**: a full-page watercolor map whose caption
+    (C2) sits in the lower-left *inside* the figure bbox, so the detector
+    swallows it (segmentation miss). Contrast C3 on the facing page (separate
+    gutter column, detected fine).
+  - `it_geo_06` — **grouping**: the first page with **≥2 figures sharing one
+    column** (LEFT subpage: 4 figures + a 4-caption stack), so caption↔figure
+    grouping is genuinely *discriminated*; the caption-stack order is
+    **number-keyed** (C26 mispairs by geometry — correct pairing needs reading
+    "Figura NN"). Exposes the detector's figure-merge + caption-mistyping gap.
+  - `it_geo_07` — **reading order past N=1**: a multi-panel evolutionary schema
+    where each stage is a diagram + two-column text (Tn-mid then Tn-right), so
+    Kendall-tau catches **row-major vs column-major** slippage. + chronology
+    table + 3-column inset.
+
+  Graded by `tools/layout_order_eval.py` (the sequence-order + grouping metric).
 
 ## Composition
 
@@ -39,7 +52,7 @@ spread, before split/dewarp).
 |---------------|----------------------------------------------------|-----------|--------------|
 | `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01` |
 | `bg_*`        | Bulgarian (Cyrillic) history: clean single-column  | 3 spreads | `01`, `02`   |
-| `it_geo_*`    | Italian (Dolomites/Veneto geology): main col + figure sidebars | 5 spreads | `04`, `06` (block-order) |
+| `it_geo_*`    | Italian (Dolomites/Veneto geology): main col + figure sidebars | 7 spreads | `04`, `05`, `06`, `07` (block-order) |
 
 Ground truth is present for **6 pages** (2 English + 4 Bulgarian, all with
 footnotes) — clears the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar.

@@ -1,0 +1,109 @@
+{
+  "image_id": "it_geo_07",
+  "gt_type": "block_reading_order",
+  "schema_version": 1,
+  "book": "Il Veneto tra Giurassico e Cretaceo (ch.7; same book/series as it_geo_01..04)",
+  "pages": "190-191",
+  "language": "italian",
+  "validated_by": "repo owner (segmentation + type + row-major reading order visually confirmed against the confirmation sheet 2026-07-03; owner: 'order is good'). Owner note: some diagram-associated text near D6/D7 sits partly/fully OUTSIDE the drawn block windows on the overlay — a bbox-tightness/capture artifact (bboxes are overlay-only and not graded); the block set + order themselves are confirmed correct.",
+  "bbox_note": "Each block carries an approximate `bbox` [x,y,w,h] in Stage-02/03 dewarped HALF-page pixel coords, for the validation overlay ONLY. Grading matches by anchor/rank and IGNORES these bboxes.",
+  "grading": {
+    "unit": "per subpage",
+    "why": "Stage 02 splits into left.png (p.190) + right.png (p.191); Stage 04 orders each half.",
+    "anchor_match": "Match each GT anchor to a detected block by text overlap ANYWHERE in the block.",
+    "primary_invariants": "This is a READING-ORDER fixture. The load-bearing assertion is ROW-MAJOR order: within each numbered stage the text reads MID column THEN RIGHT column (Tn-mid before Tn-right), and stages read top-to-bottom, each preceded by its diagram (Dn, Tn-mid, Tn-right). Column-major reading (all mid columns, then all right columns) is the failure this fixture catches. Segmentation + type are also graded; caption<->figure grouping is minor here (the only caption is C31).",
+    "caption_figure_pairs": [
+      {"caption": "C31", "figure": "D1", "subpage": "left", "note": "C31 ('Figura 31') is the COLLECTIVE caption for the whole multi-panel evolutionary schema (D1..D8 + inset). Paired to D1 as representative; it is not a per-panel caption."}
+    ],
+    "known_detector_gap": "On the current detector: the chronology TABLE is typed correctly and the stage diagrams mostly separate. The reading-order risk is COLUMN-MAJOR slippage inside the stage bands (observed: it reads T2-mid,T3-mid before T2-right,T3-right). D1 (thin 'Piana tidale' panel, top) may be missed/mistyped. Tn texts are roman numbered paragraphs -> typed 'paragraph' (correct here; they are not italic captions)."
+  },
+  "subpages": {
+    "left": {
+      "page_number": 190,
+      "stripped": [
+        {"type": "header", "anchor": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana", "bbox": [0, 80, 2062, 180]},
+        {"type": "page_number", "anchor": "190", "bbox": [80, 90, 120, 90]}
+      ],
+      "reading_order": [
+        {"order": 0,  "id": "C31",     "type": "caption",   "anchor": "In queste pagine: Figura 31 Schema evolutivo del Bacino di Belluno in rapporto alle piattaforme trentina e friulana", "bbox": [206, 285, 809, 435],
+         "desc": "Figura 31 intro/caption, top-left, spans two narrow columns; italic. Collective caption for the whole schema."},
+        {"order": 1,  "id": "TB",      "type": "table",     "anchor": "CRONOLOGIA TRA IL TRIASSICO SUPERIORE E IL CRETACEO INFERIORE Berriasiano", "bbox": [1073, 261, 951, 678],
+         "desc": "Chronology table (period rows + Ma column), top-right."},
+        {"order": 2,  "id": "D1",      "type": "figure",    "anchor": null, "bbox": [80, 880, 940, 240],
+         "desc": "Stage 1 cross-section diagram ('Piana tidale', thin). Far-left column."},
+        {"order": 3,  "id": "T1mid",   "type": "paragraph", "anchor": "1) Triassico sup. (Carnico sup. - Retico) Su una estesissima", "bbox": [1076, 1016, 388, 115],
+         "desc": "Stage 1 text, MIDDLE column. Continues into T1right."},
+        {"order": 4,  "id": "T1right", "type": "paragraph", "anchor": "piana di marea si depone la Dolomia Principale (DPR)", "bbox": [1548, 1018, 414, 114],
+         "desc": "Stage 1 text, RIGHT column (continuation of T1mid)."},
+        {"order": 5,  "id": "D2",      "type": "figure",    "anchor": null, "bbox": [200, 1150, 840, 350],
+         "desc": "Stage 2 diagram ('Piattaforma Friulana')."},
+        {"order": 6,  "id": "T2mid",   "type": "paragraph", "anchor": "2) Retico sup. - Sinemuriano Inizia a formarsi il Bacino di Belluno, dove iniziano a sedimentare depositi bacinali con", "bbox": [1076, 1225, 394, 222],
+         "desc": "Stage 2 text, MIDDLE column."},
+        {"order": 7,  "id": "T2right", "type": "paragraph", "anchor": "molto materiale detritico proveniente dalla sponda trentina (SOVa). Sulle piattaforme laterali inizia la deposizione dei Calcari Grigi (CG)", "bbox": [1547, 1228, 480, 226],
+         "desc": "Stage 2 text, RIGHT column (continuation)."},
+        {"order": 8,  "id": "D3",      "type": "figure",    "anchor": null, "bbox": [200, 1520, 840, 430],
+         "desc": "Stage 3 diagram."},
+        {"order": 9,  "id": "T3mid",   "type": "paragraph", "anchor": "3) Sinemuriano - Pliensbachiano Il Bacino di Belluno si approfondisce e vi si depone la Formazione di Soverzene (SOV)", "bbox": [1078, 1591, 379, 223],
+         "desc": "Stage 3 text, MIDDLE column."},
+        {"order": 10, "id": "T3right", "type": "paragraph", "anchor": "Il margine orientale della Piattaforma di Trento collassa e il bacino si amplia verso ovest", "bbox": [1550, 1601, 493, 158],
+         "desc": "Stage 3 text, RIGHT column (continuation)."},
+        {"order": 11, "id": "D4",      "type": "figure",    "anchor": null, "bbox": [200, 1930, 840, 400],
+         "desc": "Stage 4 diagram."},
+        {"order": 12, "id": "T4mid",   "type": "paragraph", "anchor": "4) Pliensbachiano sup. La Piattaforma di Trento comincia a sprofondare e sul plateau in annegamento si depone l'Encrinite di Fanes Piccola (FAS)", "bbox": [1078, 1984, 385, 329],
+         "desc": "Stage 4 text, MIDDLE column."},
+        {"order": 13, "id": "T4right", "type": "paragraph", "anchor": "da sabbie a crinoidi, precipita in parte nel bacino, dove alimenta la Calcarenite di Val degli Erbandoli (IGNa)", "bbox": [1541, 2002, 478, 330],
+         "desc": "Stage 4 text, RIGHT column (continuation)."},
+        {"order": 14, "id": "D5",      "type": "figure",    "anchor": null, "bbox": [200, 2377, 830, 390],
+         "desc": "Stage 5 diagram."},
+        {"order": 15, "id": "T5mid",   "type": "paragraph", "anchor": "5) Pliensbachiano sup. - Bajociano Sul plateau trentino in rapido sprofondamento la sedimentazione e lacunosa e discontinua", "bbox": [1067, 2438, 399, 355],
+         "desc": "Stage 5 text, MIDDLE column."},
+        {"order": 16, "id": "T5right", "type": "paragraph", "anchor": "In questo contesto nel Bacino Bellunese si depone la Formazione di Igne (IGN), che include le peliti anossiche del Toarciano", "bbox": [1527, 2464, 501, 223],
+         "desc": "Stage 5 text, RIGHT column (continuation)."}
+      ]
+    },
+    "right": {
+      "page_number": 191,
+      "stripped": [
+        {"type": "header", "anchor": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana", "bbox": [91, 90, 1285, 43]},
+        {"type": "page_number", "anchor": "191", "bbox": [1700, 107, 54, 33]}
+      ],
+      "reading_order": [
+        {"order": 0,  "id": "D6",      "type": "figure",    "anchor": null, "bbox": [108, 258, 865, 467],
+         "desc": "Stage 6 diagram ('Riempimento del Bacino di Belluno: fondale omogeneo dal Cansiglio al Garda' sub-label stays inside)."},
+        {"order": 1,  "id": "T6mid",   "type": "paragraph", "anchor": "6) Bajociano sup. - Bathoniano med. Mentre sul plateau trentino riprende la sedimentazione, anche se con uno stile molto condensato (Rosso Ammonitico Inferiore - RAI)", "bbox": [1001, 302, 312, 428],
+         "desc": "Stage 6 text, MIDDLE column."},
+        {"order": 2,  "id": "T6right", "type": "paragraph", "anchor": "nel Bacino Bellunese in quantita tali da riempirlo in pochi milioni di anni. Tali sedimenti formano il Calcare del Vajont (OOV)", "bbox": [1367, 303, 357, 331],
+         "desc": "Stage 6 text, RIGHT column (continuation)."},
+        {"order": 3,  "id": "D7",      "type": "figure",    "anchor": null, "bbox": [91, 842, 876, 624],
+         "desc": "Stage 7 diagram."},
+        {"order": 4,  "id": "T7mid",   "type": "paragraph", "anchor": "7) Bathoniano sup. - Kimmeridgiano. Il Bacino Bellunese si approfondisce rapidamente passando da 400-500 m fino a 1400 m di profondita", "bbox": [1000, 850, 326, 646],
+         "desc": "Stage 7 text, MIDDLE column."},
+        {"order": 5,  "id": "T7right", "type": "paragraph", "anchor": "da oltre 1000 m vicino al margine della Piattaforma a poche decine di metri in posizioni piu distali. Piu al largo ancora continua la sedimentazione condensata con il Rosso Ammonitico Medio (RAM)", "bbox": [1372, 859, 301, 396],
+         "desc": "Stage 7 text, RIGHT column (continuation)."},
+        {"order": 6,  "id": "D8",      "type": "figure",    "anchor": null, "bbox": [114, 1537, 852, 742],
+         "desc": "Stage 8 diagram."},
+        {"order": 7,  "id": "T8mid",   "type": "paragraph", "anchor": "8) Kimmeridgiano - Cretaceo inferiore (Barremiano). Una temporanea crisi sedimentaria estende la sedimentazione condensata su tutto il Bacino Bellunese (Rosso Ammonitico Superiore - RAS)", "bbox": [994, 1553, 345, 610],
+         "desc": "Stage 8 text, MIDDLE column."},
+        {"order": 8,  "id": "T8right", "type": "paragraph", "anchor": "Nel frattempo, sulla Piattaforma Friulana si deposita il Calcare del Cellina (CEL). Dal margine della piattaforma, via via piu instabile, provengono ingenti quantita di depositi torbiditici", "bbox": [1373, 1558, 323, 538],
+         "desc": "Stage 8 text, RIGHT column (continuation)."},
+        {"order": 9,  "id": "Dins",    "type": "figure",    "anchor": null, "bbox": [125, 2401, 441, 401],
+         "desc": "Bottom INSET diagram (the 'Nel riquadro' magnified plateau trentino detail). Small, bottom-left."},
+        {"order": 10, "id": "T9a",     "type": "paragraph", "anchor": "Nel riquadro e stato ingrandito il settore del plateau trentino per evidenziare i rapporti stratigrafici", "bbox": [604, 2403, 349, 401],
+         "desc": "Inset text, column 1 of 3."},
+        {"order": 11, "id": "T9b",     "type": "paragraph", "anchor": "presenta tripartita. Sulle Vette Feltrine, ovvero in una posizione piu marginale del plateau, il membro medio non si e deposto", "bbox": [997, 2406, 346, 396],
+         "desc": "Inset text, column 2 of 3 (continuation)."},
+        {"order": 12, "id": "T9c",     "type": "paragraph", "anchor": "nella parte occidentale del gruppo della Schiara, corrispondente alla porzione piu esterna del plateau, il Calcare del Vajont giace direttamente sull'Encrinite di Fanes Piccola", "bbox": [1376, 2410, 330, 324],
+         "desc": "Inset text, column 3 of 3 (continuation)."}
+      ]
+    }
+  },
+  "document_order_gate4": {
+    "order": ["C31", "TB", "D1", "T1mid", "T1right", "D2", "T2mid", "T2right", "D3", "T3mid", "T3right", "D4", "T4mid", "T4right", "D5", "T5mid", "T5right", "D6", "T6mid", "T6right", "D7", "T7mid", "T7right", "D8", "T8mid", "T8right", "Dins", "T9a", "T9b", "T9c"],
+    "note": "Row-major reflow: intro caption, chronology table, then each stage as diagram + its two-column text (mid then right) top-to-bottom across both pages, then the inset diagram + its 3-column text."
+  },
+  "notes": [
+    "READING-ORDER FIXTURE: two-column-per-row stage texts (Tn-mid + Tn-right) test row-major vs column-major linearization. Splitting each stage's text into two GT blocks lets Kendall-tau detect column-major slippage (per owner's modeling choice 2026-07-03).",
+    "Takes the multi-column reading-order proof past N=1 (it_geo_04). Detection here is clean (table typed, diagrams separate) so the interesting signal is ORDER, not segmentation.",
+    "GT COVERS segmentation + type + reading order (+ minimal grouping). NOT verbatim text; no WER GT. `bbox` fields are overlay-only, not graded."
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "image_id": "it_geo_05",
+  "gt_type": "block_reading_order",
+  "schema_version": 1,
+  "book": "Il Veneto tra Giurassico e Cretaceo (ch.7; same book/series as it_geo_01..04)",
+  "pages": "168-169",
+  "language": "italian",
+  "validated_by": "repo owner (segmentation + type + caption/figure grouping + reading order visually confirmed against the confirmation sheet 2026-07-03). Owner note: the F2 map bbox is slightly truncated at the TOP in the overlay — a capture/dewarp artifact of the non-flat sofa shot, not a GT error (bbox is overlay-only; grading ignores it).",
+  "bbox_note": "Each block carries an approximate `bbox` [x,y,w,h] in Stage-02/03 dewarped HALF-page pixel coords, present ONLY for the validation overlay. Grading (tools/layout_order_eval.py) matches by anchor text / figure rank and IGNORES these bboxes.",
+  "grading": {
+    "unit": "per subpage",
+    "why": "Stage 02 gutter-splits the spread into left.png (p.168) + right.png (p.169); Stage 04 orders each half independently.",
+    "anchor_match": "Match each GT anchor to a detected block by text overlap ANYWHERE in the block. OCR garbles this sofa-captured page.",
+    "primary_invariants": "(1) segmentation, (2) type, (3) caption<->figure grouping (C2->F2, C3->F3). Exact linear order SECONDARY.",
+    "caption_figure_pairs": [
+      {"caption": "C2", "figure": "F2", "subpage": "left",  "note": "Fig. 2 watercolor map + its caption. HARD: the caption sits in the lower-left of the map's bounding SQUARE (the map shape doesn't fill it), so it is INSIDE the figure bbox -> the detector SWALLOWS it into F2 (no caption block emitted). The embedded-caption failure mode."},
+      {"caption": "C3", "figure": "F3", "subpage": "right", "note": "Fig. 3 Ellipsactinia fossil photo + its 'Sopra' caption. Caption is in a separate gutter-side column, physically OUTSIDE the figure -> detected AND typed 'caption' correctly (contrast C2)."}
+    ],
+    "known_detector_gap": "On the current DocLayout-YOLO detector: (left) C2 is SWALLOWED into the F2 figure box -> no caption block, so C2 will be a segmentation MISS; (right) F3/C3/prose are detected + typed correctly. This fixture isolates the embedded-caption-inside-figure-bbox failure mode."
+  },
+  "subpages": {
+    "left": {
+      "page_number": 168,
+      "stripped": [
+        {"type": "page_number", "anchor": "168", "bbox": [225, 104, 57, 33]},
+        {"type": "header", "anchor": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana", "bbox": [629, 90, 1399, 60]}
+      ],
+      "reading_order": [
+        {"order": 0, "id": "F2", "type": "figure",  "anchor": null, "bbox": [231, 331, 1806, 2658],
+         "desc": "Fig. 2 hand-painted watercolor map of the Jurassic Italian peninsula. Fills most of the page. In-map hand labels (LINEAMENTO PERIADRIATICO, CANSIGLIO, BACINO DI BELLUNO, PIATTAFORMA DI TRENTO/FRIULANA/APULA, VENEZIA) stay INSIDE the figure. Caption C2 sits inside this bbox's lower-left."},
+        {"order": 1, "id": "C2", "type": "caption", "anchor": "In questa pagina: Figura 2 La geografia nei dintorni della penisola italiana nel Giurassico inferiore", "bbox": [255, 2040, 540, 760],
+         "desc": "Caption for F2. Italic, LOWER-LEFT corner INSIDE the map's bounding box; ends 'Illustrazione di E.A. Manfre'. This is the embedded caption the detector swallows into F2."}
+      ]
+    },
+    "right": {
+      "page_number": 169,
+      "stripped": [
+        {"type": "header", "anchor": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana", "bbox": [79, 86, 1312, 61]},
+        {"type": "page_number", "anchor": "169", "bbox": [1735, 94, 60, 33]}
+      ],
+      "reading_order": [
+        {"order": 0, "id": "F3", "type": "figure",    "anchor": null, "bbox": [609, 285, 1140, 1065],
+         "desc": "Fig. 3 Ellipsactinia fossil photo (grey rock, top of subpage)."},
+        {"order": 1, "id": "C3", "type": "caption",   "anchor": "Sopra: Figura 3 Fossile di Ellipsactinia, un idrozoo che colonizzava il margine della Piattaforma Friulana", "bbox": [87, 2520, 466, 292],
+         "desc": "Caption for F3. Separate gutter-side column, bottom-left; ends 'Foto di T. Abba'. Correctly separated (contrast C2)."},
+        {"order": 2, "id": "P1", "type": "paragraph", "anchor": "negli esemplari maggiori il diametro poteva raggiungere 30 cm e lo spessore del guscio 10 centimetri", "bbox": [600, 1389, 1141, 534],
+         "desc": "Body prose, main single column. Continues into P2."},
+        {"order": 3, "id": "P2", "type": "paragraph", "anchor": "Durante il Cretaceo la Piattaforma Friulana fu interessata da un'attivita tettonica piuttosto intensa", "bbox": [602, 1925, 1139, 481],
+         "desc": "Body prose, continues P1 (one flow)."},
+        {"order": 4, "id": "P3", "type": "paragraph", "anchor": "Erano i prodromi dell'annegamento. Nel Cretaceo superiore, infatti, intorno a 85 milioni di anni fa", "bbox": [609, 2410, 1135, 396],
+         "desc": "Body prose, continues P2 (one flow, verified by text-join across the breaks)."}
+      ]
+    }
+  },
+  "document_order_gate4": {
+    "order": ["F2", "C2", "F3", "C3", "P1", "P2", "P3"],
+    "note": "Reflow target: Fig.2 floated with its caption C2, then Fig.3 with caption C3, then the continuous prose P1->P2->P3. NOTE the prose belongs to p.169's narrative; F2/C2 are the whole of p.168."
+  },
+  "notes": [
+    "EMBEDDED-CAPTION FIXTURE: the defining feature is C2, whose text sits in the lower-left of Fig.2's bounding box and is swallowed by the detector. Contrast C3 (separate gutter column, detected fine). Tests whether Stage-04 / Gate-4 can recover a caption embedded inside a figure's bbox.",
+    "GT COVERS segmentation + type + caption/figure grouping + per-subpage reading order ONLY. NOT verbatim text; no WER GT.",
+    "`bbox` fields are approximate, for the validation overlay only; grading ignores them (anchor/rank matching)."
+  ]
+}

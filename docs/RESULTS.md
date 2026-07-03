@@ -551,3 +551,25 @@ scrambling figure ranks — order is secondary here per owner priority. Net:
 retires "grouping discrimination UNPROVEN on a real page" → now PROVEN that it
 fails, with the cause localized to the detector; motivates the Gate-4 "Figura NN"
 parser (types + pairs by number in one step).
+
+## Gate 3 block-order eval — 2026-07-03, tesseract 5.4.0.20240606, image=it_geo_05
+
+Stage 04 block structure graded DIRECTLY against the per-subpage block-order GT (`gt/it_geo_05.blocks.json`): segmentation, type, caption<->figure grouping, and linear order. Owner priority: segmentation/type/grouping OUTRANK exact order (tau is secondary). Split+dewarp = UVDoc auto (Gate-2 path). N=1 spread — read the rows.
+
+| subpage | seg recall | type acc | tau (Stage04) | tau (Tess-native) | grouping | det blocks | misses |
+|---|---|---|---|---|---|---|---|
+| left.png | 1/2 (50%) | 1/1 (100%) | n/a | n/a (n=1) | C2->F2:MISS/type!/1fig | 3 | C2 |
+| right.png | 5/5 (100%) | 5/5 (100%) | +1.00 | +1.00 (n=4) | C3->F3:assoc/1fig | 7 | — |
+
+**Segmentation** 6/7 GT blocks matched. **Type** 6/6 matched blocks correctly typed. **Grouping** 1/2 captions associate to their partner figure (1/2 also typed 'caption'); but only 0/2 on a subpage with >=2 figures (the rest are single-figure: association POSSIBLE, not discriminated).
+
+## Gate 3 block-order eval — 2026-07-03, tesseract 5.4.0.20240606, image=it_geo_07
+
+Stage 04 block structure graded DIRECTLY against the per-subpage block-order GT (`gt/it_geo_07.blocks.json`): segmentation, type, caption<->figure grouping, and linear order. Owner priority: segmentation/type/grouping OUTRANK exact order (tau is secondary). Split+dewarp = UVDoc auto (Gate-2 path). N=1 spread — read the rows.
+
+| subpage | seg recall | type acc | tau (Stage04) | tau (Tess-native) | grouping | det blocks | misses |
+|---|---|---|---|---|---|---|---|
+| left.png | 15/17 (88%) | 14/15 (93%) | +0.87 | +0.51 (n=13) | C31->D1:assoc/type! | 20 | D5, T5right |
+| right.png | 13/13 (100%) | 13/13 (100%) | +1.00 | +0.38 (n=13) | — | 16 | — |
+
+**Segmentation** 28/30 GT blocks matched. **Type** 27/28 matched blocks correctly typed. **Grouping** 1/1 captions associate to their partner figure (0/1 also typed 'caption'); but only 1/1 on a subpage with >=2 figures (the rest are single-figure: association POSSIBLE, not discriminated).

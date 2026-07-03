@@ -311,3 +311,22 @@ benefit removed, targeted by Stage 02. The auto-verdict FAIL is still the known
 English-only / order-sensitive artifact (see the Gate 1 interpretation above) —
 not actioned.
 
+
+## Gate 2 dewarp A/B — 2026-07-03, tesseract 5.4.0.20240606, dewarp=classical (classical text-line rectification)
+
+OCR path identical across arms (grayscale + probe-upscale); only page geometry differs. Δdewarp = split+dewarp − split.
+
+| image | lang | whole WER | split WER | split+dewarp WER | Δdewarp WER | whole CER | split CER | split+dewarp CER | Δdewarp CER | dewarp |
+|---|---|---|---|---|---|---|---|---|---|---|
+| en_coins_01 | eng | 83.1% | 21.7% | 26.6% | +4.9 pp | 65.4% | 15.0% | 21.2% | +6.1 pp | left.png:classical/64px/rms7; right.png:classical/72px/rms4 |
+| bg_01 | bul | 12.7% | 9.6% | 3.7% | -5.9 pp | 8.9% | 5.9% | 0.8% | -5.1 pp | left.png:classical/39px/rms5; right.png:classical/69px/rms8 |
+| bg_02 | bul | 38.1% | 31.5% | 2.5% | -29.0 pp | 28.9% | 27.4% | 0.7% | -26.7 pp | left.png:classical/72px/rms7; right.png:classical/82px/rms7 |
+| **mean** | — | 44.6% | 20.9% | 10.9% | -10.0 pp | 34.4% | 16.1% | 7.6% | -8.5 pp | — |
+
+Findings (per-image; the mean is carried by one image so read the rows, not the mean):
+- **Single-column body text (bg_01, bg_02): large, real gains.** bg_02 split->dewarp WER 31.5%->2.5% (CER 27.4%->0.7%). Mechanism verified by diffing the OCR text: it is RECOGNITION recovery, not reordering — on the curved split the recognized word count was 720 (vs 817 GT) with garbled words (e.g. `избягали към Гюмурджина`->`избчали към Е мура`); after straightening it is 815 correctly-recognized words. Curl was corrupting character recognition; dewarp fixed it.
+- **Figure/multi-block page (en_coins_01): dewarp regressed** (WER 21.7%->26.6%). A full-page warp fit to body-text baselines extrapolates across figure gaps and heterogeneous list/caption lines. WER understates the harm: since figures are cropped from the dewarped image, those crops are also distorted. This is NOT an engine weakness UVDoc would fix — any full-page warp bends figures. The fix is LAYOUT-AWARE dewarp (Stage 04 region masks leaving figures unwarped). NB the recorded `rms` did NOT flag this page (all pages ~4-8px) — the harm is extrapolation into figure regions that have no baselines, which a residual over sampled baselines can't see; baseline COVERAGE is the signal a Stage-04 gate would need.
+- **Split alone** is a large win over the Gate-1 whole-spread baseline (mean WER 44.6%->20.9%; en_coins 83.1%->21.7% — facing-page de-interleaving), independent of dewarp.
+
+> Framing (pre-committed before measuring): N=3 GT spreads, moderate handheld curl. A neutral/negative dewarp delta would have been a valid honest result (dewarping a flat page only adds interpolation), not a broken stage. CER is the less noisy signal at this N and avoids the hyphen-join WER artifact. Classical is the v0.1 floor; `fit_rms_px` is recorded (not thresholded — that would overfit 3 images) as a fit diagnostic, though on this testset it did not separate figure from text pages (see the en_coins finding).
+

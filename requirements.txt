@@ -11,6 +11,7 @@ Pillow>=10.0          # image IO / normalization (Stage 00)
 # --- OCR + Gate 1 harness ---
 pytesseract>=0.3.10   # optional convenience; harness may call tesseract via subprocess
 opencv-python>=4.9    # preprocessing, split, fuse, dewarp helpers
+scipy>=1.11           # Stage 03 dewarp: band-projection peak-linking baselines
 rapidfuzz>=3.6        # word/char alignment + edit distance for accuracy metrics
 jiwer>=3.0            # WER alignment ops (alternative to rapidfuzz editops)
 matplotlib>=3.8       # confidence histograms / debug plots

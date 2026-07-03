@@ -29,8 +29,9 @@ Method (per subpage — Stage 02 splits the spread, Stage 04 orders each half):
        * segmentation recall = matched GT blocks / GT blocks (lists the misses);
        * type accuracy over matched blocks (detected type == GT type);
        * caption<->figure grouping: each GT (caption, figure) pair passes if the
-         detected figure nearest the caption's block IS the block matched to the
-         partner figure. n_figures is reported so a single-figure subpage is
+         detected figure nearest the caption's block (by EDGE GAP — box-to-box
+         min distance, not center distance) IS the block matched to the partner
+         figure. n_figures is reported so a single-figure subpage is
          flagged as association-possible-but-NOT-discriminated (a one-figure
          region can't get the pairing wrong). Also reports whether the caption
          was correctly TYPED (Gate-4 reflow floats caption-with-figure keyed on
@@ -139,8 +140,20 @@ class DetBlock:
         return s[len(s) // 2]        # median TSV index
 
 
-def _center_dist(a: DetBlock, b: DetBlock) -> float:
-    return ((a.cx - b.cx) ** 2 + (a.cy - b.cy) ** 2) ** 0.5
+def _box_gap(a: DetBlock, b: DetBlock) -> float:
+    """Minimum edge-to-edge (box-to-box) distance between two blocks; 0 if they
+    overlap. A better proxy than CENTER distance for "which figure is this caption
+    attached to": center distance is unsound for unequal-height figures — a caption
+    directly under a TALL figure's bottom edge is far from that figure's (high)
+    center yet near a SHORT neighbor's center, so it mis-attaches (see the
+    tall-figure test). Edge-gap fixes THAT case but does NOT encode the caption
+    above/below convention: stacked figures with asymmetric spacing (caption nearer
+    the NEXT figure's top than its OWN figure's bottom) still mispair (see the
+    known-limit test). A convention-aware rule is deferred until a real >=2-figure
+    fixture exists to tune against."""
+    dx = max(0.0, a.bbox.x - b.bbox.x2, b.bbox.x - a.bbox.x2)
+    dy = max(0.0, a.bbox.y - b.bbox.y2, b.bbox.y - a.bbox.y2)
+    return (dx * dx + dy * dy) ** 0.5
 
 
 # --------------------------------------------------------------------------
@@ -242,7 +255,7 @@ def grouping_eval(pairs: list[dict], matched: dict[str, int], det: list[DetBlock
             out.append(GroupResult(cid, fid, cap_typed, False, 0,
                                    "no figure detected"))
             continue
-        nearest = min(figs, key=lambda f: _center_dist(cap, f))
+        nearest = min(figs, key=lambda f: _box_gap(cap, f))
         ok = nearest.idx == fig_idx
         reason = ("nearest figure is the partner"
                   if ok else "nearest figure is NOT the partner")

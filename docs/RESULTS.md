@@ -473,3 +473,48 @@ signal). The block-order eval already groups B7→B6R correctly by nearest-figur
 geometry (type-independent), so the needed geometry is proven present. No code
 change this pass; RESULTS + SPEC + memory updated. Grouping DISCRIMINATION (owed
 item 1) remains blocked on an owner-supplied ≥2-figure fixture.
+
+
+## Gate 3 grouping-metric fix — 2026-07-03, edge-gap pairing (synthetic ≥2-figure discrimination)
+
+Owed item (1) — grouping DISCRIMINATION — advanced via a **synthetic** ≥2-figure
+exercise (owner chose "synthesize now, maybe a real page later"; a fake image
+does NOT go in the append-only real-image testset, so this is a detector-free
+unit exercise of the pure grouping metric). The synthesis EXPOSED a real bug in
+the grouping rule:
+
+- `grouping_eval` paired each caption to its **nearest-CENTER-distance** figure.
+  Probed with two figures in one column — a caption directly under a TALL figure's
+  bottom edge (edge gap 10px) plus a SHORT neighbor figure — center distance picks
+  the SHORT neighbor (center dist 120 < 530) and reports the correct attachment as
+  a MISS. Unsound for unequal-height figures, and grouping is the owner's #1
+  invariant.
+- **Fix: pair by EDGE GAP** (box-to-box minimum distance; 0 if overlapping) —
+  `_box_gap`, a better proxy than center for "which figure is this caption against."
+  The tall-figure case now pairs correctly (10px < 50px). **This is NOT a fully
+  sound rule** — edge-gap fixes the unequal-HEIGHT failure but does NOT encode the
+  caption-above/below convention: stacked figures with ASYMMETRIC spacing (a caption
+  nearer the NEXT figure's top edge than its OWN figure's bottom) still mispair
+  (`gap=5` to Fig2 below beats `gap=10` to Fig1 above). No pure nearest-distance
+  rule resolves above/below; a convention-aware rule is DEFERRED until a real
+  >=2-figure fixture exists to tune against (same discipline as the NMS near-miss —
+  the distinction from NMS is that center-distance was the *wrong heuristic* while
+  a convention rule has *no data to tune* and NMS carries *en_coins_01 blast radius*).
+- **Non-regression: it_geo_04 grade is byte-identical** (seg 8/9, type 7/8,
+  tau +1.00/+1.00, grouping 2/2 assoc) — each it_geo_04 subpage has ONE figure, so
+  edge gap == center (any-distance is trivially that figure). 66 unit tests green
+  (was 63): `test_grouping_uses_edge_gap_not_center_for_unequal_height_figures`
+  (the fix's regression test), `test_two_figure_subpage_discriminates_both_captions_end_to_end`
+  (driver-level match+group on a 2-figure/2-caption synthetic subpage — both
+  captions discriminate, `discriminated==2`), and
+  `test_edge_gap_does_not_encode_caption_above_below_known_limit` (pins the
+  asymmetric-spacing mispair so the boundary is explicit).
+
+**What this proves and does NOT.** The grouping metric now *discriminates* on a
+≥2-figure column (a wrong figure is present and it must be rejected) and its
+pairing rule is *improved* (edge-gap, not center) — proven on synthetic data (the
+metric CODE). It is NOT a fully sound rule (asymmetric-spacing above/below still
+mispairs, pinned above) and it does NOT prove the DETECTOR keeps ≥2 real figures +
+their captions separate on a photographed page. Both — a convention-aware rule and
+detector-on-real grouping — still need the owner's real ≥2-figure fixture. B7
+caption TYPE (item 2) remains account-for/Gate-4.

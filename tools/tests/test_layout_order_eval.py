@@ -124,6 +124,83 @@ def test_grouping_discriminates_with_two_figures():
     assert g2.nearest_ok is False
 
 
+def test_grouping_uses_edge_gap_not_center_for_unequal_height_figures():
+    """A caption sitting directly under a TALL figure's bottom edge must pair with
+    that figure, not with a SHORT nearby figure whose center is closer. Center
+    distance mis-attaches it (tall fig center is far up); edge gap fixes it. This
+    is the ">=2 figures in one column" discrimination the Gate-3 grouping headline
+    was blocked on, exercised on the pure metric (synthetic, detector-free)."""
+    # Fig A tall (h=1000, center y=500); its caption directly under A's edge
+    # (y=1010). Fig B short (h=100, center y=1150). Caption belongs to A.
+    det = [_db(0, 0, "figure", 0, 0, 100, 1000),      # F1 (tall)
+           _db(1, 2, "caption", 0, 1010, 100, 40),    # C1 under A's bottom edge
+           _db(2, 1, "figure", 0, 1100, 100, 100)]    # F2 (short neighbor)
+    matched = {"C1": 1, "F1": 0, "F2": 2}
+    gt_pairs = [{"caption": "C1", "figure": "F1", "subpage": "left"}]
+    (g,) = grouping_eval(gt_pairs, matched, det)
+    # center distance would pick F2 (120 < 530) -> WRONG; edge gap picks F1
+    # (10px < 50px) -> correct partner. n_figures==2 so it is DISCRIMINATED.
+    assert g.nearest_ok is True
+    assert g.n_figures == 2
+    assert "NOT discriminated" not in g.reason
+
+
+def test_edge_gap_does_not_encode_caption_above_below_known_limit():
+    """BOUNDARY (documents a known limit, not a pass we want): edge-gap fixes the
+    unequal-HEIGHT failure but does NOT encode the caption-above/below convention.
+    Stacked figures with ASYMMETRIC spacing — a caption nearer the NEXT figure's
+    top edge than its OWN figure's bottom edge — still mispair. No pure
+    nearest-distance rule resolves above/below; a convention-aware rule is deferred
+    until a real >=2-figure fixture exists to tune against (same discipline as the
+    NMS near-miss). This test pins the current behavior so the boundary is explicit."""
+    # cap1 belongs to Fig1 (above). But Fig2's top (y=135) is 5px below cap1's
+    # bottom (y2=130), while Fig1's bottom (y2=100) is 10px above cap1 (y=110) ->
+    # edge gap to Fig2 (5) < to Fig1 (10) -> edge-gap picks Fig2, the WRONG figure.
+    det = [_db(0, 0, "figure", 0, 0, 100, 100),      # F1 (cap1's true partner)
+           _db(1, 1, "caption", 0, 110, 100, 20),    # C1 (y2=130)
+           _db(2, 2, "figure", 0, 135, 100, 100)]    # F2 (nearer below)
+    matched = {"C1": 1, "F1": 0, "F2": 2}
+    gt_pairs = [{"caption": "C1", "figure": "F1", "subpage": "left"}]
+    (g,) = grouping_eval(gt_pairs, matched, det)
+    assert g.nearest_ok is False   # KNOWN LIMIT: edge-gap mispairs here (documented)
+
+
+def test_two_figure_subpage_discriminates_both_captions_end_to_end():
+    """Synthetic full subpage: TWO figures sharing one column, each with its own
+    caption directly beneath it, plus a body paragraph. Drives the DRIVER-level
+    path (match_subpage figures-by-ro-rank + text-by-anchor, then grouping_eval)
+    so both captions must associate to the RIGHT figure with a wrong option
+    present. This is the ">=2 figures / column" case that discriminates pairing —
+    both pairs pass AND both count as discriminated (n_figures==2)."""
+    gt = [
+        {"order": 0, "id": "F1", "type": "figure", "anchor": None},
+        {"order": 1, "id": "C1", "type": "caption", "anchor": "figura uno alpha"},
+        {"order": 2, "id": "F2", "type": "figure", "anchor": None},
+        {"order": 3, "id": "C2", "type": "caption", "anchor": "figura due beta"},
+        {"order": 4, "id": "P1", "type": "paragraph", "anchor": "corpo del testo gamma"},
+    ]
+    det = [
+        _db(0, 0, "figure",    0,    0, 400, 600),                       # -> F1
+        _db(1, 1, "caption",   0,  610, 400,  60, text="figura uno alpha foto"),  # -> C1 (under F1)
+        _db(2, 2, "figure",    0,  700, 400, 600),                       # -> F2
+        _db(3, 3, "caption",   0, 1310, 400,  60, text="figura due beta foto"),   # -> C2 (under F2)
+        _db(4, 4, "paragraph", 0, 1400, 400, 200, text="corpo del testo gamma e altro"),
+    ]
+    matched, misses = match_subpage(gt, det)
+    assert misses == []
+    assert matched == {"F1": 0, "C1": 1, "F2": 2, "C2": 3, "P1": 4}
+
+    pairs = [{"caption": "C1", "figure": "F1", "subpage": "left"},
+             {"caption": "C2", "figure": "F2", "subpage": "left"}]
+    groups = grouping_eval(pairs, matched, det)
+    # both captions pair to the correct figure, both discriminated (2 figures)
+    assert all(g.nearest_ok for g in groups)
+    assert all(g.n_figures == 2 for g in groups)
+    assert all(g.caption_typed_ok for g in groups)
+    discriminated = sum(1 for g in groups if g.nearest_ok and g.n_figures >= 2)
+    assert discriminated == 2
+
+
 if __name__ == "__main__":
     import sys
     import pytest

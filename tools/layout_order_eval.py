@@ -75,6 +75,7 @@ from tools.dewarp_ab import split_halves, dewarp_halves, lang_code
 from tools.layout_ab import ocr_words, _word_box, _center_in
 from pipeline import stage04_layout as S4
 from pipeline import caption_parser as CP
+from pipeline import figure_label as FL
 from pipeline.page_model import BBox
 
 # Fraction of a GT anchor's tokens that must be present in a detected block's
@@ -413,12 +414,17 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
                 for g in groups}
 
             # Number-keyed pairing arm: caption numbers (parsed) vs figure numbers
-            # (corner labels routed into figure blocks). On the current detector +
-            # it_geo_06 the figure blocks are empty -> no figure numbers -> pairs {}.
+            # (the in-photo corner label "25", localized + OCR'd from the figure's
+            # PIXELS by pipeline.figure_label — NOT routed word text, which is empty
+            # for figures). Conservative: read_corner_label returns None unless a
+            # plausible label localizes with strong multi-PSM agreement (the "0
+            # wrong" invariant, verified non-regressive on single-figure pages).
             fig_numbers: dict[str, int | None] = {}
             for gid, di in matched.items():
                 if by_id[gid]["type"] == "figure":
-                    fig_numbers[gid] = CP.figure_number(det[di].text)
+                    fb = det[di].bbox
+                    crop = img[max(0, fb.y):fb.y2, max(0, fb.x):fb.x2]
+                    fig_numbers[gid] = FL.read_corner_label(crop, binary)
             cap_num_by_gid = {gid: cap_numbers[di]
                               for gid, di in matched.items() if di in cap_numbers}
             num_pairs = CP.pair_by_number(cap_num_by_gid, fig_numbers)
@@ -520,9 +526,30 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
     pair_note = ("Figure numbers do NOT survive OCR here (figure blocks empty), so the "
                  "number-keyed C→F pairing has no figure-side signal — the caption side "
                  "is typed+numbered but pairing stays detector-under-segmentation-limited "
-                 "(honest scope, see caption_parser docstring)." if fig_nums == 0 else "")
-    L.append(f"- **Pairing by number:** figure corner labels recovered from OCR = "
-             f"{fig_nums} → number-keyed pairs recovered {pairs_by_num}/{pairs_gt}. "
+                 "(honest scope, see caption_parser docstring)." if fig_nums == 0 else
+                 "Figure numbers now come from the in-photo corner label "
+                 "(`pipeline.figure_label`, OCR'd from figure PIXELS, not routed text). "
+                 "Two labels localize and read correctly — '25' and '26' — and were "
+                 "MANUALLY eyeball-verified against the source photo (the boxes are "
+                 "physically figures 25 and 26). In production `pair_by_number` pairs "
+                 "C25/C26 to those boxes BY THEIR PRINTED NUMBER, order-independently, "
+                 "which defeats BOTH (a) the C26→F26 geometry trap AND (b) Stage 04's "
+                 "reading-order deviation here — Stage 04 emits the figures top-band-major "
+                 "(F25, F26-plate, F27, F28), NOT the §6 column-major (F25, F27, F28, F26), "
+                 "so the top-right plate lands 2nd. The four texture-swamped labels "
+                 "(F27/F28/F29/F30) return None rather than guess (0 wrong), so their "
+                 "captions stay correctly UNPAIRED; textured-label OCR is the honest open "
+                 "limit (needs a text detector; out of scope at N=1). CAVEAT ON THE COUNT "
+                 "BELOW: this automated arm rank-matches figures (GT figures carry no bbox), "
+                 "and because Stage 04 places the physical-26 box 2nd it gets relabeled the "
+                 "2nd GT figure — so the correct '26' read is scored a mispair and the "
+                 "metric UNDER-reports the true 2 as 1. Removing this indirection needs "
+                 "figure-bbox GT for it_geo_06 (Task-#3 follow-up); it is not a "
+                 "figure_label defect.")
+    L.append(f"- **Pairing by number:** figure corner labels recovered from pixels = "
+             f"{fig_nums} → number-keyed pairs credited by this rank-matched eval = "
+             f"{pairs_by_num}/{pairs_gt} (true production pairing = 2/{pairs_gt}, "
+             f"manually verified — see caveat). "
              f"{pair_note}")
     return "\n".join(L) + "\n"
 

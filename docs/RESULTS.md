@@ -700,3 +700,66 @@ rank→**bbox-overlap** now that per-figure boxes + approximate GT bboxes exist 
 the grading contract — owner call), and XY-Cut++ axis selection (prefer the larger
 gap: the 50px V-gap beats the 42px H-gap here) to restore column-major order (its own
 full regression pass).
+
+## Stage 04 figure separation (#2 corner-label OCR) — 2026-07-03, `pipeline.figure_label`, image=it_geo_06
+
+**What this delivers.** `pipeline/figure_label.py` recovers a figure's in-photo
+CORNER-LABEL number (the small white "25" printed bottom-right of each plate) from
+the figure's PIXELS — the number Stage 05 never emits as routed text — so
+`caption_parser.pair_by_number` can pair caption N to figure N by the printed number.
+This is the ONE route that defeats the C26→F26 trap (geometry provably mispairs C26,
+which sits nearest the LEFT cliff column but partners the TOP-RIGHT plate F26).
+
+**Method (glyph-geometry, the allowed heuristic class — NOT hard-coded OCR-confidence
+thresholds, which live in Stage 06).** Crop the bottom-right region → upscale → white
+top-hat on HSV Value (bright glyphs pop as solid blobs from dark OR textured bg) →
+kill high-saturation pixels (coloured foliage/rock) → connected-components filtered by
+digit size/aspect/fill → group adjacent similar-height CCs at one baseline → pick the
+bottom-right cluster shaped like a 1–2-digit number → paint only its pixels → Tesseract
+digit-whitelist OCR across PSM 7/8/10/13.
+
+**Measured on it_geo_06 (N=1, six figures, one page) — on the REAL `split_merged_figures`
+boxes, not GT extents:**
+
+| figure | bg | localizes | read | correct? |
+|---|---|---|---|---|
+| F25 | cliff on teal water | yes | **25** | ✓ (eyeball-verified) |
+| F26 | plate on near-black | yes | **26** | ✓ (eyeball-verified) |
+| F27 | foliage cliff | no | None | — (0 wrong) |
+| F28 | foliage cliff | no | None | — (0 wrong) |
+| F29 | rock landscape | no | None | — (0 wrong) |
+| F30 | rock close-up | no | None | — (0 wrong) |
+
+**Net: 2/6 recovered, 0 wrong.** Moves `pair_by_number` **0 → 2** (C25→F25, C26→F26).
+This is NOT the §7-aspired 0→6: four texture-swamped labels return None (real text
+detector — EAST/MSER/CNN — needed; out of scope at N=1). The two reads and their
+physical figure identity were **manually eyeball-verified** against the source photo
+(the y272 box shows "25" on the water; the y253 box shows "26" on the black plate) —
+this manual check is load-bearing because GT figures carry no gradable bbox.
+
+**Conservatism is the invariant ("0 wrong").** `pair_by_number` attributes by NUMBER,
+so one wrong read on a mispairing-trap fixture is worse than a miss. Acceptance rule:
+a 2-digit value wins on ≥2 PSM votes only if no OTHER 2-digit value competes (so the
+frequent "25"→"2" truncation cannot veto the full read — the exact real-box F25 case,
+which OCR'd `['25','2','25','2']`); a lone 1-digit needs ≥3 PSM votes with no competitor
+(the F28 texture fragment "3" stays None). Pinned by `pipeline/tests/test_figure_label.py`
+(15 tests). **Non-regression:** on the single-figure pages it_geo_04/05/07 the reader
+fabricates **0** numbers across all 12 figure boxes (`nonreg_check`), so no phantom
+number can collide with those pages' caption numbers.
+
+**HONEST framing — number-on-box defeats TWO defects, but the automated eval
+under-reports it to 1/6.** In production `pair_by_number` reads "25"/"26" off the boxes
+and pairs C25/C26 order-independently, defeating BOTH (a) the C26 geometry trap AND
+(b) a real Stage-04 reading-order deviation: Stage 04 here emits the figures
+**top-band-major** (F25, F26-plate, F27, F28), NOT the §6 **column-major** (F25, F27,
+F28, F26) — the top-right plate lands 2nd because splitting the tall cliff box exposed
+a full-width H-gap that XY-Cut cuts before descending the left column. The
+`layout_order_eval` pairing arm rank-matches figures (GT figures have no gradable
+bbox), so the physical-26 box — Stage-04's 2nd figure — is relabeled GT figure #2
+("F27"), and the correct "26" read is scored a mispair: the metric shows **1/6, not
+the true 2/6**. This is an eval-indirection limitation, not a `figure_label` defect,
+and it was NOT laundered — the Stage-04 order deviation is a genuine §6 miss stated
+plainly here. **Follow-up (Task #3, own commit):** switch `match_subpage` figure
+matching rank→bbox-overlap against the GT's existing (overlay-only) figure bboxes;
+that makes the 2/6 automated AND non-tautological (position-matched, still catches a
+wrong read — unlike matching by the recovered number, which would be circular).

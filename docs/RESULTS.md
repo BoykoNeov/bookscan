@@ -1,6 +1,6 @@
 # Gate results (append-only history)
 
-## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=none
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=none (SUPERSEDED — EXIF-applied/portrait input; see the normalized re-run + reconciliation below)
 
 | language | images | WER | CER | conf AUROC | err-recall @10% flagged |
 |---|---|---|---|---|---|
@@ -20,7 +20,7 @@ Verdict: FAIL — confidence does not separate errors (AUROC <0.80) and/or accur
 > Caveat: confidence is labeled per raw Tesseract word (1:1 with the conf value), while WER uses hyphen-joined text. Line-end hyphenations (e.g. `encyclo-`+`pedia` vs GT `encyclopedia`) therefore count as two HIGH-confidence wrong tokens, which inflates WER and depresses AUROC on hyphen-heavy pages. A borderline MIXED verdict on real English pages may be this artifact rather than genuine OCR failure.
 
 
-## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=otsu
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=otsu (SUPERSEDED — EXIF-applied/portrait input; see the normalized re-run + reconciliation below)
 
 | language | images | WER | CER | conf AUROC | err-recall @10% flagged |
 |---|---|---|---|---|---|
@@ -40,7 +40,7 @@ Verdict: FAIL — confidence does not separate errors (AUROC <0.80) and/or accur
 > Caveat: confidence is labeled per raw Tesseract word (1:1 with the conf value), while WER uses hyphen-joined text. Line-end hyphenations (e.g. `encyclo-`+`pedia` vs GT `encyclopedia`) therefore count as two HIGH-confidence wrong tokens, which inflates WER and depresses AUROC on hyphen-heavy pages. A borderline MIXED verdict on real English pages may be this artifact rather than genuine OCR failure.
 
 
-## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=adaptive (best variant)
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=adaptive (best variant) (SUPERSEDED — EXIF-applied/portrait input; see the normalized re-run + reconciliation below)
 
 | language | images | WER | CER | conf AUROC | err-recall @10% flagged |
 |---|---|---|---|---|---|
@@ -205,7 +205,7 @@ Overlays in `jobs/<id>/debug/02_split.png`. Unit tests:
   detector would then pick a wrong in-window minimum with a confident-looking
   ratio. Widen/adapt the window (or key off dewarp) when such a capture exists.
 
-## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=none
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=none (CURRENT — normalized upright-landscape input via shared ingest helper)
 
 | language | images | WER | CER | conf AUROC | err-recall @10% flagged |
 |---|---|---|---|---|---|
@@ -225,7 +225,7 @@ Verdict: FAIL — confidence does not separate errors (AUROC <0.80) and/or accur
 > Caveat: confidence is labeled per raw Tesseract word (1:1 with the conf value), while WER uses hyphen-joined text. Line-end hyphenations (e.g. `encyclo-`+`pedia` vs GT `encyclopedia`) therefore count as two HIGH-confidence wrong tokens, which inflates WER and depresses AUROC on hyphen-heavy pages. A borderline MIXED verdict on real English pages may be this artifact rather than genuine OCR failure.
 
 
-## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=otsu
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=otsu (CURRENT — normalized upright-landscape input via shared ingest helper)
 
 | language | images | WER | CER | conf AUROC | err-recall @10% flagged |
 |---|---|---|---|---|---|
@@ -245,7 +245,7 @@ Verdict: FAIL — confidence does not separate errors (AUROC <0.80) and/or accur
 > Caveat: confidence is labeled per raw Tesseract word (1:1 with the conf value), while WER uses hyphen-joined text. Line-end hyphenations (e.g. `encyclo-`+`pedia` vs GT `encyclopedia`) therefore count as two HIGH-confidence wrong tokens, which inflates WER and depresses AUROC on hyphen-heavy pages. A borderline MIXED verdict on real English pages may be this artifact rather than genuine OCR failure.
 
 
-## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=adaptive
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=adaptive (CURRENT — normalized upright-landscape input via shared ingest helper)
 
 | language | images | WER | CER | conf AUROC | err-recall @10% flagged |
 |---|---|---|---|---|---|

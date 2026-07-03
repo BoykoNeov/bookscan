@@ -325,8 +325,28 @@ OCR path identical across arms (grayscale + probe-upscale); only page geometry d
 
 Findings (per-image; the mean is carried by one image so read the rows, not the mean):
 - **Single-column body text (bg_01, bg_02): large, real gains.** bg_02 split->dewarp WER 31.5%->2.5% (CER 27.4%->0.7%). Mechanism verified by diffing the OCR text: it is RECOGNITION recovery, not reordering — on the curved split the recognized word count was 720 (vs 817 GT) with garbled words (e.g. `избягали към Гюмурджина`->`избчали към Е мура`); after straightening it is 815 correctly-recognized words. Curl was corrupting character recognition; dewarp fixed it.
-- **Figure/multi-block page (en_coins_01): dewarp regressed** (WER 21.7%->26.6%). A full-page warp fit to body-text baselines extrapolates across figure gaps and heterogeneous list/caption lines. WER understates the harm: since figures are cropped from the dewarped image, those crops are also distorted. This is NOT an engine weakness UVDoc would fix — any full-page warp bends figures. The fix is LAYOUT-AWARE dewarp (Stage 04 region masks leaving figures unwarped). NB the recorded `rms` did NOT flag this page (all pages ~4-8px) — the harm is extrapolation into figure regions that have no baselines, which a residual over sampled baselines can't see; baseline COVERAGE is the signal a Stage-04 gate would need.
+- **Figure/multi-block page (en_coins_01): dewarp regressed** (WER 21.7%->26.6%). A full-page warp fit to body-text baselines extrapolates across figure gaps and heterogeneous list/caption lines. WER understates the harm: since figures are cropped from the dewarped image, those crops are also distorted. The cause is that the classical arm extrapolates a text-baseline polynomial across the figure gaps. NB the recorded `rms` did NOT flag this page (all pages ~4-8px) — the extrapolation happens in figure regions that have no baselines, which a residual over sampled baselines can't see; baseline COVERAGE would be the signal. [UPDATE — see the uvdoc run below: UVDoc's coherent learned flattening does NOT regress this page (21.7%->12.0%). So this regression is a limitation of the classical baseline-fit specifically, NOT an inherent "any full-page warp bends figures / needs layout awareness" law as first hypothesized here.]
 - **Split alone** is a large win over the Gate-1 whole-spread baseline (mean WER 44.6%->20.9%; en_coins 83.1%->21.7% — facing-page de-interleaving), independent of dewarp.
 
 > Framing (pre-committed before measuring): N=3 GT spreads, moderate handheld curl. A neutral/negative dewarp delta would have been a valid honest result (dewarping a flat page only adds interpolation), not a broken stage. CER is the less noisy signal at this N and avoids the hyphen-join WER artifact. Classical is the v0.1 floor; `fit_rms_px` is recorded (not thresholded — that would overfit 3 images) as a fit diagnostic, though on this testset it did not separate figure from text pages (see the en_coins finding).
+
+
+## Gate 2 dewarp A/B — 2026-07-03, tesseract 5.4.0.20240606, dewarp=uvdoc (UVDoc neural grid unwarp)
+
+OCR path identical across arms (grayscale + probe-upscale); only page geometry differs. Δdewarp = split+dewarp − split.
+
+| image | lang | whole WER | split WER | split+dewarp WER | Δdewarp WER | whole CER | split CER | split+dewarp CER | Δdewarp CER | dewarp |
+|---|---|---|---|---|---|---|---|---|---|---|
+| en_coins_01 | eng | 83.1% | 21.7% | 12.0% | -9.7 pp | 65.4% | 15.0% | 6.7% | -8.4 pp | left.png:uvdoc/0px/rms0; right.png:uvdoc/0px/rms0 |
+| bg_01 | bul | 12.7% | 9.6% | 3.7% | -5.9 pp | 8.9% | 5.9% | 1.5% | -4.4 pp | left.png:uvdoc/0px/rms0; right.png:uvdoc/0px/rms0 |
+| bg_02 | bul | 38.1% | 31.5% | 1.7% | -29.8 pp | 28.9% | 27.4% | 0.3% | -27.1 pp | left.png:uvdoc/0px/rms0; right.png:uvdoc/0px/rms0 |
+| **mean** | — | 44.6% | 20.9% | 5.8% | -15.1 pp | 34.4% | 16.1% | 2.8% | -13.3 pp | — |
+
+Findings (per-image; the mean is carried by one image so read the rows, not the mean):
+- **UVDoc improves ALL THREE pages, including the figure page.** en_coins split->dewarp WER 21.7%->12.0% (CER 15.0%->8.x%), bg_01 9.6%->3.7%, bg_02 31.5%->1.7%. Unlike the classical arm (which REGRESSED en_coins to 26.6% by extrapolating a text-baseline polynomial across the figure gaps), UVDoc applies a globally-coherent LEARNED full-page geometric rectification (perspective + curl), so figure-heavy layouts are flattened consistently rather than distorted. This revises the earlier classical-run framing: en_coins did NOT require layout awareness — it required a better (learned, coherent) warp.
+- **bg_02 (strong curl) is near-perfect after UVDoc** (WER 1.7%, CER <1%), edging out the classical arm's 2.5%.
+- **Caveat WER cannot see:** UVDoc still WARPS the figures (it bends them to flatten the page). WER improved because TEXT improved; it does not certify figure-crop fidelity. For a photo of a curved page a coherent flattening is plausibly correct for the coins too, but that needs visual QA / Stage-04 region handling to confirm — it is not measurable here.
+- **Split alone** already beats the Gate-1 whole-spread baseline (mean WER 44.6%->20.9%; en_coins 83.1%->21.7% — facing-page de-interleaving); UVDoc adds a further large gain on top.
+
+> UVDoc is the config default (`models.dewarp: uvdoc`); the classical arm remains the no-torch fallback. Full-res is preserved: the grid is predicted at 488x712 but grid_sample runs on the full-resolution page (Stage 06 patch crops come from this output).
 

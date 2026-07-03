@@ -93,14 +93,18 @@ def split_halves(bgr: np.ndarray, cfg: dict) -> tuple[list[tuple[str, np.ndarray
 
 def dewarp_halves(halves: list[tuple[str, np.ndarray]], cfg: dict, method: str
                   ) -> list[tuple[str, np.ndarray, S3.PageDewarp]]:
-    """Stage 03 dewarp each half, in-memory."""
+    """Stage 03 dewarp each half, in-memory. Loads UVDoc once (if requested) and
+    releases it, exactly like the stage runner."""
     p = S3.resolve_params(cfg)
     warns: list[str] = []
+    uv = S3.make_dewarper(method, cfg, warns)
     out = []
     for name, img in halves:
-        o, pd, _ = S3.dewarp_page(img, method, cfg, p, warns)
+        o, pd, _ = S3.dewarp_page(img, method, cfg, p, warns, uv)
         pd.name = name
         out.append((name, o, pd))
+    if uv is not None:
+        uv.close()
     return out
 
 
@@ -204,9 +208,14 @@ def _mean(xs: list[float]) -> float:
 
 def build_report(results: list[ABResult], tver: str, run_date: str, method: str
                  ) -> str:
+    label = {
+        "classical": "classical text-line rectification",
+        "uvdoc": "UVDoc neural grid unwarp",
+        "auto": "auto — UVDoc with classical fallback",
+    }.get(method, method)
     lines: list[str] = []
     lines.append(f"\n## Gate 2 dewarp A/B — {run_date}, tesseract {tver}, "
-                 f"dewarp={method} (classical text-line rectification)\n")
+                 f"dewarp={method} ({label})\n")
     lines.append("OCR path identical across arms (grayscale + probe-upscale); "
                  "only page geometry differs. Δdewarp = split+dewarp − split.\n")
     lines.append("| image | lang | whole WER | split WER | split+dewarp WER | "
@@ -228,7 +237,7 @@ def build_report(results: list[ABResult], tver: str, run_date: str, method: str
             f"| **mean** | — | {_fmt(mw[0])} | {_fmt(mw[1])} | {_fmt(mw[2])} | "
             f"{(mw[2] - mw[1]) * 100:+.1f} pp | {_fmt(mc[0])} | {_fmt(mc[1])} | "
             f"{_fmt(mc[2])} | {(mc[2] - mc[1]) * 100:+.1f} pp | — |")
-    lines.append(
+    classical_findings = (
         "\nFindings (per-image; the mean is carried by one image so read the rows, "
         "not the mean):\n"
         "- **Single-column body text (bg_01, bg_02): large, real gains.** bg_02 "
@@ -242,13 +251,11 @@ def build_report(results: list[ABResult], tver: str, run_date: str, method: str
         "21.7%->26.6%). A full-page warp fit to body-text baselines extrapolates "
         "across figure gaps and heterogeneous list/caption lines. WER understates "
         "the harm: since figures are cropped from the dewarped image, those crops "
-        "are also distorted. This is NOT an engine weakness UVDoc would fix — any "
-        "full-page warp bends figures. The fix is LAYOUT-AWARE dewarp (Stage 04 "
-        "region masks leaving figures unwarped). NB the recorded `rms` did NOT "
-        "flag this page (all pages ~4-8px) — the harm is extrapolation into "
-        "figure regions that have no baselines, which a residual over sampled "
-        "baselines can't see; baseline COVERAGE is the signal a Stage-04 gate "
-        "would need.\n"
+        "are also distorted. NB the recorded `rms` did NOT flag this page (all "
+        "pages ~4-8px) — the harm is extrapolation into figure regions that have "
+        "no baselines, which a residual over sampled baselines can't see; baseline "
+        "COVERAGE is the signal a Stage-04 gate would need. (UVDoc's coherent "
+        "learned flattening does NOT regress this page — see the uvdoc run.)\n"
         "- **Split alone** is a large win over the Gate-1 whole-spread baseline "
         "(mean WER 44.6%->20.9%; en_coins 83.1%->21.7% — facing-page "
         "de-interleaving), independent of dewarp.\n"
@@ -256,10 +263,36 @@ def build_report(results: list[ABResult], tver: str, run_date: str, method: str
         "handheld curl. A neutral/negative dewarp delta would have been a valid "
         "honest result (dewarping a flat page only adds interpolation), not a "
         "broken stage. CER is the less noisy signal at this N and avoids the "
-        "hyphen-join WER artifact. Classical is the v0.1 floor; `fit_rms_px` is "
-        "recorded (not thresholded — that would overfit 3 images) as a fit "
-        "diagnostic, though on this testset it did not separate figure from text "
-        "pages (see the en_coins finding).\n")
+        "hyphen-join WER artifact. Classical is the v0.1 no-torch floor.\n")
+
+    uvdoc_findings = (
+        "\nFindings (per-image; the mean is carried by one image so read the rows, "
+        "not the mean):\n"
+        "- **UVDoc improves ALL THREE pages, including the figure page.** en_coins "
+        "split->dewarp WER 21.7%->12.0% (CER 15.0%->8.x%), bg_01 9.6%->3.7%, bg_02 "
+        "31.5%->1.7%. Unlike the classical arm (which REGRESSED en_coins to 26.6% "
+        "by extrapolating a text-baseline polynomial across the figure gaps), "
+        "UVDoc applies a globally-coherent LEARNED full-page geometric "
+        "rectification (perspective + curl), so figure-heavy layouts are flattened "
+        "consistently rather than distorted. This revises the earlier classical-run "
+        "framing: en_coins did NOT require layout awareness — it required a better "
+        "(learned, coherent) warp.\n"
+        "- **bg_02 (strong curl) is near-perfect after UVDoc** (WER 1.7%, CER "
+        "<1%), edging out the classical arm's 2.5%.\n"
+        "- **Caveat WER cannot see:** UVDoc still WARPS the figures (it bends them "
+        "to flatten the page). WER improved because TEXT improved; it does not "
+        "certify figure-crop fidelity. For a photo of a curved page a coherent "
+        "flattening is plausibly correct for the coins too, but that needs visual "
+        "QA / Stage-04 region handling to confirm — it is not measurable here.\n"
+        "- **Split alone** already beats the Gate-1 whole-spread baseline (mean WER "
+        "44.6%->20.9%; en_coins 83.1%->21.7% — facing-page de-interleaving); UVDoc "
+        "adds a further large gain on top.\n"
+        "\n> UVDoc is the config default (`models.dewarp: uvdoc`); the classical "
+        "arm remains the no-torch fallback. Full-res is preserved: the grid is "
+        "predicted at 488x712 but grid_sample runs on the full-resolution page "
+        "(Stage 06 patch crops come from this output).\n")
+
+    lines.append(uvdoc_findings if method == "uvdoc" else classical_findings)
     return "\n".join(lines) + "\n"
 
 

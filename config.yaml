@@ -48,6 +48,13 @@ models:
   dewarp: uvdoc
   dewarp_partial: doctr++
 
+# --- Stage 03 dewarp ---
+dewarp:
+  # UVDoc checkpoint (~32 MB), gitignored under models/. Download from
+  # github.com/tanguymagne/UVDoc (model/best_model.pkl). Relative paths resolve
+  # against the repo root. Missing -> Stage 03 falls back to classical.
+  uvdoc_ckpt: "models/uvdoc/best_model.pkl"
+
 # --- Reconstruction (Stage 07) ---
 reconstruct:
   fonts:

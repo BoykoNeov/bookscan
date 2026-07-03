@@ -11,10 +11,15 @@ patch-mode crops word images from Stage 03's output, NOT a downscaled copy
 
 Two arms behind one seam (CLAUDE.md ``models.dewarp: uvdoc``):
 
-  * **UVDoc** (default target) — a neural grid-based unwarper. Loaded lazily,
-    VRAM released on CLI exit. NOT wired yet (see ``UVDocDewarper`` /
-    task #3); ``--method auto`` falls back to classical until it is.
-  * **Classical text-line rectification** (always-available fallback) — no
+  * **UVDoc** (default, ``models.dewarp: uvdoc``) — a neural grid-based
+    unwarper (vendored ``pipeline/uvdoc_model.py`` + a gitignored 32 MB
+    checkpoint). Loaded lazily ONCE per spread, VRAM released on CLI exit. Does a
+    globally-coherent full-page geometric rectification (perspective + curl); on
+    the testset it improves every page including the figure page and preserves
+    full resolution (grid predicted at 488x712, grid_sample on the full page).
+    ``--method auto`` uses it when torch + the checkpoint are present, else falls
+    back to classical.
+  * **Classical text-line rectification** (no-torch fallback) — no
     torch. The distortion that survives Stage 02's split is the binding CURL
     near the gutter (the outer/top/bottom page edges are real, but the gutter
     edge is an artificial cut, so full page-quad perspective rectification would
@@ -49,7 +54,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import StageMeta
 
 STAGE = "stage03_dewarp"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -311,43 +316,102 @@ def dewarp_classical(bgr: np.ndarray, p: dict
 
 
 # --------------------------------------------------------------------------
-# UVDoc arm (seam — wired in task #3)
+# UVDoc arm (neural grid unwarper — the config default)
 # --------------------------------------------------------------------------
+
+DEFAULT_UVDOC_CKPT = "models/uvdoc/best_model.pkl"
+
+# Errors from which the dispatcher falls back to classical rather than aborting
+# the whole page (missing torch/CUDA, missing checkpoint, OOM, shape mismatch).
+UVDOC_FALLBACK_ERRORS = (ImportError, FileNotFoundError, RuntimeError, KeyError)
 
 
 class UVDocDewarper:
-    """Lazy UVDoc loader kept as the model seam so wiring is drop-in.
+    """UVDoc neural unwarper — lazy-loaded, VRAM released on close (CLAUDE.md).
 
-    Contract for when it lands (task #3): ``load()`` imports torch, builds the
-    net, loads the checkpoint onto CUDA; ``dewarp()`` predicts a low-res sampling
-    grid, UPSCALES the grid and ``remap``s the FULL-RES page (never unwarp a
-    downscaled copy — Stage 06 crops from this output); ``close()`` drops the
-    model and calls ``torch.cuda.empty_cache()`` so VRAM is freed on CLI exit
-    (CLAUDE.md lazy-load / release-on-exit). Use as a context manager.
+    ``load()`` imports torch, builds the vendored ``UVDocnet`` and loads the
+    checkpoint onto CUDA (falls back to CPU). ``dewarp()`` predicts a low-res 2D
+    sampling grid from a 488x712 input, then unwarps the FULL-RES page by
+    upsampling the grid and running grid_sample on it (never a downscaled copy —
+    Stage 06 crops from this output). ``close()`` drops the model and empties the
+    CUDA cache. Loaded ONCE per stage run and reused across a spread's half-pages.
     """
 
     def __init__(self, cfg: dict):
         self.cfg = cfg
         self.model = None
+        self.device = None
+
+    def _ckpt_path(self) -> Path:
+        raw = (self.cfg.get("dewarp", {}) or {}).get("uvdoc_ckpt", DEFAULT_UVDOC_CKPT)
+        p = Path(raw)
+        return p if p.is_absolute() else REPO_ROOT / p
 
     def load(self) -> None:
-        raise NotImplementedError(
-            "UVDoc not wired yet (task #3: vendor model + checkpoint, verify "
-            "full-res grid remap). Use --method classical or auto."
-        )
+        import torch  # local import: the classical arm must not need torch
+
+        from pipeline.uvdoc_model import load_model
+
+        ckpt = self._ckpt_path()
+        if not ckpt.exists():
+            raise FileNotFoundError(
+                f"UVDoc checkpoint missing: {ckpt}. Download best_model.pkl "
+                f"(~32 MB) from github.com/tanguymagne/UVDoc into models/uvdoc/."
+            )
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = load_model(str(ckpt)).to(self.device).eval()
 
     def dewarp(self, bgr: np.ndarray) -> tuple[np.ndarray, PageDewarp]:
-        raise NotImplementedError
+        import torch
+
+        from pipeline.uvdoc_model import IMG_SIZE, bilinear_unwarping
+
+        rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
+        size = (bgr.shape[1], bgr.shape[0])  # (w, h)
+        inp = torch.from_numpy(
+            cv2.resize(rgb, tuple(IMG_SIZE)).transpose(2, 0, 1)
+        ).unsqueeze(0).float().to(self.device)
+        full = torch.from_numpy(rgb.transpose(2, 0, 1)).unsqueeze(0).float().to(self.device)
+        with torch.no_grad():
+            grid2d, _ = self.model(inp)
+            out = bilinear_unwarping(full, grid2d[0:1], img_size=size)
+        arr = (out[0].cpu().numpy().transpose(1, 2, 0).clip(0, 1) * 255).astype(np.uint8)
+        out_bgr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+        pd = PageDewarp(
+            name="", method="uvdoc", applied=True,
+            note=(f"UVDoc grid unwarp on {self.device}; grid predicted at "
+                  f"{IMG_SIZE[0]}x{IMG_SIZE[1]}, grid_sample on full-res page"),
+        )
+        return out_bgr, pd
 
     def close(self) -> None:
-        self.model = None
+        if self.model is not None:
+            self.model = None
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            except Exception:
+                pass
 
-    def __enter__(self) -> "UVDocDewarper":
-        self.load()
-        return self
 
-    def __exit__(self, *exc) -> None:
-        self.close()
+def make_dewarper(method: str, cfg: dict, warnings: list[str]) -> UVDocDewarper | None:
+    """Load UVDoc ONCE for the run if ``method`` wants it; return the loaded
+    dewarper, or None to signal the classical arm (either method=='classical' or
+    UVDoc was unavailable and we fell back)."""
+    if method == "classical":
+        return None
+    uv = UVDocDewarper(cfg)
+    try:
+        uv.load()
+        return uv
+    except UVDOC_FALLBACK_ERRORS as e:
+        msg = f"UVDoc unavailable ({type(e).__name__}: {e}); using classical."
+        # An explicit --method uvdoc that can't load is worth shouting about;
+        # 'auto' falling back is expected. Either way keep producing an artifact.
+        warnings.append(msg if method == "uvdoc"
+                        else "UVDoc unavailable; used classical (auto).")
+        return None
 
 
 # --------------------------------------------------------------------------
@@ -356,23 +420,18 @@ class UVDocDewarper:
 
 
 def dewarp_page(bgr: np.ndarray, method: str, cfg: dict, p: dict,
-                warnings: list[str]) -> tuple[np.ndarray, PageDewarp, list]:
-    """Dewarp one page by ``method`` (auto|uvdoc|classical), falling back to
-    classical if UVDoc is requested but unavailable. Returns (out, PageDewarp,
-    baselines_for_debug)."""
-    if method in ("uvdoc", "auto"):
+                warnings: list[str], uv: UVDocDewarper | None = None
+                ) -> tuple[np.ndarray, PageDewarp, list]:
+    """Dewarp one page. If a loaded ``uv`` dewarper is passed, use it (per-page
+    UVDoc errors still fall back to classical for that page); otherwise classical.
+    Returns (out, PageDewarp, baselines_for_debug)."""
+    if uv is not None:
         try:
-            with UVDocDewarper(cfg) as uv:
-                out, pd = uv.dewarp(bgr)
+            out, pd = uv.dewarp(bgr)
             return out, pd, []
-        except NotImplementedError as e:
-            if method == "uvdoc":
-                # Explicit request we can't honor — surface loudly, still fall
-                # back so the pipeline keeps producing an artifact.
-                warnings.append(f"UVDoc requested but unavailable ({e}); "
-                                f"fell back to classical.")
-            else:
-                warnings.append("UVDoc not wired; used classical (auto).")
+        except UVDOC_FALLBACK_ERRORS as e:
+            warnings.append(f"UVDoc failed on a page ({type(e).__name__}: {e}); "
+                            f"classical for this page.")
     return dewarp_classical(bgr, p)
 
 
@@ -453,20 +512,26 @@ def run(page_dir: Path, cfg: dict, method: str = "auto", debug: bool = False
 
     results: list[PageDewarp] = []
     panels: list[np.ndarray] = []
+    # Load UVDoc ONCE for the whole spread (both half-pages), release after.
+    uv = make_dewarper(method, cfg, warnings)
     t_dew = time.perf_counter()
     for page in pages:
         name = page["name"]
         src = split_dir / name
         img = cv2.imread(str(src), cv2.IMREAD_COLOR)
         if img is None:
+            if uv is not None:
+                uv.close()
             raise RuntimeError(f"unreadable subpage image: {src}")
-        out, pd, baselines = dewarp_page(img, method, cfg, p, warnings)
+        out, pd, baselines = dewarp_page(img, method, cfg, p, warnings, uv)
         pd.name = name
         cv2.imwrite(str(out_dir / name), out)
         results.append(pd)
         panels.append(_page_panel(img, out, pd, baselines))
         if not pd.applied:
             warnings.append(f"{name}: {pd.note}")
+    if uv is not None:
+        uv.close()   # release VRAM before the CLI exits (CLAUDE.md)
     dew_ms = (time.perf_counter() - t_dew) * 1000.0
 
     result = DewarpResult(engine=method, pages=results)
@@ -483,10 +548,10 @@ def run(page_dir: Path, cfg: dict, method: str = "auto", debug: bool = False
         params={k: p[k] for k in DEFAULTS},
         timings_ms={"dewarp": round(dew_ms, 1), "total": round(total_ms, 1)},
         warnings=warnings + [
-            "v0.1: UVDoc arm not wired (task #3) — classical text-line "
-            "rectification only. Corrects vertical curl; horizontal "
-            "foreshortening near the gutter is left. Identity emitted (flagged) "
-            "on flat/low-text pages.",
+            "v0.2: UVDoc (default) + classical no-torch fallback. Classical "
+            "corrects vertical curl only (horizontal foreshortening left) and "
+            "emits a flagged identity on flat/low-text pages; UVDoc does full "
+            "geometric rectification.",
             "FIGURE PAGES: a full-page warp (classical OR UVDoc) bends figures "
             "as well as text. Since CLAUDE.md crops figures from THIS dewarped "
             "image, a warp fit to body-text baselines can distort coin/photo "

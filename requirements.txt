@@ -17,6 +17,12 @@ jiwer>=3.0            # WER alignment ops (alternative to rapidfuzz editops)
 matplotlib>=3.8       # confidence histograms / debug plots
 numpy>=1.26
 
+# --- Stage 03 dewarp: UVDoc neural unwarper (GPU) ---
+# On Blackwell (RTX 50xx) install the CUDA build explicitly, e.g.:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+torch>=2.6             # weights_only=True default is relied on for the checkpoint
+torchvision>=0.21
+
 # --- Second-opinion OCR (Bulgarian) ---
 easyocr>=1.7
 

@@ -348,5 +348,5 @@ Findings (per-image; the mean is carried by one image so read the rows, not the 
 - **Caveat WER cannot see:** UVDoc still WARPS the figures (it bends them to flatten the page). WER improved because TEXT improved; it does not certify figure-crop fidelity. For a photo of a curved page a coherent flattening is plausibly correct for the coins too, but that needs visual QA / Stage-04 region handling to confirm — it is not measurable here.
 - **Split alone** already beats the Gate-1 whole-spread baseline (mean WER 44.6%->20.9%; en_coins 83.1%->21.7% — facing-page de-interleaving); UVDoc adds a further large gain on top.
 
-> UVDoc is the config default (`models.dewarp: uvdoc`); the classical arm remains the no-torch fallback. Full-res is preserved: the grid is predicted at 488x712 but grid_sample runs on the full-resolution page (Stage 06 patch crops come from this output).
+> Same N=3 humility as the classical run: 3 GT spreads, mean still carried by bg_02 — read the rows. UVDoc is the config default and wins on this evidence; revisit as the GT set grows. Full-res is preserved: the grid is predicted at 488x712 but grid_sample runs on the full-resolution page (Stage 06 patch crops come from this output).
 

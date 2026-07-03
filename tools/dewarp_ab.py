@@ -69,6 +69,10 @@ def ocr_text(binary: str, cfg: dict, bgr: np.ndarray, lang: str) -> str:
     gray = to_gray(bgr)
     # Probe pass to decide upscale (median text height < 20px -> 2x), exactly as
     # the Gate 1 harness does, so absolute numbers stay comparable to Gate 1.
+    # CONFOUND (moot on this testset, medh~53 >> 20 so every arm lands on 1x): on
+    # a small-text set dewarp could nudge the probe so two arms OCR at different
+    # scales, and the A/B delta would no longer isolate geometry alone. Revisit
+    # (fix the scale across arms) if a small-text spread is ever added.
     probe = M.parse_tsv(run_tesseract(binary, gray, lang, tessdata, oem, psm))
     scale = 2.0 if 0 < median_word_height(probe) < 20 else 1.0
     words = M.parse_tsv(run_tesseract(binary, upscale(gray, scale), lang,
@@ -99,12 +103,16 @@ def dewarp_halves(halves: list[tuple[str, np.ndarray]], cfg: dict, method: str
     warns: list[str] = []
     uv = S3.make_dewarper(method, cfg, warns)
     out = []
-    for name, img in halves:
-        o, pd, _ = S3.dewarp_page(img, method, cfg, p, warns, uv)
-        pd.name = name
-        out.append((name, o, pd))
-    if uv is not None:
-        uv.close()
+    try:
+        for name, img in halves:
+            o, pd, _ = S3.dewarp_page(img, method, cfg, p, warns, uv)
+            pd.name = name
+            out.append((name, o, pd))
+    finally:
+        # finally, not happy-path: this tool loads UVDoc once PER image, so a
+        # mid-loop error must not leak the model for the rest of the run.
+        if uv is not None:
+            uv.close()
     return out
 
 
@@ -287,10 +295,11 @@ def build_report(results: list[ABResult], tver: str, run_date: str, method: str
         "- **Split alone** already beats the Gate-1 whole-spread baseline (mean WER "
         "44.6%->20.9%; en_coins 83.1%->21.7% — facing-page de-interleaving); UVDoc "
         "adds a further large gain on top.\n"
-        "\n> UVDoc is the config default (`models.dewarp: uvdoc`); the classical "
-        "arm remains the no-torch fallback. Full-res is preserved: the grid is "
-        "predicted at 488x712 but grid_sample runs on the full-resolution page "
-        "(Stage 06 patch crops come from this output).\n")
+        "\n> Same N=3 humility as the classical run: 3 GT spreads, mean still "
+        "carried by bg_02 — read the rows. UVDoc is the config default and wins on "
+        "this evidence; revisit as the GT set grows. Full-res is preserved: the "
+        "grid is predicted at 488x712 but grid_sample runs on the full-resolution "
+        "page (Stage 06 patch crops come from this output).\n")
 
     lines.append(uvdoc_findings if method == "uvdoc" else classical_findings)
     return "\n".join(lines) + "\n"

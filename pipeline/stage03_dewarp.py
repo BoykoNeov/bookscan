@@ -512,26 +512,28 @@ def run(page_dir: Path, cfg: dict, method: str = "auto", debug: bool = False
 
     results: list[PageDewarp] = []
     panels: list[np.ndarray] = []
-    # Load UVDoc ONCE for the whole spread (both half-pages), release after.
+    # Load UVDoc ONCE for the whole spread (both half-pages); release in finally
+    # so VRAM is freed even if a page errors (CLAUDE.md release-on-exit — matters
+    # for long-lived callers like the eventual server, not just the CLI).
     uv = make_dewarper(method, cfg, warnings)
     t_dew = time.perf_counter()
-    for page in pages:
-        name = page["name"]
-        src = split_dir / name
-        img = cv2.imread(str(src), cv2.IMREAD_COLOR)
-        if img is None:
-            if uv is not None:
-                uv.close()
-            raise RuntimeError(f"unreadable subpage image: {src}")
-        out, pd, baselines = dewarp_page(img, method, cfg, p, warnings, uv)
-        pd.name = name
-        cv2.imwrite(str(out_dir / name), out)
-        results.append(pd)
-        panels.append(_page_panel(img, out, pd, baselines))
-        if not pd.applied:
-            warnings.append(f"{name}: {pd.note}")
-    if uv is not None:
-        uv.close()   # release VRAM before the CLI exits (CLAUDE.md)
+    try:
+        for page in pages:
+            name = page["name"]
+            src = split_dir / name
+            img = cv2.imread(str(src), cv2.IMREAD_COLOR)
+            if img is None:
+                raise RuntimeError(f"unreadable subpage image: {src}")
+            out, pd, baselines = dewarp_page(img, method, cfg, p, warnings, uv)
+            pd.name = name
+            cv2.imwrite(str(out_dir / name), out)
+            results.append(pd)
+            panels.append(_page_panel(img, out, pd, baselines))
+            if not pd.applied:
+                warnings.append(f"{name}: {pd.note}")
+    finally:
+        if uv is not None:
+            uv.close()
     dew_ms = (time.perf_counter() - t_dew) * 1000.0
 
     result = DewarpResult(engine=method, pages=results)

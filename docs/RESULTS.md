@@ -149,3 +149,53 @@ AUROC (multiset / bag alignment) would let English and Italian contribute a
 fair confidence number even on scrambled spreads. That is a deliberate metric
 change with unit tests — file it separately, matching the existing
 report-with-caveat philosophy.
+
+---
+
+## Stage 02 (gutter split) — 2026-07-03, before/after WER
+
+First pipeline stage. Splits a two-page spread into `left.png` / `right.png` at
+the central gutter (low-ink valley in the middle 30–70% band; cut biased into
+the whitespace with a small overlap so no text is lost). Directly attacks the
+Gate 1 finding — **reading-order scramble on complex layouts**.
+
+Method: OCR the whole normalized landscape spread (baseline) vs OCR `left.png`
+then `right.png` concatenated left-then-right (split). Same orientation for
+both — the only difference is the split. Raw Tesseract (`preprocessing=none`),
+same binary/tessdata as the Gate 1 harness.
+
+| spread (GT) | lang | base WER | split WER | base CER | split CER |
+|---|---|---|---|---|---|
+| en_coins_01 (EN figures) | eng | 54.9% | **23.9%** | 45.0% | **15.9%** |
+| bg_01 (clean order, guardrail) | bul | 12.5% | **9.4%** | 8.2% | **5.9%** |
+| bg_02 (BG dense) | bul | 35.5% | **27.0%** | 25.8% | **21.9%** |
+
+- **Split reduces WER on all three GT spreads.** Biggest win on the English
+  figure spread (−31 WER pts): its figure-caption sidebars made raw Tesseract
+  read across the gutter; splitting removes the cross-gutter scramble.
+- **`bg_01` guardrail did not regress — it improved** (12.5→9.4). It already
+  read in correct order as a spread, so a bad cut could only have hurt it.
+- Residual en_coins_01 WER (23.9%) is intra-page sidebar order — **Stage 04**
+  (layout + reading order)'s job, not split's.
+- **`en_coins_03`** (no GT, the facing-page interleaver): after split the left
+  half OCRs as "Chopmarked Coins … Hawai'i", the right as "… Honduras" — the
+  line-by-line interleave of the two facing pages is gone.
+
+Detector: all 9 testset spreads split with the cut landing in the central
+whitespace; confidence ratio (valley/page-ink) 0.11–0.47, threshold 0.55.
+Overlays in `jobs/<id>/debug/02_split.png`. Unit tests:
+`pipeline/tests/test_stage02_split.py` (synthetic spread + single-page).
+
+### Follow-ups (own commits)
+
+- **Stage 00 EXIF normalization + shared ingest helper.** The testset JPEGs
+  carry EXIF orientation=6; `cv2.imread` (OpenCV 5.0) auto-applies it and hands
+  Tesseract a *sideways* buffer, while Stage 02 reads `IMREAD_IGNORE_ORIENTATION`
+  (readable landscape). Tesseract auto-orients internally, so Gate 1 WER numbers
+  are unaffected — but once Stage 00 normalizes, the harness (raw `cv2.imread`)
+  and the pipeline will feed differently-oriented images, so word boxes/layout
+  diverge even at equal WER. Fix: one shared ingest/normalize helper both call;
+  general orientation (180°, single-page portrait) needs Tesseract OSD.
+- **Single-page discrimination is unvalidated** — the testset has no single-page
+  capture, so the `valley_ratio` single/split boundary is only checked on
+  synthetic data. Append a single-page test image.

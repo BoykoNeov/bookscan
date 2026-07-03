@@ -518,3 +518,36 @@ mispairs, pinned above) and it does NOT prove the DETECTOR keeps ≥2 real figur
 their captions separate on a photographed page. Both — a convention-aware rule and
 detector-on-real grouping — still need the owner's real ≥2-figure fixture. B7
 caption TYPE (item 2) remains account-for/Gate-4.
+
+## Gate 3 block-order eval — 2026-07-03, tesseract 5.4.0.20240606, image=it_geo_06
+
+Stage 04 block structure graded DIRECTLY against the per-subpage block-order GT (`gt/it_geo_06.blocks.json`): segmentation, type, caption<->figure grouping, and linear order. Owner priority: segmentation/type/grouping OUTRANK exact order (tau is secondary). Split+dewarp = UVDoc auto (Gate-2 path). N=1 spread — read the rows.
+
+| subpage | seg recall | type acc | tau (Stage04) | tau (Tess-native) | grouping | det blocks | misses |
+|---|---|---|---|---|---|---|---|
+| left.png | 7/8 (88%) | 3/7 (43%) | +0.14 | +1.00 (n=4) | C25->F25:assoc/type!; C26->F26:MISS/type!; C27->F27:MISS/type!; C28->F28:MISS/type! | 9 | F26 |
+| right.png | 5/6 (83%) | 3/5 (60%) | +1.00 | +1.00 (n=4) | C29->F29:assoc/type!/1fig; C30->F30:MISS/type!/1fig | 8 | F30 |
+
+**Segmentation** 12/14 GT blocks matched. **Type** 6/12 matched blocks correctly typed. **Grouping** 2/6 captions associate to their partner figure (0/6 also typed 'caption'); but only 1/6 on a subpage with >=2 figures (the rest are single-figure: association POSSIBLE, not discriminated).
+
+**What it_geo_06 proves — grouping headline now DISCRIMINATED on a real page (the
+owed fixture), and it measures a real DETECTOR gap.** This is the first fixture
+with **≥2 figures sharing one column** (LEFT: 4 figs + a 4-caption stack; RIGHT:
+2 figs + 2 caps), so a caption's nearest figure *can* be wrong — grouping is
+genuinely discriminated, not merely "possible" as on single-figure it_geo_04.
+Result on the current DocLayout-YOLO detector: **grouping fails, and the failure
+is upstream of the edge-gap pairing rule** — (1) contiguous stacked figures MERGE
+(LEFT cliffs F25/F27/F28 → one block; RIGHT F29+F30 → one block), cascading the
+figure rank-match so F26/F30 go unmatched; (2) **every caption is typed
+`paragraph`, not `caption` (0/6)** — the same tall-gutter-column miss class as B7.
+So the blocker for real-page grouping is **figure under-segmentation + caption
+mistyping**, not the geometric pairing rule. The fixture also encodes the
+**number-keyed-pairing trap**: C26 (2nd in the stack) sits nearest the LEFT cliff
+column but belongs to the top-right F26 — nearest-figure geometry *must* mispair
+it, proving Gate-4 caption pairing has to be **textual** (read "Figura NN"), the
+deferred convention-aware rule. tau is high where segmentation survives (+1.00 on
+RIGHT, +1.00 Tess-native both) and drops on LEFT (+0.14) purely from the merge
+scrambling figure ranks — order is secondary here per owner priority. Net:
+retires "grouping discrimination UNPROVEN on a real page" → now PROVEN that it
+fails, with the cause localized to the detector; motivates the Gate-4 "Figura NN"
+parser (types + pairs by number in one step).

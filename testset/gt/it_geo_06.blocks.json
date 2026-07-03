@@ -1,0 +1,83 @@
+{
+  "image_id": "it_geo_06",
+  "gt_type": "block_reading_order",
+  "schema_version": 1,
+  "book": "Il Veneto tra Giurassico e Cretaceo (ch.7; same book/series as it_geo_01..04)",
+  "pages": "188-189",
+  "language": "italian",
+  "validated_by": "repo owner (segmentation + type + caption/figure grouping hand-confirmed against the photo 2026-07-03; per-subpage reading_order = spatial column-major, owner-delegated to author, order is SECONDARY here)",
+  "grading": {
+    "unit": "per subpage",
+    "why": "Stage 02 gutter-splits the spread into left.png (p.188) + right.png (p.189); Stage 04 computes reading_order per subpage independently.",
+    "anchor_match": "Match each GT anchor to a detected block by text overlap ANYWHERE in the block, not by exact prefix. OCR garbles this sofa-captured page.",
+    "primary_invariants": "Per the owner, the load-bearing assertions are (1) correct segmentation into these blocks, (2) correct type per block, (3) each caption attached to its figure BY FIGURE NUMBER (C25->F25, C26->F26, C27->F27, C28->F28, C29->F29, C30->F30). Exact linear reading order is SECONDARY. Weight the metric accordingly.",
+    "caption_figure_pairs": [
+      {"caption": "C25", "figure": "F25", "subpage": "left",  "note": "Fig. 25 cliff (top-left, corner label 25) + its caption."},
+      {"caption": "C26", "figure": "F26", "subpage": "left",  "note": "Fig. 26 fossils PLATE (top-RIGHT) + its caption. HARD: C26 is 2nd in the caption stack and sits geometrically nearest the LEFT cliff column, but its true partner is the top-right F26 -> nearest-figure geometry MUST mispair it; correct pairing requires reading 'Figura 26'."},
+      {"caption": "C27", "figure": "F27", "subpage": "left",  "note": "Fig. 27 cliff (mid-left, corner label 27) + its caption."},
+      {"caption": "C28", "figure": "F28", "subpage": "left",  "note": "Fig. 28 cliff (bottom-left, corner label 28) + its caption."},
+      {"caption": "C29", "figure": "F29", "subpage": "right", "note": "Fig. 29 landscape (top) + its 'Sopra' caption."},
+      {"caption": "C30", "figure": "F30", "subpage": "right", "note": "Fig. 30 rocky close-up (overlaps the body column) + its 'A lato' caption."}
+    ],
+    "known_detector_gap": "On the current DocLayout-YOLO detector: (left) the 3 contiguous cliff photos F25/F27/F28 MERGE into one figure block (+ a duplicate), so only F26 is separable; (right) F29+F30 MERGE into one figure block. Captions C25..C28, C29..C30 are typed 'paragraph' not 'caption'. So segmentation recall + grouping discrimination will score LOW on this fixture with the present detector -- that is the intended finding (this fixture measures the gap; it does not assume the detector already passes). See docs/RESULTS.md / gate3-progress memory (2026-07-03 probe)."
+  },
+  "subpages": {
+    "left": {
+      "page_number": 188,
+      "stripped": [
+        {"type": "page_number", "anchor": "188"},
+        {"type": "header", "anchor": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana"}
+      ],
+      "reading_order": [
+        {"order": 0, "id": "F25", "type": "figure",  "anchor": null,
+         "desc": "Fig. 25 cliff photo, TOP-LEFT of the figure column (in-photo corner label '25'). Caption is C25."},
+        {"order": 1, "id": "F27", "type": "figure",  "anchor": null,
+         "desc": "Fig. 27 cliff photo, MIDDLE-LEFT (corner label '27'). Caption is C27. Physically contiguous with F25/F28 -> the detector merges all three."},
+        {"order": 2, "id": "F28", "type": "figure",  "anchor": null,
+         "desc": "Fig. 28 cliff photo, BOTTOM-LEFT (corner label '28'). Caption is C28."},
+        {"order": 3, "id": "F26", "type": "figure",  "anchor": null,
+         "desc": "Fig. 26 fossils PLATE, TOP-RIGHT (above the caption stack; corner label '26'). Its caption C26 is the 2nd in the stack. This is the number-keyed-grouping trap."},
+        {"order": 4, "id": "C25", "type": "caption", "anchor": "In questa pagina: Figura 25 La Maiolica, affiorante lungo il Lago del Corlo",
+         "desc": "Caption for F25. Gutter-side column, top; ends 'Foto di T. Abba'."},
+        {"order": 5, "id": "C26", "type": "caption", "anchor": "Figura 26 Fossili della Maiolica rinvenuti sul Monte Grappa Essi sono due brachiopodi",
+         "desc": "Caption for F26 (top-right fossils). Long, lists ammonites a)..g); ends 'Foto di D. Giordano'."},
+        {"order": 6, "id": "C27", "type": "caption", "anchor": "Figura 27 Il Calcare di Soccher, affiorante nella localita Pieve di Castellavazzo, presso Longarone",
+         "desc": "Caption for F27; ends 'Foto di M. Ghion'."},
+        {"order": 7, "id": "C28", "type": "caption", "anchor": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella localita di Cornolade",
+         "desc": "Caption for F28; mentions Maiolica (MAI); ends 'Foto di M. Ghion'."}
+      ]
+    },
+    "right": {
+      "page_number": 189,
+      "stripped": [
+        {"type": "header", "anchor": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana"},
+        {"type": "page_number", "anchor": "189"}
+      ],
+      "reading_order": [
+        {"order": 0, "id": "F29", "type": "figure",    "anchor": null,
+         "desc": "Fig. 29 mountain-landscape photo, top of the subpage. Caption C29."},
+        {"order": 1, "id": "C29", "type": "caption",   "anchor": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Maiolica",
+         "desc": "Caption for F29. Gutter-side column, upper; ends 'Foto di T. Abba'."},
+        {"order": 2, "id": "F30", "type": "figure",    "anchor": null,
+         "desc": "Fig. 30 rocky detrito close-up. OVERLAPS the body text column (the 'image overlapping the column' case). Caption C30. Detector merges F29+F30."},
+        {"order": 3, "id": "C30", "type": "caption",   "anchor": "A lato: Figura 30 La Maiolica e una roccia geliva che tipicamente si sgretola",
+         "desc": "Caption for F30. Gutter-side column, lower; ends 'Foto di T. Abba'."},
+        {"order": 4, "id": "P1",  "type": "paragraph", "anchor": "sfrangiavano interdigitandosi con i depositi bacinali. Ad esempio, il Calcare del Fadalto ha uno spessore",
+         "desc": "Body prose, LEFT of the two bottom columns. Continues into P2."},
+        {"order": 5, "id": "P2",  "type": "paragraph", "anchor": "arriva al Santoniano, nel Cretaceo superiore (85 milioni di anni fa)",
+         "desc": "Body prose, RIGHT bottom column; continues P1 (one flow, verified by text-join across the column break)."}
+      ]
+    }
+  },
+  "document_order_gate4": {
+    "order": ["F25", "C25", "F26", "C26", "F27", "C27", "F28", "C28", "F29", "C29", "F30", "C30", "P1", "P2"],
+    "note": "Owner-validated whole-document linear order for Gate-4 reflow: each figure floated with its caption (paired BY FIGURE NUMBER), then the continuous prose P1->P2. This is the reflow target, NOT the per-subpage XY-Cut target above. Interleaving figure+caption across the two physical columns by caption number is Gate-4's job (the deferred 'Figura NN' parser), not XY-Cut's -- so the per-subpage reading_order stays spatial column-major and is graded as such."
+  },
+  "notes": [
+    "GROUPING FIXTURE: this is the owed '>=2 figures sharing one column' page (Gate-3 grouping headline). LEFT subpage has 4 figures (3 in the left cliff column + 1 fossils plate top-right) and a 4-caption stack; RIGHT has 2 figures + 2 captions. Unlike the single-figure it_geo_04 subpages, a caption's nearest figure CAN be wrong here -> grouping is genuinely DISCRIMINATED, not merely possible.",
+    "NUMBER-KEYED PAIRING is the key lesson: the caption stack order (25,26,27,28) does NOT track figure spatial position (F26 is top-right, not 2nd-down-the-left). Geometry-only pairing mispairs C26; correct grouping must read the printed 'Figura NN'. This is why the Gate-4 caption pairing must be textual, not purely geometric (the deferred convention-aware rule).",
+    "EMBEDDED numbers: figures carry in-photo corner labels 25/26/27/28/29/30 (bottom-right of each photo). These do OCR and could leak as stray words; route/ignore as figure-internal, like it_geo_04's geo labels.",
+    "GT COVERS block segmentation + type + caption/figure grouping + per-subpage reading order ONLY. NOT verbatim text; no WER ground truth (deliberate).",
+    "Reading_order is SECONDARY per the owner (grouping + type outrank it). LEFT = spatial column-major (left cliff column top->bottom, then right column F26 + caption stack). RIGHT = figure/caption top->bottom then 2-col prose."
+  ]
+}

@@ -408,7 +408,7 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
     L.append(f"\n## Gate 3 block-order eval — {run_date}, tesseract {tver}, "
              f"image={grade.image_id}\n")
     L.append("Stage 04 block structure graded DIRECTLY against the per-subpage "
-             "block-order GT (`gt/it_geo_04.blocks.json`): segmentation, type, "
+             f"block-order GT (`gt/{grade.image_id}.blocks.json`): segmentation, type, "
              "caption<->figure grouping, and linear order. Owner priority: "
              "segmentation/type/grouping OUTRANK exact order (tau is secondary). "
              "Split+dewarp = UVDoc auto (Gate-2 path). N=1 spread — read the rows.\n")

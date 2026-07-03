@@ -20,9 +20,12 @@ anchor.
   WER is deliberately NOT used for it (WER on figure-sidebar spreads conflates
   layout scramble with recognition). Graded **per subpage** (Stage 02 splits
   the spread first) by matching each anchor to a detected block via text
-  overlap. First fixture: `it_geo_04` (owner-validated). Note: this UNBLOCKS
-  the reading-order proof; the sequence-order metric itself still has to be
-  written.
+  overlap. First fixture: `it_geo_04` (owner-validated, reading-order). Second:
+  `it_geo_06` (owner-validated, **grouping**) — the first page with **≥2 figures
+  sharing one column** (LEFT subpage: 4 figures + a 4-caption stack), so
+  caption↔figure grouping is genuinely *discriminated*, and it exposes the
+  detector's figure-merge + caption-mistyping gap. Graded by
+  `tools/layout_order_eval.py` (the sequence-order + grouping metric).
 
 ## Composition
 
@@ -36,7 +39,7 @@ spread, before split/dewarp).
 |---------------|----------------------------------------------------|-----------|--------------|
 | `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01` |
 | `bg_*`        | Bulgarian (Cyrillic) history: clean single-column  | 3 spreads | `01`, `02`   |
-| `it_geo_*`    | Italian (Dolomites geology): main col + figure sidebars | 4 spreads | `04` (block-order) |
+| `it_geo_*`    | Italian (Dolomites/Veneto geology): main col + figure sidebars | 5 spreads | `04`, `06` (block-order) |
 
 Ground truth is present for **6 pages** (2 English + 4 Bulgarian, all with
 footnotes) — clears the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar.

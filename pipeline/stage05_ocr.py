@@ -34,9 +34,11 @@ metadata, and Stage 04 already set the reach-back precedent):
   * Never modifies earlier artifacts; re-running overwrites only ``05_ocr/``.
 
 OCR path — the PROVEN probe-upscale path from Gate 1 / ``tools/layout_ab.py``,
-reused verbatim so Stage 05's word boxes + confidences are byte-identical to the
-Gate 3 A/B measurement (no recognition drift between what we measured and what we
-ship): OCR the whole subpage once at 1x to measure median word height; if it is
+reused so Stage 05 runs the SAME OCR path + params (oem/psm, probe threshold,
+INTER_CUBIC upscale) as the Gate 3 A/B measurement — the words we ship track the
+words we measured (Stage 05 reads Stage 03's persisted dewarp PNGs while the A/B
+dewarps in-memory, so this is same-path, not bit-for-bit verified): OCR the whole
+subpage once at 1x to measure median word height; if it is
 under 20px, re-OCR at 2x (INTER_CUBIC) and map word boxes back to 1x. Word boxes
 are stored in FULL-RES 1x dewarp coordinates — the same space as the Stage 04
 blocks AND the space Stage 06 patch-mode crops from (CLAUDE.md: crop from the
@@ -65,18 +67,19 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+from pydantic import BaseModel, Field
 
 from pipeline.page_model import BBox, Block, BlockType, StageMeta, Word
 from pipeline import stage04_layout as S4
 
 # Pure, IO-free metrics + the Tesseract IO harness. Neither imports ``pipeline``,
 # so there is no cycle and ``tools.gate1_harness`` stays independently runnable
-# (CLAUDE.md). Reusing them (rather than re-implementing) keeps Stage 05's OCR
-# byte-identical to the Gate 1 / Gate 3 A/B path — same oem/psm, same probe
-# threshold, same INTER_CUBIC upscale — so shipped words match measured words.
+# (CLAUDE.md). Reusing them (rather than re-implementing) keeps Stage 05's OCR on
+# the same path as the Gate 1 / Gate 3 A/B — same oem/psm, same probe threshold,
+# same INTER_CUBIC upscale — so shipped words track the measured words.
 from tools import ocr_metrics as M
 from tools.gate1_harness import (
-    LANG_CODES, band_color, find_tesseract, lang_code, median_word_height,
+    band_color, find_tesseract, lang_code, median_word_height,
     resolve_tessdata_dir, run_tesseract, tesseract_version, to_gray, upscale,
 )
 
@@ -95,9 +98,6 @@ UPSCALE_FACTOR = 2.0
 # --------------------------------------------------------------------------
 # Output schema (stage-local wrapper; the blocks/words are page_model types)
 # --------------------------------------------------------------------------
-
-
-from pydantic import BaseModel, Field
 
 
 class OCRPage(BaseModel):
@@ -402,6 +402,7 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
         stage=STAGE, version=VERSION,
         params={
             "language": lang_code_used,
+            "tesseract_version": tesseract_version(binary),
             "oem": int(tcfg.get("oem", 1)),
             "psm": int(tcfg.get("psm", 3)),
             "upscale_median_px": UPSCALE_MEDIAN_PX,
@@ -413,8 +414,11 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
         warnings=warnings + [
             "v0.1: Tesseract 5 backbone (TSV word rows). Word boxes stored in 1x "
             "full-res dewarp coords (== Stage 04 block coords == Stage 06 patch "
-            "crop coords). Probe-upscale path identical to the Gate 3 A/B, so "
-            "shipped words match measured words.",
+            "crop coords). Same OCR path + params as the Gate 3 A/B "
+            "(probe-upscale, oem/psm) so shipped words track the measured words. "
+            "The 2x-upscale coord map-back is unit-tested; both GT-set pages ran "
+            "at scale=1 (word height >= 20px), so it is not yet exercised on real "
+            "small-text pixels.",
             "RAW confidence only — adaptive thresholds + keep/flag/patch are "
             "Stage 06 (Word.decision is None here). Orphan words (outside every "
             "Stage 04 block) are kept in synthetic OTHER blocks slotted by XY-Cut; "

@@ -204,3 +204,110 @@ Overlays in `jobs/<id>/debug/02_split.png`. Unit tests:
   unequal-width spread could put the true gutter outside the window, and the
   detector would then pick a wrong in-window minimum with a confident-looking
   ratio. Widen/adapt the window (or key off dewarp) when such a capture exists.
+
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=none
+
+| language | images | WER | CER | conf AUROC | err-recall @10% flagged |
+|---|---|---|---|---|---|
+| bul | 3 | 25.4% | 18.9% | 0.796 | 45.3% |
+| eng | 3 | 83.1% | 65.4% | 0.692 | 14.5% |
+| ita | 3 | — | — | — | — |
+
+**By category:**
+
+| category | images | WER | CER | conf AUROC |
+|---|---|---|---|---|
+| clean | 3 | 25.4% | 18.9% | 0.796 |
+| figures | 6 | 83.1% | 65.4% | 0.692 |
+
+Verdict: FAIL — confidence does not separate errors (AUROC <0.80) and/or accuracy poor. Benchmark MinerU/Surya before building stages.
+
+> Caveat: confidence is labeled per raw Tesseract word (1:1 with the conf value), while WER uses hyphen-joined text. Line-end hyphenations (e.g. `encyclo-`+`pedia` vs GT `encyclopedia`) therefore count as two HIGH-confidence wrong tokens, which inflates WER and depresses AUROC on hyphen-heavy pages. A borderline MIXED verdict on real English pages may be this artifact rather than genuine OCR failure.
+
+
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=otsu
+
+| language | images | WER | CER | conf AUROC | err-recall @10% flagged |
+|---|---|---|---|---|---|
+| bul | 3 | 26.5% | 19.0% | 0.819 | 44.5% |
+| eng | 3 | 83.7% | 65.9% | 0.725 | 14.2% |
+| ita | 3 | — | — | — | — |
+
+**By category:**
+
+| category | images | WER | CER | conf AUROC |
+|---|---|---|---|---|
+| clean | 3 | 26.5% | 19.0% | 0.819 |
+| figures | 6 | 83.7% | 65.9% | 0.725 |
+
+Verdict: FAIL — confidence does not separate errors (AUROC <0.80) and/or accuracy poor. Benchmark MinerU/Surya before building stages.
+
+> Caveat: confidence is labeled per raw Tesseract word (1:1 with the conf value), while WER uses hyphen-joined text. Line-end hyphenations (e.g. `encyclo-`+`pedia` vs GT `encyclopedia`) therefore count as two HIGH-confidence wrong tokens, which inflates WER and depresses AUROC on hyphen-heavy pages. A borderline MIXED verdict on real English pages may be this artifact rather than genuine OCR failure.
+
+
+## Gate 1 run — 2026-07-03, tesseract 5.4.0.20240606, preprocessing=adaptive
+
+| language | images | WER | CER | conf AUROC | err-recall @10% flagged |
+|---|---|---|---|---|---|
+| bul | 3 | 30.3% | 20.5% | 0.899 | 45.4% |
+| eng | 3 | 52.6% | 36.1% | 0.798 | 25.2% |
+| ita | 3 | — | — | — | — |
+
+**By category:**
+
+| category | images | WER | CER | conf AUROC |
+|---|---|---|---|---|
+| clean | 3 | 30.3% | 20.5% | 0.899 |
+| figures | 6 | 52.6% | 36.1% | 0.798 |
+
+Verdict: FAIL — confidence does not separate errors (AUROC <0.80) and/or accuracy poor. Benchmark MinerU/Surya before building stages.
+
+> Caveat: confidence is labeled per raw Tesseract word (1:1 with the conf value), while WER uses hyphen-joined text. Line-end hyphenations (e.g. `encyclo-`+`pedia` vs GT `encyclopedia`) therefore count as two HIGH-confidence wrong tokens, which inflates WER and depresses AUROC on hyphen-heavy pages. A borderline MIXED verdict on real English pages may be this artifact rather than genuine OCR failure.
+
+
+---
+
+## Gate 2 / Stage 00 — harness re-run through the shared orientation helper (2026-07-03)
+
+**What changed.** The three Gate 1 sections dated 2026-07-03 *immediately above*
+are a re-run of the harness after it was switched to load images through the new
+shared ingest helper (`tools/normalize.py`: PIL exif_transpose → Tesseract OSD →
+upright, EXIF stripped). The pipeline (Stage 00) and the harness now feed
+Tesseract **identically-oriented** pixels — closing the divergence flagged after
+Stage 02. These supersede the earlier same-dated `none/otsu/adaptive` sections
+(which fed Tesseract the testset's *misleading* EXIF orientation, i.e. a
+portrait-rotated spread).
+
+**Helper is verified correct.** For `en_coins_01`, the helper's output is
+**pixel-identical** to `cv2.IMREAD_IGNORE_ORIENTATION` (upright 4000×3000
+landscape), and OSD independently calls that buffer upright (rotate 0) while
+calling the EXIF-applied portrait buffer rotate 270. All 9 spreads normalize to
+upright landscape; one output was eyeballed as genuinely upright (not merely
+landscape-shaped).
+
+**The delta, reconciled (per-orientation `en_coins_01`, harness code held fixed):**
+
+| input orientation | none WER | none AUROC | adaptive WER | adaptive AUROC |
+|---|---|---|---|---|
+| portrait (old, EXIF applied) | 56.3% | 0.748 | 53.3% | 0.775 |
+| **upright landscape (new)**  | **83.1%** | 0.692 | **52.6%** | 0.798 |
+
+- **Bulgarian is stable** (clean single-column reading order → orientation-neutral):
+  `none` bul 25.0→25.4%, bg_01 12.7% (≈ prior 13.0%). No regression.
+- **The big English move is reading order, not recognition.** Under raw `none`,
+  the old portrait orientation *accidentally* stacked the two pages top/bottom,
+  which reads close to canonical order; upright-landscape places them side by
+  side and re-exposes the **cross-gutter scramble** — the exact Gate 1 finding,
+  and exactly what Stage 02 split fixes (Stage 02 drove `en_coins_01` 54.9→23.9%).
+- **Why `adaptive` barely moved (53.3→52.6) while `none` jumped:** `adaptive`'s
+  binarization + 2× upscale let Tesseract's layout analysis separate the two
+  pages regardless of orientation, so the scramble only bites the raw path.
+  Reassuringly, the **recommended preprocessing is orientation-invariant**, and
+  `adaptive` remains the best variant (bul AUROC 0.899, en_coins_01 AUROC 0.798).
+
+**Bottom line:** the upright-landscape baseline is the honest one and both callers
+now agree on it; the worse-looking raw-`none` English number is an accidental
+benefit removed, targeted by Stage 02. The auto-verdict FAIL is still the known
+English-only / order-sensitive artifact (see the Gate 1 interpretation above) —
+not actioned.
+

@@ -159,3 +159,49 @@ Findings (per-image; read the rows). Verdict: PASS / MIXED / NEUTRAL + interpret
 - Multi-column proof is the first follow-up when reading-order GT lands for a
   multi-column / `it_geo` sidebar page.
 ```
+
+## Known limitation — caption typing (B7), and the Gate-4 requirement it drives
+
+Diagnosed 2026-07-03 on `it_geo_04` (raw pre-NMS DocLayout-YOLO dets dumped per
+subpage; see the block-order eval below in `RESULTS.md`). The block-order eval
+scores type 7/8 — the one miss is **B7**, the Fig. 21 caption on the right
+subpage, typed `paragraph` instead of `caption`. Two captions on this spread,
+two *different* mechanisms — established by dumping the raw detections, not
+inferred from the routed block:
+
+- **B8 (left caption) is typed correctly but by a hair.** Its region is detected
+  as BOTH `figure_caption` (conf 0.49) AND `plain text` (conf 0.47) on the same
+  box; class-agnostic NMS keeps the caption only because it is the higher-conf of
+  the two — a **0.02 margin**. If the confidences were reversed the caption would
+  be lost. (Follow-up, not built speculatively: a **class-aware NMS tiebreak** —
+  a specific label such as `figure_caption`/`figure`/`table` should beat a
+  co-located generic `plain text`/`abandon` on overlap regardless of the 2nd-decimal
+  conf. This hardens B8; it does NOT help B7. Deferred because B8 currently passes
+  and the codebase adds refinements on pages the numbers *fail*, not near-misses —
+  but the exact conf evidence is recorded so a future page that flips it is a
+  one-line change. Non-regression bar for that change: `layout_order_eval` on
+  it_geo_04 + `layout_ab` on the 3 GT pages + the unit tests; en_coins_01 carries
+  the same dual-label per `nms_and_dedup`'s docstring and is the real risk.)
+
+- **B7 (right caption) is a genuine model MISS, no NMS lever.** Its region (the
+  tall narrow gutter-side column, w≈430 vs body columns ≈588) is detected ONLY as
+  `plain text` (conf 0.90). There is **no `figure_caption` box on right.png at any
+  confidence down to 0.10** — nothing was suppressed; the model reads it as body
+  text. The only Stage-04 lever would be a geometric `paragraph→caption` re-type,
+  which tuned on this one block is N=1 overfitting and is explicitly NOT done.
+
+**Consequence + the Gate-4 requirement.** The planned Gate-4 reflow floats a
+caption *with* its figure as a unit. If that float is keyed solely on the
+detector's `caption` type, B7 (typed `paragraph`) is not recognized as a caption,
+so the Fig. 21 panorama loses its caption at reconstruction — consequential, not
+cosmetic. Therefore **the Gate-4 caption↔figure float must NOT rely on the
+detector type alone.** It must also accept a *geometric* caption signal: a text
+block that is **narrow relative to the body columns and vertically adjacent to /
+directly under a figure** (optionally italic) is a caption candidate even if typed
+`paragraph`. Note "short block hugging a figure" is insufficient here — B7 is a
+*tall* 940px column; the discriminating signal is column **narrowness +
+figure-adjacency**, not shortness. The block-order eval's grouping check already
+associates B7→B6R correctly via nearest-figure geometry (it does not depend on the
+caption type), so the geometry needed for the Gate-4 float is proven present; only
+the type-keyed trigger is unsafe. This is the load-bearing takeaway from the
+`it_geo_04` type miss and aligns with the owner's "grouping > exact order" priority.

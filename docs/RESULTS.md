@@ -443,3 +443,33 @@ this spread, not prose-column linearization.
 > sharing one column (discriminate caption->figure pairing); (2) fix or account for
 > the B7 caption->paragraph type error. Reading-order correctness itself no longer
 > needs more GT at this altitude. See docs/GATE3_SPEC.md.
+
+
+## Gate 3 caption-typing diagnosis (B7) — 2026-07-03, DocLayout-YOLO raw dets on it_geo_04
+
+Owed item (2) above RESOLVED as **account-for, not code-fix** — by dumping the raw
+pre-NMS DocLayout-YOLO detections per subpage (not inferring from the routed
+block). The type miss (B7, Fig. 21 caption typed `paragraph`) is a **genuine model
+miss, not an NMS suppression bug**:
+
+- **B7 (right subpage):** its region (tall narrow gutter-side column,
+  x=203 y=1870 w=430 h=940, w≈430 vs body columns ≈588) is detected ONLY as
+  `plain text` conf **0.90**. **No `figure_caption` box appears on right.png at any
+  confidence down to 0.10** — nothing was suppressed. The only Stage-04 lever is a
+  geometric re-type, which at N=1 is overfitting → NOT done.
+- **B8 (left subpage), for contrast:** correctly typed, but its box carries BOTH
+  `figure_caption` 0.49 AND `plain text` 0.47; class-agnostic NMS keeps the caption
+  by a **0.02 conf margin**. A class-aware NMS tiebreak (specific label beats
+  co-located generic on overlap) would harden B8 — captured as a follow-up with the
+  conf evidence, NOT built (B8 passes today; refinements go on failing pages, and
+  en_coins_01 carries the same dual-label and is the regression risk).
+
+**Fix pushed to Gate 4 (documented in GATE3_SPEC.md "Known limitation"):** the
+Gate-4 caption↔figure float must NOT key solely on the detector `caption` type
+(else B7's panorama loses its caption at reflow). It must also accept a *geometric*
+caption signal — a text block **narrow relative to body columns and vertically
+adjacent to a figure** (B7 is *tall*, so narrowness+adjacency, not shortness, is the
+signal). The block-order eval already groups B7→B6R correctly by nearest-figure
+geometry (type-independent), so the needed geometry is proven present. No code
+change this pass; RESULTS + SPEC + memory updated. Grouping DISCRIMINATION (owed
+item 1) remains blocked on an owner-supplied ≥2-figure fixture.

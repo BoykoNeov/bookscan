@@ -275,7 +275,10 @@ def run_testset(binary: str, cfg: dict, testset: Path, method: str
             lang = lang_code(row.get("language", "eng"))
             gt_file = (row.get("gt_file") or "").strip()
             gt_text = ""
-            if gt_file and (testset / gt_file).exists():
+            # Only ``.txt`` is verbatim WER GT. Block-order GT (``.blocks.json``,
+            # e.g. it_geo_04) is graded by tools/layout_order_eval.py — reading it
+            # here would tokenize JSON as text and append a garbage WER row.
+            if gt_file.endswith(".txt") and (testset / gt_file).exists():
                 gt_text = (testset / gt_file).read_text(encoding="utf-8")
 
             res, overlays = evaluate(binary, cfg, bgr, lang, gt_text or " ",

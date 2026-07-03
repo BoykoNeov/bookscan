@@ -11,6 +11,10 @@
     "why": "Stage 02 gutter-splits the spread into left.png (p.86) + right.png (p.87); Stage 04 computes reading_order 0..n-1 independently per subpage. There is NO single spread-level ordering to grade against.",
     "anchor_match": "Match each GT anchor to a detected block by text overlap ANYWHERE in the block, not by exact prefix. OCR will garble the first words on this rotated, colored-background page.",
     "primary_invariants": "Per the owner, the load-bearing assertions are (1) correct segmentation into these blocks, (2) correct type per block, (3) each caption attached to its figure (B8->B5, B7->B6). Exact linear reading order is SECONDARY — the owner considers precise sequence low-priority as long as captions stay grouped with figures. Weight the metric accordingly.",
+    "caption_figure_pairs": [
+      {"caption": "B8", "figure": "B5",  "subpage": "left",  "note": "Fig. 20 photo + its 'A lato' caption, both on the left subpage."},
+      {"caption": "B7", "figure": "B6R", "subpage": "right", "note": "Fig. 21 panorama (right fragment B6R) + its 'Sopra' caption, both on the right subpage."}
+    ],
     "metric_todo": "The harness is WER-only today. A sequence-order metric (block-order match / Kendall-tau over matched blocks, plus a caption<->figure grouping check) still has to be written; this fixture UNBLOCKS that proof but does not by itself constitute it."
   },
   "subpages": {

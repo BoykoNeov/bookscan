@@ -373,3 +373,73 @@ Verdict: **PASS on the measurable scope** (detection proven; reading order non-r
 
 > N=3 GT spreads, none multi-column. Proves figure/caption/footnote + header/page-number ordering on one single-column page (en_coins_01) + non-regression on two clean single-column pages (bg_01, bg_02). Multi-column order is exercised only qualitatively (testset/debug/*_04layout.png: it_geo_*, en_coins_02) and stays UNPROVEN until multi-column reading-order GT is hand-typed. See docs/GATE3_SPEC.md.
 
+
+## Gate 3 block-order eval — 2026-07-03, tesseract 5.4.0.20240606, image=it_geo_04
+
+Stage 04 block structure graded DIRECTLY against the per-subpage block-order GT
+(`gt/it_geo_04.blocks.json`) by `tools/layout_order_eval.py`: segmentation, type,
+caption<->figure grouping, and linear order. This is the sequence-order + grouping
+metric the Gate-3 headline was blocked on. Owner priority (GT `primary_invariants`):
+segmentation / type / grouping OUTRANK exact order — tau is secondary. Split+dewarp
+= UVDoc auto (Gate-2 path). **N=1 spread — read the rows, not a mean.**
+
+Matching: FIGURE GT blocks by reading-order rank within the subpage (no GT bbox;
+in-figure labels don't OCR); TEXT GT blocks by anchor-token overlap on routed OCR
+text (greedy, threshold 0.5). `tau (Tess-native)` ranks each block by the median
+TSV index of its routed words — Tesseract's implicit order — graded the same way,
+so improvement-over-baseline is measured, not asserted.
+
+| subpage | seg recall | type acc | tau (Stage04) | tau (Tess-native) | grouping | det blocks | misses |
+|---|---|---|---|---|---|---|---|
+| left.png  | 4/5 (80%)  | 4/4 (100%) | +1.00 | +1.00 (n=3) | B8->B5: assoc, 1 figure | 10 | B6L |
+| right.png | 4/4 (100%) | 3/4 (75%)  | +1.00 | +0.33 (n=4) | B7->B6R: assoc, caption MISTYPED, 1 figure | 9 | — |
+
+Aggregate: **segmentation 8/9** GT blocks matched, **type 7/8** correct, **order
+tau=+1.00** on both subpages. Grouping 2/2 captions associate to their partner
+figure — but **0/2 on a >=2-figure subpage**, so grouping is NOT yet discriminated.
+
+Findings (per-subpage; N=1):
+- **Reading-order CORRECTNESS is proven on a genuine multi-column spread:** Stage
+  04's XY-Cut order is fully concordant with GT on both subpages (tau=+1.00),
+  including the right subpage's 3 columns (gutter-side caption B7 -> middle prose
+  column B11 -> right prose column B12, read left-to-right column-major). This
+  RETIRES the "multi-column reading order UNPROVEN" flag **for reading order
+  specifically** — at N=1 with sparse anchors (4 blocks/subpage).
+- **Improvement over Tesseract is limited to FIGURE placement, not text-column
+  linearization — stated honestly.** Right-subpage Tesseract-native tau is +0.33
+  vs Stage 04's +1.00, but the entire deficit is the figure block B6R (native
+  median TSV=286, landing mid-stream because the panorama's stray in-figure labels
+  OCR late). Over the TEXT blocks alone (B7=43 < B11=128 < B12=337) Tesseract's
+  native column order is ALSO correct. So on this spread Stage 04 beats Tesseract
+  only by placing the figure correctly (Tesseract has no figure concept); it does
+  NOT out-linearize Tesseract on the prose columns, which Tesseract already reads
+  in order. This refines — does not contradict — the layout_ab "neutral" finding.
+- **Grouping is NOT yet proven — the metric passes are TRIVIAL here.** Each subpage
+  has exactly ONE detected figure (B6L, the left fragment of the cross-gutter Fig.
+  21 panorama, was pushed wholly onto the right subpage by the Stage-02 gutter
+  split — right `ro2` figure spans x=0..2071 of 2099), so "caption's nearest figure
+  == partner" has no wrong alternative to pick. Association is POSSIBLE, not
+  DISCRIMINATED. The discriminating case (>=2 figures sharing one column, caption
+  must pick the right one) is the owed follow-up fixture.
+- **B7 (Fig. 21 caption) is mistyped paragraph -> grouping breaks in PRACTICE.**
+  The geometric nearest-figure test passes, but the planned Gate-4 reflow floats
+  caption-with-figure keyed on caption TYPE; a caption typed 'paragraph' won't be
+  recognised as the caption to float, so the Fig. 21 panorama would lose its
+  caption at reconstruction. Consequential, not cosmetic.
+- **Segmentation miss B6L is a Stage-02 split artifact, not a Stage-04 failure**
+  (the whole panorama went to the right subpage; see above). Extra detected prose
+  blocks (10 left / 9 right vs 5 / 4 anchored GT blocks) are the body split into
+  more paragraphs than GT anchors — GT anchors are sparse first-words, so this is
+  not over-segmentation against GT.
+
+Verdict: **Reading-order correctness on a genuine multi-column spread is PROVEN**
+(tau=+1.00 both subpages, N=1, sparse anchors); segmentation 8/9 and type 7/8.
+**Grouping is NOT closed** — the fixture has one figure per region so the pairing
+test is undiscriminated, and B7's caption->paragraph type error would break the
+Gate-4 float in practice. Improvement over Tesseract is figure-placement only on
+this spread, not prose-column linearization.
+
+> OWED to fully close the Gate-3 grouping headline: (1) a fixture with >=2 figures
+> sharing one column (discriminate caption->figure pairing); (2) fix or account for
+> the B7 caption->paragraph type error. Reading-order correctness itself no longer
+> needs more GT at this altitude. See docs/GATE3_SPEC.md.

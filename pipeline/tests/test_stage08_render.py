@@ -177,6 +177,35 @@ def test_no_external_asset_refs_in_html(tmp_path: Path):
     assert 'src="document_assets' not in html and 'src="../' not in html
 
 
+# ---- Embedded fonts (self-contained Noto, Latin + Cyrillic) ---------------
+
+
+def test_noto_serif_bundled_and_verifiable():
+    """The tracked TTF exists and its family name matches the CSS stack string
+    exactly (a mismatch would silently fall back to a system serif)."""
+    p = S8.FONTS_DIR / "NotoSerif.ttf"
+    assert p.exists() and p.stat().st_size > 100_000
+    fams = {fam for _f, fam, *_ in S8._FONT_FACES}
+    assert "Noto Serif" in fams          # must equal the name used in font-family
+
+
+def test_font_face_embedded_as_data_uri():
+    """@font-face is emitted from files PRESENT (not settings.fonts), carries a
+    non-trivial base64 payload, declares the variable weight range, and is
+    prepended to the stylesheet so it wins over the system serif."""
+    faces = S8._font_face_css()
+    assert '@font-face' in faces and 'font-family: "Noto Serif"' in faces
+    assert 'base64,' in faces and 'font-weight: 100 900' in faces
+    b64 = faces.split('base64,')[1].split(')')[0]
+    assert len(b64) > 100_000           # the real font, not an empty stub
+    assert S8._css([]).lstrip().startswith('@font-face')   # even with empty fonts
+
+
+def test_font_face_degrades_gracefully_when_dir_missing(tmp_path: Path):
+    """No bundled TTFs -> no faces (pre-fix behavior), never a crash."""
+    assert S8._font_face_css(tmp_path) == ""
+
+
 # ---- PDF backend dispatch -------------------------------------------------
 
 

@@ -68,9 +68,24 @@ from pipeline.page_model import BBox, Block, BlockType, Document, DocPage, Stage
 from pipeline import stage04_layout as S4
 
 STAGE = "stage08_render"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+
+# Bundled, tracked fonts embedded as @font-face data URIs (self-containment
+# rule: the HTML must render Noto on any machine, with or without it installed —
+# otherwise Chromium/WeasyPrint silently fall back to a system serif like Times
+# New Roman and Cyrillic can tofu). NotoSerif.ttf is a VARIABLE font (wght
+# 100–900) so a single file yields Regular through Bold with no faux-bolding.
+# Its family name MUST match the CSS ``font-family`` stack strings exactly.
+FONTS_DIR = REPO_ROOT / "pipeline" / "assets" / "fonts"
+
+# (file, family, font-weight, font-style). Add Noto Sans here when bundled — the
+# loader emits a face for whatever files are PRESENT, independent of a document's
+# ``settings.fonts`` (which defaults to []), so embedding never silently drops.
+_FONT_FACES: list[tuple[str, str, str, str]] = [
+    ("NotoSerif.ttf", "Noto Serif", "100 900", "normal"),
+]
 
 # Block types dropped by default (running headers / page numbers), gated by the
 # document's toggles. Keyed on the CURRENT type so a user retype is honored.
@@ -249,10 +264,32 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
 # --------------------------------------------------------------------------
 
 
+def _font_face_css(fonts_dir: Path = FONTS_DIR) -> str:
+    """`@font-face` rules embedding each bundled TTF as a base64 data URI.
+
+    Driven by files PRESENT on disk (not a document's ``settings.fonts``), so an
+    empty-fonts document still gets Noto embedded. A variable font declares its
+    full weight range (``font-weight: 100 900``) so Chromium synthesizes every
+    weight from one file. Missing dir/file -> no faces (graceful degrade to the
+    named-stack system fallback, same as before this fix); noted in meta."""
+    faces: list[str] = []
+    for fname, family, weight, style in _FONT_FACES:
+        p = fonts_dir / fname
+        if not p.exists():
+            continue
+        b64 = base64.b64encode(p.read_bytes()).decode("ascii")
+        faces.append(
+            f'@font-face {{ font-family: "{family}"; font-weight: {weight}; '
+            f'font-style: {style}; font-display: swap; '
+            f'src: url(data:font/ttf;base64,{b64}) format("truetype"); }}'
+        )
+    return "\n".join(faces) + ("\n" if faces else "")
+
+
 def _css(fonts: list[str]) -> str:
     stack = ", ".join(f'"{f}"' for f in fonts) or '"Noto Serif", serif'
     stack += ", serif"
-    return f"""
+    return _font_face_css() + f"""
 @page {{ size: A4; margin: 22mm 20mm; }}
 * {{ box-sizing: border-box; }}
 body {{ font-family: {stack}; font-size: 11.5pt; line-height: 1.45;
@@ -430,6 +467,16 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
     n_trans = sum(1 for p in doc.pages for b in p.blocks if b.text is not None)
     n_fig = sum(1 for p in doc.pages for b in p.blocks if b.type is BlockType.FIGURE)
 
+    embedded = [fam for fname, fam, *_ in _FONT_FACES if (FONTS_DIR / fname).exists()]
+    if embedded:
+        font_note = ("Fonts embedded as @font-face data URIs (self-contained): "
+                     + ", ".join(embedded) + " — covers Latin + Cyrillic; renders "
+                     "identically without the font installed on the host.")
+    else:
+        font_note = (f"No bundled TTFs found in {FONTS_DIR} — HTML names the font "
+                     "stack but embeds nothing; the renderer falls back to a system "
+                     "serif (Cyrillic may tofu). Bundle NotoSerif.ttf to fix.")
+
     total_ms = (time.perf_counter() - t0) * 1000.0
     meta = StageMeta(
         stage=STAGE, version=VERSION,
@@ -441,11 +488,13 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
             "target_language": doc.settings.target_language,
             "pdf_backend": backend,
             "wrote_pdf": wrote_pdf,
+            "embedded_fonts": embedded,
             "reads": ["document.json", "document_assets/"],
         },
         timings_ms={"total": round(total_ms, 1)},
         warnings=[
             pdf_note,
+            font_note,
             "De-hyphenation is a wired seam: no per-language dictionary is loaded, "
             "so line-end hyphens are conservatively KEPT (join needs next-line "
             "lowercase AND joined token in dictionary). Supply a dictionary to "

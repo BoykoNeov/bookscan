@@ -126,11 +126,28 @@ Consequences that fall out for free:
 - **HTML is always produced** and is itself a first-class artifact: a
   self-contained, searchable, browser-viewable rendering (assets inlined or
   referenced from `document_assets/`). It doubles as a human-readable preview.
-- **PDF** is produced when a backend is available. No PDF library is currently
-  installed; the backend (WeasyPrint per the original CLAUDE.md, vs. a
-  headless-Chromium or pure-python alternative that installs cleanly on this
-  Windows host) is an **open dependency decision** to settle with the owner
-  before wiring the PDF path. HTML-first keeps the gate unblocked meanwhile.
+- **PDF** is produced by **headless Chromium via Playwright** (owner decision,
+  2026-07-06). Chromium renders the *exact* `page.html` this stage writes, so the
+  PDF matches the browser preview 1:1 — one rendering target, not two. Two flags
+  are load-bearing: `print_background=True` (else the `.flag` yellow highlight —
+  the load-bearing uncertainty marker — silently drops from the PDF) and
+  `prefer_css_page_size=True` (honor `@page { size: A4 }`). Render loads the local
+  file via `file://` rather than pushing the multi-MB data-URI HTML over CDP.
+  `config.yaml reconstruct.pdf_backend` selects the engine (`chromium` |
+  `weasyprint` (secondary fallback) | `auto` | `none`); an unavailable engine
+  falls through and render still writes `page.html`, so the gate is never blocked.
+  **Verified** on real jobs: `dw_en_coins_01` (English, 60 flags) → valid `%PDF`,
+  7.2 MB, 39.6k yellow highlight pixels present (proves `print_background`);
+  `bg_01` (Bulgarian) → valid `%PDF`, 3.2k searchable Cyrillic chars.
+  **Sync-API caveat (Gate 5):** `sync_playwright()` raises inside a running
+  asyncio loop; the future FastAPI server must export PDFs off the request loop
+  (async API or subprocess), not call `try_render_pdf` directly.
+- **Font embedding is an owed follow-up.** Chromium *does* embed + subset the
+  fonts it uses (the PDFs above are portable and searchable), but with only a
+  named `"Noto Serif"` stack and no Noto installed on the host it fell back to
+  **Times New Roman**. CLAUDE.md's non-negotiable is Noto embedded for Latin +
+  Cyrillic — that needs `@font-face` with bundled Noto TTFs in `_css`, tracked
+  separately from wiring the engine.
 - Render honors doc-wide settings carried in `document.json` (uncertainty mode
   already resolved at Stage 06, header/page-number stripping, fonts, target
   language) so editing a setting and re-rendering just works.
@@ -163,4 +180,8 @@ model, not a schema change.
   edited/deleted. — owner
 - Edit surface is a **visual editor** (see word in context; edit
   order/type/OCR), built **after** format + render. — owner
-- PDF backend = **open dependency decision**; HTML-first until settled.
+- PDF backend = **headless Chromium via Playwright** (owner, 2026-07-06);
+  data-driven via `reconstruct.pdf_backend`, WeasyPrint kept as fallback,
+  HTML always still emitted. Verified on real jobs.
+- **Owed:** Noto `@font-face` embedding (Chromium currently falls back to Times
+  New Roman); visual editor.

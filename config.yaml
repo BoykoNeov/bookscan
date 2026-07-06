@@ -93,8 +93,16 @@ reconstruct:
     - Noto Sans
   strip_running_headers: true   # user toggle
   strip_page_numbers: true      # user toggle
-  # PDF backend for Stage 08 is an open dependency decision (WeasyPrint vs.
-  # headless-Chromium print); none installed yet -> render emits HTML only.
+  # PDF backend for Stage 08 (owner decision: headless Chromium via Playwright).
+  # Chromium renders the EXACT self-contained page.html render already produces,
+  # so the PDF matches the browser preview (one rendering target, not two).
+  #   chromium   -> Playwright headless Chromium (default; `playwright install chromium`)
+  #   weasyprint -> secondary fallback if importable (its CSS engine may diverge)
+  #   auto       -> chromium, then weasyprint, then HTML-only
+  #   none       -> HTML-only (skip PDF)
+  # Any backend that is chosen but unavailable falls through to the next; render
+  # ALWAYS still writes page.html, so the gate is never blocked.
+  pdf_backend: chromium
 
 # --- Paths ---
 paths:

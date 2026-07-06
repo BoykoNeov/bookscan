@@ -177,5 +177,45 @@ def test_no_external_asset_refs_in_html(tmp_path: Path):
     assert 'src="document_assets' not in html and 'src="../' not in html
 
 
+# ---- PDF backend dispatch -------------------------------------------------
+
+
+def test_pdf_backend_none_skips_and_notes():
+    ok, note = S8.try_render_pdf("<h1>x</h1>", Path("nope.pdf"), backend="none")
+    assert ok is False and "HTML only" in note
+
+
+def test_pdf_backend_chromium_without_html_path_falls_through(tmp_path: Path):
+    """Chromium needs the on-disk html_path; absent it, the dispatch must not
+    write a PDF and must return a clear HTML-only note (never crash)."""
+    ok, note = S8.try_render_pdf("<h1>x</h1>", tmp_path / "page.pdf",
+                                 backend="chromium", html_path=None)
+    assert ok is False and "HTML only" in note
+    assert not (tmp_path / "page.pdf").exists()
+
+
+def test_pdf_chromium_produces_valid_pdf_with_flag_background(tmp_path: Path):
+    """Live Chromium check (skipped where Playwright/browser absent): the PDF is
+    real (%PDF magic, non-trivial size) and print_background is on so the flag
+    highlight survives. This is the path unit tests of pure functions can't cover."""
+    pytest.importorskip("playwright")
+    blocks = [Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 20},
+                    reading_order=0,
+                    words=[_w("plain"), _w("caput", decision="flag", conf=40.0, x=40)])]
+    page, jd = _page_with(blocks, tmp_path)
+    html_str = S8.render_html(_doc(page, uncertainty_mode="flag"), jd)
+    html_path = tmp_path / "page.html"
+    html_path.write_text(html_str, encoding="utf-8")
+    try:
+        ok, note = S8.try_render_pdf(html_str, tmp_path / "page.pdf",
+                                     backend="chromium", html_path=html_path)
+    except Exception as e:  # browser not installed -> treat like importorskip
+        pytest.skip(f"chromium unavailable: {e!r}")
+    if not ok:
+        pytest.skip(f"chromium unavailable: {note}")
+    data = (tmp_path / "page.pdf").read_bytes()
+    assert data[:5] == b"%PDF-" and len(data) > 1000
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

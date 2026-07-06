@@ -28,12 +28,15 @@ edit round-trips. In particular:
   * Output text is real text -> the HTML (and any PDF made from it) is searchable;
     ``DocSettings.fonts`` drive the embedded font stack (Latin + Cyrillic).
 
-**HTML is the deliverable; a PDF engine is a thin consumer of it.** The HTML is
+**HTML is the deliverable; the PDF engine is a thin consumer of it.** The HTML is
 written print-ready (``@page``, page breaks) and fully self-contained (every image
-inlined as a data URI — no external refs, no broken paths). No PDF library is
-installed yet; the engine (WeasyPrint vs. a headless-Chromium/Playwright print,
-which consumes this HTML faithfully) is an owner decision. Until then render
-emits HTML only and says so in meta — the gate is not blocked.
+inlined as a data URI — no external refs, no broken paths). The PDF backend is
+**headless Chromium via Playwright** (owner decision): it renders the exact
+``page.html`` this stage produces, so the PDF matches the browser preview 1:1
+(``print_background`` keeps the flag highlight, ``prefer_css_page_size`` honors
+``@page``). ``config.yaml reconstruct.pdf_backend`` selects it (``chromium`` |
+``weasyprint`` | ``auto`` | ``none``); if the chosen engine is unavailable render
+still writes ``page.html`` and says so in meta — the gate is never blocked.
 
 **De-hyphenation on reflow** is a wired seam (repo pattern: ship the conservative
 default arm, wire the hook — cf. the Stage-06 disagreement trigger): a line-end
@@ -293,25 +296,107 @@ def render_html(doc: Document, job_dir: Path,
 
 
 # --------------------------------------------------------------------------
-# PDF backend (deferred — no library installed; HTML is the deliverable)
+# PDF backend (owner decision: headless Chromium via Playwright)
 # --------------------------------------------------------------------------
+#
+# The PDF is a thin consumer of the print-ready, fully self-contained page.html.
+# Chromium is primary because it renders the EXACT HTML the preview already
+# produces, so the PDF matches the browser 1:1 (one rendering target, not two).
+# WeasyPrint stays as a secondary fallback (its own CSS engine may diverge).
+# Whatever is chosen, if it is unavailable we fall through and still emit HTML,
+# so the gate is never blocked.
 
 
-def try_render_pdf(html_str: str, out_pdf: Path) -> tuple[bool, str]:
-    """Attempt HTML->PDF with WeasyPrint if it is importable. Returns
-    (wrote_pdf, note). No engine is installed by default; this is a thin optional
-    consumer of the print-ready HTML, chosen by the owner later."""
+def _pdf_via_chromium(html_path: Path, out_pdf: Path) -> tuple[bool, str]:
+    """Render ``render/page.html`` to PDF with Playwright headless Chromium.
+
+    Loads the LOCAL file (``file://``) rather than pushing the HTML string over
+    CDP: the HTML inlines full-res dewarped images as data URIs and can be many
+    MB, so a local load is faster and less flaky. ``file://`` resolves ``data:``
+    images fine, so the self-contained HTML needs no asset server.
+
+    Two flags are load-bearing:
+      * ``print_background=True`` — Chromium prints backgrounds OFF by default,
+        which would silently drop the ``.flag`` uncertainty highlight (CLAUDE.md's
+        load-bearing feature) from the PDF.
+      * ``prefer_css_page_size=True`` — honor the HTML's ``@page { size: A4; ... }``
+        instead of Chromium's default Letter/margins.
+
+    NOTE (Gate 5): the sync Playwright API raises if called inside a running
+    asyncio loop. Fine for this CLI (no loop); the future FastAPI server must
+    drive PDF export off the request loop (async API or a subprocess), not call
+    this directly.
+    """
+    try:
+        from playwright.sync_api import sync_playwright  # type: ignore
+    except Exception:
+        return False, "playwright not importable"
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            try:
+                page = browser.new_page()
+                page.goto(html_path.as_uri(), wait_until="load")
+                page.pdf(path=str(out_pdf), print_background=True,
+                         prefer_css_page_size=True)
+            finally:
+                browser.close()
+    except Exception as e:  # pragma: no cover - depends on a launched browser
+        return False, f"Chromium present but failed ({e!r})"
+    try:                                    # version is cosmetic; never fail on it
+        from importlib.metadata import version
+        ver = version("playwright")
+    except Exception:
+        ver = "?"
+    return True, f"PDF written via headless Chromium (Playwright {ver})"
+
+
+def _pdf_via_weasyprint(html_str: str, out_pdf: Path) -> tuple[bool, str]:
+    """Secondary fallback: HTML string -> PDF with WeasyPrint if importable."""
     try:
         import weasyprint  # type: ignore
     except Exception:
-        return False, ("no PDF engine installed — emitted HTML only. Choose a "
-                       "backend (WeasyPrint, or a headless-Chromium print that "
-                       "consumes render/page.html) to enable page.pdf.")
+        return False, "weasyprint not importable"
     try:
         weasyprint.HTML(string=html_str).write_pdf(str(out_pdf))
         return True, f"PDF written via WeasyPrint {weasyprint.__version__}"
     except Exception as e:  # pragma: no cover - depends on system libs
-        return False, f"WeasyPrint present but failed ({e!r}); emitted HTML only."
+        return False, f"WeasyPrint present but failed ({e!r})"
+
+
+def try_render_pdf(html_str: str, out_pdf: Path, backend: str = "chromium",
+                   html_path: Path | None = None) -> tuple[bool, str]:
+    """Dispatch HTML->PDF by the configured ``backend``. Returns (wrote_pdf, note).
+
+    ``backend``: ``chromium`` (default), ``weasyprint``, ``auto`` (chromium then
+    weasyprint), or ``none`` (skip). Chromium needs the on-disk ``html_path``
+    (it loads the local file); WeasyPrint consumes the HTML string. A chosen
+    engine that is unavailable falls through to the next candidate, and if none
+    succeed we return False with a clear note — render still wrote page.html.
+    """
+    backend = (backend or "chromium").lower()
+    if backend == "none":
+        return False, "pdf_backend=none — emitted HTML only (PDF skipped by config)."
+
+    attempts: list[tuple[bool, str]] = []
+    order = {"chromium": ["chromium"], "weasyprint": ["weasyprint"],
+             "auto": ["chromium", "weasyprint"]}.get(backend, ["chromium"])
+    for name in order:
+        if name == "chromium" and html_path is not None:
+            ok, note = _pdf_via_chromium(html_path, out_pdf)
+        elif name == "weasyprint":
+            ok, note = _pdf_via_weasyprint(html_str, out_pdf)
+        else:
+            ok, note = False, f"{name}: html_path unavailable"
+        if ok:
+            return True, note
+        attempts.append((ok, f"{name}: {note}"))
+
+    tried = "; ".join(n for _, n in attempts)
+    hint = ("install it with `pip install playwright && playwright install "
+            "chromium`" if "chromium" in order else "")
+    return False, (f"pdf_backend={backend} unavailable — emitted HTML only "
+                   f"[{tried}]. {hint}".rstrip())
 
 
 # --------------------------------------------------------------------------
@@ -335,7 +420,9 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
     html_path = out_dir / "page.html"
     html_path.write_text(html_str, encoding="utf-8")
 
-    wrote_pdf, pdf_note = try_render_pdf(html_str, out_dir / "page.pdf")
+    backend = str((cfg.get("reconstruct") or {}).get("pdf_backend", "chromium"))
+    wrote_pdf, pdf_note = try_render_pdf(
+        html_str, out_dir / "page.pdf", backend=backend, html_path=html_path)
 
     n_blocks = sum(len(p.blocks) for p in doc.pages)
     n_words = sum(bool(w.text.strip()) for p in doc.pages for b in p.blocks for w in b.words)
@@ -352,6 +439,7 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
             "mode": doc.settings.uncertainty_mode,
             "source_language": doc.settings.source_language,
             "target_language": doc.settings.target_language,
+            "pdf_backend": backend,
             "wrote_pdf": wrote_pdf,
             "reads": ["document.json", "document_assets/"],
         },

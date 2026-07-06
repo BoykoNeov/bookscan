@@ -48,10 +48,20 @@ The pipeline is a chain of stages. **Every stage obeys the same contract:**
    (the single shared schema). Change the schema ONLY deliberately, in its own
    commit, updating all stages that touch the changed fields.
 
+**Editable-document exception (Stages 07–08).** Items 1–4 describe the per-page,
+immutable pipeline trace (00–06). The editable document (`Document` in
+`page_model.py`) is deliberately different: it is **job-level** and **mutable** —
+the user's editable working copy (translate / fix OCR / reorder before, or after,
+baking a PDF). Stage 07 `assemble` builds it from the whole job; Stage 08
+`render` is a **pure, re-runnable** function of it. Both read ONLY `document.json`
++ `document_assets/` — never the per-page folders — so a saved document survives
+upstream re-runs (self-containment). Assemble won't clobber an edited document
+without `--force`. See `docs/GATE4_SPEC.md`.
+
 ### Job folder layout
 
 ```
-jobs/<job_id>/<page_NNN>/
+jobs/<job_id>/<page_NNN>/            <- per-page, immutable pipeline trace
   00_ingest/    raw uploads normalized to RGB PNG + capture metadata
   01_fuse/      anchor image after multi-zoom stitch (or best single frame)
   02_split/     left.png, right.png (gutter split) — or single.png
@@ -59,8 +69,13 @@ jobs/<job_id>/<page_NNN>/
   04_layout/    layout.json (blocks: type, bbox, reading_order) + overlay
   05_ocr/       ocr.json (words: text, bbox, confidence, engine) + overlay
   06_uncertain/ resolved.json (per-word decision: keep/flag/patch) + patches/
-  07_reconstruct/ page.html, page.pdf, figures/
   debug/        one overlay PNG per stage (04_layout.png, 05_ocr.png, ...)
+
+jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
+  document.json         editable re-typeset doc (all pages, MUTABLE working copy)
+  document_assets/      self-contained images: dewarp pages + flag/patch crops
+  document.meta.json    Stage 07 assemble meta
+  render/               page.html (always) + page.pdf (when a PDF engine exists)
 ```
 
 ### Pipeline stages
@@ -74,7 +89,8 @@ jobs/<job_id>/<page_NNN>/
 | 04 | `stage04_layout` | block detection + reading order | DocLayout-YOLO + XY-Cut++ |
 | 05 | `stage05_ocr` | word-level text + bbox + confidence | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |
 | 06 | `stage06_uncertainty` | per-word decision using user mode a/b/c | own code |
-| 07 | `stage07_reconstruct` | page model → HTML → PDF | WeasyPrint, Noto fonts (Latin+Cyrillic) |
+| 07 | `stage07_assemble` | job-level: build editable `document.json` + self-contained `document_assets/` | own code |
+| 08 | `stage08_render` | `document.json` → re-typeset HTML (always) → PDF (re-runnable) | own code; WeasyPrint/headless-Chromium (PDF, TBD), Noto fonts |
 
 ### Non-negotiable design decisions (do not "optimize" these away)
 
@@ -86,10 +102,19 @@ jobs/<job_id>/<page_NNN>/
   hard-coded cutoff. Cross-engine disagreement is a second trigger for
   "uncertain", independent of raw confidence.
 - **Uncertainty modes (user-selectable, all three must exist):**
-  - `flag` — low-confidence words rendered in a highlighted span in the PDF;
+  - `flag` — low-confidence words rendered in a highlighted span in the output;
   - `best_guess` — emit text plainly;
   - `patch` — crop the word's image box from the full-res dewarped page
     (03_dewarp output, NOT a downscaled copy) and inline it as a tiny `<img>`.
+  - Markers are **per-word**: a marker clears only when *that* word is edited or
+    deleted (Stage 08 renders on `Word.flag_visible`), never wholesale.
+- **Editable document before finalize (Stages 07–08).** The pipeline must save an
+  editable-by-the-program `document.json` BEFORE finalizing to PDF, so the text
+  can be corrected/translated first — or a PDF baked now and edited later.
+  Render is a pure, re-runnable function of that document; edits round-trip.
+  Editable text is a word-level layer with provenance (`text` = current,
+  `text_ocr` = original OCR, kept forever); a block-level `text` override carries
+  a translation and supersedes the words.
 - **Figures are cropped from the full-resolution dewarped image** and placed
   with their captions as a single block in reading order.
 - **De-hyphenation rule on reflow:** join a line-end hyphen with the next line

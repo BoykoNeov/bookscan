@@ -83,7 +83,9 @@ layout:
   # the repo root. Missing -> Stage 04 falls back to classical (flagged).
   yolo_ckpt: "models/doclayout_yolo/doclayout_yolo_docstructbench_imgsz1024.pt"
 
-# --- Reconstruction (Stage 07) ---
+# --- Reconstruction (Stages 07 assemble + 08 render) ---
+# Stage 07 copies these into document.json's settings; Stage 08 render honors
+# them (editing a setting in document.json + re-rendering just works).
 reconstruct:
   fonts:
     # Noto covering Latin + Cyrillic; embed into the PDF.
@@ -91,6 +93,8 @@ reconstruct:
     - Noto Sans
   strip_running_headers: true   # user toggle
   strip_page_numbers: true      # user toggle
+  # PDF backend for Stage 08 is an open dependency decision (WeasyPrint vs.
+  # headless-Chromium print); none installed yet -> render emits HTML only.
 
 # --- Paths ---
 paths:

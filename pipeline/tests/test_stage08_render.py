@@ -81,6 +81,28 @@ def test_patch_word_inlines_image(tmp_path: Path):
     assert out.startswith('<img class="patch"') and "data:image/png;base64," in out
 
 
+def test_implicit_edit_clears_marker_without_edited_flag(tmp_path: Path):
+    """Interim hand-edit safety: changing `text` away from `text_ocr` clears the
+    marker even if the user forgot `edited: true`."""
+    w = Word(text="fixed", text_ocr="fixd", bbox={"x": 0, "y": 0, "w": 30, "h": 20},
+             conf=40.0, decision="flag", edited=False)
+    assert w.flag_visible is False
+    assert S8._word_html(w, "flag", tmp_path) == "fixed"      # plain, no span
+
+
+def test_patch_stale_crop_not_rendered_after_text_edit(tmp_path: Path):
+    """The load-bearing patch case: a hand-corrected word must render the CORRECTED
+    TEXT, never the stale original crop, even without an explicit edited flag."""
+    asset = "document_assets/p.png"
+    (tmp_path / "document_assets").mkdir()
+    cv2.imwrite(str(tmp_path / asset), np.zeros((10, 20, 3), np.uint8))
+    w = Word(text="corrected", text_ocr="c0rrupt", bbox={"x": 0, "y": 0, "w": 30, "h": 20},
+             conf=30.0, decision="patch", patch_asset=asset, edited=False)
+    out = S8._word_html(w, "patch", tmp_path)
+    assert out == "corrected"                                 # text wins
+    assert "<img" not in out and "base64" not in out          # stale crop suppressed
+
+
 # ---- block-level behaviors ------------------------------------------------
 
 

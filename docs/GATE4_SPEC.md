@@ -103,8 +103,16 @@ marker is shown until *that specific word* is edited or deleted — never cleare
 wholesale by editing something else in the block. Implemented as:
 
 ```
-flag_visible(word) := word.decision in {FLAG, PATCH} and not word.edited
+edited        := word.edited OR (word.text_ocr is not None AND word.text != word.text_ocr)
+flag_visible  := word.decision in {FLAG, PATCH} AND not edited
 ```
+
+The implicit `text != text_ocr` term makes the **interim hand-edit path safe**:
+until the visual editor exists the only way to edit is hand-editing
+`document.json`, and a user who changes `text` but forgets `edited: true` still
+clears the marker — and in patch mode Stage 08 then renders their corrected text
+instead of the stale original crop. On a fresh assemble `text_ocr == text`, so it
+is a no-op until text actually changes.
 
 Consequences that fall out for free:
 - Fixing one OCR word clears only *its* marker; other flagged words in the same

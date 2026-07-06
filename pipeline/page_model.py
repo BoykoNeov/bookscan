@@ -104,9 +104,18 @@ class Word(BaseModel):
     def flag_visible(self) -> bool:
         """Owner's per-word rule: an uncertainty marker (flag/patch) is shown
         until THAT word is edited or deleted — never cleared wholesale by editing
-        something else in the block. A deleted word is simply gone, so only the
-        ``edited`` guard is needed here."""
-        return self.decision in (WordDecision.FLAG, WordDecision.PATCH) and not self.edited
+        something else in the block. A deleted word is simply gone.
+
+        ``edited`` is treated as set EITHER explicitly OR implicitly when ``text``
+        diverges from ``text_ocr``. The implicit path makes the interim hand-edit
+        workflow safe: until the visual editor exists, a user editing
+        ``document.json`` who changes ``text`` but forgets ``edited: true`` still
+        clears the marker — and, crucially, in patch mode Stage 08 then renders
+        their corrected text instead of the STALE original crop. On a fresh
+        assemble ``text_ocr == text`` so this is a no-op; it only fires once text
+        actually changes."""
+        edited = self.edited or (self.text_ocr is not None and self.text != self.text_ocr)
+        return self.decision in (WordDecision.FLAG, WordDecision.PATCH) and not edited
 
 
 class Block(BaseModel):

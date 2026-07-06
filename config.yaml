@@ -28,10 +28,30 @@ languages:
 # --- Adaptive confidence / uncertainty (Stage 06) ---
 # NOTE: thresholds are adaptive PER DOCUMENT, never a single global cutoff.
 # These are the knobs the adaptive logic tunes around, not fixed gates.
+#
+# The rule (Stage 06):
+#   threshold = clip( percentile(word_confs, flag_rate*100), conf_floor, conf_ceiling )
+#   a word is "uncertain" iff conf < threshold  (or a second engine disagrees).
+# flag_rate is a TARGET that BENDS with the document: in a clean doc the ceiling
+# bites (flag fewer than flag_rate — only the genuine low-conf tail); in a garbage
+# doc the floor bites (flag MORE than flag_rate). The operating point moves with
+# the confidence distribution between the two rails, so it is adaptive, not a
+# single hard cutoff. Stage 06 records the raw + clamped threshold in meta.json.
 uncertainty:
   # Default fraction of words to flag when using per-document adaptive threshold.
   flag_rate: 0.10
+  # Sanity rails on the adaptive threshold (Tesseract conf scale 0-100). Anchored
+  # to real testset per-word conf histograms (bg_01: p10=92, p50=96, genuine bad
+  # tail <65; en_coins_01: p10=82, p50=96, tail <65). The clean bulk sits >=82, so
+  # conf_ceiling=75 lands between bulk and tail: a clean doc flags only its real
+  # low-conf tail (bg ~3%, en ~7%), never good words. conf_floor=45 is the minimum
+  # threshold for a garbage doc (untested by the current all-clean testset, so a
+  # theoretical rail for now). Tune these when a genuinely-garbled page lands.
+  conf_floor: 45.0
+  conf_ceiling: 75.0
   # Cross-engine disagreement is an independent trigger for "uncertain".
+  # (EasyOCR second opinion is deferred at Stage 05, so this trigger is a wired
+  # seam that fires only once a second engine exists — see Stage 06 warnings.)
   disagreement_is_trigger: true
   # Selectable output mode: flag | best_guess | patch
   default_mode: flag

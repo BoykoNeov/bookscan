@@ -845,3 +845,82 @@ honest miss with no rank shift; a fragment can't steal the whole-figure match). 
 kendall_tau `1/3` unit fixture is retained as a pure partial-concordance case with an
 updated comment (it was the it_geo_04-right native value *when* the B6R figure leaked
 in; that grade is now +1.00 over its 3 text blocks).
+
+## Stage 06 (uncertainty) — 2026-07-06, adaptive keep/flag/patch decision
+
+The load-bearing stage: because OCR output BECOMES the visible re-typeset document,
+every low-confidence word must be surfaced (flag), imaged (patch), or knowingly
+emitted (best_guess). Built `pipeline/stage06_uncertainty.py` reading
+`05_ocr/ocr.json`, writing `06_uncertain/resolved.json` (each `Word.decision` set,
++ a per-page patch manifest), `meta.json`, `debug/06_uncertain.png`, and (patch
+mode) `06_uncertain/patches/`.
+
+**The adaptive threshold (CLAUDE.md: never a single global cutoff).**
+`threshold = clip(percentile(conf, flag_rate*100), conf_floor, conf_ceiling)`,
+pooled over both subpages of the spread (spread ≈ document; `--threshold` injects a
+true whole-job value). `flag_rate` (0.10) is a TARGET that BENDS: in a clean doc the
+ceiling bites (flag fewer), in a garbage doc the floor bites (flag more) — the
+operating point moves with the confidence distribution between the two rails, so it
+is adaptive, not one hard-coded gate. `uncertain := conf < threshold OR
+second-engine-disagrees` (the disagreement term is a wired seam — EasyOCR is deferred
+at Stage 05, so it is always False and a warning makes the gap visible). Mode is a
+thin policy layer over that one decision: `best_guess`→all KEEP, `flag`→FLAG,
+`patch`→PATCH.
+
+**Rails anchored to REAL testset conf histograms, not invented** (config
+`uncertainty.conf_floor=45`, `conf_ceiling=75`). Per-word conf over the two OCR'd
+docs: bg_01 p10=92/p50=96 (bad tail <65), en_coins_01 p10=82/p50=96 (tail <65). The
+clean bulk sits ≥82, so `conf_ceiling=75` lands between bulk and tail — a clean doc
+flags only its genuine low-conf tail, never good words. `conf_floor=45` is the
+minimum threshold for a garbage doc and is a THEORETICAL rail: both testset docs are
+clean (raw p10 ≫ 45), so only the ceiling bites here; the floor is untested until a
+genuinely garbled page lands.
+
+**Measured (both clean docs → ceiling bites, effective rate below the 10% target):**
+
+| doc | scored words | raw p10 | applied thr | flagged (total) | effective rate (scored) |
+|---|---|---|---|---|---|
+| bg_01 | 759 | 91.96 | 75 (ceiling) | 30 | 3.43% |
+| en_coins_01 | 738 | 81.81 | 75 (ceiling) | 60 | 7.45% |
+
+The raw + clamped threshold and effective rate are recorded in `meta.json` — that
+record is the proof the threshold adapted. "Effective rate" is scored-word-only
+(non-KEEP among the words that fed the percentile); it shares the percentile's
+denominator, so conf≤0 words — flagged unconditionally at any threshold, thus not a
+measure of the threshold's action — are excluded from both. It is therefore a hair
+below the total-flagged count (which does include those conf≤0 words).
+
+**Note on the honest limit of this proof:** both testset docs are clean, so the raw
+p10 is ≫ the ceiling and the threshold pins to 75 on both — i.e. on the REAL data
+"adaptive" is currently indistinguishable from a fixed 75 cutoff. The percentile
+machinery that makes it adaptive is exercised only by the synthetic unit tests
+(clean→ceiling, garbage→floor, mid→honours target). Real-data adaptivity (a doc with
+p10 inside the (45,75) band) and any `conf_floor` exercise are OWED until a
+mid-degraded page lands in the testset.
+
+**Patch-mode ship-gate — coordinate contract verified on REAL pixels.** Patch mode is
+the first real exercise of Stage 05's promise that word bboxes live in 1x full-res
+dewarp coords (both GT pages had run scale=1, so the map-back was unit-tested only).
+Cut 60 crops from en_coins_01's `03_dewarp` full-res image and eyeballed a labelled
+contact sheet (crop pixels vs recorded OCR text): every crop tightly frames its
+labelled word — the coord map-back is correct. Better, the flagged words are genuine
+recognition failures the crop exposes: `'Chapmarked'`→pixels "Chopmarked",
+`'Light'`→"Eight", `'111'`→"III" (roman numeral), `'36.24).'`→"36.2a).", plus conf-0
+accented/footnote/quote-wrapped tokens. Caveat: both docs ran scale=1 (word height
+≥20px), so the 2× upscale coord map-back still isn't exercised on real small-text
+pixels (a Stage 05 caveat inherited here).
+
+**Scope kept lean** (like the other v0.1 stages): Stage 06 only assigns the per-word
+decision + cuts patch crops. De-hyphenation on reflow and running-header /
+page-number stripping are Stage 07 (`reconstruct`), not here.
+
+Tests: `pipeline/tests/test_stage06_uncertainty.py` (12) — the rails biting in both
+pathological tails (clean→ceiling→flag fewer; garbage→floor→flag more; mid honours
+target), small-sample fallback to the floor, empty/conf≤0 eligibility (excluded from
+the percentile yet still decided uncertain), mode policy layer, config resolution.
+Full suite **115 green**.
+
+Follow-ups (own commits, not this pass): a true whole-job (multi-spread) threshold
+pass feeding `--threshold`; the EasyOCR cross-engine disagreement trigger when the
+second engine lands; `conf_floor` re-tuning once a genuinely garbled page is in the
+testset; and the 2×-upscale patch-coord exercise on a real small-text page.

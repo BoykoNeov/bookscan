@@ -18,10 +18,17 @@ Method (per subpage — Stage 02 splits the spread, Stage 04 orders each half):
      comparable. OCR each half ONCE and route each word to the smallest block
      whose box contains its center (same routing as layout_ab).
   2. MATCH each GT block to a detected block:
-       * FIGURE GT blocks: by reading_order rank within the subpage. Figures
-         carry no bbox in the GT and their in-figure labels ("LAGAZUOI ...")
-         do not OCR, so anchor text can't match them; the i-th GT figure pairs
-         with the i-th detected figure top-to-bottom.
+       * FIGURE GT blocks: by BBOX-OVERLAP when the GT figure carries a bbox
+         (each GT figure claims the detected figure it overlaps most, global
+         greedy by IoU >= ``FIG_IOU_MIN``; a bbox-carrying figure that overlaps
+         nothing is an honest miss, no rank fallback). This is POSITION-matched,
+         so a figure Stage 04 emits out of GT reading order still pairs with its
+         own box — rank matching instead relabels it by order, which scored the
+         it_geo_06 top-right plate's correct corner-label number a mispair.
+         Figures WITHOUT a bbox (it_geo_04, authored before figure bboxes) fall
+         back to reading_order rank (i-th GT figure -> i-th detected figure,
+         top-to-bottom); their in-figure labels don't OCR so anchor text can't
+         match them.
        * TEXT GT blocks (paragraph / caption / heading): by anchor-token
          overlap against the block's routed OCR text (greedy, highest score
          first, one detected block per GT block, threshold ``MATCH_TAU``).
@@ -83,6 +90,16 @@ from pipeline.page_model import BBox
 # even garbled OCR keeps well over half, and the argmax block is unambiguous.
 MATCH_TAU = 0.5
 
+# Minimum IoU for a GT figure (that carries a bbox) to match a detected figure
+# box. Lenient: correct figure matches on it_geo_06 land at IoU 0.63-1.00 while
+# every wrong (opposite-column / non-overlapping) pairing is ~0, so 0.2 clears
+# the wrong pairs with a wide margin yet tolerates GT-bbox truncation (the
+# "sofa-shot" clipped cliff bottoms, e.g. F30 at IoU 0.63). A partial-figure
+# fragment (top third of a tall figure, IoU ~0.33) can exceed this floor but is
+# harmless: greedy claims the whole-figure match first, and the fragment overlaps
+# no OTHER GT figure, so it stays unmatched rather than stealing a match.
+FIG_IOU_MIN = 0.2
+
 
 # --------------------------------------------------------------------------
 # Text normalization for anchor matching (aggressive: OCR garbles this page)
@@ -142,6 +159,28 @@ class DetBlock:
         return s[len(s) // 2]        # median TSV index
 
 
+def _bbox_iou(gt_bbox: list[float], d: BBox) -> float:
+    """Intersection-over-union between a GT figure bbox ``[x, y, w, h]`` and a
+    detected block's BBox, both in dewarped-subpage pixel space (verified equal:
+    the GT figure bboxes and Stage-04 block bboxes coincide to IoU 0.92-1.00 on
+    the clean figures of it_geo_06). Symmetric IoU (not coverage-of-smaller) so a
+    partial-figure FRAGMENT — a det box covering only a slice of a GT figure —
+    scores low and cannot masquerade as the whole figure. Returns 0.0 on no
+    overlap."""
+    gx, gy, gw, gh = gt_bbox
+    ix = max(gx, d.x)
+    iy = max(gy, d.y)
+    iX = min(gx + gw, d.x2)
+    iY = min(gy + gh, d.y2)
+    iw = max(0.0, iX - ix)
+    ih = max(0.0, iY - iy)
+    inter = iw * ih
+    if inter <= 0.0:
+        return 0.0
+    union = gw * gh + d.w * d.h - inter
+    return inter / union if union > 0 else 0.0
+
+
 def _box_gap(a: DetBlock, b: DetBlock) -> float:
     """Minimum edge-to-edge (box-to-box) distance between two blocks; 0 if they
     overlap. A better proxy than CENTER distance for "which figure is this caption
@@ -167,18 +206,42 @@ def match_subpage(gt_blocks: list[dict], det: list[DetBlock]
                   ) -> tuple[dict[str, int], list[str]]:
     """Return (gt_id -> det.idx, list of unmatched gt_ids).
 
-    Figures match by reading-order rank (i-th GT figure -> i-th detected figure,
-    top-to-bottom); text blocks match by greedy anchor-token overlap on the
-    remaining detected blocks. Each detected block is claimed at most once.
+    Figures match by BBOX-OVERLAP when the GT figure carries a bbox: each GT
+    figure claims the detected figure it overlaps most (global greedy by IoU,
+    floor ``FIG_IOU_MIN``), a bbox-carrying GT figure with no overlapping det box
+    is an honest MISS (no rank fallback). This is POSITION-matched, so a figure
+    Stage 04 emits out of GT reading order (e.g. it_geo_06's top-right plate F26,
+    which the split lands 2nd not last) still pairs with its own box — the earlier
+    rank matcher instead relabelled it by order and scored its correct corner-label
+    number a mispair. GT figures WITHOUT a bbox (it_geo_04, authored before figure
+    bboxes existed) fall back to reading-order rank, unchanged. Text blocks match
+    by greedy anchor-token overlap on the remaining detected blocks. Each detected
+    block is claimed at most once.
     """
     matched: dict[str, int] = {}
     used: set[int] = set()
 
-    # Figures first (by reading_order rank), so a figure box can't be stolen by
-    # a stray text-anchor overlap.
+    # Figures first, so a figure box can't be stolen by a stray text-anchor
+    # overlap. Bbox-carrying GT figures: global greedy by IoU.
     gt_figs = [g for g in gt_blocks if g["type"] == "figure"]
-    det_figs = sorted((d for d in det if d.btype == "figure"), key=lambda d: d.ro)
-    for g, d in zip(sorted(gt_figs, key=lambda g: g["order"]), det_figs):
+    det_figs = [d for d in det if d.btype == "figure"]
+    gt_figs_bbox = [g for g in gt_figs if g.get("bbox")]
+    fig_cand = [(_bbox_iou(g["bbox"], d.bbox), g["id"], d.idx)
+                for g in gt_figs_bbox for d in det_figs]
+    fig_cand.sort(key=lambda t: t[0], reverse=True)
+    for iou_val, gid, didx in fig_cand:
+        if iou_val < FIG_IOU_MIN or gid in matched or didx in used:
+            continue
+        matched[gid] = didx
+        used.add(didx)
+
+    # GT figures with no bbox (older fixtures): reading-order rank over the
+    # detected figures not already claimed by an overlap match.
+    gt_figs_norank = sorted((g for g in gt_figs if not g.get("bbox")),
+                            key=lambda g: g["order"])
+    det_rank = sorted((d for d in det_figs if d.idx not in used),
+                      key=lambda d: d.ro)
+    for g, d in zip(gt_figs_norank, det_rank):
         matched[g["id"]] = d.idx
         used.add(d.idx)
 
@@ -378,11 +441,23 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
             type_ok = {gid: det[di].btype == by_id[gid]["type"]
                        for gid, di in matched.items()}
 
-            # Order: Stage 04 arm (all matched) + Tesseract-native arm (word-bearing).
+            # Order: both arms over TEXT blocks only (GT type != figure), so the
+            # layout-vs-native headline compares the SAME block set. Photos carry no
+            # routed words (native_key None) and were already absent from native, but
+            # text-bearing figures — diagrams/maps with embedded labels, e.g.
+            # it_geo_04's B6R map or it_geo_07's diagrams — DO get routed words and
+            # so leaked into the native arm (that leak, not a real order deficit, is
+            # what pinned it_geo_04-right native at 0.33). Excluding figures by TYPE
+            # from BOTH arms removes that asymmetry and keeps tau measuring TEXT
+            # reading order; figure ORDER is owner-SECONDARY and, with bbox-overlap
+            # matching now position-honest, would otherwise inject figure-placement
+            # deviations (e.g. it_geo_06's out-of-order F26 plate) into it.
             lay_pairs = [(by_id[gid]["order"], det[di].ro)
-                         for gid, di in matched.items()]
+                         for gid, di in matched.items()
+                         if by_id[gid]["type"] != "figure"]
             nat = [(by_id[gid]["order"], det[di].native_key)
-                   for gid, di in matched.items() if det[di].native_key is not None]
+                   for gid, di in matched.items()
+                   if by_id[gid]["type"] != "figure" and det[di].native_key is not None]
             tau_layout = kendall_tau([(g, d) for g, d in lay_pairs])
             tau_native = kendall_tau([(g, d) for g, d in nat]) if len(nat) >= 2 else None
 
@@ -467,6 +542,9 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
              f"block-order GT (`gt/{grade.image_id}.blocks.json`): segmentation, type, "
              "caption<->figure grouping, and linear order. Owner priority: "
              "segmentation/type/grouping OUTRANK exact order (tau is secondary). "
+             "Tau is over TEXT blocks only (figures excluded from BOTH the Stage-04 "
+             "and Tesseract-native arms, so the two arms compare the same block set); "
+             "figures match by GT-bbox overlap. "
              "Split+dewarp = UVDoc auto (Gate-2 path). N=1 spread — read the rows.\n")
     L.append("| subpage | seg recall | type acc | tau (Stage04) | tau (Tess-native) | "
              "grouping | det blocks | misses |")
@@ -539,17 +617,15 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
                  "so the top-right plate lands 2nd. The four texture-swamped labels "
                  "(F27/F28/F29/F30) return None rather than guess (0 wrong), so their "
                  "captions stay correctly UNPAIRED; textured-label OCR is the honest open "
-                 "limit (needs a text detector; out of scope at N=1). CAVEAT ON THE COUNT "
-                 "BELOW: this automated arm rank-matches figures (GT figures carry no bbox), "
-                 "and because Stage 04 places the physical-26 box 2nd it gets relabeled the "
-                 "2nd GT figure — so the correct '26' read is scored a mispair and the "
-                 "metric UNDER-reports the true 2 as 1. Removing this indirection needs "
-                 "figure-bbox GT for it_geo_06 (Task-#3 follow-up); it is not a "
-                 "figure_label defect.")
+                 "limit (needs a text detector; out of scope at N=1). The eval matches "
+                 "figures to the GT's overlay figure bboxes by IoU overlap (POSITION-honest), "
+                 "so the credited count here is the true pairing — the correct '26' read on "
+                 "Stage 04's 2nd-emitted figure is no longer rank-relabeled into a mispair. "
+                 "The check stays non-circular: bbox matching is independent of the recovered "
+                 "number, so a WRONG read would still be caught.")
     L.append(f"- **Pairing by number:** figure corner labels recovered from pixels = "
-             f"{fig_nums} → number-keyed pairs credited by this rank-matched eval = "
-             f"{pairs_by_num}/{pairs_gt} (true production pairing = 2/{pairs_gt}, "
-             f"manually verified — see caveat). "
+             f"{fig_nums} → number-keyed C→F pairs credited = "
+             f"{pairs_by_num}/{pairs_gt} (bbox-matched, manually verified). "
              f"{pair_note}")
     return "\n".join(L) + "\n"
 

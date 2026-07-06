@@ -10,7 +10,8 @@ from __future__ import annotations
 
 from pipeline.page_model import BBox
 from tools.layout_order_eval import (
-    DetBlock, anchor_score, grouping_eval, kendall_tau, match_subpage, norm_tokens,
+    DetBlock, _bbox_iou, anchor_score, grouping_eval, kendall_tau, match_subpage,
+    norm_tokens,
 )
 
 
@@ -42,7 +43,10 @@ def test_kendall_tau_known_values():
     assert kendall_tau([(0, 0), (1, 1), (2, 2)]) == 1.0
     assert kendall_tau([(0, 2), (1, 1), (2, 0)]) == -1.0
     assert kendall_tau([(0, 0)]) is None
-    # the real it_geo_04 right-native case: 4 blocks, conc=4 disc=2 -> 1/3
+    # 4 blocks, conc=4 disc=2 -> 1/3. This WAS the it_geo_04 right-native value
+    # when the B6R map (a text-bearing figure) leaked into the native arm; tau now
+    # excludes figures from both arms, so that grade is 1.0 over its 3 text blocks.
+    # Kept here as a pure-function fixture for the partial-concordance case.
     tau = kendall_tau([(0, 286), (1, 43), (2, 128), (3, 337)])
     assert abs(tau - 1 / 3) < 1e-9
 
@@ -77,6 +81,78 @@ def test_match_reports_missing_figure_when_fewer_detected():
     matched, misses = match_subpage(gt, det)
     assert matched == {"F1": 0}
     assert misses == ["F2"]
+
+
+def test_bbox_iou_values():
+    # identical boxes -> 1; disjoint -> 0; half-overlap -> intersection/union
+    b = BBox(x=0, y=0, w=100, h=100)
+    assert _bbox_iou([0, 0, 100, 100], b) == 1.0
+    assert _bbox_iou([200, 200, 50, 50], b) == 0.0
+    # GT [0,0,100,50] vs det 100x100: inter=100*50=5000, union=10000+5000-5000
+    assert abs(_bbox_iou([0, 0, 100, 50], b) - 5000 / 10000) < 1e-9
+
+
+def test_match_figures_by_bbox_overlap_beats_ro_rank():
+    # it_geo_06 shape: the top-RIGHT plate (F_d) is emitted 2nd by Stage 04
+    # (ro=3), out of column-major GT order (order=3, last). Bbox-overlap must pair
+    # each GT figure with the det box it physically overlaps, NOT the i-th by rank
+    # (which would give F_b the plate box and cascade the rest wrong).
+    gt = [
+        {"order": 0, "id": "Fa", "type": "figure", "anchor": None,
+         "bbox": [0, 0, 100, 100]},          # top-left
+        {"order": 1, "id": "Fb", "type": "figure", "anchor": None,
+         "bbox": [0, 200, 100, 100]},        # mid-left
+        {"order": 2, "id": "Fc", "type": "figure", "anchor": None,
+         "bbox": [0, 400, 100, 100]},        # bottom-left
+        {"order": 3, "id": "Fd", "type": "figure", "anchor": None,
+         "bbox": [300, 0, 80, 90]},          # top-right plate
+    ]
+    det = [
+        _db(0, 2, "figure", 2, 2, 98, 98),     # ro 2 -> top-left  (Fa)
+        _db(1, 3, "figure", 300, 0, 80, 90),   # ro 3 -> plate     (Fd)  <- 2nd read
+        _db(2, 4, "figure", 0, 200, 100, 100), # ro 4 -> mid-left  (Fb)
+        _db(3, 5, "figure", 0, 400, 100, 100), # ro 5 -> bottom    (Fc)
+    ]
+    matched, misses = match_subpage(gt, det)
+    assert matched == {"Fa": 0, "Fd": 1, "Fb": 2, "Fc": 3}
+    assert misses == []
+
+
+def test_bbox_carrying_figure_with_no_overlap_is_honest_miss_no_rank_shift():
+    # it_geo_07-left shape: the TOP diagram (G1) is undetected; only G2/G3 have
+    # boxes. Rank would shift G1->G2's box and drop G3; bbox-overlap must flag G1
+    # as the miss and match G2/G3 to their OWN boxes (no rank fallback for a
+    # bbox-carrying figure that overlaps nothing).
+    gt = [
+        {"order": 0, "id": "G1", "type": "figure", "anchor": None,
+         "bbox": [0, 0, 100, 80]},           # top -- NOT detected
+        {"order": 1, "id": "G2", "type": "figure", "anchor": None,
+         "bbox": [0, 200, 100, 100]},
+        {"order": 2, "id": "G3", "type": "figure", "anchor": None,
+         "bbox": [0, 400, 100, 100]},
+    ]
+    det = [
+        _db(0, 5, "figure", 0, 200, 100, 100),  # overlaps G2
+        _db(1, 6, "figure", 0, 400, 100, 100),  # overlaps G3
+    ]
+    matched, misses = match_subpage(gt, det)
+    assert matched == {"G2": 0, "G3": 1}
+    assert misses == ["G1"]
+
+
+def test_fragment_box_does_not_steal_whole_figure_match():
+    # A partial-figure fragment (top slice, IoU ~0.3) and the whole-figure box
+    # both overlap one GT figure. Greedy claims the whole box; the fragment,
+    # overlapping no OTHER GT figure, stays unmatched rather than stealing.
+    gt = [{"order": 0, "id": "F1", "type": "figure", "anchor": None,
+           "bbox": [0, 0, 100, 300]}]
+    det = [
+        _db(0, 0, "figure", 0, 0, 100, 100),   # fragment: top third (IoU 1/3)
+        _db(1, 1, "figure", 0, 0, 100, 300),   # whole figure (IoU 1.0)
+    ]
+    matched, misses = match_subpage(gt, det)
+    assert matched == {"F1": 1}
+    assert misses == []
 
 
 # --- grouping -------------------------------------------------------------

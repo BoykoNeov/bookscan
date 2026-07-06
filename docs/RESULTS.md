@@ -763,3 +763,85 @@ plainly here. **Follow-up (Task #3, own commit):** switch `match_subpage` figure
 matching rank→bbox-overlap against the GT's existing (overlay-only) figure bboxes;
 that makes the 2/6 automated AND non-tautological (position-matched, still catches a
 wrong read — unlike matching by the recovered number, which would be circular).
+
+## Gate 3 eval — 2026-07-06, figure matching → bbox-overlap + tau over text-only, images=it_geo_04/05/06/07
+
+**Closes the Task-#3 follow-up named at the end of the corner-label section above.**
+Two entangled changes to `tools/layout_order_eval.py`, shipped together because the
+first exposes a metric asymmetry the second must resolve:
+
+**(1) Figures match GT figures by BBOX-OVERLAP, not reading-order rank.** A GT
+figure that carries a bbox claims the detected figure it overlaps most (global
+greedy by symmetric IoU, floor `FIG_IOU_MIN = 0.2`); a bbox-carrying figure that
+overlaps nothing is an honest MISS (no rank fallback — that reintroduces the bug).
+GT figures WITHOUT a bbox (it_geo_04, authored before figure bboxes) keep the rank
+path, unchanged. Coordinate spaces were verified equal before writing: GT figure
+bboxes and Stage-04 block bboxes coincide to IoU 0.92–1.00 on it_geo_06's clean
+figures; every wrong (opposite-column / non-overlapping) pairing is ~0, so 0.2
+clears them with a wide margin yet tolerates GT-bbox truncation (the clipped cliff
+bottom F30 at IoU 0.63). Symmetric IoU, not coverage-of-smaller, so a partial-figure
+fragment can't masquerade as the whole figure. This is the **non-circular** fix:
+figures match by POSITION against the GT bboxes, independent of the recovered
+corner-label number, so a WRONG read is still caught.
+
+**(2) Tau (both arms) is now over TEXT blocks only.** The Tesseract-NATIVE arm ranks
+blocks by the median TSV index of their routed words. Photos carry no words and were
+already absent — but text-bearing figures (diagrams/maps with embedded labels, e.g.
+it_geo_04's B6R map, it_geo_07's diagrams) DO get routed words and leaked into the
+native arm, where their `native_key` is just where scattered internal labels fell in
+the raster scan — noise, not a reading-order claim. That leak (not a real order
+deficit) is what had pinned it_geo_04-right native at +0.33. Before change (1),
+rank-matching forced figures concordant so the asymmetry was dormant; position-honest
+matching would otherwise inject figure-placement deviations into a TEXT-order metric.
+Excluding figures by TYPE from BOTH arms makes the layout-vs-native comparison
+like-for-like for the first time and keeps tau measuring text reading order. Figure
+order is owner-SECONDARY; nothing load-bearing consumes it.
+
+**Measured (tool output for all four fixtures; text-block matches are byte-identical
+to the prior grade on every subpage, so every delta is a figure-matching or
+figure-exclusion effect only):**
+
+| fixture / subpage | tau Stage04 | tau native | Δ vs prior | note |
+|---|---|---|---|---|
+| it_geo_04 left  | +1.00 | +1.00 (n=3) | native +1.00 (was +1.00) | byte-identical; bbox-less → rank |
+| it_geo_04 right | +1.00 | **+1.00 (n=3)** | **native +0.33 → +1.00** | B6R map's TSV leak removed; text order was always a tie (matches prior prose) |
+| it_geo_05 left  | n/a   | n/a (n=0)   | — | single figure only, no text pair |
+| it_geo_05 right | +1.00 | +1.00 (n=4) | unchanged | — |
+| it_geo_06 left  | **+1.00** | +1.00 (n=4) | layout stays +1.00 | text fully concordant; F26-plate order deviation no longer drags tau |
+| it_geo_06 right | **+1.00** | +1.00 (n=4) | **layout +0.87 → +1.00** | figure-discordance removed |
+| it_geo_07 left  | **+0.96** | **+0.45 (n=11)** | **layout +0.87→+0.96, native +0.51→+0.45** | like-for-like; win margin widens |
+| it_geo_07 right | +1.00 | **+0.33 (n=9)** | native +0.38 → +0.33 | diagram-label TSV removed from native |
+
+**Headline 1 — it_geo_07 multi-column reading-order proof, SHARPENED (not new).**
+Previously recorded as "+0.87 / +1.00 (L/R) vs Tesseract-native +0.51 / +0.38." It is
+now **"+0.96 / +1.00 vs +0.45 / +0.33"** — same conclusion (Stage 04's column-major
+linearization beats native by a wide margin), but for the first time both arms are
+text-only, so the comparison is like-for-like and the margin is honest, not inflated
+by figures on the Stage-04 side that native structurally couldn't order.
+
+**Headline 2 — grouping C31→D1 downgraded assoc → MISS, and this is the metric getting
+MORE correct.** it_geo_07 left has 5 GT diagrams but 4 detected boxes; D1 (top,
+`[80,880,940,240]`) is genuinely undetected (IoU 0.000 vs every det box). Old
+rank-matching assumed the missing figure is *last*, shifting D1→D2's box … D4→D5's box
+and dropping D5 — so C31's nearest figure was the box wrongly labelled D1 and scored a
+spurious "assoc." Bbox-overlap matches D2–D5 to their own boxes and flags D1 as the
+true miss, so the geometric arm now correctly CANNOT confirm C31→D1 (its partner wasn't
+detected). Owner ranks grouping > order: the honest count drop is the point.
+
+**The corner-label win, now correctly reported: `pair_by_number` 1/6 → 2/6.** On
+it_geo_06 left, Stage 04 emits the figures top-band-major (F25, F26-plate 2nd, F27,
+F28), not §6 column-major. Rank matching relabelled the physical-26 box as GT figure
+#2 and scored `figure_label`'s correct "26" read a mispair (reported 1/6). Bbox-overlap
+matches the plate box to GT F26 at IoU 1.000, so C25→F25 and C26→F26 are both credited:
+**2/6, position-verified, non-tautological.** (The geometric nearest-figure arm also
+moved to 2/6 — C28→F28, C30→F30 — but those are incidental geometry coincidences on
+single-partner sub-columns, NOT the number-keyed win; the four texture-swamped labels
+still return None → 0 wrong, unchanged.) Non-regression: it_geo_04/05 figure matches
+byte-identical; full suite 103 green.
+
+Tests: `tools/tests/test_layout_order_eval.py` +4 (`_bbox_iou` values; bbox-overlap
+beats ro-rank on the out-of-order plate shape; a bbox-carrying no-overlap figure is an
+honest miss with no rank shift; a fragment can't steal the whole-figure match). The
+kendall_tau `1/3` unit fixture is retained as a pure partial-concordance case with an
+updated comment (it was the it_geo_04-right native value *when* the B6R figure leaked
+in; that grade is now +1.00 over its 3 text blocks).

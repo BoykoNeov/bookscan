@@ -165,6 +165,10 @@ python -m pipeline.stage05_ocr jobs/demo/page_001/
 # run full pipeline on a folder of captures
 python -m pipeline.run_all --input testset/spread_03/ --job demo --mode flag
 
+# open the visual editor on an assembled job (edit OCR/type/order/translation,
+# then Preview / re-render). Reads+writes ONLY document.json + document_assets/.
+python -m pipeline.editor jobs/<job>/ [--port 8000]
+
 # Gate 1 harness
 python -m tools.gate1_harness --testset testset/ --report docs/RESULTS.md
 ```

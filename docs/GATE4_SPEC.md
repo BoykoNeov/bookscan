@@ -154,15 +154,46 @@ Consequences that fall out for free:
 - De-hyphenation on reflow and running-header / page-number stripping (CLAUDE.md
   non-negotiables) live here.
 
-## Out of scope for this gate (next step)
+## Visual editor (BUILT — `pipeline/editor.py`)
 
 The **visual editor** (page image + block/word overlays; edit reading order,
 block type, and OCR text in visual context; translate; preview) is the owner's
-chosen surface for editing, but sequenced *after* format + render (owner's
-call: "format + render, then editor"). `document.json` is designed now to drive
-it: per-word boxes in page-image space, retained provenance, and structure
-overrides are all present so the editor is a view/controller over an existing
-model, not a schema change.
+chosen surface for editing, sequenced *after* format + render (owner's call:
+"format + render, then editor"). It is now built as `pipeline/editor.py`, run
+`python -m pipeline.editor jobs/<job>/ [--port N]`. Like Stage 07/08 it is
+**job-level and outside the per-page immutable contract**, and it reads/writes
+**only** `document.json` + `document_assets/` (self-containment). It is a
+view/controller over the existing model — no schema change — exactly as the
+document was designed to allow (per-word boxes in page-image space, retained
+provenance, structure overrides).
+
+Shape:
+- A tiny stdlib `http.server` (NOT FastAPI — that is Gate 5; the reusable asset
+  is the pure edit-apply logic, not the HTTP layer) serves a single-page
+  browser editor (`pipeline/assets/editor/index.html`) + a small JSON API:
+  `GET /api/document`, `PUT /api/document` (validate → normalize → atomic save),
+  `GET /document_assets/<rel>`, `POST /api/render`, `GET /render/page.html`.
+- The **load-bearing correctness rule**: on save the editor must set the exact
+  flags `stage07_assemble._document_has_edits` keys on, or a later re-assemble
+  would silently discard the user's work. `normalize_edits` enforces this
+  server-side regardless of the browser: a word whose `text` diverged from
+  `text_ocr` gets `edited=True` (which also clears the per-word `flag_visible`
+  marker); a block whose `type`/`reading_order` diverged from `type_auto`/
+  `order_auto` gets `structure_edited=True`. Provenance is never touched.
+- **Save is atomic** (temp file + `os.replace`) with a `.bak`; the incoming doc
+  is validated through the `Document` pydantic model before it can overwrite the
+  precious working copy.
+- **Preview is HTML-only** (`stage08_render.render_html`); the slow/flaky
+  Chromium PDF path stays a separate explicit export.
+- Reorder UX in the MVP is **numeric `reading_order`** (owner's call);
+  drag-to-reorder can be added later as pure frontend polish over the same model.
+- Verified: `pipeline/tests/test_editor.py` (pure edit-apply invariants, HTTP
+  round-trip, and a Playwright DOM e2e that edits a word and asserts the on-disk
+  document flipped); smoke-validated on real `dw_en_coins_01` (60 flags) and
+  `bg_01` (Cyrillic round-trips through PUT + re-render).
+
+Remaining polish (not blockers): drag-to-reorder, add/delete/split blocks or
+words, undo, and multi-word range edits.
 
 ## Decisions log (this gate)
 
@@ -183,5 +214,13 @@ model, not a schema change.
 - PDF backend = **headless Chromium via Playwright** (owner, 2026-07-06);
   data-driven via `reconstruct.pdf_backend`, WeasyPrint kept as fallback,
   HTML always still emitted. Verified on real jobs.
-- **Owed:** Noto `@font-face` embedding (Chromium currently falls back to Times
-  New Roman); visual editor.
+- Noto `@font-face` embedding — DONE (bundled variable NotoSerif.ttf as a
+  base64 data URI; kills the Times New Roman fallback).
+- **Visual editor** — BUILT (`pipeline/editor.py`): stdlib server + single-page
+  browser editor over `document.json` + `document_assets/` only; edits word text,
+  block type, numeric reading order, block-level translation, and doc settings;
+  atomic save (+`.bak`) with pydantic validation; `normalize_edits` sets the
+  edit flags assemble's clobber-detection keys on; HTML-only live preview.
+  Verified (pytest + Playwright e2e; real bg_01/dw_en_coins_01 smoke).
+- **Reorder UX** = numeric `reading_order` in the MVP (owner, 2026-07-06);
+  drag-to-reorder deferred as frontend polish.

@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.bookscan.network.BookscanApi
 import com.bookscan.network.BookscanClientFactory
 import com.bookscan.network.JobStatus
+import com.bookscan.network.JobSummary
 import com.bookscan.network.multipartPart
+import com.bookscan.network.withRetry
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,17 +24,19 @@ sealed interface UiState {
         val serverUrl: String,
         val jobId: String? = null,
         val jobStatus: JobStatus? = null,
+        val jobs: List<JobSummary> = emptyList(),
         val uploading: Boolean = false,
         val error: String? = null,
     ) : UiState
 }
 
 private const val POLL_INTERVAL_MS = 2000L
+private const val UPLOAD_MAX_ATTEMPTS = 4
 
 /**
- * Server address entry, job creation, spread upload (anchor + any close-ups
- * captured for it, M4), status polling. No retry/backoff yet — that's M5
- * (docs/plans/android-guided-capture.md).
+ * Server address entry, job list/resume, job creation, spread upload (anchor
+ * + any close-ups captured for it, M4, retried with backoff over flaky
+ * Wi-Fi, M5), status polling (docs/plans/android-guided-capture.md).
  */
 class BookscanViewModel(application: Application) : AndroidViewModel(application) {
     private val prefs = ServerPrefs(application)
@@ -46,7 +50,10 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
     private var pollJob: Job? = null
 
     init {
-        prefs.serverUrl?.let { api = BookscanClientFactory.create(it) }
+        prefs.serverUrl?.let {
+            api = BookscanClientFactory.create(it)
+            loadJobs()
+        }
     }
 
     fun setServerUrl(url: String) {
@@ -54,6 +61,19 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
         prefs.serverUrl = normalized
         api = BookscanClientFactory.create(normalized)
         _state.value = UiState.Ready(serverUrl = normalized)
+        loadJobs()
+    }
+
+    fun loadJobs() {
+        val api = api ?: return
+        viewModelScope.launch {
+            try {
+                val res = api.listJobs()
+                updateReady { it.copy(jobs = res.jobs, error = null) }
+            } catch (e: Exception) {
+                updateReady { it.copy(error = "list jobs failed: ${e.message}") }
+            }
+        }
     }
 
     fun createJob() {
@@ -69,6 +89,12 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    /** Resume an existing job from the job list — just re-targets polling, same as [createJob] past creation. */
+    fun resumeJob(jobId: String) {
+        updateReady { it.copy(jobId = jobId, jobStatus = null, error = null) }
+        startPolling(jobId)
+    }
+
     /**
      * [anchor] and [closeups] are one spread's capture frames, uploaded
      * together in a single multipart request — [anchor] is always index 0
@@ -82,10 +108,10 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
             updateReady { it.copy(uploading = true, error = null) }
             try {
                 val parts = (listOf(anchor) + closeups).mapIndexed { index, file -> multipartPart(index, file) }
-                api.uploadPage(jobId, parts)
+                withRetry(maxAttempts = UPLOAD_MAX_ATTEMPTS) { api.uploadPage(jobId, parts) }
                 refreshStatus(jobId)
             } catch (e: Exception) {
-                updateReady { it.copy(error = "upload failed: ${e.message}") }
+                updateReady { it.copy(error = "upload failed after retries: ${e.message}") }
             } finally {
                 updateReady { it.copy(uploading = false) }
             }

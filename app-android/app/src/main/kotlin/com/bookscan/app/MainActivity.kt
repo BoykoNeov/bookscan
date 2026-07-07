@@ -65,6 +65,8 @@ class MainActivity : ComponentActivity() {
                                 state = s,
                                 onCreateJob = viewModel::createJob,
                                 onCapturePage = ::openCapture,
+                                onResumeJob = viewModel::resumeJob,
+                                onRefreshJobs = viewModel::loadJobs,
                             )
 
                             CaptureFlow.CapturingAnchor -> CaptureScreen(

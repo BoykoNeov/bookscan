@@ -249,6 +249,31 @@ persisted across launches.
 *Verify:* unit tests for retry/backoff logic against a fake failing client
 (CI-able). Session UX (job list, progress overlay) is manual on-device.
 
+*Status: built.* Server-address persistence (`ServerPrefs`) and `listJobs()`
+already existed from M1, so this milestone's actual scope was three things.
+**Retry/backoff** lives in `:network` (`RetryBackoff.kt`) as the same
+pure-function-plus-thin-wrapper shape as `:capture`'s `HoverGate`:
+`delayForAttempt(attempt)` is a pure doubling-with-cap function, `withRetry`
+loops over it. It deliberately does *not* switch dispatchers, so
+`kotlinx-coroutines-test`'s virtual time advances `delay()` under `runTest` —
+5 new unit tests (`RetryBackoffTest`) run instantly instead of wall-clock
+sleeping. `isRetryableNetworkError` retries `IOException` (connect refused/
+unreachable/DNS/timeout) but not `HttpException` (server responded);
+`uploadSpread` wraps `uploadPage` in it at 4 attempts. Documented, not
+solved: a lost response after a processed request (read-timeout-after-send)
+retries into a genuine duplicate page — accepted as a conscious tradeoff for
+this personal single-LAN tool rather than building server-side dedup.
+**Job list/resume**: `UiState.Ready` gained a `jobs` field; `loadJobs()` calls
+`listJobs()` on server connect and on-demand; `resumeJob(id)` re-targets
+`startPolling` the same way `createJob` does post-creation. `JobScreen`'s
+`jobId == null` branch now lists jobs (tap to resume) alongside "New job".
+**Progress**: reused `JobScreen`'s existing per-page stage display rather
+than building a second rendering path — added a `LinearProgressIndicator`
+and an "N/7 stages" count next to the existing per-stage ✓/✗/… marks.
+`./gradlew :network:test` (new tests green) and `./gradlew assembleDebug`
+both pass. Job list/resume and progress display are UX — unverified without
+a device, same caveat as M2-M4.
+
 ## Explicit non-goals (v1)
 
 - NSD/mDNS auto-discovery of the server (manual IP entry instead; would

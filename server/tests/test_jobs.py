@@ -92,3 +92,28 @@ def test_job_status_detects_document_and_render(tmp_path: Path):
     status = J.job_status(job_dir)
     assert status["has_document"] is True
     assert status["has_render"] is True
+
+
+def test_create_job_defaults_to_flag_mode(tmp_path: Path):
+    job_id = J.create_job(tmp_path)
+    assert J.job_mode(tmp_path / job_id) == "flag"
+
+
+def test_create_job_persists_requested_mode(tmp_path: Path):
+    job_id = J.create_job(tmp_path, mode="patch")
+    assert J.job_mode(tmp_path / job_id) == "patch"
+    assert J.job_status(tmp_path / job_id)["mode"] == "patch"
+
+
+def test_create_job_rejects_invalid_mode(tmp_path: Path):
+    import pytest
+    with pytest.raises(ValueError):
+        J.create_job(tmp_path, mode="not-a-mode")
+
+
+def test_job_mode_defaults_when_job_json_missing(tmp_path: Path):
+    # a job dir with no job.json at all (e.g. created before this setting
+    # existed) must still resolve to the flag default, not raise.
+    job_dir = tmp_path / "legacy-job"
+    job_dir.mkdir()
+    assert J.job_mode(job_dir) == "flag"

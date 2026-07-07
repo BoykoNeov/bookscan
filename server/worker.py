@@ -9,7 +9,11 @@ docstring for why this is a subprocess, never an in-process call).
 The queue only ever holds a ``page_dir`` (Path). ``run_all`` is invoked with
 **no** ``--input`` — it reads ``<page_dir>/raw/`` itself (Stage 00's
 ``src=None`` branch), which the upload endpoint has already populated before
-enqueuing.
+enqueuing. ``--mode`` IS passed, read from the job's ``job.json`` via
+``page_dir.parent`` (``server.jobs.job_mode``) rather than carried on the
+queue item — the job-level setting a page belongs to never changes between
+enqueue and run, so re-deriving it from disk at run time keeps the queue's
+Path-only shape instead of widening it for one field.
 
 A failed page (non-zero subprocess exit, or a crash before ``run_all.py`` even
 gets to write its own ``run_all.json``) must never kill the drain loop — one
@@ -23,6 +27,8 @@ from __future__ import annotations
 import asyncio
 import sys
 from pathlib import Path
+
+from server import jobs as J
 
 
 class Worker:
@@ -58,8 +64,10 @@ class Worker:
                 self.queue.task_done()
 
     async def _run_one(self, page_dir: Path) -> None:
+        mode = J.job_mode(page_dir.parent)
         proc = await asyncio.create_subprocess_exec(
             sys.executable, "-m", "pipeline.run_all", str(page_dir),
+            "--mode", mode,
             cwd=self.repo_root,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
         )

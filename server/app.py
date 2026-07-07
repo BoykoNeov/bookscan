@@ -29,6 +29,7 @@ from server import jobs as J
 from server.routes_assemble import router as assemble_router
 from server.routes_editor import router as editor_router
 from server.routes_jobs import router as jobs_router
+from server.routes_render import router as render_router
 from server.worker import Worker
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -57,6 +58,7 @@ def create_app(config_path: Path | None = None) -> FastAPI:
 
     app.include_router(jobs_router)
     app.include_router(assemble_router)
+    app.include_router(render_router)
     app.include_router(editor_router)
 
     @app.get("/api/health")

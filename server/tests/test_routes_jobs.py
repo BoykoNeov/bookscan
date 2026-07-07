@@ -46,9 +46,23 @@ def test_status_shape_for_fresh_job(client: TestClient):
     job_id = client.post("/api/jobs").json()["job_id"]
     body = client.get(f"/api/jobs/{job_id}").json()
     assert body["job_id"] == job_id
+    assert body["mode"] == "flag"
     assert body["pages"] == []
     assert body["has_document"] is False
     assert body["has_render"] is False
+
+
+def test_create_job_with_mode(client: TestClient):
+    r = client.post("/api/jobs", params={"mode": "patch"})
+    assert r.status_code == 200
+    job_id = r.json()["job_id"]
+    assert r.json()["mode"] == "patch"
+    assert client.get(f"/api/jobs/{job_id}").json()["mode"] == "patch"
+
+
+def test_create_job_rejects_invalid_mode(client: TestClient):
+    r = client.post("/api/jobs", params={"mode": "not-a-mode"})
+    assert r.status_code == 400
 
 
 def test_upload_writes_raw_frames(client: TestClient, tmp_path: Path):

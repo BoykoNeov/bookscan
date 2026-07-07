@@ -33,9 +33,11 @@ def _require_job(request: Request, job_id: str) -> Path:
 
 
 @router.post("")
-def create_job(request: Request) -> dict:
-    job_id = J.create_job(_root(request))
-    return {"job_id": job_id}
+def create_job(request: Request, mode: str = "flag") -> dict:
+    if mode not in J.MODES:
+        raise HTTPException(400, f"invalid mode: {mode!r} (choices: {J.MODES})")
+    job_id = J.create_job(_root(request), mode=mode)
+    return {"job_id": job_id, "mode": mode}
 
 
 @router.get("")

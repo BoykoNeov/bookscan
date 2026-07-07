@@ -24,6 +24,11 @@ from pipeline.run_all import STAGE_ORDER
 JOB_ID_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 PAGE_DIR_RE = re.compile(r"^page_(\d+)$")
 
+# Mirrors pipeline/run_all.py's own --mode choices exactly (Stage 06's
+# uncertainty modes) — kept here, not imported from run_all, since this is
+# the server's contract with its own job.json, not run_all's CLI surface.
+MODES = ("flag", "best_guess", "patch")
+
 
 def jobs_root(cfg: dict, repo_root: Path) -> Path:
     rel = (cfg.get("paths", {}) or {}).get("jobs", "jobs")
@@ -39,10 +44,32 @@ def new_job_id() -> str:
     return f"{stamp}-{uuid.uuid4().hex[:8]}"
 
 
-def create_job(root: Path) -> str:
+def create_job(root: Path, mode: str = "flag") -> str:
+    """Mint a job dir and persist its uncertainty ``mode`` in ``job.json`` —
+    the one job-level setting the API needs before any page is uploaded
+    (Stage 06 reads it per page, via ``job_mode()`` below, when the worker
+    subprocesses ``run_all`` for each page)."""
+    if mode not in MODES:
+        raise ValueError(f"invalid mode: {mode!r} (choices: {MODES})")
     job_id = new_job_id()
-    (root / job_id).mkdir(parents=True, exist_ok=False)
+    job_dir = root / job_id
+    job_dir.mkdir(parents=True, exist_ok=False)
+    (job_dir / "job.json").write_text(
+        json.dumps({"mode": mode}), encoding="utf-8")
     return job_id
+
+
+def job_mode(job_dir: Path) -> str:
+    """The job's uncertainty mode, defaulting to ``flag`` if ``job.json`` is
+    missing (jobs created before this setting existed) or unreadable."""
+    path = job_dir / "job.json"
+    if not path.exists():
+        return "flag"
+    try:
+        mode = json.loads(path.read_text(encoding="utf-8")).get("mode", "flag")
+    except Exception:
+        return "flag"
+    return mode if mode in MODES else "flag"
 
 
 def resolve_job_dir(root: Path, job_id: str) -> Path | None:
@@ -101,6 +128,7 @@ def job_status(job_dir: Path) -> dict:
     )
     return {
         "job_id": job_dir.name,
+        "mode": job_mode(job_dir),
         "pages": [page_status(p) for p in pages],
         "has_document": (job_dir / "document.json").exists(),
         "has_render": (job_dir / "render" / "page.html").exists(),

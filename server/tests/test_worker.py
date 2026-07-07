@@ -32,7 +32,7 @@ async def test_processes_queued_pages_one_at_a_time_in_order(tmp_path, monkeypat
     concurrent = {"n": 0, "max": 0}
 
     async def fake_exec(*args, **kwargs):
-        page_dir = Path(args[-1])
+        page_dir = Path(args[args.index("pipeline.run_all") + 1])
         concurrent["n"] += 1
         concurrent["max"] = max(concurrent["max"], concurrent["n"])
 
@@ -110,3 +110,52 @@ async def test_a_page_that_raises_does_not_kill_the_drain_loop(tmp_path, monkeyp
     # returned) but page_002 still ran — the drain loop survived page_001's error.
     assert not (p1 / "worker.log").exists()
     assert (p2 / "worker.log").exists()
+
+
+@pytest.mark.asyncio
+async def test_passes_mode_from_job_json_to_run_all(tmp_path, monkeypatch):
+    captured: dict = {}
+
+    async def fake_exec(*args, **kwargs):
+        captured["args"] = args
+        return _FakeProc(0, b"ok", b"")
+
+    monkeypatch.setattr(asyncio, "create_subprocess_exec", fake_exec)
+
+    job_dir = tmp_path / "job1"
+    job_dir.mkdir()
+    (job_dir / "job.json").write_text('{"mode": "patch"}', encoding="utf-8")
+    page_dir = job_dir / "page_001"
+    page_dir.mkdir()
+
+    worker = Worker(tmp_path)
+    worker.enqueue(page_dir)
+    await worker.start()
+    await asyncio.wait_for(worker.queue.join(), timeout=5)
+    await worker.stop()
+
+    args = captured["args"]
+    assert args[args.index("--mode") + 1] == "patch"
+
+
+@pytest.mark.asyncio
+async def test_defaults_to_flag_mode_without_job_json(tmp_path, monkeypatch):
+    captured: dict = {}
+
+    async def fake_exec(*args, **kwargs):
+        captured["args"] = args
+        return _FakeProc(0, b"ok", b"")
+
+    monkeypatch.setattr(asyncio, "create_subprocess_exec", fake_exec)
+
+    page_dir = tmp_path / "page_001"  # no job.json in tmp_path (its parent)
+    page_dir.mkdir()
+
+    worker = Worker(tmp_path)
+    worker.enqueue(page_dir)
+    await worker.start()
+    await asyncio.wait_for(worker.queue.join(), timeout=5)
+    await worker.stop()
+
+    args = captured["args"]
+    assert args[args.index("--mode") + 1] == "flag"

@@ -1,8 +1,8 @@
 // Android shell module: Compose UI, CameraX (from M2 on), manifest.
-// UNVERIFIED IN THIS ENVIRONMENT — no Android SDK / compileSdk is installed
-// here (see docs/plans/android-guided-capture.md's M1 note). Written against
-// current (2026) AGP/Compose-BOM versions but not yet built; first compile
-// must happen on an SDK-equipped machine before this is trusted.
+// Build-verified as of M3 (`./gradlew assembleDebug` succeeds — an Android
+// SDK is now present at this environment's `local.properties` sdk.dir).
+// Camera/hover UX itself is still manual-on-device-only, per
+// docs/plans/android-guided-capture.md's verification split.
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -40,6 +40,7 @@ android {
 
 dependencies {
     implementation(project(":network"))
+    implementation(project(":capture"))
 
     implementation(platform("androidx.compose:compose-bom:2024.06.00"))
     implementation("androidx.compose.ui:ui")

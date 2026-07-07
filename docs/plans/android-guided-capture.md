@@ -49,6 +49,11 @@ surfaced there as expected fallout, not scope creep, and budget time in
 `pipeline/stage01_fuse.py` for it. It's also the missing `testset/zoomset_*`
 fixture `stage01_fuse.py` flags as never-shot — the first good multi-zoom
 capture should be committed there (append-only, per `testset/README.md`).
+Open question, not yet designed: today's stitch is one-close-up-per-region
+(spatial placement only); a true multi-frame merge of *overlapping* shots of
+the same region (e.g. stacking for noise/detail beyond single-frame quality)
+may be needed for best image quality — revisit once real M4 captures show
+whether single-frame-per-region is actually the bottleneck.
 
 ## Architecture
 
@@ -131,6 +136,24 @@ uploading redundant blurry burst frames over Wi-Fi).
 *Verify:* unit tests for the sharpness/stability scoring functions against
 fixture frame sequences (CI-able). The auto-trigger UX itself is manual
 on-device only.
+
+*Status: built.* The scoring + gate/burst decision logic lives in a new
+pure-JVM `:capture` module (`varianceOfLaplacian`, `meanAbsLumaDiff`,
+`HoverGate` state machine, `pickSharpest`) — 22 unit tests green via
+`./gradlew :capture:test`, exercising streak-completion, throttling,
+burst-cap finalize, mid-burst interruption/reset. `CaptureScreen.kt` wires
+`ImageAnalysis` + the gate into the existing M2 screen, keeping the manual
+shutter as a fallback. This environment turned out to have a working Android
+SDK after all (`local.properties` `sdk.dir` resolves) — unlike M1/M2,
+`./gradlew assembleDebug` was run here and succeeds; still, the hover UX
+itself (does it feel right, does it actually trigger on a real spread) is
+unverified without a device. **Thresholds are placeholders**
+(`SHARPNESS_THRESHOLD`/`STABILITY_THRESHOLD`/etc. in `CaptureScreen.kt`) —
+variance-of-Laplacian on a downsampled on-device luma buffer is not on the
+pipeline's absolute scale (not scale-invariant), and the stability threshold
+has no pipeline equivalent at all (auto-exposure re-metering shifts luma
+frame-to-frame even when the phone is perfectly still). Calibrating these
+against real captures is the first on-device task, before M4.
 
 **M4 — Multi-zoom close-ups for large pages.** Scope conservatively for v1:
 a **user-triggered** "capture close-up" action (zoom in, tap to capture)

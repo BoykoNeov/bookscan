@@ -58,4 +58,8 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.4")
     implementation("androidx.camera:camera-lifecycle:1.3.4")
     implementation("androidx.camera:camera-view:1.3.4")
+
+    // M4: reads/bakes-in EXIF orientation when a close-up still is decoded and
+    // re-encoded (BitmapFactory/Bitmap.compress don't round-trip the tag).
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 }

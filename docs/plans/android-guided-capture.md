@@ -173,6 +173,57 @@ pipeline validation event, not just an app milestone — inspect
 bugs into `stage01_fuse.py`. Commit the first clean capture set into
 `testset/` as the first real `zoomset_*` fixture (append-only).
 
+*Status: built, not yet device-verified.* New `CloseupScreen.kt` (fixed
+zoom-ratio steps — 1x/2x/3x/4x buttons via `CameraControl.setZoomRatio`,
+deliberately not a pinch gesture or a `zoomState`-bound slider, to avoid
+gesture-detection/LiveData surface that can't be tuned without a device —
+plus tap-to-capture, repeatable) is a separate flow from `CaptureScreen.kt`'s
+M2/M3 hover state machine, which is untouched. `MainActivity.kt` now drives a
+`CaptureFlow` state machine: anchor capture -> `SpreadReviewScreen.kt`
+(thumbnails, add-another-closeup / discard / upload) -> optionally back into
+`CloseupScreen` -> upload. `BookscanViewModel.uploadFrame(file)` became
+`uploadSpread(anchor, closeups)`, uploading the whole spread in one
+multipart request (anchor always index 0), per the server contract above.
+
+**Design change from the plan's literal reading, pushed by advisor review:**
+"the app must ensure each close-up's pixel area is meaningfully below the
+anchor's" does NOT mean crop. A blind center-crop to hit the area target
+would cut into content the user just framed by zooming — the opposite of
+what a close-up is for. Instead `com.bookscan.capture.scaledCloseupSize`
+(new pure function, `:capture` module, unit-tested) computes a downscale
+target at `CLOSEUP_AREA_FRACTION = 0.5` (comfortably under Stage 01's
+`fullspread_area_frac = 0.70`) applied to the close-up's OWN captured
+resolution — CameraX zoom narrows field of view, not pixel count, so a
+close-up starts at the same sensor resolution as the anchor; only this
+post-capture resample actually shrinks its saved dimensions. Resampling
+keeps the whole framed region while still delivering a real DPI win on it
+(e.g. 3x zoom downscaled by sqrt(0.5) is still ~2.1x the anchor's effective
+resolution there). `downscaleCloseupInPlace` (app module,
+`CloseupImageOps.kt`) also bakes in EXIF orientation via
+`androidx.exifinterface` before re-encoding — `BitmapFactory`/
+`Bitmap.compress` don't round-trip the orientation tag, and
+`stage00_ingest.py` applies `exif_transpose` to every ingested frame, so an
+un-corrected close-up would desync from the anchor before Stage 01's ORB
+stitch ever saw them (would have looked like a pipeline bug, wasn't one).
+
+**Validated the downscale approach on real photographic texture without a
+device**, per advisor's suggestion, since M4's real value (first real test of
+`stage01_fuse.py`'s ORB stitch path) can't otherwise be checked here: cropped
+a region of a real `testset/it_geo_07.jpg` spread photo, downscaled it by the
+same `sqrt(0.5)` math `scaledCloseupSize` uses, ran it through real
+`stage00_ingest.run()` + `stage01_fuse.run()` alongside the untouched full
+photo as anchor. Result: ORB stitch matched with 384 inliers, closeup area
+0.06 of the anchor's (well under the 0.70 threshold) — confirms downscaled
+close-ups retain enough real feature texture to match, and that the
+area-fraction math behaves as intended, on an actual photograph rather than
+a synthetic unit-test pattern. This is NOT a substitute for a real on-device
+capture — it doesn't touch camera zoom UX, EXIF-from-camera-hardware
+behavior, or whether 1x-4x zoom steps produce a useful close-up in practice.
+`./gradlew assembleDebug` and the full `test` task (network + capture)
+pass; the capture UX itself — does zoom feel right, does the close-up
+actually add useful detail, whether `CLOSEUP_AREA_FRACTION`/zoom steps need
+tuning — is unverified without a device, same caveat as M2/M3.
+
 **M5 — Session UX + resilience.** Job list/resume screen (`GET /api/jobs`),
 retry-with-backoff on upload over flaky Wi-Fi, a capture-progress overlay
 driven by polling `GET /api/jobs/{id}` per-stage status, server address

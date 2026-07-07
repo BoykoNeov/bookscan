@@ -30,8 +30,8 @@ sealed interface UiState {
 private const val POLL_INTERVAL_MS = 2000L
 
 /**
- * Server address entry, job creation, single-frame upload (one CameraX still
- * per tap as of M2), status polling. No retry/backoff yet — that's M5
+ * Server address entry, job creation, spread upload (anchor + any close-ups
+ * captured for it, M4), status polling. No retry/backoff yet — that's M5
  * (docs/plans/android-guided-capture.md).
  */
 class BookscanViewModel(application: Application) : AndroidViewModel(application) {
@@ -69,14 +69,20 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    /** [file] is a single full-resolution frame captured via [com.bookscan.app.ui.CaptureScreen]. */
-    fun uploadFrame(file: File) {
+    /**
+     * [anchor] and [closeups] are one spread's capture frames, uploaded
+     * together in a single multipart request — [anchor] is always index 0
+     * ("frame_00" server-side); Stage 01 Fuse classifies anchor-vs-closeup by
+     * area itself (see docs/plans/android-guided-capture.md M4).
+     */
+    fun uploadSpread(anchor: File, closeups: List<File>) {
         val api = api ?: return
         val jobId = (_state.value as? UiState.Ready)?.jobId ?: return
         viewModelScope.launch {
             updateReady { it.copy(uploading = true, error = null) }
             try {
-                api.uploadPage(jobId, listOf(multipartPart(0, file)))
+                val parts = (listOf(anchor) + closeups).mapIndexed { index, file -> multipartPart(index, file) }
+                api.uploadPage(jobId, parts)
                 refreshStatus(jobId)
             } catch (e: Exception) {
                 updateReady { it.copy(error = "upload failed: ${e.message}") }

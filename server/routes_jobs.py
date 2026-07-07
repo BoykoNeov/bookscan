@@ -1,10 +1,11 @@
 """server.routes_jobs — job lifecycle + page-upload endpoints.
 
-Step 2 scope (docs/plans/partitioned-questing-pillow.md): create/list/status
-are pure filesystem reads (server/jobs.py). The upload endpoint writes a
-spread's capture frame(s) into a new ``page_NNN/raw/`` folder but does not yet
-invoke the pipeline on it — wiring that onto the background worker is Step 3,
-kept as its own commit so each step stays independently verifiable end to end.
+Upload writes a spread's capture frame(s) into a new ``page_NNN/raw/`` folder,
+then enqueues that page onto the background worker (``server/worker.py``),
+which subprocesses ``pipeline.run_all`` against it. Poll
+``GET /api/jobs/{id}`` to watch a page's stages fill in as the worker gets to
+it — there is no push/websocket transport (see the plan doc: no real client
+exists yet to build that contract against).
 """
 
 from __future__ import annotations
@@ -65,9 +66,14 @@ async def upload_page(job_id: str, request: Request,
         if Path(f.filename or "").suffix.lower() not in _UPLOAD_EXTS:
             raise HTTPException(400, f"unsupported file type: {f.filename}")
 
-    page_dir = J.next_page_dir(job_dir)
-    raw_dir = page_dir / "raw"
-    raw_dir.mkdir(parents=True, exist_ok=False)
+    # Locked span: next_page_dir() (read the job dir) through mkdir() (claim
+    # the name) must be atomic against a concurrent upload to the same job —
+    # see the upload_lock comment in server/app.py.
+    async with request.app.state.upload_lock:
+        page_dir = J.next_page_dir(job_dir)
+        raw_dir = page_dir / "raw"
+        raw_dir.mkdir(parents=True, exist_ok=False)
+
     saved = []
     for i, f in enumerate(files):
         ext = Path(f.filename).suffix.lower()
@@ -75,4 +81,5 @@ async def upload_page(job_id: str, request: Request,
         dest.write_bytes(await f.read())
         saved.append(dest.name)
 
+    request.app.state.worker.enqueue(page_dir)
     return {"page": page_dir.name, "files": saved}

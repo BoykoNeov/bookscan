@@ -40,7 +40,8 @@ playwright>=1.42       # `playwright install chromium` after pip install
 fastapi>=0.110
 uvicorn[standard]>=0.29
 python-multipart>=0.0.9   # multipart/form-data parsing (page upload endpoint)
-httpx>=0.27                # test-only: FastAPI TestClient transport
+httpx>=0.27                # test-only: FastAPI TestClient + ASGITransport
+pytest-asyncio>=0.24       # test-only: async tests for server/worker.py
 
 # --- Later gates (kept here for a single install surface; unused until then) ---
 # rawpy>=0.19         # Stage 00 RAW decode

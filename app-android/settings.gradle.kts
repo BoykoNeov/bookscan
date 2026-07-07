@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "bookscan-android"
+
+// :network is pure-JVM (no Android SDK needed) — DTOs, response parsing,
+// retry/backoff. Buildable and testable in any environment with a JDK.
+// :app is the Android shell (Compose UI, CameraX, manifest) and requires
+// compileSdk / the Android Gradle Plugin — see docs/plans/android-guided-capture.md
+// for why the split exists.
+include(":network")
+include(":app")

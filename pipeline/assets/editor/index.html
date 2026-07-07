@@ -154,9 +154,9 @@ function wordClass(w){ if(isEdited(w)) return "edited";
 
 // ---- load ----
 async function load(){
-  const meta = await (await fetch("/api/meta")).json();
+  const meta = await (await fetch("api/meta")).json();
   $("#jobname").textContent = meta.job;
-  state.doc = await (await fetch("/api/document")).json();
+  state.doc = await (await fetch("api/document")).json();
   state.pageIndex = 0; state.selBlock=null; state.selWord=null;
   renderAll(); setStatus("loaded", "ok");
 }
@@ -168,7 +168,7 @@ function renderPage(){
   const p = page();
   $("#pagelabel").textContent = `${p.page_id}  (${state.pageIndex+1}/${state.doc.pages.length})`;
   const img = $("#pageimg");
-  img.src = "/" + p.image_asset;            // served under /document_assets/... via /assets or direct
+  img.src = p.image_asset;                  // relative: resolves under this job's base URL
   drawOverlays();
 }
 function pct(v, total){ return (100*v/total) + "%"; }
@@ -237,7 +237,7 @@ function wordEditor(blk, wi){
   c.appendChild(el("div","small muted",
     `conf ${Number(w.conf).toFixed(0)} · decision ${w.decision||"—"} · engine ${w.engine||"—"}`));
   if(w.patch_asset){
-    const im = el("img","patchthumb"); im.src="/"+w.patch_asset; c.appendChild(im);
+    const im = el("img","patchthumb"); im.src=w.patch_asset; c.appendChild(im);
   }
   const rev = el("button",null,"Revert to OCR");
   rev.style.marginTop="8px";
@@ -341,11 +341,11 @@ function renderSettings(){
 // ---- save / preview ----
 async function save(){
   setStatus("saving…");
-  const res = await fetch("/api/document", { method:"PUT",
+  const res = await fetch("api/document", { method:"PUT",
     headers:{"Content-Type":"application/json"}, body: JSON.stringify(state.doc) });
   if(!res.ok){ const e=await res.json().catch(()=>({})); setStatus("save failed: "+(e.detail||e.error||res.status),"err"); return false; }
   const j = await res.json();
-  state.doc = await (await fetch("/api/document")).json();   // pick up server-normalized flags
+  state.doc = await (await fetch("api/document")).json();   // pick up server-normalized flags
   state.dirty=false; renderAll();
   setStatus(j.has_edits ? "saved · edits protected from re-assemble" : "saved", "ok");
   return true;
@@ -353,9 +353,9 @@ async function save(){
 async function renderPreview(){
   if(state.dirty){ const ok=await save(); if(!ok) return; }
   setStatus("rendering…");
-  const res = await fetch("/api/render", { method:"POST" });
+  const res = await fetch("api/render", { method:"POST" });
   if(!res.ok){ const e=await res.json().catch(()=>({})); setStatus("render failed: "+(e.error||res.status),"err"); return; }
-  $("#preview").src = "/render/page.html?ts=" + Date.now();
+  $("#preview").src = "render/page.html?ts=" + Date.now();
   setStatus("preview updated","ok");
 }
 

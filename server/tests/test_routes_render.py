@@ -82,7 +82,7 @@ def test_render_success(client: TestClient, tmp_path: Path, monkeypatch):
     body = r.json()
     assert body["ok"] is True
     assert body["wrote_pdf"] is True
-    assert body["pdf_href"] == "render/pdf"
+    assert body["pdf_href"] == f"/api/jobs/{job_id}/render/pdf"
     assert body["pages"] == 1
 
     args = captured["args"]

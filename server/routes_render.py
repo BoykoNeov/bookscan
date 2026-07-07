@@ -67,7 +67,7 @@ async def render(job_id: str, request: Request) -> dict:
         # served by routes_editor.py, not this router — that's the only GET
         # route for the HTML render (this router only adds the PDF route).
         "href": f"/jobs/{job_id}/render/page.html",
-        "pdf_href": "render/pdf" if wrote_pdf else None,
+        "pdf_href": f"/api/jobs/{job_id}/render/pdf" if wrote_pdf else None,
         "wrote_pdf": wrote_pdf,
         "pages": params.get("pages"),
         "words": params.get("words"),

@@ -25,9 +25,10 @@ Italian, German**.
 <!-- UPDATE THIS SECTION AS WORK PROGRESSES -->
 - [x] Gate 1: OCR quality harness (see `docs/GATE1_SPEC.md`) — DONE
 - [x] Gate 2: fusion + split + dewarp improve OCR accuracy — DONE
-- [ ] Gate 3: layout + reading order correct on complex pages — IN PROGRESS
-- [ ] Gate 4: end-to-end re-typeset PDF reads correctly
-- [ ] Gate 5: server + Android app
+- [x] Gate 3: layout + reading order correct on complex pages — DONE
+- [x] Gate 4: end-to-end re-typeset PDF reads correctly — DONE
+- [ ] Gate 5: server + Android app — desktop FastAPI server DONE (see
+      `docs/plans/partitioned-questing-pillow.md`); Android app not started
 
 ## Architecture: the stage contract (IMPORTANT)
 

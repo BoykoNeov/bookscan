@@ -33,6 +33,15 @@ huggingface_hub>=0.20   # checkpoint download
 # --- Second-opinion OCR (Bulgarian) ---
 easyocr>=1.7
 
+# --- Stage 08 render: headless-Chromium PDF backend ---
+playwright>=1.42       # `playwright install chromium` after pip install
+
+# --- Gate 5: desktop FastAPI server ---
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9   # multipart/form-data parsing (page upload endpoint)
+httpx>=0.27                # test-only: FastAPI TestClient transport
+
 # --- Later gates (kept here for a single install surface; unused until then) ---
 # rawpy>=0.19         # Stage 00 RAW decode
-# weasyprint>=61      # Stage 07 HTML -> PDF
+# weasyprint>=61      # Stage 07 HTML -> PDF (secondary PDF backend)

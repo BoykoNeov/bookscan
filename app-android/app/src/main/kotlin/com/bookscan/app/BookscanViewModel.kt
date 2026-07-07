@@ -30,9 +30,9 @@ sealed interface UiState {
 private const val POLL_INTERVAL_MS = 2000L
 
 /**
- * M1 scope only: server address entry, job creation, single-frame upload
- * (gallery picker stands in for the camera until M2), status polling. No
- * retry/backoff yet — that's M5 (docs/plans/android-guided-capture.md).
+ * Server address entry, job creation, single-frame upload (one CameraX still
+ * per tap as of M2), status polling. No retry/backoff yet — that's M5
+ * (docs/plans/android-guided-capture.md).
  */
 class BookscanViewModel(application: Application) : AndroidViewModel(application) {
     private val prefs = ServerPrefs(application)
@@ -69,7 +69,7 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    /** [file] is a single gallery-picked image — the M2 camera stand-in per the plan. */
+    /** [file] is a single full-resolution frame captured via [com.bookscan.app.ui.CaptureScreen]. */
     fun uploadFrame(file: File) {
         val api = api ?: return
         val jobId = (_state.value as? UiState.Ready)?.jobId ?: return

@@ -224,6 +224,24 @@ pass; the capture UX itself — does zoom feel right, does the close-up
 actually add useful detail, whether `CLOSEUP_AREA_FRACTION`/zoom steps need
 tuning — is unverified without a device, same caveat as M2/M3.
 
+**Threading bug caught by a second advisor review before any device use:**
+the first `CloseupScreen` cut ran `takePicture`'s `OnImageSavedCallback` on
+`getMainExecutor`, so `downscaleCloseupInPlace`'s full decode + EXIF-rotate +
+scale + JPEG re-encode of a multi-megapixel still executed synchronously on
+the UI thread — hundreds of ms per close-up, a guaranteed freeze/ANR risk on
+first real capture. This does NOT inherit `CaptureScreen`'s "analyzer on
+main is deliberate" reasoning (M3's per-frame work is a cheap 320x240 luma
+variance, not a full-res image transform). Fixed: `takePicture` now runs on
+a remembered single-thread `Executor` (shut down in `onDispose`);
+`downscaleCloseupInPlace` executes there, and only the resulting
+`capturing`/`error`/`onCaptured` state mutations are marshaled back to
+`getMainExecutor`. Also flagged, not fixed (unverifiable without a device):
+the real-texture ORB validation above used `cv2.imwrite`, which writes no
+EXIF — so the EXIF-orientation-baking path (`applyExifOrientation`) is
+plausible but has NOT actually been exercised by anything, unit test or
+pipeline check. Treat it as unverified, same bucket as the rest of the
+capture UX.
+
 **M5 — Session UX + resilience.** Job list/resume screen (`GET /api/jobs`),
 retry-with-backoff on upload over flaky Wi-Fi, a capture-progress overlay
 driven by polling `GET /api/jobs/{id}` per-stage status, server address

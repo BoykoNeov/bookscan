@@ -30,6 +30,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat.getMainExecutor
 import com.bookscan.app.downscaleCloseupInPlace
 import java.io.File
+import java.util.concurrent.Executors
 
 /**
  * Fixed zoom-ratio steps rather than a pinch gesture or a CameraX
@@ -68,6 +69,15 @@ fun CloseupScreen(
     var camera by remember { mutableStateOf<Camera?>(null) }
     var capturing by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+
+    // takePicture's callback runs on whatever executor is passed to it, and
+    // downscaleCloseupInPlace does a full decode + rotate + scale + JPEG
+    // re-encode of a full-resolution still — hundreds of ms of work that
+    // must NOT land on the main thread (unlike CaptureScreen's ImageAnalysis
+    // analyzer, which is deliberately main-thread because its per-frame work
+    // is a cheap 320x240 luma variance, not a full-res image transform).
+    val captureExecutor = remember { Executors.newSingleThreadExecutor() }
+    DisposableEffect(Unit) { onDispose { captureExecutor.shutdown() } }
 
     DisposableEffect(lifecycleOwner) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -121,24 +131,34 @@ fun CloseupScreen(
                         capturing = true
                         error = null
                         val file = File(outputDir, "closeup_${System.currentTimeMillis()}.jpg")
+                        val mainExecutor = getMainExecutor(context)
                         capture.takePicture(
                             ImageCapture.OutputFileOptions.Builder(file).build(),
-                            getMainExecutor(context),
+                            captureExecutor,
                             object : ImageCapture.OnImageSavedCallback {
+                                // Runs on captureExecutor (background) — downscaleCloseupInPlace's
+                                // decode/rotate/scale/encode happens off the main thread; only the
+                                // resulting state mutations are marshaled back to it.
                                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                                     try {
                                         downscaleCloseupInPlace(file)
-                                        capturing = false
-                                        onCaptured(file)
+                                        mainExecutor.execute {
+                                            capturing = false
+                                            onCaptured(file)
+                                        }
                                     } catch (e: Exception) {
-                                        capturing = false
-                                        error = "close-up processing failed: ${e.message}"
+                                        mainExecutor.execute {
+                                            capturing = false
+                                            error = "close-up processing failed: ${e.message}"
+                                        }
                                     }
                                 }
 
                                 override fun onError(exc: ImageCaptureException) {
-                                    capturing = false
-                                    error = "close-up capture failed: ${exc.message}"
+                                    mainExecutor.execute {
+                                        capturing = false
+                                        error = "close-up capture failed: ${exc.message}"
+                                    }
                                 }
                             },
                         )

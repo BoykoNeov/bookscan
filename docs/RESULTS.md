@@ -924,3 +924,119 @@ Follow-ups (own commits, not this pass): a true whole-job (multi-spread) thresho
 pass feeding `--threshold`; the EasyOCR cross-engine disagreement trigger when the
 second engine lands; `conf_floor` re-tuning once a genuinely garbled page is in the
 testset; and the 2×-upscale patch-coord exercise on a real small-text page.
+
+## Multi-view curvature Phase 0 — 2026-07-11, make-or-break gate on the N=1 skew set
+
+Ran the two gated Phase-0 measurements from `docs/plans/multiview-curvature.md` on the
+existing skew set (`temp/zoomset_raw/skew/example 3`, "A New World" p.797 — the ONE
+dense-single-column strong-gutter-curl page; examples 1/2 are mostly-photo regression
+guards, not validation). Baseline frame = **151056**, the most *face-on* of the 4
+angles (least gutter foreshortening — advisor: Phase-1's win must beat the best single
+view, not just the sharpest). Ingest via the real pipeline path
+(`normalize.load_upright_bgr`); OCR path identical across arms (grayscale +
+probe-upscale, same as `tools/dewarp_ab`). Gutter/spine is on the LEFT. Scratch probes:
+`temp/skew_phase0/skew_0a.py`, `skew_0b.py`. **N=1 — feasibility/sizing only, not an
+OCR-gain validation** (that needs the data-gap set below).
+
+### 0a — does Stage 03 UVDoc already solve it (on the best single view)? → NO.
+
+Raw face-on page-crop vs UVDoc-dewarped crop, same OCR, words in 4 x-bands (same band
+edges as 0b so the two tie together; gutter/spine on the LEFT):
+
+| x-band | region | RAW words / conf | DEWARP words / conf |
+|---|---|---|---|
+| [0.00–0.12] | innermost gutter | 9 / 35.0  | 33 / **28.1** |
+| [0.12–0.24] | outer gutter     | 28 / 48.2 | 49 / 53.3 |
+| [0.24–0.50] | inner flat       | 118 / 68.3 | 112 / **80.9** |
+| [0.50–1.00] | outer flat       | 114 / 78.7 | 117 / **88.5** |
+
+UVDoc flattens geometry excellently: both flat bands jump (+12.6, +9.8 conf) and are
+visually crisp. But the **innermost gutter band [0–.12] gets *worse* (35.0→28.1)** while
+its word count balloons 9→33 — dewarp now finds boxes in the spine smear but they are
+spurious/garbled. The dewarped gutter is a faint, foreshortened gray ghost
+(`temp/skew_phase0/gutter_dewarp.png`); OCR there is garbage in BOTH arms (e.g. dewarp
+reads `bine or Every / wees, 100, but / smd make` for "…ght. Every line…/ …too, but…/ …and
+make…"). The word-count-up / conf-down signature means the innermost strip is **degraded
+text + shadow**, not blank margin. UVDoc *straightens* the gutter but cannot *synthesise*
+the resolution/contrast the single oblique view lost.
+
+**Verdict:** on the best single view, a real, gutter-specific residual gap survives dewarp
+→ the effort is **not moot** (do NOT STOP). The dead zone is **narrow** — the innermost
+~1 word/line (<12% page width). Its two components split cleanly by band and matter for
+what can fix them: the innermost [0–.12] is **foreshortening** smear (geometric — only a
+different viewpoint has those pixels; contrast tricks can't reconstruct them); the outer
+gutter [.12–.24] is real text at conf ~48–53, plausibly partly spine **shadow** (a cheap
+contrast/CLAHE lever *for that band only*).
+
+### #1 — does another ANGLE recover what the face-on view loses? → YES (existence proof).
+
+The make-or-break question the plan bets on: is the lost gutter text actually *present* in
+another view? Cropped the same top gutter lines from the face-on anchor (151056) vs the
+most-oblique frame (151105) and OCR'd each (`temp/skew_phase0/compare_gutter.py`,
+`cmp_*.png`):
+
+| frame | top-gutter OCR (line-starts) |
+|---|---|
+| face-on 151056  | `and 98 = lots of line…` — line-starts **lost/garbled** |
+| oblique 151105  | `Lines in the sang are … That's right … a line, UME passes too … come back here…` |
+
+In 151105 the camera sits left and the page's **top-left tilts toward the lens**, so
+"**Lines** in the sand around us / '**What** are you doing?' / '**I** draw seconds.' /
+'**Seconds?**' / '**That's right.** Every line is time…" are **crisp and fully legible** —
+every one a faint foreshortened smear in the face-on frame. The trade-off: in that same
+oblique frame the *outer margin* ("A New World", "lots of lines with gaps…") recedes and
+shrinks. So **different viewpoints favour different parts of the page**; the face-on frame
+is best *overall* but is *not* best at the gutter.
+
+**This flips an earlier hypothesis** (that the oblique frames might simply be
+worse-everywhere, making multi-view moot on this set): the pixels say the opposite. It is
+an **existence proof only** — N=1 page, one gutter region, one angle-pair: the *premise*
+(the lost gutter text exists in another view) is **verified**; the *solution* (fusing it
+yields net OCR gain) is **not** — that still needs the data-gap set. (Whether the oblique
+advantage is more pixels-per-character or partly a focus/lighting accident of that frame is
+not isolable at N=1 and does not matter for an existence proof.)
+
+### 0b — can we register the angle set to fuse the gutter? → NOT with feature matching.
+
+Registered the other 3 angles onto the face-on anchor with a single global ORB homography
+fit on page-region correspondences, residual bucketed by x (long-side 2000px):
+
+| angle vs anchor | inliers (% of page matches) | gutter inliers (x<0.24) | flat median resid |
+|---|---|---|---|
+| 151058 (mild)    | 320 / 584 (55%) | **0** (pre-RANSAC raw: 7 + 17) | 1.33–2.02px |
+| 151100 (more)    | 25 / 265 (9%)   | **0** (raw: 0 + 11)            | 1.58px |
+| 151105 (oblique) | 9 / 198 (5%)    | **0** (raw: 0 + 4)             | ~1.0px |
+
+Zero RANSAC inliers land in the gutter band for all 3 pairs; the global homography fits the
+flat region fine (median 1.3–2.0px). **Reconciling this with #1** (the oblique gutter is
+crisp, so it is *not* feature-poor in absolute terms): the 0 inliers are an artefact of
+registering **to the face-on anchor**, whose gutter is smear — there are no anchor-side
+keypoints for the oblique frame's real gutter keypoints to match *to*, and the page's
+non-planarity gets any stray gutter match rejected as an outlier against the flat-region
+homography. So the precise claim is **"the gutter is unregisterable-by-features to a
+face-on anchor,"** not "the pixels aren't there." Two more findings: the innermost band
+[0–.12] has ~0 *raw* matches even on the anchor side (7/0/0), and inlier robustness
+**collapses with angle** (55%→9%→5%) — the more-oblique views that carry the gutter payload
+are the hardest to register.
+
+**Verdict:** the recoverable gutter pixels demonstrably exist (#1) but a global ORB
+homography cannot fuse them — Phase 1's naive mechanism ("ORB-register the set →
+per-region pick the least-foreshortened view → blend") is **not** a cheap build. It needs
+intensity-based / optical-flow registration seeded from the flat region, or a
+developable-surface geometric model — i.e. it lands in the Phase-2 research bucket.
+
+### Combined Phase-0 conclusion (holds the effort at SCOPE)
+
+The effort's *premise is now demonstrated, not assumed*: on the one strong-curl page, gutter
+text the best single view foreshortens into mush is legibly present in another angle (#1),
+and UVDoc alone cannot recover it (0a). But Phase 0 still does **not** greenlight Phase 1 as
+a quick build — the pixels exist yet feature registration cannot fuse them (0b). Verdict and
+next-actions are unchanged from scope; this finding enriches the *why*, not the *what-next*.
+Cheapest honest next steps, in order: (1) the still-owed **data-gap ask** — 3–5 more
+paperback-style strong-curl dense-text pages, each multi-angle, before any OCR-gain claim
+can be validated; (2) a cheap **shadow/contrast spike** targeting the *outer* gutter band
+[.12–.24] only (the innermost word is foreshortening, not shadow — preprocessing can't
+reach it); (3) if multi-view is pursued, budget for non-feature (ECC/optical-flow) or
+geometric registration from the start — ORB will not align a gutter to a face-on anchor.
+Examples 1/2 remain untouched regression guards. Nothing was canonised into `testset/` (N=1;
+that stays the curated append-only data-gap deliverable).

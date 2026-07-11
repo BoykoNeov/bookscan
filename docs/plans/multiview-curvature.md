@@ -6,8 +6,16 @@ from multiple angles — and asked to **scope this as its own effort** (separate
 from the [max-quality-fusion](max-quality-fusion.md) feature), and explicitly
 **not to start building yet**.
 
-Status: **SCOPE ONLY.** No code. First next actions (Phase 0 + a data ask) are
-listed at the end and await owner go-ahead.
+Status: **SCOPE.** Phase 0 (make-or-break gate) RUN on the N=1 skew set 2026-07-11
+— see `docs/RESULTS.md` "Multi-view curvature Phase 0". Verdict: (0a) UVDoc alone does
+NOT recover the innermost gutter word on the best single view (flat-band conf +10-13,
+innermost gutter unchanged/worse) → not moot; (#1) **premise verified as an existence
+proof** — a different angle (151105) legibly captures gutter line-starts ("Lines in the
+sand…") the face-on frame foreshortens into smear; (0b) BUT a global ORB homography
+cannot fuse them — the gutter is *unregisterable-by-features to a face-on anchor*, so a
+naive-registration Phase 1 is **research, not a cheap build**. Phase 0 does NOT greenlight
+Phase 1. Held at scope pending the data-gap ask (validates the *solution*, not just the
+premise) + an outer-gutter-band contrast spike. See end.
 
 ## What multi-view actually buys (do not oversell)
 
@@ -46,8 +54,12 @@ the geometric flatten.
 
 ## Phases (each gated — do not skip a gate)
 
-### Phase 0 — make-or-break gate (cheap, runnable on N=1 today)
-Two measurements decide whether the effort is worth anything and how hard it is:
+### Phase 0 — make-or-break gate (cheap, runnable on N=1 today) — RAN 2026-07-11
+Two measurements decide whether the effort is worth anything and how hard it is.
+**Result: 0a → UVDoc doesn't recover the innermost gutter on the best single view (not
+moot); +an added cross-frame check → another angle DOES legibly capture that gutter text
+(premise verified, existence proof); 0b → but ORB can't register the gutter to a face-on
+anchor → Phase 1 is research, not a quick build. Full numbers in docs/RESULTS.md.**
 - **0a — does Stage 03 already solve it?** Run Stage 03 UVDoc on the single
   sharpest example-3 frame; OCR the dewarped result vs. the raw frame (reuse the
   `tools/dewarp_ab.py` + `tools/ocr_metrics.py` path). **If UVDoc already
@@ -83,10 +95,18 @@ as its own multi-session effort then.
 - examples 1/2 are regression guards: curvature handling must not wreck a
   mostly-photo page or its thin flat-margin caption.
 
-## First next actions (await owner go-ahead — do NOT auto-run)
-1. **Phase 0a + 0b** on the existing skew set (cheap, N=1, decides feasibility +
-   sizes Phase 1). Owner said don't proceed — hold until they say go.
-2. **Data gap ask:** to validate any Phase-1 OCR gain, owner shoots **~3–5 more
-   paperback-style strong-curl dense-text pages, each from multiple angles**
-   (like example 3, not like the photo-book pages). Then a real
-   `testset/skewset_*` fixture can be curated (append-only).
+## First next actions
+1. ~~**Phase 0a + 0b** on the existing skew set.~~ **DONE 2026-07-11** (docs/RESULTS.md):
+   gap real but narrow; gutter feature-poor → Phase 1 is research, not a cheap build.
+   Phase 0 does NOT greenlight Phase 1.
+2. **Data gap ask (still owed):** to validate any Phase-1 OCR gain, owner shoots **~3–5
+   more paperback-style strong-curl dense-text pages, each from multiple angles** (like
+   example 3, not the photo-book pages). Then a real `testset/skewset_*` fixture can be
+   curated (append-only). Blocks any Phase-1 build.
+3. **Cheap preprocessing spike (new, do before multi-view):** 0a showed part of the
+   gutter gap is spine *shadow*, not just foreshortening. Test local contrast /
+   shadow-flatten (CLAHE etc.) on the deepest gutter of frame 151056 — it may recover
+   part of the gap for free and shrink or remove the multi-view case.
+4. **If multi-view is still pursued:** budget for non-feature (ECC / optical-flow) or
+   geometric (developable-surface) registration from the start — 0b proved ORB cannot
+   align the feature-poor gutter.

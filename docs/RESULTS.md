@@ -1040,3 +1040,105 @@ reach it); (3) if multi-view is pursued, budget for non-feature (ECC/optical-flo
 geometric registration from the start — ORB will not align a gutter to a face-on anchor.
 Examples 1/2 remain untouched regression guards. Nothing was canonised into `testset/` (N=1;
 that stays the curated append-only data-gap deliverable).
+
+---
+
+## Multi-view curvature Phase 0 — extended to N>1 — 2026-07-11
+
+The owner delivered the data-gap set (`temp/zoomset_raw/curl/`, 7 usable multi-angle sets,
+folder 4 empty). This re-runs the Phase-0 gate on **N>1** to test whether the premise and the
+gap **generalise** beyond the one skew page. **Important framing:** N>1 here buys *gap
+generality* (0a) and *premise generality* (#1) — the go/no-go evidence to **greenlight** the
+Phase-1 build. It is **NOT** the fusion OCR-gain measurement; that still needs the build (0b
+showed no working registration). Do not read "solution validated" into this section.
+
+**Honest clean N = 3 single-page strong-curl pages** (skew p.797 + curl set 3 "A New World"
+p.785 + curl set 5 "Dépôt Kurt" p.827) — all single-page obliques with one unambiguous left
+gutter, same geometry as the N=1 harness. The spreads (sets 1/2/6/7/8) have **two** gutters +
+a central spine occlusion + need the Stage-02 split, so they are visual-consistency notes
+only, not folded into the measurement.
+
+*Curl geometry, so the frame labels don't read as a contradiction:* near a gutter the page
+curls so its inner text runs **near-vertical / edge-on**. A camera **tilted toward the
+gutter** sees that spine text more **face-on** (more pixels/char) than a camera square over
+the page's flat middle — which instead foreshortens the gutter into a smear. So "the oblique
+frame reads the gutter better" is geometry, not a mislabel.
+
+### Gate first — is the angle spread real, or an auto-capture burst? → REAL.
+
+Before measuring, confirmed the within-set frames are deliberately re-angled, not a static
+hand-held burst (which would measure noise). ORB frame-to-frame registration (`orb_homography`,
+half-res ×2 for full-res px):
+
+| set | f1→f0 disp | f2→f0 disp | inlier trend |
+|---|---|---|---|
+| 1 (mild)   | ~336px | ~676px (→f3 ~926px) | 514→75→7 |
+| 2 (strong) | ~394px | ~694px | 278→49 |
+| 3 (strong) | ~83px  | ~581px | 151→7 |
+| 5 (strong) | ~223px | ~607px | 83→7 |
+
+Displacements of 80–900px are far beyond hand-shake (a few px) = genuine viewpoint change.
+Inliers collapse as angle widens (set1 514→75→7), reproducing 0b's "robustness collapses with
+angle." Gate passes numerically **and** by eye.
+
+### #1 premise generality — the complementary-halves proof (the spine of this section)
+
+On curl set 3 (p.785), the two extreme frames of the same page, de-contaminated (facing-page
+sliver cut at the spine-shadow valley *before* any processing):
+
+- **Oblique f0** reads the **left gutter line-STARTS** crisply ("*It changes its face as the
+  year progresses*", "*and in spring by a dusting of pollen*") but foreshortens the **right
+  line-ends** (flat-right OCR conf 65.4 / 52.8).
+- **Face-on f2** reads the **right ends** crisply (flat-right conf 94.1 / 89.8) but now curls
+  the **left gutter starts** away ("*ace as the year*", "*dusting of pollen*").
+
+**Neither single frame reads the whole line** — each owns the half nearest its camera. This
+is the multi-view premise made visible on a **second (and, on set 5, third)** page, and it is
+a *picture*, robust to any band-conf noise. It also **reframes 0a**: there is no single "best
+frame" that is face-on across the full width, so single-frame flattening (UVDoc, which only
+un-warps one frame) structurally cannot recover the half that frame foreshortens — *that* is
+the not-moot proof, cleaner than any statistic. (It also kills the tempting "just pick the
+most face-on frame" deflation — no such frame exists.) The **cross-frame word-count** f0-vs-f2
+is deliberately **not** quoted as a statistic: different scale/position/legible-half make it
+not apples-to-apples — quantifying it rigorously *is* the fusion measurement, which needs the
+build.
+
+### 0a generality — does UVDoc alone recover the gutter on the best single frame? → NOT reliably.
+
+De-contaminated (facing page removed from the *input* before dewarp), the only
+apples-to-apples comparison is **RAW-faceon vs UVDoc-faceon** (same frame, same input, scale
+controlled). Per x-band mean OCR conf:
+
+| page (face-on frame) | innermost [0–.12] | outer gutter [.12–.24] | flat [.24–.5] |
+|---|---|---|---|
+| set 3 | 59.4 → **80.9** (helps) | 85.5 → 91.2 (helps) | 94.1 → 91.6 |
+| set 5 | 63.9 → **34.3** (hurts) | 48.6 → **71.0** (helps) | 91.1 → 85.1 |
+
+UVDoc **reliably lifts the outer gutter band** on both pages, but the **innermost band is
+page-dependent** — it helps set 3 (+21) and hurts set 5 (−30). **Correction to the N=1
+finding:** the earlier "UVDoc always mangles the innermost gutter" (skew page, conf 35→28 +
+spurious boxes) **did not survive de-contamination** — it was partly the facing-page sliver
+warping under the grid, not the target gutter. The honest, generalised 0a: *UVDoc does not
+**reliably** recover the innermost gutter* (one page it degrades) → a residual gutter gap
+remains on at least some pages → **not moot** — but the effect is weaker and less universal
+than N=1 implied. The stronger not-moot argument is the complementary-halves geometry above,
+which does not depend on this noisy band.
+
+### Combined N>1 conclusion → GREENLIGHTS the Phase-1 build (0b still makes it research)
+
+Both Phase-0 questions now hold at N=3: the **premise generalises** (complementary halves on
+2 more pages — the lost gutter text lives in another angle) and the **gap generalises** (no
+single frame + UVDoc recovers the whole gutter). That is exactly the go/no-go evidence to
+**greenlight the Phase-1 multi-view build** — which the original N=1 gate could not do. It
+does **not** change 0b's verdict: a global ORB homography still can't fuse the angles
+(gutter unregisterable-by-features to a face-on anchor), so Phase 1 remains **research, not a
+quick build** — intensity/optical-flow or developable-surface registration from the start.
+
+**Next, in order:** (1) if the build is greenlit, curate a `testset/skewset_*` fixture
+(append-only) — and if the production capture mode is spreads, prefer **strong-curl spreads**
+(the central gutter is where two inner margins curl hardest) plus **variety**: 3–5 different
+books, a curl-severity range, and the priority non-Latin scripts (Bulgarian Cyrillic,
+Italian, German), since gutter OCR degradation is script-dependent; (2) the cheap
+outer-gutter-band [.12–.24] contrast/CLAHE spike still applies. Nothing canonised into
+`testset/` yet (the curl set stays scratch until a build is greenlit). Scratch probes:
+`temp/skew_phase0/{viewpoint_diversity,curl_0a,curl_0a_clean}.py`.

@@ -6,16 +6,24 @@ from multiple angles — and asked to **scope this as its own effort** (separate
 from the [max-quality-fusion](max-quality-fusion.md) feature), and explicitly
 **not to start building yet**.
 
-Status: **SCOPE.** Phase 0 (make-or-break gate) RUN on the N=1 skew set 2026-07-11
-— see `docs/RESULTS.md` "Multi-view curvature Phase 0". Verdict: (0a) UVDoc alone does
-NOT recover the innermost gutter word on the best single view (flat-band conf +10-13,
-innermost gutter unchanged/worse) → not moot; (#1) **premise verified as an existence
-proof** — a different angle (151105) legibly captures gutter line-starts ("Lines in the
-sand…") the face-on frame foreshortens into smear; (0b) BUT a global ORB homography
-cannot fuse them — the gutter is *unregisterable-by-features to a face-on anchor*, so a
-naive-registration Phase 1 is **research, not a cheap build**. Phase 0 does NOT greenlight
-Phase 1. Held at scope pending the data-gap ask (validates the *solution*, not just the
-premise) + an outer-gutter-band contrast spike. See end.
+Status: **SCOPE — Phase-0 gate PASSED at N>1; Phase-1 build is GREENLIT (as research).**
+Phase 0 first RAN on the N=1 skew set 2026-07-11, then was **extended to N=3** the same day
+after the owner delivered the data-gap set (`temp/zoomset_raw/curl/`, 7 multi-angle sets).
+See `docs/RESULTS.md` "Multi-view curvature Phase 0" (+ the "extended to N>1" addendum).
+Verdict at N=3: (#1) **premise generalises** — on 2 more strong-curl pages the two extreme
+frames read *complementary halves* of each curled line (oblique owns the gutter line-starts,
+face-on owns the right ends; **neither single frame reads the whole line**), so the lost
+gutter text demonstrably lives in another angle; (0a) UVDoc alone does **not reliably**
+recover the whole gutter (outer band lifts on both pages, innermost is page-dependent:
+set3 +21, set5 −30 conf) — and there is no single face-on-across-the-width frame for it to
+flatten → **not moot**. NOTE: the N=1 "UVDoc always mangles the innermost gutter" claim did
+NOT survive de-contamination (it was partly a facing-page artifact) — corrected in RESULTS.
+BUT (0b, unchanged) a global ORB homography still cannot fuse the angles (gutter
+unregisterable-by-features to a face-on anchor), so **Phase 1 is research (intensity/
+optical-flow or developable-surface registration), not a quick build.** Both Phase-0
+questions now hold at N>1 = the go/no-go evidence to **greenlight** the build; still owed
+before shipping: a curated `testset/skewset_*` fixture + the outer-gutter contrast spike.
+See end.
 
 ## What multi-view actually buys (do not oversell)
 
@@ -97,16 +105,22 @@ as its own multi-session effort then.
 
 ## First next actions
 1. ~~**Phase 0a + 0b** on the existing skew set.~~ **DONE 2026-07-11** (docs/RESULTS.md):
-   gap real but narrow; gutter feature-poor → Phase 1 is research, not a cheap build.
-   Phase 0 does NOT greenlight Phase 1.
-2. **Data gap ask (still owed):** to validate any Phase-1 OCR gain, owner shoots **~3–5
-   more paperback-style strong-curl dense-text pages, each from multiple angles** (like
-   example 3, not the photo-book pages). Then a real `testset/skewset_*` fixture can be
-   curated (append-only). Blocks any Phase-1 build.
-3. **Cheap preprocessing spike (new, do before multi-view):** 0a showed part of the
-   gutter gap is spine *shadow*, not just foreshortening. Test local contrast /
-   shadow-flatten (CLAHE etc.) on the deepest gutter of frame 151056 — it may recover
-   part of the gap for free and shrink or remove the multi-view case.
-4. **If multi-view is still pursued:** budget for non-feature (ECC / optical-flow) or
-   geometric (developable-surface) registration from the start — 0b proved ORB cannot
-   align the feature-poor gutter.
+   gap real; ORB cannot register the gutter → Phase 1 is research, not a cheap build.
+2. ~~**Data-gap ask.**~~ **DELIVERED + measured 2026-07-11**: owner shot 7 multi-angle
+   strong-curl sets (`temp/zoomset_raw/curl/`); Phase 0 extended to **N=3** clean
+   single-page pages (docs/RESULTS.md "extended to N>1"). **Premise + gap now generalise
+   → Phase-1 build is GREENLIT (as research).** The *fusion OCR-gain* still is NOT yet
+   measured — that needs the build itself, not more data.
+3. **Curate the `testset/skewset_*` fixture (append-only)** — the remaining data deliverable
+   before/with the build. If the production capture mode is **spreads**, prefer strong-curl
+   spreads (central gutter = where two inner margins curl hardest) + variety: 3–5 books,
+   curl-severity range, priority non-Latin scripts (Bulgarian/Italian/German). The current
+   curl set stays scratch until then.
+4. **Cheap preprocessing spike (still applies):** contrast/CLAHE on the *outer* gutter band
+   [.12–.24] only (the innermost word is foreshortening, not shadow — preprocessing can't
+   reach it). May shrink the multi-view case for free.
+5. **Phase-1 build (greenlit, research):** budget for non-feature (ECC / optical-flow) or
+   geometric (developable-surface) registration from the start — 0b proved ORB cannot align
+   the gutter to a face-on anchor. Per-region pick the least-foreshortened view → blend into
+   one composite anchor → feed Stage 03 (unchanged). Ship only on a measured OCR gain on the
+   skewset fixture.

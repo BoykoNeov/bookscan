@@ -10,10 +10,12 @@ Status: **SCOPE — Phase-0 gate PASSED at N>1; Phase-1 build is GREENLIT (as re
 Phase 0 first RAN on the N=1 skew set 2026-07-11, then was **extended to N=3** the same day
 after the owner delivered the data-gap set (`temp/zoomset_raw/curl/`, 7 multi-angle sets).
 See `docs/RESULTS.md` "Multi-view curvature Phase 0" (+ the "extended to N>1" addendum).
-Verdict at N=3: (#1) **premise generalises** — on 2 more strong-curl pages the two extreme
-frames read *complementary halves* of each curled line (oblique owns the gutter line-starts,
-face-on owns the right ends; **neither single frame reads the whole line**), so the lost
-gutter text demonstrably lives in another angle; (0a) UVDoc alone does **not reliably**
+Verdict at N=3: (#1) **premise generalises** — on curl set 3 the two extreme frames read
+*complementary halves* of each curled line (oblique owns the gutter line-starts, face-on owns
+the right ends; **neither single frame reads the whole line**), so the lost gutter text
+demonstrably lives in another angle; set 5 corroborates this *directionally* (its cross-frame
+band numbers are muddied by a ~2× foreshortening crop-width mismatch, so it is not a clean
+numeric split — the clean proof is set 3, on top of the N=1 skew existence proof); (0a) UVDoc alone does **not reliably**
 recover the whole gutter (outer band lifts on both pages, innermost is page-dependent:
 set3 +21, set5 −30 conf) — and there is no single face-on-across-the-width frame for it to
 flatten → **not moot**. NOTE: the N=1 "UVDoc always mangles the innermost gutter" claim did

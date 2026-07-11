@@ -1093,8 +1093,15 @@ sliver cut at the spine-shadow valley *before* any processing):
   the **left gutter starts** away ("*ace as the year*", "*dusting of pollen*").
 
 **Neither single frame reads the whole line** — each owns the half nearest its camera. This
-is the multi-view premise made visible on a **second (and, on set 5, third)** page, and it is
-a *picture*, robust to any band-conf noise. It also **reframes 0a**: there is no single "best
+is the multi-view premise made visible on a **second** page (after the N=1 skew existence
+proof), and it is a *picture*, robust to any band-conf noise. **Set 5 is directionally
+consistent, not a clean split:** by eye its oblique frame likewise reads the left gutter
+starts that the face-on frame curls away, but its two frames differ ~2× in crop width
+(oblique 1142px vs face-on 2370px — steep foreshortening, *not* a crop bug: the oblique
+gutter text is intact), so set 5's *cross-frame* band numbers are muddied and are **not**
+quoted as a complementary split — its face-on frame even wins the innermost-band conf. So the
+clean complementary-halves proof is **set 3**; set 5 corroborates the premise directionally.
+It also **reframes 0a**: there is no single "best
 frame" that is face-on across the full width, so single-frame flattening (UVDoc, which only
 un-warps one frame) structurally cannot recover the half that frame foreshortens — *that* is
 the not-moot proof, cleaner than any statistic. (It also kills the tempting "just pick the
@@ -1126,9 +1133,10 @@ which does not depend on this noisy band.
 
 ### Combined N>1 conclusion → GREENLIGHTS the Phase-1 build (0b still makes it research)
 
-Both Phase-0 questions now hold at N=3: the **premise generalises** (complementary halves on
-2 more pages — the lost gutter text lives in another angle) and the **gap generalises** (no
-single frame + UVDoc recovers the whole gutter). That is exactly the go/no-go evidence to
+Both Phase-0 questions now hold at N=3: the **premise generalises** (complementary halves
+cleanly on set 3, directionally on set 5 — the lost gutter text lives in another angle) and
+the **gap generalises** (no single frame + UVDoc recovers the whole gutter across the 3
+pages). That is exactly the go/no-go evidence to
 **greenlight the Phase-1 multi-view build** — which the original N=1 gate could not do. It
 does **not** change 0b's verdict: a global ORB homography still can't fuse the angles
 (gutter unregisterable-by-features to a face-on anchor), so Phase 1 remains **research, not a

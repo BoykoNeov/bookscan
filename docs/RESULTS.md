@@ -1201,9 +1201,18 @@ identical geometry and one keying is valid for both.
 
 **CLAHE recovers 0, 0, and 1 gutter tokens across the three pages.** The spike is negative.
 
-**The metric is not broken** — curl3 scores 0.975, i.e. the GT keying + scorer reach ceiling
-when the text is legible. So skew/curl5 at ~0.50 is real residual degradation that CLAHE
-does not touch, not a scoring artefact.
+**This is a true null, not a dead gauge** — the first thing to ask of any negative. Three
+things say the needle *can* move: curl3 scores 0.975 (the GT keying + scorer reach ceiling on
+legible text), recall ranges 0.33–0.64 across the sweep below, and it drops **sharply** when
+CLAHE over-amplifies (curl5 4.0/8 → 0.333). The metric responds to CLAHE in **both
+directions**, so +0.000 at the pre-registered setting is a measured zero. skew/curl5 at ~0.50
+is real residual degradation that CLAHE does not touch, not a scoring artefact.
+
+**The null is also conservative** — two things bias this measurement *toward* CLAHE and it
+still lost. The recall window [0–.35] deliberately includes the smear band, so had CLAHE
+turned any smear-garbage into a real GT-matching word, that would have scored as a gain. And
+hand-keying error hits both arms symmetrically (one keying, identical geometry), so it can
+only wash out a real delta — never manufacture a null.
 
 **curl5 is the case for using recall and not conf:** conf rose **+2.9 while recall moved by
 one token**. Token-level, the baseline reads `Anglada's` / `brought` / `You see,` where CLAHE
@@ -1245,10 +1254,17 @@ recall are decorrelated throughout the sweep (skew 4.0/16: conf **+5.2**, recall
 
 ### Verdict
 
-**The outer-gutter CLAHE lever does not exist.** Multi-view Phase 1 therefore **keeps the
-whole gutter gap [0–.24]** — nothing is descoped, and the Phase-1 budget is unchanged. This
-is a real (negative) result, and it was cheap: it closes the plan's open question rather
-than leaving it as a maybe.
+**The outer-gutter CLAHE lever does not exist at the insertion point the plan scoped** —
+i.e. CLAHE applied *post-dewarp*, on pixels UVDoc has already resampled, as a cheap Stage-05
+preprocessing step. That bound is deliberate and worth reading precisely: this result does
+**not** say all contrast preprocessing is dead (the illumination lead below is the
+counter-example), and it does not test CLAHE *before* dewarp — a different mechanism
+(feeding UVDoc's grid prediction), outside what the plan scoped as a cheap post-processing
+lever, and not worth chasing given the band-model correction above.
+
+Multi-view Phase 1 therefore **keeps the whole gutter gap [0–.24]** — nothing is descoped,
+and the Phase-1 budget is unchanged. This is a real (negative) result, and it was cheap: it
+closes the plan's open question rather than leaving it as a maybe.
 
 ### Lead, explicitly NOT a claim — global illumination normalization
 

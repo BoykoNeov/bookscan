@@ -24,8 +24,19 @@ BUT (0b, unchanged) a global ORB homography still cannot fuse the angles (gutter
 unregisterable-by-features to a face-on anchor), so **Phase 1 is research (intensity/
 optical-flow or developable-surface registration), not a quick build.** Both Phase-0
 questions now hold at N>1 = the go/no-go evidence to **greenlight** the build; still owed
-before shipping: a curated `testset/skewset_*` fixture + the outer-gutter contrast spike.
-See end.
+before shipping: a curated `testset/skewset_*` fixture. See end.
+
+**UPDATE 2026-07-17 — the outer-gutter CLAHE spike RAN and is NEGATIVE** (docs/RESULTS.md
+"Outer-gutter CLAHE spike"). It does **not** shrink the multi-view case: on the same N=3
+pages, outer-band token recall vs hand-keyed GT moves **+0.000 / +0.000 / +0.019** at the
+pre-registered setting, and no setting in a 6-point sweep is consistently positive
+(clipLimit ≥3.0 is actively destructive). **Phase 1 keeps the whole gutter gap [0–.24];
+the Phase-1 budget is unchanged.** It also **corrects this plan's own band model**: the
+"innermost = foreshortening, outer = shadow" split below did NOT survive contact with the
+pixels — the outer band is crisp black-on-white text whose low conf was a *mixture
+artefact* (smear-tail fragments landing past x=.12), not shadow. Both gutter bands are
+foreshortening; only severity differs. So the remaining pre-build deliverable is the
+`testset/skewset_*` fixture alone.
 
 ## What multi-view actually buys (do not oversell)
 
@@ -118,9 +129,16 @@ as its own multi-session effort then.
    spreads (central gutter = where two inner margins curl hardest) + variety: 3–5 books,
    curl-severity range, priority non-Latin scripts (Bulgarian/Italian/German). The current
    curl set stays scratch until then.
-4. **Cheap preprocessing spike (still applies):** contrast/CLAHE on the *outer* gutter band
-   [.12–.24] only (the innermost word is foreshortening, not shadow — preprocessing can't
-   reach it). May shrink the multi-view case for free.
+4. ~~**Cheap preprocessing spike:** contrast/CLAHE on the *outer* gutter band [.12–.24].~~
+   **DONE 2026-07-17 — NEGATIVE** (docs/RESULTS.md "Outer-gutter CLAHE spike"). Recovers
+   0/0/+1 gutter tokens across N=3 vs hand-keyed GT; conf rose on curl5 (+2.9) while the
+   text got *worse* (`Anglada's`→`nglads`) — the reason the go/no-go was recall, not conf.
+   **Does NOT shrink the multi-view case.** Premise was wrong: the outer band is crisp text,
+   not shadow (see the band-model correction at the top). *Separate* lead, deliberately NOT
+   folded in here: gentle CLAHE lifts the globally-dim skew page's **flat**-band conf
+   +10.5/+12.6 — that is illumination normalization (Stage 00/03/05 preprocessing, already
+   scoped in max-quality-fusion.md), quoted **conf-only and unvalidated as accuracy**; it
+   should be measured on `testset/`, which has real GT.
 5. **Phase-1 build (greenlit, research):** budget for non-feature (ECC / optical-flow) or
    geometric (developable-surface) registration from the start — 0b proved ORB cannot align
    the gutter to a face-on anchor. Per-region pick the least-foreshortened view → blend into

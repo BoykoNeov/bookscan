@@ -1150,3 +1150,120 @@ Italian, German), since gutter OCR degradation is script-dependent; (2) the chea
 outer-gutter-band [.12–.24] contrast/CLAHE spike still applies. Nothing canonised into
 `testset/` yet (the curl set stays scratch until a build is greenlit). Scratch probes:
 `temp/skew_phase0/{viewpoint_diversity,curl_0a,curl_0a_clean}.py`.
+
+---
+
+## Outer-gutter CLAHE spike — 2026-07-17 — VERDICT: NEGATIVE (multi-view keeps the whole gutter gap)
+
+The cheap preprocessing spike owed by `docs/plans/multiview-curvature.md` (First next
+actions #4): does contrast/CLAHE recover the **outer gutter band [.12–.24]**, which Phase 0
+described as "real text at conf ~48–53, plausibly partly spine **shadow** (a cheap
+contrast/CLAHE lever *for that band only*)"? If yes, it would shrink the multi-view case for
+free — narrowing Phase 1 to the innermost [0–.12] foreshortening band. **It does not.**
+
+Same N=3 clean single-page strong-curl pages as the Phase-0 N>1 extension (skew p.797 +
+curl set 3 p.785 + curl set 5 p.827), same de-contamination (facing-page sliver cut at the
+spine valley before dewarp). Scratch probes: `temp/gutter_clahe/{dump_bands,clahe_ab}.py`,
+GT in `temp/gutter_clahe/gt_bands.json`.
+
+### Method — why the go/no-go is recall, not conf
+
+**Baseline is UVDoc, not RAW.** RESULTS already shows UVDoc alone lifts the outer band
+(set3 85.5→91.2, set5 48.6→71.0); measuring against RAW would bank Stage 03's win as
+CLAHE's. The only question is whether CLAHE adds anything **on top of Stage 03**.
+
+**CLAHE is applied globally** to the gray that feeds Tesseract, at native res before the
+probe-upscale (the production-plausible Stage-05 preprocessing point). Global, not
+band-local: CLAHE is already tile-adaptive, and a band-local application creates seams and
+is not shippable. That makes the **flat bands a free regression guard**.
+
+**Settings fixed a priori** at the conservative default (clipLimit 2.0, tile 8×8) — no
+tuning on N=3. The sweep below shows every page × every setting so variance is visible.
+
+**The probe-upscale scale is pinned** from the baseline arm and reused by the CLAHE arm, so
+"CLAHE helped" can't be confounded with "the arms ran at different resolutions".
+
+**Metric.** Screen = per-band word count + mean conf (Phase-0 continuity). **Go/no-go =
+token recall against hand-keyed outer-band GT**, because mean conf cannot answer this
+question — CLAHE raises conf on garbage as readily as on real text. GT was keyed by eye off
+full-res strips with the band edges drawn (declared coverage: ~30–37 text lines/page, not
+full-page); recall is scored box-independently inside a generous [0–.35] window, since CLAHE
+can split/merge tokens near an edge. CLAHE moves **zero pixels**, so both arms share
+identical geometry and one keying is valid for both.
+
+### Result — at the pre-registered setting (clipLimit 2.0, tile 8×8)
+
+| page | outer conf base→CLAHE | Δconf | outer **recall** base→CLAHE | **Δrecall** | flat guard [.24–.5] / [.5–1] |
+|---|---|---|---|---|---|
+| skew  | 67.6 → 66.3 | −1.3 | 0.533 → 0.533 | **+0.000** | 79.7→90.2 (+10.5), 77.2→89.8 (+12.6) |
+| curl3 | 91.2 → 92.1 | +0.9 | 0.975 → 0.975 | **+0.000** | 91.6→93.6 (+2.0), 94.8→93.1 (−1.7) |
+| curl5 | 71.0 → 73.9 | +2.9 | 0.500 → 0.519 | **+0.019** | 85.1→81.3 (−3.8), 87.8→88.5 (+0.7) |
+
+**CLAHE recovers 0, 0, and 1 gutter tokens across the three pages.** The spike is negative.
+
+**The metric is not broken** — curl3 scores 0.975, i.e. the GT keying + scorer reach ceiling
+when the text is legible. So skew/curl5 at ~0.50 is real residual degradation that CLAHE
+does not touch, not a scoring artefact.
+
+**curl5 is the case for using recall and not conf:** conf rose **+2.9 while recall moved by
+one token**. Token-level, the baseline reads `Anglada's` / `brought` / `You see,` where CLAHE
+reads `nglads` / `rought` / `Y ou see,` — *more confident, less correct*. A conf-only spike
+would have reported a win that does not exist.
+
+### Why the premise was wrong (the pixels, not the statistic)
+
+Phase 0 inferred "plausibly partly spine shadow" from the band's low conf (48–53). Looking at
+the actual band pixels kills that inference: on curl3 and curl5 the outer band is **crisp,
+high-contrast, black-on-white text** — there is no shadow in it to remove. Its depressed mean
+conf is a **mixture artefact**: the band is mostly clean text plus a few *smear-tail
+fragments* whose centres happen to land past x=.12 (`aving`, `flea`, `sonal`, `ried.`), and
+those fragments drag the mean down. They are foreshortening damage, which is geometric —
+contrast cannot reconstruct pixels the lens never resolved. The skew page differs: it is
+**uniformly faint everywhere**, gutter and flat alike, which is a global exposure problem,
+not a gutter one.
+
+So the band's low conf never was a shadow signal. **The [0–.12] / [.12–.24] split that Phase 0
+drew — "innermost = foreshortening, outer = shadow" — does not survive contact with the
+pixels. Both gutter bands are foreshortening; only the severity differs.**
+
+### Sweep — variance across settings (NOT a tuning result)
+
+| setting | Δrecall skew | Δrecall curl3 | Δrecall curl5 | worst flat-guard hit |
+|---|---|---|---|---|
+| 1.0 / 8  | +0.111 | +0.000 | +0.037 | −2.5 |
+| **2.0 / 8** (pre-registered) | **+0.000** | **+0.000** | **+0.019** | −3.8 |
+| 3.0 / 8  | +0.044 | +0.000 | −0.019 | −9.0 |
+| 4.0 / 8  | −0.089 | −0.025 | −0.167 | −16.1 |
+| 2.0 / 16 | +0.000 | +0.000 | +0.074 | −1.7 |
+| 4.0 / 16 | +0.044 | −0.025 | −0.093 | −21.6 |
+
+No setting is consistently positive; the largest single gain (skew 1.0/8, +0.111 = 5 tokens
+of 45) comes from the *mildest* setting and is **not** reproduced on the other two pages —
+crowning it would be exactly the "tune on N=3" error. Everything at clipLimit ≥3.0 is
+actively **destructive** (curl5 4.0/8: recall 0.500→0.333, flat conf −13.4/−16.1). Conf and
+recall are decorrelated throughout the sweep (skew 4.0/16: conf **+5.2**, recall +0.044).
+
+### Verdict
+
+**The outer-gutter CLAHE lever does not exist.** Multi-view Phase 1 therefore **keeps the
+whole gutter gap [0–.24]** — nothing is descoped, and the Phase-1 budget is unchanged. This
+is a real (negative) result, and it was cheap: it closes the plan's open question rather
+than leaving it as a maybe.
+
+### Lead, explicitly NOT a claim — global illumination normalization
+
+The one large effect found is **not** the one the spike hunted: gentle CLAHE lifts the
+**flat-band** conf of the globally-dim skew page by **+10.5 / +12.6**, bringing it from 79.7/77.2
+up to the 90ish of the other pages, while being neutral-to-negative on the already-bright
+pages (curl5 flat −3.8). That is illumination normalization, not gutter recovery — the
+Stage 00/03/05 preprocessing item already scoped in [max-quality-fusion](plans/max-quality-fusion.md)
+("glare is single-image illumination normalization, not fusion"), not this effort.
+
+**It is quoted as conf-only and is NOT validated as an accuracy win** — GT here covers the
+outer gutter band only, so there is no accuracy number behind the flat bands. This very
+spike just demonstrated that conf moves independently of accuracy (curl5: +2.9 conf, +1
+token), so treating a flat-band conf lift as a win would repeat the exact error the spike
+was designed to catch. Worth a separate spike **because it can be done right**: the real
+`testset/` has ground truth, so a clean-page CLAHE non-regression + gain measurement is
+directly runnable there — which is also the precondition a shippable Stage-05 preprocessor
+would owe anyway, since it would touch every page, not just gutters.

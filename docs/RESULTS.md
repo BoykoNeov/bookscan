@@ -1361,6 +1361,16 @@ before/after (those fixtures get clean cuts and never enter the changed
 fallback); `split_eval` 15/15; full suite 218 green (incl. a new
 `_reading_rows` bridged-column regression test).
 
+Two honest caveats. (a) The fix rescues a column bridged by a *horizontally
+disjoint* neighbour (de_01's English column at x≥1563 splits cleanly from German
+x≤1542); a bridge that also overlaps the column in x still falls to the flat
+x-sort — unfixed, no fixture yet. (b) **Latent testset bug (not Finding 3, for a
+follow-up):** `it_geo_04..07` list their `.blocks.json` in the manifest `gt_file`
+column, but `gate1_harness`/`dewarp_ab` read `gt_file` as verbatim *text* WER GT
+with no `.txt` guard — so those rows compute a bogus WER against JSON. de_01 was
+deliberately left with an empty `gt_file` to avoid joining that; the it_geo rows
+still need either a `.txt`-guard in the harnesses or the `gt_file` column cleared.
+
 Symptom 1 (icon sidebar OCRs to junk, lands early) is **deferred** — it is a
 content-*typing* issue (in a climbing guide that difficulty/time/GPS panel is
 high-value structured info, not junk to drop), so rendering it as a structured

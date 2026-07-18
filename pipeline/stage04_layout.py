@@ -360,7 +360,14 @@ def _reading_rows(items: list[int], boxes: list[BBox]) -> list[int]:
     top->bottom. A row that is a single x-cluster (genuine same-line boxes, or
     mutually overlapping boxes with no clean column split) keeps the left->right
     sort — so a line of jittery footnote words still reads left->right and two
-    diagonally-stacked blocks (separate rows) still read top->bottom."""
+    diagonally-stacked blocks (separate rows) still read top->bottom.
+
+    HONEST LIMIT: this rescues a column bridged by a HORIZONTALLY-DISJOINT
+    neighbour (de_01-right: the English column sits at x>=1563, cleanly right of
+    the German column's x<=1542, so they split into two x-clusters). A bridge that
+    also OVERLAPS the stacked column in x (e.g. a wide figure that vertically
+    overlaps the paragraphs too) stays in one x-cluster and still falls to the
+    flat x-sort — unproven/unfixed here (no such fixture yet)."""
     rows: list[dict] = []
     for i in sorted(items, key=lambda i: boxes[i].y):
         b = boxes[i]

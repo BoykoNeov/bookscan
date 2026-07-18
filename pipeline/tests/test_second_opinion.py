@@ -3,9 +3,13 @@
 The load-bearing filter is the DICTIONARY GATE (see RESULTS.md 2026-07-18): a raw
 token-diff flagged 89/763 real Cyrillic words (precision ~0) because on Cyrillic
 EasyOCR is the noisier reader (homoglyphs se->ce, its own misreads). The gate
-flags a Tesseract word iff  norm(T) not in dict  AND  EasyOCR nominated a
-norm(E) in dict — flag only a Tesseract NON-word that EasyOCR replaced with a
-VALID word. This subsumes homoglyph-folding and join-tolerance in one filter.
+flags a Tesseract word iff it is a 1<->1 replace with EasyOCR  AND  norm(T) not
+in dict  AND  the paired norm(E) in dict — flag only a Tesseract NON-word that
+EasyOCR replaced, one-for-one, with a VALID word. The 1<->1 restriction is
+load-bearing: in a multi-token replace the alignment is undetermined, so a valid
+E token could vouch for flagging a different T token (the помашки/село false
+flag — see the regression test below). This subsumes homoglyph-folding and
+join-tolerance in one filter.
 
 Also covered: the inert-seam contract (dictionary=None flags nothing — the
 mechanism stays dormant until the owner supplies a lexicon), the region-confidence
@@ -100,6 +104,33 @@ def test_nonword_but_easyocr_offers_no_valid_word_is_not_flagged():
     boxes, texts = _boxes((0, "касалница"))
     regions = [_line("касалннца", 0.9)]  # EasyOCR also garbled, not in dict
     assert find_disagreements(boxes, texts, regions, 0.30, DICT) == set()
+
+
+def test_multitoken_replace_does_not_let_a_valid_word_vouch_for_a_neighbor():
+    """Regression for the real bg_01 false flag (RESULTS.md 2026-07-18): in a
+    2<->2 replace a valid EasyOCR token must NOT vouch for flagging a DIFFERENT
+    Tesseract token whose own aligned counterpart is garbage.
+
+    Tesseract read 'помашки села' (both CORRECT); EasyOCR misread it 'помошки
+    село'. difflib groups the whole thing into ONE replace slot. 'село' is a
+    valid word — but it is the counterpart of 'села', NOT of the correct
+    'помашки' (whose real counterpart 'помошки' is garbage). The old
+    any(e in dict) test let 'село' vouch for the slot and flagged the correct
+    'помашки'. The 1<->1 restriction skips the ambiguous multi-token slot so
+    neither token is flagged."""
+    only_voucher_is_a_word = {normalize_token("село")}
+    boxes, texts = _boxes((0, "помашки"), (50, "села"))
+    regions = [_line("помошки село", 0.9)]
+    assert find_disagreements(boxes, texts, regions, 0.30, only_voucher_is_a_word) == set()
+
+
+def test_one_to_one_replace_survives_between_agreeing_neighbors():
+    """The complement: a genuine 1<->1 misread flanked by agreeing tokens is
+    still caught — the neighbors are 'equal' opcodes, so 'касалница'/'касапница'
+    stays a clean 1<->1 replace and flags."""
+    boxes, texts = _boxes((0, "власти"), (50, "касалница"), (100, "се"))
+    regions = [_line("власти касапница се", 0.9)]  # only middle token differs
+    assert find_disagreements(boxes, texts, regions, 0.30, DICT) == {1}
 
 
 def test_agreement_flags_nothing():

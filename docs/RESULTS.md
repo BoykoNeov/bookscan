@@ -1493,3 +1493,79 @@ Full suite 158 green. Files: `pipeline/second_opinion.py` (+
 OR-in + LIVE/inert reporting, and a Stage 08 test proving a disagreement-flagged
 confident word clears through the SAME per-word `flag_visible`/edit path as a
 confidence flag (no separate un-clearable marker).
+
+### Addendum — 2026-07-18, honest re-measurement on a GENERAL lexicon + a bug fix
+
+Followed up the "PROXY-OPTIMISTIC" caveat above: sourced a real, **non-GT-derived**
+Bulgarian wordlist and re-measured `bg_01`. Lexicon = **FrequencyWords `bg_full`**
+(hermitdave, MIT / OPUS-OpenSubtitles, CC) — 1.2M raw rows; the count≥1 tail is
+subtitle noise (`безопстно`, `педставлението`, `коло-ните`), so a frequency cut
+(≥5 → 332k words) trims it. Truth for TP/FP classification stays the page's GT
+(this is **non-circular**: the lexicon is a general list, the GT is only the
+grader).
+
+**Bug found by the real lexicon (now fixed): a multi-token `replace` let a valid
+EasyOCR word vouch for a wrong neighbor.** The proxy could never surface it (its
+tiny 382-word vocab rarely produced multi-token replaces with an in-dict token).
+On the general lexicon `bg_01` produced a **false flag on the correct word
+`помашки`**:
+
+```
+TESS: помашки села      (both CORRECT — "Pomak villages")
+EASY: помошки село       (both EasyOCR misreads)
+one 2↔2 replace:  T[помашки, села] ↔ E[помошки, село]
+old gate: any(e∈dict) → 'село'∈dict → True → flag T-nonwords → 'помашки' flagged ✗
+```
+`село` is the counterpart of `села`, **not** of `помашки` (whose true counterpart
+`помошки` is itself garbage). The `any(e in dict)` slot test measured the wrong
+thing. **Fix:** the tiebreaker now fires **only on 1↔1 replaces**, where "EasyOCR
+nominated a valid word in place of *this exact* token" is actually defined. Skips
+multi-token slots entirely (accepted recall loss on multi-token misreads — the
+confidence trigger stays the net; no real multi-token TP was observed here — the
+one dropped, `Иб5ит`, was footnote-punctuation mash). Regression-tested
+(`test_multitoken_replace_does_not_let_a_valid_word_vouch_for_a_neighbor`).
+
+**Honest numbers — general lexicon, after the fix** (stable across cutoffs ≥2…≥20,
+so not a tuning artifact):
+
+| bg_01 | proxy (GT-as-lexicon) | general freq lexicon (honest) |
+|---|---|---|
+| flags | 6 | **1** |
+| TP (genuine misread, T≠GT) | — | **1** (`касалница`→`касапница`) |
+| FP (correct word flagged) | — | **0** |
+| precision | — | **1/1** |
+
+The one surviving catch is **lexicon-robust**: `касапница` has **count 478** in
+the frequency list (a solidly frequent common noun) — this **retracts** an
+intermediate claim that it survived only via a hyphen-spelled artifact row (that
+was a spot-check bug reading the file's last/lowest-frequency entry).
+
+**⚠️ 1/1 is ONE flag on ONE page — the fix certifies the ALGORITHM, not the
+lexicon.** A 330k-word lexicon still false-flags any rare-real-word or proper noun
+whenever `norm(T)∉dict` and an aligned `norm(E)∈dict`; bg_01 is far too thin to
+bound that rate. This is **not** an activation green-light.
+
+**Sourcing answer (this was the actual question): a general frequency list alone
+is INSUFFICIENT — now measured, not assumed.** Every place name in `bg_01` is
+**absent** from `bg_full` at any frequency: `Дедеагач`, `Гюмурджина`,
+`Дуганхисар` → `ABSENT`. Proper nouns dominate this corpus and are the
+highest-error-risk tokens, so the blind spot lands hard exactly here. The
+proxy's `Делеагач`→`Дедеагач` catch is **confirmed lost** on the general list.
+Therefore:
+
+- **GeoNames-BG (CC-BY) gazetteer overlay is now *measurably* justified** — it
+  carries Bulgarian toponyms (the missing `Дедеагач`-class words) — rather than
+  assumed. This is the delta the prior advisor said would decide the question.
+- A **morphologically-complete base** (Hunspell `bg_BG` surface forms) is worth
+  weighing against the frequency list for rare-valid-word coverage (would also
+  have carried `помашки`, removing that word from the blind spot).
+
+**Scope note / owner decision pending.** "Look into sourcing it" is answered:
+the freq-list base is sourced and works, a real precision bug was found+fixed, and
+proper-noun coverage measurably needs a gazetteer. The full build — a reproducible
+4-language `tools/setup_lexicons.py` (mirroring `setup_tessdata`) + GeoNames
+overlay + possible Hunspell base — is a real investment and is **held for owner
+greenlight** rather than silently expanded into. The disagreement seam remains
+inert (no lexicon committed; `models/` is gitignored) until that build lands.
+
+Full suite **198 green** (17 in `test_second_opinion.py`, +2 for the 1↔1 fix).

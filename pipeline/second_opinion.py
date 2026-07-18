@@ -25,16 +25,28 @@ errors, not Tesseract's. Edit distance can't separate a real 1-char Tesseract
 misread (``Chapmarked``→``Chopmarked``) from 1-char homoglyph noise — both are
 single substitutions. The tiebreaker is a per-language dictionary:
 
-    flag a Tesseract word iff  norm(T) ∉ dict  AND  EasyOCR proposed a norm(E) ∈ dict
+    flag a Tesseract word iff it is a 1↔1 replace with EasyOCR
+    AND  norm(T) ∉ dict  AND  the paired norm(E) ∈ dict
 
 i.e. flag only when Tesseract produced a NON-word and EasyOCR nominated a VALID
-word in its place. This subsumes homoglyph-folding and join-tolerance in one
-principled filter (``се`` ∈ dict → never flagged, whatever EasyOCR read). On
-bg_01 it collapses 89 → ~7, and the survivors are genuine misreads
-(``касалница``→``касапница``, ``Делеагач``→``Дедеагач``).
+word IN PLACE OF THAT EXACT TOKEN. The **1↔1 restriction is load-bearing**: the
+premise ("EasyOCR nominated a valid word in place of *this* token") is only
+defined when the replace slot pairs one token with one token. In a multi-token
+replace the aligned counterpart is undetermined, so a valid E token can vouch for
+flagging a DIFFERENT T token whose real counterpart is itself garbage — measured
+on bg_01: T[``помашки`` ``села``] ↔ E[``помошки`` ``село``] wrongly flagged the
+CORRECT ``помашки`` because ``село`` ∈ dict. The gate subsumes homoglyph-folding
+and join-tolerance (``се`` ∈ dict → never flagged, whatever EasyOCR read).
+Measured on bg_01 against a GENERAL (non-GT-derived) frequency lexicon: 1 clean
+catch (``касалница``→``касапница``, ``касапница`` count 478 — robust), no false
+flags; a naive raw token-diff over the same page flagged 89 (precision ≈ 0). See
+RESULTS.md 2026-07-18 for the honest measurement + activation caveats.
 
 Honest blind spot: ``norm(T) ∉ dict AND norm(E) ∉ dict`` is a MISS (both
-non-words — a domain term, or a rare word absent from the lexicon). That is an
+non-words). The **measured dominant miss is PROPER NOUNS / toponyms**
+(``Дедеагач``, ``Гюмурджина``, ``Дуганхисар`` are ALL absent from a general
+frequency list, yet dominate this corpus and are the highest OCR-error-risk
+tokens) — closing that needs a gazetteer overlay, not a bigger wordlist. An
 accepted recall loss traded for precision, correct when raw precision is ≈ 0.
 
 **Inert-seam contract (repo pattern, mirrors ``stage08.join_hyphen``).** The gate
@@ -164,15 +176,17 @@ def find_disagreements(
         for tag, i1, i2, j1, j2 in sm.get_opcodes():
             if tag != "replace":
                 continue
-            # Dictionary tiebreaker: only when EasyOCR nominated a VALID word in
-            # this slot (evidence Tesseract, not EasyOCR, is the wrong one) do we
-            # flag the Tesseract tokens here that are themselves NON-words.
-            e_offers_word = any(e in dictionary for e in e_toks[j1:j2])
-            if not e_offers_word:
+            # Only 1<->1 replaces (see module docstring): the dictionary
+            # tiebreaker's premise — "EasyOCR nominated a valid word IN PLACE OF
+            # this exact Tesseract token" — is only defined when one token pairs
+            # with one token. A multi-token replace has an undetermined alignment,
+            # so a valid E token could vouch for flagging a DIFFERENT T token whose
+            # true counterpart is itself garbage (the помашки/село false flag).
+            if i2 - i1 != 1 or j2 - j1 != 1:
                 continue
-            for k in range(i1, i2):
-                if t_toks[k] not in dictionary:
-                    flagged.add(t_pairs[k][0])
+            t_tok, e_tok = t_toks[i1], e_toks[j1]
+            if t_tok not in dictionary and e_tok in dictionary:
+                flagged.add(t_pairs[i1][0])
     return flagged
 
 

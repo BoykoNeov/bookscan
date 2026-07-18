@@ -78,6 +78,24 @@ class WordDecision(str, Enum):
     PATCH = "patch"    # uncertain — inline image crop
 
 
+class OrderMode(str, Enum):
+    """User-selectable handling of Stage 04's proposed reading order.
+
+    Parallel to ``UncertaintyMode`` (which governs low-confidence *words*), this
+    governs low-confidence *ordering*: reading order is fallible on hard real
+    pages (multi-column + figure sidebars + cross-gutter panoramas), so the owner
+    wants a first-class toggle between trusting the automatic order and reviewing
+    it in the editor before reconstruction (owner design intent, 2026-07-03).
+
+    Unlike ``UncertaintyMode``, this changes ZERO pipeline computation — it is
+    purely editor-review state layered over an already-assembled document. It only
+    ever affects whether the editor asks the user to confirm/correct block order.
+    """
+
+    AUTO = "auto"      # trust Stage 04's reading order as-is
+    REVIEW = "review"  # surface each block's order for user confirm/correct/edit
+
+
 class Word(BaseModel):
     """One recognized word with geometry and OCR provenance (Stage 05).
 
@@ -139,7 +157,34 @@ class Block(BaseModel):
     type_auto: BlockType | None = None   # automatic type before any override
     order_auto: int | None = None        # automatic reading_order before any override
     structure_edited: bool = False       # True if type/reading_order was overridden
+    order_confirmed: bool = False        # user explicitly accepted the auto reading order
     text: str | None = None              # block-level translated/edited text override
+
+    def order_review_visible(self, order_mode: str) -> bool:
+        """Reading-order analogue of ``Word.flag_visible``: in REVIEW mode a block's
+        proposed order stays 'needs review' until the user clears it, and — like
+        ``flag_visible`` keys on the *specific* word field (``text`` vs ``text_ocr``)
+        rather than any block edit — this keys on the *order field specifically*, NOT
+        the shared ``structure_edited`` bit.
+
+        ``structure_edited`` conflates type edits and order edits (both set it), so a
+        type-only edit (paragraph -> heading, position untouched) must NOT count as
+        having reviewed the order. Two independent clearing paths, neither touching
+        type: the user RENUMBERS (``reading_order`` diverges from ``order_auto``) or
+        explicitly ACCEPTS the auto order (``order_confirmed``). ``order_confirmed`` is
+        a distinct bit precisely because accepting leaves ``reading_order`` equal to
+        ``order_auto``, so acceptance can't be derived from the numbers.
+
+        In AUTO mode nothing ever needs review. If ``order_auto`` is None (a document
+        assembled before this field existed), we can't prove a renumber, so the block
+        conservatively still shows as needing review until explicitly confirmed."""
+        if order_mode != OrderMode.REVIEW.value:
+            return False
+        if self.order_confirmed:
+            return False
+        if self.order_auto is not None and self.reading_order != self.order_auto:
+            return False
+        return True
 
 
 class Page(BaseModel):
@@ -182,6 +227,7 @@ class DocSettings(BaseModel):
     source_language: str = "eng"
     target_language: str | None = None    # set when the document is translated
     uncertainty_mode: str = "flag"        # flag | best_guess | patch (resolved at Stage 06)
+    order_mode: str = "auto"              # auto | review — editor reading-order review (no pipeline effect)
     strip_running_headers: bool = True
     strip_page_numbers: bool = True
     fonts: list[str] = Field(default_factory=list)  # embedded at render (Latin+Cyrillic)

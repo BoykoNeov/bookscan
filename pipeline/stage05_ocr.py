@@ -71,6 +71,8 @@ from pydantic import BaseModel, Field
 
 from pipeline.page_model import BBox, Block, BlockType, StageMeta, Word
 from pipeline import stage04_layout as S4
+from pipeline.second_opinion import (
+    EasyOCRSecondOpinion, find_disagreements, load_lexicon)
 
 # Pure, IO-free metrics + the Tesseract IO harness. Neither imports ``pipeline``,
 # so there is no cycle and ``tools.gate1_harness`` stays independently runnable
@@ -351,15 +353,29 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
     out_dir = page_dir / "05_ocr"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # EasyOCR Cyrillic second-opinion seam — DEFERRED (not built). Note it when a
-    # Cyrillic page is OCR'd so the gap is visible, never silently skipped.
-    easy_for = set((cfg.get("engines", {}).get("easyocr", {}) or {}).get(
-        "enabled_for", []))
-    if any(lc in easy_for for lc in lang_code_used.split("+")):
-        warnings.append(
-            f"EasyOCR second opinion is configured for {sorted(easy_for)} but is "
-            f"DEFERRED (seam only): v0.1 uses Tesseract alone. Cross-engine "
-            f"disagreement as an uncertainty trigger arrives with the engine.")
+    # EasyOCR second opinion — cross-engine disagreement is a CLAUDE.md
+    # non-negotiable uncertainty trigger. Tesseract stays the sole text +
+    # confidence source; EasyOCR only NOMINATES a valid dictionary word in place
+    # of a Tesseract non-word (see second_opinion module doc + RESULTS.md
+    # 2026-07-18: the raw diff was measured at ~0 precision on Cyrillic — the
+    # dictionary tiebreaker is what makes the trigger usable). The trigger needs
+    # BOTH (a) an enabled language and (b) a per-language lexicon. The lexicon
+    # does not yet ship in the repo, so in production this seam is currently INERT
+    # — and we do not load EasyOCR at all when it can flag nothing (wasted GPU).
+    easy_cfg = (cfg.get("engines", {}) or {}).get("easyocr", {}) or {}
+    easy_for = set(easy_cfg.get("enabled_for", []))
+    lang_enabled = any(lc in easy_for for lc in lang_code_used.split("+"))
+    lex_cfg = easy_cfg.get("lexicon", {}) or {}
+    lex_paths = [REPO_ROOT / lex_cfg[lc] for lc in lang_code_used.split("+")
+                 if lc in lex_cfg]
+    lexicon = load_lexicon(lex_paths) if lex_paths else None
+    run_second = lang_enabled and lexicon is not None
+    second: EasyOCRSecondOpinion | None = None
+    min_region_conf = float(easy_cfg.get("min_region_conf", 0.30))
+    n_disagree = 0
+    if run_second:
+        second = EasyOCRSecondOpinion(
+            easy_cfg.get("langs", ["en"]), gpu=bool(easy_cfg.get("gpu", True)))
 
     pages: list[OCRPage] = []
     panels: list[np.ndarray] = []
@@ -384,8 +400,25 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
         page = OCRPage(name=pl.name, width=w, height=h, language=lang_code_used,
                        scale=scale, total_words=len(twords),
                        orphan_words=n_orphan, blocks=ordered)
+
+        # Second opinion: flag Tesseract words EasyOCR reads differently. Runs on
+        # the SAME dewarp image as the words (coords already aligned). EasyOCR
+        # regions are line-level, so alignment is token-sequence (see module doc).
+        if second is not None:
+            sub_words = [wd for b in page.blocks for wd in b.words]
+            regions = second.regions(str(src))
+            boxes = [(wd.bbox.x, wd.bbox.y, wd.bbox.w, wd.bbox.h) for wd in sub_words]
+            texts = [wd.text for wd in sub_words]
+            flagged = find_disagreements(
+                boxes, texts, regions, min_region_conf, lexicon)
+            for idx in flagged:
+                sub_words[idx].engine_disagree = True
+            n_disagree += len(flagged)
+
         pages.append(page)
         panels.append(_ocr_panel(img, page))
+    if second is not None:
+        second.close()
     ocr_ms = (time.perf_counter() - t_ocr) * 1000.0
 
     result = OCRResult(engine="tesseract", pages=pages)
@@ -409,9 +442,33 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
             "upscale_factor": UPSCALE_FACTOR,
             "xy_gap_frac": p["xy_gap_frac"],
             "reads": ["04_layout/layout.json", "03_dewarp/<subpage images>"],
+            "second_opinion": (
+                {"engine": "easyocr", "langs": easy_cfg.get("langs", ["en"]),
+                 "min_region_conf": min_region_conf,
+                 "gate": "dictionary (norm(T) not in lexicon AND norm(E) in lexicon)",
+                 "lexicon_words": len(lexicon), "words_flagged": n_disagree}
+                if run_second else None),
         },
         timings_ms={"ocr": round(ocr_ms, 1), "total": round(total_ms, 1)},
-        warnings=warnings + [
+        warnings=warnings + (
+            [f"EasyOCR second opinion ran ({easy_cfg.get('langs', ['en'])}, region "
+             f"conf floor {min_region_conf}, {len(lexicon)}-word lexicon): "
+             f"{n_disagree} word(s) flagged engine_disagree — a Tesseract non-word "
+             f"that EasyOCR replaced with a valid dictionary word (second, "
+             f"independent Stage-06 trigger). Tesseract remains the sole text + "
+             f"confidence source."]
+            if run_second else
+            [f"No second opinion: EasyOCR enabled_for={sorted(easy_for)} includes "
+             f"this page's language ({lang_code_used}), but no per-language lexicon "
+             f"is available (engines.easyocr.lexicon). The disagreement trigger's "
+             f"dictionary gate is inert without it — EasyOCR was NOT loaded (its "
+             f"pass would flag nothing). engine_disagree stays False. OWNER "
+             f"DEPENDENCY: supply a lexicon to activate (see RESULTS.md 2026-07-18)."]
+            if lang_enabled else
+            [f"No second opinion: EasyOCR is enabled_for={sorted(easy_for)}, which "
+             f"does not include this page's language ({lang_code_used}). "
+             f"engine_disagree stays False (inert), not a dead seam."]
+        ) + [
             "v0.1: Tesseract 5 backbone (TSV word rows). Word boxes stored in 1x "
             "full-res dewarp coords (== Stage 04 block coords == Stage 06 patch "
             "crop coords). Same OCR path + params as the Gate 3 A/B "

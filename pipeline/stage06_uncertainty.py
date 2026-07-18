@@ -23,11 +23,13 @@ proof the threshold adapted. Rails (``conf_floor``/``conf_ceiling``) live in
 here.
 
 **Cross-engine disagreement** is a second, independent uncertainty trigger
-(CLAUDE.md). The EasyOCR Cyrillic second opinion is DEFERRED at Stage 05, so no
-second engine exists yet; the disagreement path is a wired seam (a per-word
-``disagree`` flag OR-ed into ``uncertain``) that fires only once a second engine
-lands. A warning makes the gap visible rather than silently pretending the
-trigger is active.
+(CLAUDE.md). Stage 05's EasyOCR second opinion sets ``Word.engine_disagree`` (a
+Tesseract non-word that EasyOCR replaced with a valid dictionary word — see
+``pipeline/second_opinion.py`` + RESULTS.md 2026-07-18); this stage ORs that flag
+into ``uncertain``, independent of confidence. The trigger is inert on a page only
+when Stage 05 ran no second opinion (language not enabled, or its per-language
+lexicon is absent) — a warning reports the actual per-page state rather than
+pretending activity either way.
 
 **Mode is a thin policy layer** on top of the single ``uncertain`` decision
 (user-selectable, all three must exist — CLAUDE.md):
@@ -361,13 +363,24 @@ def run(page_dir: Path, cfg: dict, mode: str | None = None,
             f"only {len(confs)} scored words (< {MIN_WORDS_FOR_PERCENTILE}) — "
             f"percentile unreliable, fell back to conf_floor={lo:g}.")
 
-    # Disagreement trigger is a wired seam only — no second engine at Stage 05 yet.
+    # Cross-engine disagreement: the second, independent trigger (CLAUDE.md).
+    # Stage 05's EasyOCR second opinion sets Word.engine_disagree; here it is ORed
+    # into `uncertain`. Report the ACTUAL state of this page rather than assuming.
     if (cfg.get("uncertainty", {}) or {}).get("disagreement_is_trigger", True):
-        warnings.append(
-            "cross-engine disagreement is configured as an uncertainty trigger, "
-            "but no second engine runs yet (EasyOCR is deferred at Stage 05); the "
-            "disagreement path is a wired seam that fires only once a second "
-            "opinion lands. v0.1 uncertainty = confidence-vs-threshold alone.")
+        n_disagree = sum(w.engine_disagree
+                         for pg in ocr.pages for blk in pg.blocks for w in blk.words)
+        if n_disagree:
+            warnings.append(
+                f"cross-engine disagreement trigger LIVE: {n_disagree} word(s) "
+                f"carry engine_disagree from Stage 05's EasyOCR second opinion — "
+                f"each is uncertain regardless of its Tesseract confidence.")
+        else:
+            warnings.append(
+                "cross-engine disagreement is configured as a trigger but no word "
+                "on this page carries engine_disagree (Stage 05 ran no second "
+                "opinion — language not enabled, or its per-language lexicon is "
+                "absent; see Stage 05 meta). The path is a wired, unit-tested seam, "
+                "inert on this page rather than a dead one.")
 
     # Patch mode needs pixels + a clean patches/ dir; other modes touch neither.
     out_dir = page_dir / "06_uncertain"

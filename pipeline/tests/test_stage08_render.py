@@ -73,6 +73,21 @@ def test_edited_flagged_word_renders_plain(tmp_path: Path):
     assert S8._word_html(w, "flag", tmp_path) == "capita"
 
 
+def test_disagreement_flagged_word_clears_through_the_same_edit_path(tmp_path: Path):
+    """A CONFIDENT word flagged only by the cross-engine disagreement trigger
+    (conf 90, Stage 06 -> decision=flag) shows its marker like any flag, and clears
+    through the SAME per-word edit path — the marker is decision-based, never keyed
+    on which trigger fired, so no separate un-clearable disagreement marker exists."""
+    w = _w("Chapmarked", decision="flag", conf=90.0)
+    w.text_ocr = "Chapmarked"                # provenance as Stage 07 assemble sets it
+    w.engine_disagree = True
+    assert w.flag_visible is True
+    assert 'class="flag"' in S8._word_html(w, "flag", tmp_path)
+    w.text = "Chopmarked"                    # user accepts EasyOCR's nomination
+    assert w.flag_visible is False           # cleared via text!=text_ocr, like any flag
+    assert S8._word_html(w, "flag", tmp_path) == "Chopmarked"
+
+
 def test_patch_word_inlines_image(tmp_path: Path):
     asset = "document_assets/p.png"
     (tmp_path / "document_assets").mkdir()

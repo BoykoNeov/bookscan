@@ -49,9 +49,10 @@ uncertainty:
   # theoretical rail for now). Tune these when a genuinely-garbled page lands.
   conf_floor: 45.0
   conf_ceiling: 75.0
-  # Cross-engine disagreement is an independent trigger for "uncertain".
-  # (EasyOCR second opinion is deferred at Stage 05, so this trigger is a wired
-  # seam that fires only once a second engine exists — see Stage 06 warnings.)
+  # Cross-engine disagreement is an independent trigger for "uncertain". Stage 05's
+  # EasyOCR second opinion sets Word.engine_disagree (dictionary-gated — see
+  # engines.easyocr.lexicon); Stage 06 ORs it into `uncertain`. Inert on a page
+  # only when Stage 05 ran no second opinion (lang not enabled or lexicon absent).
   disagreement_is_trigger: true
   # Selectable output mode: flag | best_guess | patch
   default_mode: flag
@@ -59,8 +60,30 @@ uncertainty:
 # --- Second-opinion engines (never the sole text/confidence source) ---
 engines:
   easyocr:
-    enabled_for: [bul]   # Cyrillic second opinion
-    langs: [bg, en]
+    enabled_for: [bul]   # Cyrillic second opinion (production scope, per CLAUDE.md)
+    langs: [bg, en]      # EasyOCR reader languages (bg = Bulgarian Cyrillic)
+    gpu: true
+    # EasyOCR only flags a Tesseract word (Word.engine_disagree) when its OWN
+    # line-region confidence clears this floor — keeps EasyOCR's junk reads from
+    # nominating alternatives. Tuned on the spike: kills 0.09 'L=' noise, keeps
+    # 0.34+ real-content lines.
+    min_region_conf: 0.30
+    # Per-language lexicon paths (relative to repo root), keyed by Tesseract lang
+    # code. THE DICTIONARY GATE that makes the disagreement trigger usable: flag
+    # a Tesseract word only when it is a NON-word AND EasyOCR nominated a VALID
+    # dictionary word in its place (see RESULTS.md 2026-07-18 — the raw diff was
+    # ~0 precision on Cyrillic; EasyOCR is the noisier reader there). A path that
+    # does not exist -> the trigger is INERT and EasyOCR is not even loaded.
+    #
+    # OWNER DEPENDENCY: no lexicon ships in the repo yet, so this seam is
+    # currently inert. Supplying one activates BOTH this trigger and the Stage 08
+    # de-hyphenation rule (same dependency). Lexicons are gitignored under
+    # models/lexicons/ (one word per line, UTF-8).
+    lexicon:
+      bul: "models/lexicons/bg.txt"
+      eng: "models/lexicons/en.txt"
+      ita: "models/lexicons/it.txt"
+      deu: "models/lexicons/de.txt"
 
 # --- Models (loaded lazily per stage; VRAM released on CLI exit) ---
 models:

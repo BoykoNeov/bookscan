@@ -1377,3 +1377,84 @@ high-value structured info, not junk to drop), so rendering it as a structured
 info-box is a real feature and an owner call, not an ordering bug. Symptom 3 (a
 Bulgarian paragraph swap) was the pre-split Taleb spread's cross-gutter scramble,
 already resolved by Finding 2; `bg_01` reads cleanly post-split.
+
+
+## Cross-engine disagreement trigger — 2026-07-18, EasyOCR 1.7.2 second opinion (bg_01)
+
+Built the Stage 05 EasyOCR second opinion that sets `Word.engine_disagree` — the
+CLAUDE.md non-negotiable *second, independent* uncertainty trigger, until now a
+wired always-`False` seam. Measuring it on real Cyrillic **overturned the naive
+design and reframed the feature**; recording both the finding and the reframing.
+
+**Finding: a raw cross-engine token-diff has ~0 precision on Cyrillic.** The first
+implementation flagged a Tesseract word whenever EasyOCR's line-region text
+disagreed (token-sequence diff, region-conf gated, replace-opcodes only). On
+`bg_01` it flagged **89/763 words (11.7%)** — of which 78 were high-confidence,
+manifestly-correct Bulgarian words (`само`, `които`, `социалист`, `население`).
+Precision ≈ 0; on a clean page the true number of confident Tesseract misreads is
+~0. Direct cause (per-region alignment dumps):
+
+- **Cyrillic↔Latin homoglyphs** dominate — EasyOCR (`[bg,en]`) freely emits Latin
+  lookalikes for Cyrillic: `се`→`ce`, `а`→`a`, `е`→`e`, `и`→`h`. Tesseract-`bul`
+  reads them correctly. Casefolding doesn't unify them, so `се`≠`ce`.
+- **EasyOCR's own misreads** — `които`→`конто`, `социалист`→`соцналист` (и→н).
+- **Tokenization boundaries** — `само за` (2 words) vs `самоза` (1); one `replace`
+  opcode then flags *both* correct words.
+
+The premise "disagreement ⇒ Tesseract may be wrong" is **asymmetric on Cyrillic**:
+EasyOCR is the *noisier* reader there, so raw disagreement surfaces EasyOCR's
+errors, not Tesseract's. And edit distance can't separate a real 1-char Tesseract
+misread (`Chapmarked`→`Chopmarked`) from 1-char homoglyph noise (`се`→`ce`) — both
+are single substitutions.
+
+**Fix: a dictionary tiebreaker.** Flag a Tesseract word iff
+
+    norm(T) ∉ lexicon   AND   EasyOCR nominated a norm(E) ∈ lexicon
+
+i.e. flag only a Tesseract **non-word** that EasyOCR replaced with a **valid**
+word. This single filter subsumes homoglyph-folding *and* join-tolerance (`се` is
+a valid word → never flagged, whatever EasyOCR read), and its clean-page
+null-behavior falls out for free (only non-dictionary words are even eligible).
+Measured on `bg_01` with a proxy lexicon (382 normalized ground-truth tokens):
+
+| bg_01 (763 words) | raw token-diff | + dictionary gate |
+|---|---|---|
+| words flagged `engine_disagree` | **89 (11.7%)** | **7 (0.9%)** |
+| genuine Tesseract misreads among them | 2 | 2 |
+| high-conf correct words wrongly flagged | 78 | 0 |
+
+Net-vs-confidence impact (Stage 06, threshold 75): the 7 add only **2 net-new
+flags (+0.26%)** over the confidence rule — `касалница`→`касапница` @92 and
+`Делеагач`→`Дедеагач` @93, both **genuine confident misreads the confidence rule
+alone keeps**. The other 5 were already low-confidence. This is exactly the job of
+a disagreement trigger: surface confidently-wrong words, add negligible noise.
+Blind spot (accepted, documented): `norm(T)∉lex ∧ norm(E)∉lex` is a MISS (both
+non-words — a domain term, or a rare word absent from the lexicon); recall traded
+for precision, correct when raw precision is ≈ 0.
+
+**Honest reframing (owner-visible).** With the dictionary gate the trigger is
+effectively an **"EasyOCR-nominated dictionary check"**, not a bare cross-engine
+disagreement. It still earns EasyOCR its place — far more precise than a plain
+spellcheck (which flags every proper noun / abbreviation); requiring an
+independent engine to produce a *valid alternative* is what buys the precision.
+But it IS a reframing of the raw non-negotiable, surfaced here rather than shipped
+silently.
+
+**OWNER DEPENDENCY — a per-language lexicon.** The gate needs a lexicon, which
+does **not** ship in the repo — the same dependency the Stage 08 de-hyphenation
+seam already waits on (`join_hyphen(..., dictionary)` is always passed `None`).
+So the trigger is shipped **inert**, mirroring the repo's seam pattern: the
+mechanism is built + unit-tested (13 tests), wired through
+`config.engines.easyocr.lexicon` (`models/lexicons/<lang>.txt`, gitignored), and
+Stage 05 does **not** even load EasyOCR when no lexicon is present (its pass would
+flag nothing — wasted GPU). Supplying a lexicon activates BOTH this trigger and
+de-hyphenation. Verified end-to-end on `bg_01`: with a proxy lexicon dropped into
+the seam the live CLI produces the 7 flags above and Stage 06 reports the trigger
+LIVE; with the lexicon removed it produces 0 and reports inert. The proxy was a
+smoke-test stand-in (this page's own GT tokens), NOT a production lexicon.
+
+Full suite 156 green. Files: `pipeline/second_opinion.py` (+
+`test_second_opinion.py`), `Word.engine_disagree`, Stage 05 wiring, Stage 06
+OR-in + LIVE/inert reporting, and a Stage 08 test proving a disagreement-flagged
+confident word clears through the SAME per-word `flag_visible`/edit path as a
+confidence flag (no separate un-clearable marker).

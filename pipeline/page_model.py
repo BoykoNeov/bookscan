@@ -113,6 +113,17 @@ class Word(BaseModel):
     block_id: int | None = None
     decision: WordDecision | None = None   # set by Stage 06
 
+    # Cross-engine disagreement (CLAUDE.md non-negotiable): a SECOND, independent
+    # uncertainty trigger, set by Stage 05 when a second opinion (EasyOCR) reads
+    # this word differently from Tesseract. Stage 06 ORs it into ``is_uncertain``
+    # ALONGSIDE the adaptive confidence threshold, so a confidently-wrong word
+    # (high ``conf``, e.g. Tesseract's "Chapmarked" for "Chopmarked") is still
+    # surfaced. Independent of ``conf`` by design. Tesseract stays the sole text +
+    # confidence source; the second engine only sets this flag. The resulting
+    # FLAG/PATCH decision clears per-word through ``flag_visible`` (an edit to
+    # THIS word), exactly like a confidence flag — no separate un-clearable marker.
+    engine_disagree: bool = False
+
     # --- editable layer (Stage 07 assemble onward; None/False until then) ---
     text_ocr: str | None = None    # original Tesseract read, kept as provenance
     edited: bool = False           # True once `text` diverges from `text_ocr`

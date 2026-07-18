@@ -94,6 +94,18 @@ def test_nonpositive_conf_word_is_uncertain_despite_exclusion():
     assert decide(w, LO, "flag") is WordDecision.FLAG
 
 
+def test_engine_disagreement_flags_a_confident_word():
+    """The second, independent trigger (CLAUDE.md non-negotiable): a word Tesseract
+    read confidently (conf 90 >> any threshold) is STILL uncertain when the second
+    engine disagreed — this is the "Chapmarked"→"Chopmarked" case the confidence
+    rule alone would keep."""
+    w = _w("Chapmarked", 90.0)
+    assert not is_uncertain(w, LO)             # confident, no disagreement -> keep
+    w.engine_disagree = True
+    assert is_uncertain(w, LO)                 # disagreement alone flips it
+    assert decide(w, LO, "flag") is WordDecision.FLAG
+
+
 # ---- decision + mode policy layer ------------------------------------------
 
 

@@ -176,12 +176,13 @@ def adaptive_threshold(confs: list[float], flag_rate: float,
 
 def is_uncertain(w: Word, threshold: float) -> bool:
     """A word is uncertain iff its confidence is below the adaptive threshold OR a
-    second engine disagreed. The disagreement term is a wired seam: Stage 05 emits
-    no second-engine field yet, so it is always False here — but the OR keeps the
-    trigger structurally present for when EasyOCR (or a VLM) lands.
+    second engine disagreed. Both triggers are CLAUDE.md non-negotiables and are
+    independent: ``engine_disagree`` (set by Stage 05's EasyOCR second opinion)
+    surfaces confidently-wrong words the confidence threshold alone would keep.
+    Before EasyOCR ran for the page's language ``engine_disagree`` is simply False,
+    so the term is inert on Tesseract-only pages rather than a dead seam.
     """
-    disagree = getattr(w, "engine_disagree", False)  # future second-engine seam
-    return w.conf < threshold or bool(disagree)
+    return w.conf < threshold or w.engine_disagree
 
 
 def decide(w: Word, threshold: float, mode: str) -> WordDecision:

@@ -44,6 +44,7 @@ Contract:
 
 Usage:
     python -m pipeline.stage07_assemble jobs/<job>/ [--force] [--debug]
+                                        [--order-mode auto|review]
 """
 
 from __future__ import annotations
@@ -109,6 +110,7 @@ def _enrich_block(blk: Block, patch_map: dict[tuple[int, int], str]) -> Block:
         "type_auto": blk.type,
         "order_auto": blk.reading_order,
         "structure_edited": False,
+        "order_confirmed": False,
     })
 
 
@@ -118,7 +120,7 @@ def _document_has_edits(doc: Document) -> bool:
         return True
     for pg in doc.pages:
         for blk in pg.blocks:
-            if blk.structure_edited or blk.text is not None:
+            if blk.structure_edited or blk.order_confirmed or blk.text is not None:
                 return True
             if any(w.edited for w in blk.words):
                 return True
@@ -167,7 +169,8 @@ def _assemble_panel(bgr: np.ndarray, page: DocPage, panel_w: int = 1100) -> np.n
 # --------------------------------------------------------------------------
 
 
-def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False) -> Document:
+def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
+        order_mode: str = "auto") -> Document:
     t0 = time.perf_counter()
     warnings: list[str] = []
 
@@ -266,6 +269,7 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False) -> D
         source_language=sorted(langs_seen)[0] if langs_seen else "eng",
         target_language=None,
         uncertainty_mode=sorted(modes_seen)[0] if modes_seen else "flag",
+        order_mode=order_mode,
         strip_running_headers=bool(reco.get("strip_running_headers", True)),
         strip_page_numbers=bool(reco.get("strip_page_numbers", True)),
         fonts=list(reco.get("fonts", []) or []),
@@ -289,6 +293,7 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False) -> D
             "patches_copied": n_patches,
             "source_language": settings.source_language,
             "uncertainty_mode": settings.uncertainty_mode,
+            "order_mode": settings.order_mode,
             "assets_dir": ASSETS_DIRNAME,
             "reads": ["page_*/06_uncertain/resolved.json",
                       "page_*/03_dewarp/<subpage>", "page_*/06_uncertain/patches/"],
@@ -320,6 +325,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--config", type=Path, default=REPO_ROOT / "config.yaml")
     ap.add_argument("--force", action="store_true",
                     help="overwrite an existing document even if it carries edits")
+    ap.add_argument("--order-mode", choices=["auto", "review"], default="auto",
+                    help="reading-order handling: 'auto' trusts Stage 04's order; "
+                         "'review' marks every block for editor confirm/correct before "
+                         "reconstruction. Editor-review state only — no pipeline effect.")
     ap.add_argument("--debug", action="store_true",
                     help="also write debug/07_assemble.png (blocks + reading order)")
     args = ap.parse_args(argv)
@@ -331,13 +340,15 @@ def main(argv: list[str] | None = None) -> int:
         pass
 
     cfg = S4.load_config(args.config)
-    doc = run(args.job_dir, cfg, force=args.force, debug=args.debug)
+    doc = run(args.job_dir, cfg, force=args.force, debug=args.debug,
+              order_mode=args.order_mode)
     nword = sum(bool(w.text.strip()) for pg in doc.pages for blk in pg.blocks
                 for w in blk.words)
     nflag = sum(w.flag_visible for pg in doc.pages for blk in pg.blocks
                 for w in blk.words)
     print(f"{args.job_dir}: document.json + {ASSETS_DIRNAME}/ "
-          f"({doc.settings.source_language}, mode={doc.settings.uncertainty_mode})")
+          f"({doc.settings.source_language}, mode={doc.settings.uncertainty_mode}, "
+          f"order={doc.settings.order_mode})")
     print(f"  pages={len(doc.pages)} words={nword} flagged-visible={nflag}")
     for pg in doc.pages:
         print(f"  {pg.page_id}: blocks={len(pg.blocks)} img={pg.image_asset}")

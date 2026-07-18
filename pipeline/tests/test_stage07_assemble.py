@@ -140,6 +140,40 @@ def test_refuses_to_clobber_edits_without_force(tmp_path: Path):
     assert doc2.pages[0].blocks[0].words[0].edited is False
 
 
+def test_order_mode_defaults_to_auto(tmp_path: Path):
+    job = _build_job(tmp_path)
+    doc = S7.run(job, CFG)
+    assert doc.settings.order_mode == "auto"
+    # a pristine auto-mode block never needs review, and nothing is confirmed
+    blk = doc.pages[0].blocks[0]
+    assert blk.order_confirmed is False
+    assert blk.order_review_visible("auto") is False
+
+
+def test_order_mode_review_persists_and_flags_blocks(tmp_path: Path):
+    job = _build_job(tmp_path)
+    doc = S7.run(job, CFG, order_mode="review")
+    assert doc.settings.order_mode == "review"
+    meta = json.loads((job / "document.meta.json").read_text(encoding="utf-8"))
+    assert meta["params"]["order_mode"] == "review"
+    # pristine review-mode blocks surface as needing review, but that alone is NOT
+    # an "edit" — the doc stays re-assemblable until the user confirms/renumbers
+    blk = doc.pages[0].blocks[0]
+    assert blk.order_review_visible("review") is True
+    assert S7._document_has_edits(doc) is False
+
+
+def test_confirmed_order_protects_from_clobber(tmp_path: Path):
+    job = _build_job(tmp_path)
+    S7.run(job, CFG, order_mode="review")
+    p = job / "document.json"
+    d = Document.model_validate_json(p.read_text(encoding="utf-8"))
+    d.pages[0].blocks[0].order_confirmed = True        # user accepted the auto order
+    p.write_text(d.model_dump_json(indent=2), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="carries edits"):
+        S7.run(job, CFG, order_mode="review")          # no --force -> refuse
+
+
 def test_empty_job_raises(tmp_path: Path):
     (tmp_path / "empty").mkdir()
     with pytest.raises(RuntimeError, match="no page folders"):

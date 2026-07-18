@@ -137,6 +137,85 @@ def test_target_language_marks_document_edited(job: Path):
 
 
 # --------------------------------------------------------------------------
+# Layer 1 (cont.) — reading-order review mode (Block.order_review_visible)
+# --------------------------------------------------------------------------
+
+
+def _review_block() -> Block:
+    return Block(id=0, type=BlockType.PARAGRAPH,
+                 bbox={"x": 0, "y": 0, "w": 10, "h": 10}, reading_order=3,
+                 type_auto=BlockType.PARAGRAPH, order_auto=3)
+
+
+def test_order_review_auto_mode_never_needs_review():
+    assert _review_block().order_review_visible("auto") is False
+
+
+def test_order_review_untouched_needs_review_in_review_mode():
+    assert _review_block().order_review_visible("review") is True
+
+
+def test_order_review_type_edit_does_not_clear_review():
+    """The load-bearing correctness rule (advisor): a type-only edit sets the shared
+    ``structure_edited`` bit but must NOT count as reviewing the order."""
+    b = _review_block()
+    b.type = BlockType.HEADING
+    b.structure_edited = True                 # a type change flips the shared bit
+    assert b.reading_order == b.order_auto     # order itself untouched
+    assert b.order_review_visible("review") is True
+
+
+def test_order_review_renumber_clears_review():
+    b = _review_block()
+    b.reading_order = 9                         # diverges from order_auto=3
+    assert b.order_review_visible("review") is False
+
+
+def test_order_review_explicit_confirm_clears_review():
+    b = _review_block()
+    b.order_confirmed = True                    # accepted auto order (number unchanged)
+    assert b.reading_order == b.order_auto
+    assert b.order_review_visible("review") is False
+
+
+def test_order_review_none_order_auto_is_conservative():
+    b = Block(id=0, type=BlockType.PARAGRAPH,
+              bbox={"x": 0, "y": 0, "w": 10, "h": 10}, reading_order=3)  # no order_auto
+    assert b.order_review_visible("review") is True
+
+
+def test_confirming_order_marks_document_edited(job: Path):
+    """order_confirmed is real review work — it must protect the doc from a
+    re-assemble even though no number diverged."""
+    doc = ED.load_document(job)
+    assert not ED._document_has_edits(doc)          # pristine
+    doc.pages[0].blocks[0].order_confirmed = True
+    assert ED._document_has_edits(doc)              # both editor + assemble copies agree
+    from pipeline import stage07_assemble as S7
+    assert S7._document_has_edits(doc)
+
+
+def test_http_put_persists_order_confirmed(job: Path):
+    """The review-mode 'accept auto order' action round-trips through the server and
+    is saved as-is (no divergence to infer it from)."""
+    with _Server(job) as srv:
+        doc = _get_json(srv.url("/api/document"))
+        doc["settings"]["order_mode"] = "review"
+        doc["pages"][0]["blocks"][0]["order_confirmed"] = True
+        req = urllib.request.Request(
+            srv.url("/api/document"), data=json.dumps(doc).encode("utf-8"),
+            method="PUT", headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as r:
+            body = json.loads(r.read().decode("utf-8"))
+        assert body["ok"] and body["has_edits"] is True
+    reloaded = ED.load_document(job)
+    assert reloaded.settings.order_mode == "review"
+    blk = reloaded.pages[0].blocks[0]
+    assert blk.order_confirmed is True
+    assert blk.order_review_visible("review") is False
+
+
+# --------------------------------------------------------------------------
 # Layer 2 — HTTP round-trip through the real server (no browser)
 # --------------------------------------------------------------------------
 
@@ -246,6 +325,42 @@ def test_e2e_edit_word_via_dom(job: Path):
 
     w = _flagged_word(ED.load_document(job))
     assert w.text == "world" and w.edited is True and w.flag_visible is False
+
+
+@pytest.mark.e2e
+def test_e2e_review_mode_confirm_all_via_dom(job: Path):
+    """Drive the review workflow through the real UI: switch reading-order mode to
+    'review' in Settings, click 'Confirm all', Save, and assert every block on disk
+    is order_confirmed."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.click('.tabs button[data-tab="settings"]')
+            # order-mode is the 2nd select in the settings pane (after uncertainty mode)
+            selects = pg.query_selector_all("#settings select")
+            assert len(selects) >= 2
+            selects[1].select_option("review")
+            pg.click('.tabs button[data-tab="inspect"]')
+            pg.wait_for_selector("#blocklist .reviewbar button")   # "Confirm all" present
+            pg.click("#blocklist .reviewbar button")
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+        finally:
+            browser.close()
+
+    reloaded = ED.load_document(job)
+    assert reloaded.settings.order_mode == "review"
+    assert all(b.order_confirmed for b in reloaded.pages[0].blocks)
+    assert not any(b.order_review_visible("review") for b in reloaded.pages[0].blocks)
 
 
 if __name__ == "__main__":

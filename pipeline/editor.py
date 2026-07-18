@@ -15,8 +15,9 @@ future FastAPI server lifts unchanged — the HTTP layer is a thin swap.
 **The load-bearing correctness rule — keep assemble's clobber-detection honest.**
 ``stage07_assemble._document_has_edits`` protects a user's work from a re-assemble
 by checking exactly: ``settings.target_language`` set, any block ``structure_edited``,
-any block ``text`` override, or any word ``edited``. So when the editor saves, it
-MUST set those same flags, or a later ``python -m pipeline.stage07_assemble`` (without
+any block ``order_confirmed`` (an accepted-auto-order review is real work too), any
+block ``text`` override, or any word ``edited``. So when the editor saves, it MUST set
+those same flags, or a later ``python -m pipeline.stage07_assemble`` (without
 ``--force``) would silently discard the edits. ``normalize_edits`` enforces this
 server-side regardless of what the browser sent:
 
@@ -25,7 +26,9 @@ server-side regardless of what the browser sent:
     patch-mode render the correction instead of the stale crop);
   * block ``type``/``reading_order`` diverged from ``type_auto``/``order_auto``
     -> ``structure_edited = True``.
-``text_ocr``/``*_auto`` provenance is NEVER touched.
+``order_confirmed`` (the review-mode "accept auto order" action) is sent by the browser
+and saved as-is — it needs no divergence to infer. ``text_ocr``/``*_auto`` provenance is
+NEVER touched.
 
 **Preview is HTML-only.** Re-rendering the HTML (``stage08_render.render_html``) is
 cheap; the Chromium/Playwright PDF path is slow/flaky, so it stays a separate
@@ -250,7 +253,7 @@ def _document_has_edits(doc: Document) -> bool:
         return True
     for pg in doc.pages:
         for blk in pg.blocks:
-            if blk.structure_edited or blk.text is not None:
+            if blk.structure_edited or blk.order_confirmed or blk.text is not None:
                 return True
             if any(w.edited for w in blk.words):
                 return True

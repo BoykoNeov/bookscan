@@ -8,7 +8,7 @@
   :root {
     --bg:#1e2127; --panel:#262b33; --panel2:#2f3640; --line:#3a424e;
     --fg:#e6e9ee; --muted:#9aa4b2; --accent:#5aa9ff; --flag:#e8c400; --patch:#d9534f;
-    --edited:#5ad18b;
+    --edited:#5ad18b; --review:#e08b3a;
   }
   * { box-sizing:border-box; }
   html,body { margin:0; height:100%; font:14px/1.4 system-ui,Segoe UI,sans-serif;
@@ -43,6 +43,8 @@
   .wbox.edited { border-color:var(--edited); background:rgba(90,209,139,.14); }
   .wbox.sel { outline:2px solid #fff; outline-offset:0; }
   .bbox { border:1.5px dashed rgba(255,255,255,.25); pointer-events:none; }
+  .bbox.review { border-color:var(--review); border-style:solid;
+                 background:rgba(224,139,58,.08); }
   .bbox.sel { border-color:var(--accent); border-style:solid;
               background:rgba(90,169,255,.06); }
   .bbox .lbl { position:absolute; top:-16px; left:0; font-size:11px; padding:0 4px;
@@ -59,6 +61,12 @@
   .badge.flag { color:var(--flag); border-color:var(--flag); }
   .badge.patch { color:var(--patch); border-color:var(--patch); }
   .badge.edited { color:var(--edited); border-color:var(--edited); }
+  .badge.review { color:var(--review); border-color:var(--review); }
+  .dot { display:inline-block; width:8px; height:8px; border-radius:50%; }
+  .dot.review { background:var(--review); }
+  .reviewbar { display:flex; gap:8px; align-items:center; margin:0 0 8px;
+               padding:6px 8px; border:1px solid var(--review); border-radius:6px;
+               background:rgba(224,139,58,.08); }
   .card { background:var(--panel2); border:1px solid var(--line); border-radius:8px;
           padding:10px; margin-bottom:12px; }
   .blocklist { display:flex; flex-direction:column; gap:4px; }
@@ -152,6 +160,20 @@ function wordClass(w){ if(isEdited(w)) return "edited";
   if(w.decision==="patch"&&flagVisible(w)) return "patch";
   if(w.decision==="flag"&&flagVisible(w)) return "flag"; return ""; }
 
+// ---- reading-order review helpers (mirror page_model.Block.order_review_visible) ----
+function orderMode(){ return (state.doc.settings.order_mode)||"auto"; }
+function orderNeedsReview(blk){
+  if(orderMode()!=="review") return false;
+  if(blk.order_confirmed) return false;
+  if(blk.order_auto!=null && blk.reading_order!==blk.order_auto) return false;  // renumbered
+  return true;
+}
+function pageBlocksNeedingReview(){ return page().blocks.filter(orderNeedsReview); }
+function confirmOrder(blk, on){ blk.order_confirmed=!!on; markDirty();
+  renderPage(); renderBlockList(); renderInspector(); }
+function confirmAllOnPage(){ for(const blk of page().blocks){ if(orderNeedsReview(blk)) blk.order_confirmed=true; }
+  markDirty(); renderPage(); renderBlockList(); renderInspector(); }
+
 // ---- load ----
 async function load(){
   const meta = await (await fetch("api/meta")).json();
@@ -183,8 +205,10 @@ function drawOverlays(){
     const b = el("div","box bbox"); const bb=blk.bbox;
     b.style.left=pct(bb.x,W); b.style.top=pct(bb.y,H);
     b.style.width=pct(bb.w,W); b.style.height=pct(bb.h,H);
+    const needsRev = orderNeedsReview(blk);
+    if(needsRev) b.classList.add("review");
     if(state.selBlock===blk.id) b.classList.add("sel");
-    const lbl = el("span","lbl", `${blk.reading_order} ${blk.type}${blk.structure_edited?" *":""}`);
+    const lbl = el("span","lbl", `${blk.reading_order} ${blk.type}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}`);
     b.appendChild(lbl); ovB.appendChild(b);
     (blk.words||[]).forEach((w,wi)=>{
       const e = el("div","box wbox "+wordClass(w));
@@ -254,6 +278,10 @@ function blockEditor(blk){
   const head = el("div","row");
   head.appendChild(el("strong",null,`Block #${blk.id}`));
   if(blk.structure_edited) head.appendChild(el("span","badge edited","structure edited"));
+  if(orderMode()==="review"){
+    head.appendChild(el("span", "badge " + (orderNeedsReview(blk)?"review":"edited"),
+      orderNeedsReview(blk) ? "order: review" : "order: ok"));
+  }
   c.appendChild(head);
 
   const f1 = el("div","field");
@@ -276,6 +304,23 @@ function blockEditor(blk){
     f2.appendChild(el("div","small muted",`auto: ${blk.order_auto}`));
   c.appendChild(f2);
 
+  if(orderMode()==="review"){
+    const rv = el("div","field");
+    if(orderNeedsReview(blk)){
+      rv.appendChild(el("div","small muted",
+        "reading order not yet reviewed — renumber above, or accept the auto order:"));
+      const ok=el("button",null,"Confirm order ✓"); ok.onclick=()=>confirmOrder(blk,true);
+      rv.appendChild(ok);
+    } else if(blk.order_confirmed){
+      rv.appendChild(el("div","small muted","auto order confirmed by you"));
+      const un=el("button",null,"Undo confirm"); un.onclick=()=>confirmOrder(blk,false);
+      rv.appendChild(un);
+    } else {
+      rv.appendChild(el("div","small muted","order reviewed (renumbered)"));
+    }
+    c.appendChild(rv);
+  }
+
   const f3 = el("div","field");
   f3.appendChild(el("label","small muted","translation / block-level text override (supersedes words when set)"));
   const ta = el("textarea"); ta.rows=3; ta.value = blk.text==null ? "" : blk.text;
@@ -296,12 +341,24 @@ function blockEditor(blk){
 
 function renderBlockList(){
   const host=$("#blocklist"); host.innerHTML="";
+  if(orderMode()==="review"){
+    const pend = pageBlocksNeedingReview().length;
+    const bar = el("div","reviewbar small");
+    bar.appendChild(el("span","dot review"));
+    bar.appendChild(el("span","grow", pend
+      ? `${pend} block${pend>1?"s":""} need order review on this page`
+      : "all blocks on this page reviewed"));
+    if(pend){ const btn=el("button",null,"Confirm all"); btn.classList.add("small");
+      btn.onclick=confirmAllOnPage; bar.appendChild(btn); }
+    host.appendChild(bar);
+  }
   const blocks=[...page().blocks].sort((a,b)=>a.reading_order-b.reading_order);
   for(const blk of blocks){
     const row=el("div","blockrow"+(state.selBlock===blk.id?" sel":""));
     row.appendChild(el("span","ord", String(blk.reading_order)));
     const t=el("span","grow", blk.type + (blk.text!=null?" · translated":""));
     row.appendChild(t);
+    if(orderNeedsReview(blk)) row.appendChild(el("span","dot review"));
     if(blk.structure_edited) row.appendChild(el("span","ty","*"));
     row.onclick=()=>selectBlock(blk.id);
     host.appendChild(row);
@@ -318,6 +375,14 @@ function renderSettings(){
     if(m===s.uncertainty_mode)o.selected=true; mode.appendChild(o);});
   mode.onchange=()=>{ s.uncertainty_mode=mode.value; markDirty(); };
   mk("uncertainty mode", mode);
+
+  const omode=el("select"); ["auto","review"].forEach(m=>{const o=el("option",null,m);o.value=m;
+    if(m===(s.order_mode||"auto"))o.selected=true; omode.appendChild(o);});
+  omode.onchange=()=>{ s.order_mode=omode.value; markDirty(); renderPage(); renderBlockList(); renderInspector(); };
+  mk("reading-order mode", omode);
+  host.appendChild(el("div","small muted",
+    "review: mark every block's reading order for confirm/correct before reconstruction "
+    + "(caption↔figure grouping is not addressed by this toggle)."));
 
   const src=el("input"); src.value=s.source_language||"";
   src.onchange=()=>{ s.source_language=src.value; markDirty(); };

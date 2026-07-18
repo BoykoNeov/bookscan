@@ -58,11 +58,32 @@ orientation *policy* decision (options for the owner):
    capture mode from the Android app) as "trust raw pixels, ignore EXIF".
    The Android capture app (Gate 5) can also stamp a reliable orientation.
 
-## Finding 2 — Stage 02 gutter split never fires on real curved spreads (HIGH)
+## Finding 2 — Stage 02 gutter split never fires on real curved spreads (HIGH) — FIXED 2026-07-18
 
-**Symptom.** All three real spreads emitted `single.png` — no confident gutter
-(valley/page_ref = **0.80 / 0.85 / 0.91 / 0.93**, all above the 0.55 threshold).
-The two facing pages are then processed as one image.
+**Fix (Stage 02 v0.2.0).** Added a second cue as a priority layer below the ink
+valley (mirrors the Finding-1 orientation cascade): the **spine pinch**. An open
+book photographed from above has its paper outline eaten in at the binding (top
+edge dips, bottom edge rises), so the per-column vertical EXTENT of the bright
+page region (Otsu page/background split) has a minimum right at the gutter. This
+cue is content-independent — it survives figure-heavy pages where the ink valley
+AND the binding shadow both fail — and, crucially, the very curvature that kills
+the ink valley is what CREATES the pinch. Resolver = **ink-first, pinch-second**:
+Layer 1 (ink) wins outright when confident, so all 13 flat testset spreads keep
+byte-identical splits (non-regression by construction); Layer 2 (pinch, gate
+depth ≥ 0.11) only runs when ink failed. Calibrated on the testset: flat spreads
+pinch ≤ 0.09, the three curved spreads pinch 0.14–0.18 (clean gap). New
+`testset/gt/gutter.json` + `tools/split_eval.py`: **15/15 spreads correct**
+(13 ink, unchanged; de_01/de_02 now split via pinch at x≈1983/2047). Binding
+shadow is kept as corroboration only (drifts onto a dark photo on de_01 → that
+split is honestly flagged uncorroborated but lands correctly). Downstream proof:
+re-running 02→05 on the Taleb spread de-scrambles reading order — all four
+left-page (224) paragraphs now precede every right-page (225) paragraph; the
+documented cross-gutter jump ("Друг начин" as block 2) is gone. Otsu dark-bg
+assumption recorded in `meta.warnings`.
+
+**Symptom (original).** All three real spreads emitted `single.png` — no confident
+gutter (valley/page_ref = **0.80 / 0.85 / 0.91 / 0.93**, all above the 0.55
+threshold). The two facing pages are then processed as one image.
 
 **Consequence.** Reading order scrambles across the gutter. `realtest_bg` block
 order pulls the **top-right** column in right after the **top-left** one

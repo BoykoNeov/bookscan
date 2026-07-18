@@ -55,6 +55,44 @@ def test_single_page_has_no_confident_gutter():
     assert gx is None, f"single page wrongly split (ratio={diag['ratio']:.2f})"
 
 
+def _curved_spread_no_ink_valley(w: int = 4000, h: int = 3000,
+                                 gutter: int = 2000) -> np.ndarray:
+    """A spread with NO ink whitespace valley (text spans continuously across the
+    gutter, so the ink profile is flat and Layer 1 cannot fire) but whose bright
+    page region is PINCHED at the binding — the Finding-2 case (de_01/de_02/taleb).
+
+    Dark 'fabric' background; a bright page block with a triangular wedge eaten
+    out of its top and bottom edges near the gutter (deepest at the spine). The
+    wedge shortens the page's vertical extent at the spine (the pinch cue) while
+    leaving the mid-height text intact (so no ink valley).
+    """
+    img = np.full((h, w), 30, np.uint8)                    # dark background
+    ptop, pbot = int(h * 0.05), int(h * 0.95)
+    page_x0, page_x1 = int(w * 0.10), int(w * 0.90)
+    img[ptop:pbot, page_x0:page_x1] = 235                  # bright page block
+    _text_block(img, page_x0 + 40, page_x1 - 40)           # text across the gutter
+    # Carve the spine pinch: a wedge eaten from top and bottom, deepest (~20% of
+    # page height each) at the gutter, tapering to 0 within notch_hw px.
+    notch_hw, notch_max = 300, int((pbot - ptop) * 0.20)
+    for x in range(gutter - notch_hw, gutter + notch_hw):
+        eat = int(notch_max * (1 - abs(x - gutter) / notch_hw))
+        img[ptop:ptop + eat, x] = 30
+        img[pbot - eat:pbot, x] = 30
+    return img
+
+
+def test_curved_spread_splits_via_pinch():
+    img = _curved_spread_no_ink_valley(gutter=2000)
+    gx, diag = detect_gutter(img, DEFAULTS)
+    # ink alone must NOT be confident here (that is the whole Finding-2 failure)…
+    assert diag["ratio"] >= DEFAULTS["valley_ratio"], (
+        f"synthetic curved spread unexpectedly has an ink valley "
+        f"(ratio={diag['ratio']:.2f}); it no longer exercises the pinch layer")
+    # …yet the spine pinch rescues the split at the right column.
+    assert diag["method"] == "pinch"
+    assert gx is not None and abs(gx - 2000) < 150, f"pinch gutter {gx} off"
+
+
 def test_cut_pages_loses_no_columns_and_overlaps():
     img = _two_page_spread(gutter=2000)
     w = img.shape[1]

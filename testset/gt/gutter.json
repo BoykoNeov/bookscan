@@ -1,0 +1,21 @@
+{
+  "_doc": "Stage 02 gutter-split ground truth. Each entry: expected gutter column (x, in original 4000-wide anchor pixels) and a pixel tolerance, OR {\"single\": true} for a genuine single page. gutter_x-near-GT is a STAGE-02 PROXY for the real consequence (cross-gutter reading-order scramble, which is downstream at Stage 04); a hit means the two facing pages are cleanly separated. Provenance: flat spreads anchored to the known-good ink-valley split column (visually validated, Gate-1/3 era); the three curved spreads (de_01/de_02 and the out-of-testset taleb_bg) hand-labelled from the visible spine in the debug overlay, INDEPENDENT of the pinch detector they validate. de_* anchors are the orientation-normalized landscape (orient_fix jobs). Append-only per testset/README.md.",
+  "_tol_note": "tol is generous (~3-5% of width): the 2*margin cut overlap absorbs sub-tolerance error, so the metric only flags gross mis-splits, not pixel drift.",
+  "spreads": {
+    "bg_01": {"gutter_x": 1907, "tol": 180},
+    "bg_02": {"gutter_x": 1940, "tol": 180},
+    "bg_03": {"gutter_x": 2011, "tol": 180},
+    "en_coins_01": {"gutter_x": 1960, "tol": 180},
+    "en_coins_02": {"gutter_x": 1994, "tol": 180},
+    "en_coins_03": {"gutter_x": 2024, "tol": 180},
+    "it_geo_01": {"gutter_x": 2091, "tol": 180},
+    "it_geo_02": {"gutter_x": 2099, "tol": 180},
+    "it_geo_03": {"gutter_x": 2082, "tol": 180},
+    "it_geo_04": {"gutter_x": 1941, "tol": 180},
+    "it_geo_05": {"gutter_x": 2012, "tol": 180},
+    "it_geo_06": {"gutter_x": 2089, "tol": 180},
+    "it_geo_07": {"gutter_x": 2040, "tol": 180},
+    "de_01": {"gutter_x": 2000, "tol": 200},
+    "de_02": {"gutter_x": 2040, "tol": 200}
+  }
+}

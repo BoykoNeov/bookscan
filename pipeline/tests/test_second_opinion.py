@@ -12,7 +12,8 @@ mechanism stays dormant until the owner supplies a lexicon), the region-confiden
 gate, replace-only (a pure delete = EasyOCR under-detection), and x-sort within a
 line (Tesseract word-ORDER is not a text disagreement).
 """
-from pipeline.second_opinion import Region, find_disagreements, normalize_token
+from pipeline.second_opinion import (
+    Region, find_disagreements, load_lexicon, normalize_token)
 
 
 def _boxes(*specs):
@@ -41,6 +42,20 @@ def test_normalize_strips_punctuation_and_folds_case():
 
 
 # ---- the inert-seam contract ------------------------------------------------
+
+
+def test_load_lexicon_missing_paths_returns_none(tmp_path):
+    """No lexicon file -> None, the inert-seam signal (Stage 05 then skips EasyOCR)."""
+    assert load_lexicon([tmp_path / "absent.txt"]) is None
+    assert load_lexicon([]) is None
+
+
+def test_load_lexicon_normalizes_and_reads_first_existing(tmp_path):
+    """Words are stored normalized; the first existing path wins."""
+    lex = tmp_path / "bg.txt"
+    lex.write_text("Касапница\nвласти,  СЕ\n", encoding="utf-8")
+    loaded = load_lexicon([tmp_path / "absent.txt", lex])
+    assert loaded == {normalize_token(w) for w in ["касапница", "власти", "се"]}
 
 
 def test_no_dictionary_flags_nothing():

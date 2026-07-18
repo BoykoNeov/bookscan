@@ -1415,9 +1415,10 @@ i.e. flag only a Tesseract **non-word** that EasyOCR replaced with a **valid**
 word. This single filter subsumes homoglyph-folding *and* join-tolerance (`се` is
 a valid word → never flagged, whatever EasyOCR read), and its clean-page
 null-behavior falls out for free (only non-dictionary words are even eligible).
-Measured on `bg_01` with a proxy lexicon (382 normalized ground-truth tokens):
+Measured on `bg_01` with a **proxy lexicon = this page's own 382 ground-truth
+tokens** (a smoke-test stand-in, NOT a production lexicon — see the caveat below):
 
-| bg_01 (763 words) | raw token-diff | + dictionary gate |
+| bg_01 (763 words) | raw token-diff | + dictionary gate (proxy) |
 |---|---|---|
 | words flagged `engine_disagree` | **89 (11.7%)** | **7 (0.9%)** |
 | genuine Tesseract misreads among them | 2 | 2 |
@@ -1425,12 +1426,36 @@ Measured on `bg_01` with a proxy lexicon (382 normalized ground-truth tokens):
 
 Net-vs-confidence impact (Stage 06, threshold 75): the 7 add only **2 net-new
 flags (+0.26%)** over the confidence rule — `касалница`→`касапница` @92 and
-`Делеагач`→`Дедеагач` @93, both **genuine confident misreads the confidence rule
-alone keeps**. The other 5 were already low-confidence. This is exactly the job of
-a disagreement trigger: surface confidently-wrong words, add negligible noise.
-Blind spot (accepted, documented): `norm(T)∉lex ∧ norm(E)∉lex` is a MISS (both
-non-words — a domain term, or a rare word absent from the lexicon); recall traded
-for precision, correct when raw precision is ≈ 0.
+`Делеагач`→`Дедеагач` @93, both confident misreads the confidence rule alone
+keeps. The other 5 were already low-confidence.
+
+**⚠️ These numbers are PROXY-OPTIMISTIC — pending re-measurement on a real
+lexicon.** The proxy dict is bg_01's own ground truth, so *every* correct word on
+the page is in it by construction. That is exactly why the homoglyph FPs collapse
+(`се`, `само`, `които` are common words → in any real lexicon too, so **that part
+generalizes** and is the solid result). But it also inflates the catches:
+
+- Only `касапница` is **lexicon-robust** (a common noun any Bulgarian wordlist
+  has). `Делеагач`→`дедеагач` fires **only because the proxy contains the place
+  name** — a general/frequency wordlist won't have `дедеагач`, so EasyOCR's
+  nomination fails the `E∈lex` test and **that catch is LOST**. So on a real
+  lexicon expect ~1 net-new catch here, not 2.
+- **The gate is structurally weakest on proper nouns** — which *dominate* this
+  content (Гюмурджина, Балъкьой, Ортакьой, Караагач, Дедеагач) and are the
+  *highest OCR-error-risk* tokens. The blind spot `norm(T)∉lex ∧ norm(E)∉lex`
+  (both non-words → no flag; recall traded for precision, correct when raw
+  precision ≈ 0) therefore lands HARD in this domain: a mangled place name whose
+  correct form isn't in a plain wordlist is a silent miss.
+
+**Reader-language finding (`langs`).** The whole homoglyph FP class
+(`се`→`ce`, `а`→`a`, `и`→`h`) is an artifact of the EasyOCR reader `langs:[bg,en]`
+— the English pack is what lets it emit Latin. Confirmed: a `[bg]`-only reader
+emits **0 Latin characters** on bg_01. BUT `[bg]`-only does NOT remove the lexicon
+dependency — its raw diff still flags ~9.8% (tokenization/segmentation drift like
+`само за`↔`самоза` remains), and *under the dict gate the output is identical*
+(`[bg]` and `[bg,en]` both give the same 4 flags on left.png, because the gate
+already neutralizes the homoglyphs via `се∈lex`). So the reader choice is a wash
+under the gate; config keeps `[bg,en]` (helps read genuinely-Latin foreign names).
 
 **Honest reframing (owner-visible).** With the dictionary gate the trigger is
 effectively an **"EasyOCR-nominated dictionary check"**, not a bare cross-engine
@@ -1440,20 +1465,30 @@ independent engine to produce a *valid alternative* is what buys the precision.
 But it IS a reframing of the raw non-negotiable, surfaced here rather than shipped
 silently.
 
-**OWNER DEPENDENCY — a per-language lexicon.** The gate needs a lexicon, which
-does **not** ship in the repo — the same dependency the Stage 08 de-hyphenation
-seam already waits on (`join_hyphen(..., dictionary)` is always passed `None`).
-So the trigger is shipped **inert**, mirroring the repo's seam pattern: the
-mechanism is built + unit-tested (13 tests), wired through
+**OWNER DEPENDENCY — a per-language lexicon (with a caveat on WHAT KIND).** The
+gate needs a lexicon, which does **not** ship in the repo — the same dependency
+the Stage 08 de-hyphenation seam already waits on (`join_hyphen(..., dictionary)`
+is always passed `None`). So the trigger is shipped **inert**, mirroring the repo's
+seam pattern: the mechanism is built + unit-tested (15 tests), wired through
 `config.engines.easyocr.lexicon` (`models/lexicons/<lang>.txt`, gitignored), and
 Stage 05 does **not** even load EasyOCR when no lexicon is present (its pass would
 flag nothing — wasted GPU). Supplying a lexicon activates BOTH this trigger and
-de-hyphenation. Verified end-to-end on `bg_01`: with a proxy lexicon dropped into
-the seam the live CLI produces the 7 flags above and Stage 06 reports the trigger
-LIVE; with the lexicon removed it produces 0 and reports inert. The proxy was a
-smoke-test stand-in (this page's own GT tokens), NOT a production lexicon.
+de-hyphenation.
 
-Full suite 156 green. Files: `pipeline/second_opinion.py` (+
+> **Not just any wordlist.** A plain frequency/dictionary wordlist activates the
+> common-word precision win but, per the proxy analysis above, will NOT catch
+> proper-noun misreads (names/places absent from a general lexicon) — precisely
+> the high-error-risk tokens in this material. For real coverage the lexicon wants
+> **gazetteer / proper-noun breadth** (place + person names for the corpus), not
+> only common vocabulary. If only a plain wordlist is available, ship it — but
+> expect proper-noun errors to remain silent misses, and re-measure the real
+> flag numbers (the 89→7 / +2 above are proxy-optimistic).
+
+Verified end-to-end on `bg_01`: with a proxy lexicon dropped into the seam the
+live CLI produces the 7 flags above and Stage 06 reports the trigger LIVE; with
+the lexicon removed it produces 0 and reports inert.
+
+Full suite 158 green. Files: `pipeline/second_opinion.py` (+
 `test_second_opinion.py`), `Word.engine_disagree`, Stage 05 wiring, Stage 06
 OR-in + LIVE/inert reporting, and a Stage 08 test proving a disagreement-flagged
 confident word clears through the SAME per-word `flag_visible`/edit path as a

@@ -32,6 +32,11 @@ huggingface_hub>=0.20   # checkpoint download
 
 # --- Second-opinion OCR (Bulgarian) ---
 easyocr>=1.7
+# Pure-Python Hunspell: the Stage 05 disagreement gate validates surface forms
+# morphologically at runtime (HunspellLexicon in second_opinion.py). Lazy-imported
+# — only needed once a real lexicon is configured. Dicts built by
+# `python -m tools.setup_lexicons` into gitignored models/lexicons/.
+spylls>=0.1.7
 
 # --- Stage 08 render: headless-Chromium PDF backend ---
 playwright>=1.42       # `playwright install chromium` after pip install

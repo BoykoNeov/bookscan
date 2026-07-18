@@ -72,18 +72,24 @@ engines:
     # code. THE DICTIONARY GATE that makes the disagreement trigger usable: flag
     # a Tesseract word only when it is a NON-word AND EasyOCR nominated a VALID
     # dictionary word in its place (see RESULTS.md 2026-07-18 — the raw diff was
-    # ~0 precision on Cyrillic; EasyOCR is the noisier reader there). A path that
-    # does not exist -> the trigger is INERT and EasyOCR is not even loaded.
+    # ~0 precision on Cyrillic; EasyOCR is the noisier reader there).
     #
-    # OWNER DEPENDENCY: no lexicon ships in the repo yet, so this seam is
-    # currently inert. Supplying one activates BOTH this trigger and the Stage 08
-    # de-hyphenation rule (same dependency). Lexicons are gitignored under
-    # models/lexicons/ (one word per line, UTF-8).
+    # Each path is the .dic of a Hunspell pair (.dic + .aff), validated at runtime
+    # by spylls (see second_opinion.HunspellLexicon) — surface forms are checked
+    # morphologically, so inflections validate without being listed. For Bulgarian
+    # a GeoNames gazetteer overlay (bg.geo.txt, alongside) is unioned on for the
+    # toponym blind spot. A pair that does not exist -> the trigger is INERT and
+    # EasyOCR is not even loaded.
+    #
+    # OWNER DEPENDENCY: no lexicon ships in the repo (models/ is gitignored), so
+    # this seam is inert on a fresh clone. Build it locally with
+    #   python -m tools.setup_lexicons        (downloads LibreOffice dicts + GeoNames-BG)
+    # Activating it also feeds the Stage 08 de-hyphenation rule (same dependency).
     lexicon:
-      bul: "models/lexicons/bg.txt"
-      eng: "models/lexicons/en.txt"
-      ita: "models/lexicons/it.txt"
-      deu: "models/lexicons/de.txt"
+      bul: "models/lexicons/bg.dic"
+      eng: "models/lexicons/en.dic"
+      ita: "models/lexicons/it.dic"
+      deu: "models/lexicons/de.dic"
 
 # --- Models (loaded lazily per stage; VRAM released on CLI exit) ---
 models:

@@ -133,6 +133,17 @@ def test_one_to_one_replace_survives_between_agreeing_neighbors():
     assert find_disagreements(boxes, texts, regions, 0.30, DICT) == {1}
 
 
+def test_single_character_voucher_is_too_weak_to_flag():
+    """Regression for the bg_01 'кК.),' <- 'к' catch (RESULTS.md 2026-07-18): a
+    bare one-letter EasyOCR token, valid in a Hunspell dict (unlike a frequency
+    list), must NOT vouch for flagging a garbled neighbor. A >=2-char voucher
+    still does (касалница <- касапница), so the guard is voucher-length only."""
+    lex = DICT | {normalize_token("к")}          # 'к' IS a valid dict word
+    boxes, texts = _boxes((0, "кК.),"))          # Tesseract garble -> norm 'кк'
+    regions = [_line("к", 0.9)]                   # EasyOCR nominates bare 'к'
+    assert find_disagreements(boxes, texts, regions, 0.30, lex) == set()
+
+
 def test_agreement_flags_nothing():
     boxes, texts = _boxes((0, "Chopmarked"), (50, "Coins"))
     regions = [_line("Chopmarked Coins", 0.9)]

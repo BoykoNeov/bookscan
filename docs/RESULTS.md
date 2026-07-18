@@ -1569,3 +1569,84 @@ greenlight** rather than silently expanded into. The disagreement seam remains
 inert (no lexicon committed; `models/` is gitignored) until that build lands.
 
 Full suite **198 green** (17 in `test_second_opinion.py`, +2 for the 1↔1 fix).
+
+### Addendum — 2026-07-18, owner greenlit the build: Hunspell lexicon shipped (runtime spylls)
+
+Owner decision above resolved: **"build it — hunspell."** The lexicon
+infrastructure is now built (`tools/setup_lexicons.py`), the gate consumes a real
+Hunspell dictionary, and it was re-measured on bg_01 through the real code path.
+
+**Mechanism — runtime spylls lookup, not offline expansion (empirically forced).**
+The plan was to expand Hunspell to a flat wordlist. Verified on this box: no
+`unmunch`/`hunspell` CLI, and `spylls` (pure-Python Hunspell, pip) exposes only
+`.lookup()` (surface-form → valid?), **not** surface-form enumeration — it gives
+stems + affix tables, i.e. the raw materials to *reimplement* unmunch (lossy,
+over-generating, and German compounds are generative → not enumerable at all). So
+we check validity at runtime instead: `HunspellLexicon.__contains__` (in
+`second_opinion.py`) calls `spylls .lookup()`. Because it is a `__contains__`
+drop-in for the old `set[str]`, **`find_disagreements` and its tests are unchanged**
+— the gate still just does `tok in dictionary`. `spylls` is a lazy runtime dep
+(imported only when a lexicon is configured); `config.yaml` lexicon paths now point
+at `<lang>.dic`.
+
+**`tools/setup_lexicons.py`** (mirrors `setup_tessdata`) downloads the four
+LibreOffice Hunspell pairs — **SHA-pinned** `da8a7e7` — into gitignored
+`models/lexicons/`, and for Bulgarian builds a **GeoNames** gazetteer overlay
+(`bg.geo.txt`, CC-BY, 11 014 Cyrillic place-name tokens) unioned onto the Hunspell
+base. Post-download sanity confirms morphology is live, incl. the inflected
+`помашки`=True (bg) and `Häuser`=True (de).
+
+**The Hunspell win, and the voucher guard it forced.** `помашки` (an inflected
+plural the frequency list lacked) validates **morphologically without being
+listed** — the whole reason for choosing Hunspell. But the real dictionary
+introduced a new leak class: a **single valid letter** can vouch. Measured on
+bg_01, EasyOCR's bare `к` (valid in Hunspell, never in a subtitle frequency list)
+vouched to flag Tesseract's garble `кК.),`. Fix (deliberate, not deferred): the
+voucher `e_tok` must be **≥2 chars**; regression-tested; all 17→18 gate tests green.
+
+**Honest bg_01 re-measurement (real `load_lexicon` → `HunspellLexicon` path; GT
+used only to classify TP/FP, non-circular):**
+
+| lexicon | flags | TP | FP | precision |
+|---|---|---|---|---|
+| naive raw token-diff (no dict) | 89 | — | — | ≈ 0 |
+| general frequency list (prior addendum) | 1 | 1 | 0 | 1.00 |
+| **Hunspell bg_BG + GeoNames-BG (this build)** | **1** | **1** | **0** | **1.00** |
+
+The one flag is the robust `касалница`→`касапница` л/п misread. The gate also
+**correctly did NOT flag `караагач`** (Tesseract right; EasyOCR's `каразгач`
+wrong — the dictionary protected the correct word), a clean demonstration the
+freq-list measurement could not show.
+
+⚠️ **Do not oversell: on this clean page Hunspell does NOT measurably beat the
+frequency list** — both are 1 flag / 0 FP. The `помашки` over-flag was already
+killed by the 1↔1 fix, not by Hunspell coverage, so nothing on bg_01 exercises the
+coverage advantage. The Hunspell win is **principled** (inflected real words
+validate → fewer over-flags *in principle*); one thin, clean page cannot
+demonstrate it, same humility as before.
+
+**Proper-noun coverage — partially closed, honestly.** The overlay closes the
+*modern*-Bulgaria toponym gap (София/Пловдив/Хасково/Кърджали all present). But the
+**Aegean-Thrace exonyms this refugee-history corpus is dense with are only
+partially in GeoNames at all**: `Дедеагач` exists solely as a Cyrillic *altname*
+under the **GR** dump (Alexandroupoli); `Гюмурджина` (Komotini) and `Дуганхисар`
+are **absent from GeoNames entirely**, even as altnames. So `--geo-countries
+BG,GR,TR` buys 1 of 3; the other 2 no gazetteer will supply. Default stays BG
+(not silently widened); the knob makes the finding actionable.
+
+**Reproducibility caveat.** LibreOffice dicts are SHA-pinned (bit-reproducible);
+the GeoNames dumps are a **rolling, unversioned** file (GeoNames tags no releases),
+so the overlay may drift between rebuilds. Noted in `setup_lexicons.py`.
+
+**Activated path verified end-to-end (GPU).** Ran the real
+`stage05_ocr jobs/bg_01/page_001 --lang bul` — never exercised before (the 254
+tests only pass `set`/`None`; the measurement called `find_disagreements`
+directly). Confirmed: `HunspellLexicon` loads, `run_second` flips True, live
+EasyOCR runs, `meta.second_opinion.lexicon_words`=89 251 (`__len__`), warning
+f-strings render, and exactly 1 `engine_disagree` (`касалница`) lands in ocr.json.
+
+**Status.** The seam is now **activatable locally** (`python -m tools.setup_lexicons`)
+and still **ships inert** (`models/` gitignored — a fresh clone has no lexicon →
+`load_lexicon` returns None → gate flags nothing). Activating it also feeds the
+Stage 08 de-hyphenation rule (same dependency). Full suite **255 green**
+(18 in `test_second_opinion.py`).

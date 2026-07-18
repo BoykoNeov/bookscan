@@ -37,10 +37,22 @@ flagging a DIFFERENT T token whose real counterpart is itself garbage — measur
 on bg_01: T[``помашки`` ``села``] ↔ E[``помошки`` ``село``] wrongly flagged the
 CORRECT ``помашки`` because ``село`` ∈ dict. The gate subsumes homoglyph-folding
 and join-tolerance (``се`` ∈ dict → never flagged, whatever EasyOCR read).
-Measured on bg_01 against a GENERAL (non-GT-derived) frequency lexicon: 1 clean
-catch (``касалница``→``касапница``, ``касапница`` count 478 — robust), no false
-flags; a naive raw token-diff over the same page flagged 89 (precision ≈ 0). See
-RESULTS.md 2026-07-18 for the honest measurement + activation caveats.
+Also load-bearing: the voucher (``e_tok``) must be **≥2 chars**. A bare valid
+letter (Cyrillic ``к``, which a Hunspell dict accepts but a frequency list never
+listed) is too weak to certify a Tesseract non-word is wrong — measured on bg_01,
+it let ``кК.),`` ← ``к`` flag; the guard drops it.
+
+Measured on bg_01 against the REAL production lexicon (LibreOffice ``bg_BG``
+Hunspell via spylls + a GeoNames-BG overlay): 1 clean catch
+(``касалница``→``касапница``), 0 false flags — and the gate correctly did NOT
+flag ``караагач`` (Tesseract right, EasyOCR's ``каразгач`` wrong: the dictionary
+protected the correct word). Honest framing: on this clean page Hunspell does not
+*measurably* beat the frequency list (both ~0 FP; the помашки over-flag was
+already killed by the 1↔1 fix, not by coverage). The Hunspell win is *principled*
+coverage — inflected real words like ``помашки`` validate morphologically, so the
+gate over-flags less in principle — which one thin page cannot demonstrate. A
+naive raw token-diff over the same page flagged 89 (precision ≈ 0). See RESULTS.md
+2026-07-18 for the full measurement + activation caveats.
 
 Honest blind spot: ``norm(T) ∉ dict AND norm(E) ∉ dict`` is a MISS (both
 non-words). The **measured dominant miss is PROPER NOUNS / toponyms**
@@ -49,13 +61,25 @@ frequency list, yet dominate this corpus and are the highest OCR-error-risk
 tokens) — closing that needs a gazetteer overlay, not a bigger wordlist. An
 accepted recall loss traded for precision, correct when raw precision is ≈ 0.
 
+**The lexicon is a Hunspell dictionary, checked at runtime (see
+``HunspellLexicon``).** ``load_lexicon`` resolves ``models/lexicons/<lang>.dic`` +
+``.aff`` into a spylls-backed checker whose ``__contains__`` validates a token
+against Hunspell's morphology — so inflected forms (``помашки``) validate WITHOUT
+being enumerated, which a flat frequency list could not do. For Bulgarian a
+GeoNames gazetteer overlay (``bg.geo.txt``) is unioned on for the toponym blind
+spot. ``find_disagreements`` is agnostic to which it gets: a ``set`` or a
+``HunspellLexicon`` both answer ``tok in dictionary``. Build both with
+``python -m tools.setup_lexicons`` (downloads LibreOffice dicts + the GeoNames-BG
+dump into gitignored ``models/lexicons/``).
+
 **Inert-seam contract (repo pattern, mirrors ``stage08.join_hyphen``).** The gate
-NEEDS a per-language lexicon, which does not yet exist in the repo (it is the same
-dependency the de-hyphenation seam waits on). With ``dictionary is None`` the
-trigger flags NOTHING — the mechanism is built + unit-tested but stays inert until
-the owner supplies a lexicon (see config ``engines.easyocr.lexicon``). Stage 05
-therefore does not even load EasyOCR when no lexicon is present (its second pass
-would produce nothing — wasted GPU).
+NEEDS that per-language lexicon (the same dependency the de-hyphenation seam waits
+on). A fresh clone has no ``models/lexicons/`` (gitignored), so ``load_lexicon``
+returns ``None`` and the trigger flags NOTHING — the mechanism is built +
+unit-tested but stays inert until ``setup_lexicons`` (or the owner) supplies the
+dicts (see config ``engines.easyocr.lexicon``). Stage 05 therefore does not even
+load EasyOCR when no lexicon is present (its second pass would produce nothing —
+wasted GPU).
 
 **Region-confidence gate.** EasyOCR emits its own junk (e.g. conf 0.09 ``'L='``
 against a perfect Tesseract ``'a'``@96). Regions below ``min_region_conf`` are
@@ -80,17 +104,90 @@ def normalize_token(s: str) -> str:
     return _NORM_RE.sub("", s).casefold()
 
 
-def load_lexicon(paths: list[Path | str]) -> set[str] | None:
-    """Load a per-language lexicon (whitespace-separated words, one or many per
-    line) from the first path that exists, normalized to ``normalize_token`` form.
+def _load_overlay(path: Path | str | None) -> frozenset[str]:
+    """Load an optional gazetteer overlay (one word per line) as NORMALIZED
+    tokens, to union proper nouns / toponyms onto the Hunspell base. Place names
+    are the MEASURED blind spot — ``Дедеагач``/``Гюмурджина`` are absent from the
+    general dictionary yet dominate this corpus (see RESULTS.md 2026-07-18)."""
+    if path and Path(path).exists():
+        words = Path(path).read_text(encoding="utf-8").split()
+        return frozenset(n for n in (normalize_token(w) for w in words) if n)
+    return frozenset()
 
-    Returns ``None`` when no path exists — the inert-seam signal that keeps the
-    disagreement trigger dormant (and, in Stage 05, keeps EasyOCR unloaded). This
-    lexicon does not yet ship in the repo; supplying it is an owner dependency,
-    shared with the de-hyphenation seam (see RESULTS.md 2026-07-18)."""
+
+class HunspellLexicon:
+    """Per-language validity check backed by a Hunspell ``.dic``/``.aff`` pair
+    (via the pure-Python ``spylls``), optionally unioned with a normalized overlay
+    set (a GeoNames gazetteer for the proper-noun blind spot).
+
+    Implements ``__contains__`` over NORMALIZED tokens (``normalize_token`` form)
+    so it is a DROP-IN for the ``set[str]`` the gate used before: the whole of
+    ``find_disagreements`` is unchanged — it still just tests ``tok in dictionary``.
+    Membership means the token is a valid surface form per Hunspell's morphology
+    (inflections/derivations — this is why ``помашки`` validates where a flat
+    frequency list missed it) OR is present in the overlay.
+
+    Case: gate tokens arrive casefolded; Hunspell is case-aware, so we also try
+    the Capitalized form (a lowered proper noun / German noun still validates).
+    ``spylls`` is imported LAZILY here — the module stays importable (and the pure
+    logic tests keep running) without the dependency; it is only needed once a
+    real lexicon is actually configured.
+    """
+
+    def __init__(self, dic_path: Path | str, aff_path: Path | str,
+                 overlay: frozenset[str] = frozenset()) -> None:
+        from spylls.hunspell import Dictionary  # lazy: only when a lexicon exists
+        # spylls reads ``<base>.aff`` + ``<base>.dic``; aff_path is required to
+        # exist by the caller but the base drives both.
+        self._dic = Dictionary.from_files(str(Path(dic_path).with_suffix("")))
+        self._overlay = overlay
+        self._stems = len(self._dic.dic.words)
+        self._cache: dict[str, bool] = {}
+
+    def __contains__(self, token: str) -> bool:
+        if not token:
+            return False
+        if token in self._overlay:
+            return True
+        hit = self._cache.get(token)
+        if hit is None:
+            hit = bool(self._dic.lookup(token)
+                       or self._dic.lookup(token.capitalize()))
+            self._cache[token] = hit
+        return hit
+
+    def __len__(self) -> int:
+        """Reported as ``lexicon_words`` in Stage 05 meta. NOTE: this counts
+        dictionary STEMS + overlay tokens, NOT the (generative) number of valid
+        surface forms — Hunspell validates far more than it lists."""
+        return self._stems + len(self._overlay)
+
+
+def load_lexicon(paths: list[Path | str]) -> "set[str] | HunspellLexicon | None":
+    """Resolve the per-language lexicon from the first usable path.
+
+    Two shapes are tried per path:
+
+      * a Hunspell pair — ``<base>.dic`` + ``<base>.aff`` both present → a
+        ``HunspellLexicon`` (spylls), unioned with an optional ``<base>.geo.txt``
+        gazetteer overlay next to it. THIS is the production shape, built by
+        ``tools/setup_lexicons.py`` into gitignored ``models/lexicons/``.
+      * a flat ``.txt`` wordlist → a normalized ``set[str]`` (legacy / tests).
+
+    Returns ``None`` when no path yields either — the inert-seam signal that keeps
+    the disagreement trigger dormant (and, in Stage 05, keeps EasyOCR unloaded). A
+    fresh clone has no ``models/lexicons/`` (gitignored), so the seam ships inert;
+    ``tools/setup_lexicons.py`` activates it locally. Shared with the Stage 08
+    de-hyphenation seam (same owner dependency; see RESULTS.md 2026-07-18)."""
     for p in paths:
-        if p and Path(p).exists():
-            words = Path(p).read_text(encoding="utf-8").split()
+        if not p:
+            continue
+        p = Path(p)
+        dic, aff = p.with_suffix(".dic"), p.with_suffix(".aff")
+        if dic.exists() and aff.exists():
+            return HunspellLexicon(dic, aff, _load_overlay(p.with_suffix(".geo.txt")))
+        if p.suffix == ".txt" and p.exists():
+            words = p.read_text(encoding="utf-8").split()
             lex = {n for n in (normalize_token(w) for w in words) if n}
             return lex or None
     return None
@@ -124,7 +221,7 @@ def find_disagreements(
     word_texts: list[str],
     regions: list[Region],
     min_region_conf: float,
-    dictionary: set[str] | None,
+    dictionary: "set[str] | HunspellLexicon | None",
 ) -> set[int]:
     """Return the indices of Tesseract words that disagree with EasyOCR.
 
@@ -185,6 +282,15 @@ def find_disagreements(
             if i2 - i1 != 1 or j2 - j1 != 1:
                 continue
             t_tok, e_tok = t_toks[i1], e_toks[j1]
+            # The voucher must be more than one character. A bare letter — e.g.
+            # Cyrillic ``к`` (an abbreviation marker), which a Hunspell dictionary
+            # accepts as valid though a frequency list never listed it — is too
+            # weak to certify that a Tesseract non-word is wrong: it would let any
+            # stray single letter vouch for flagging a garbled neighbor (measured
+            # on bg_01, ``кК.),`` ← ``к``). Guards the leak class the real
+            # dictionary introduced; see RESULTS.md 2026-07-18.
+            if len(e_tok) < 2:
+                continue
             if t_tok not in dictionary and e_tok in dictionary:
                 flagged.add(t_pairs[i1][0])
     return flagged

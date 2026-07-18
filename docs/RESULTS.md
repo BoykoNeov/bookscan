@@ -1283,3 +1283,33 @@ was designed to catch. Worth a separate spike **because it can be done right**: 
 `testset/` has ground truth, so a clean-page CLAHE non-regression + gain measurement is
 directly runnable there — which is also the precondition a shippable Stage-05 preprocessor
 would owe anyway, since it would touch every page, not just gutters.
+
+---
+
+## 2026-07-18 — Stage 00 orientation cascade (no-regression check)
+
+`tools/normalize` rewritten from "exif_transpose-then-OSD-rescue" into a
+confidence-gated priority cascade (capture-hint / text-baseline stubs → OSD →
+EXIF **mirror-only**, pure-rotation tag distrusted → landscape prior). Motivated
+by real-capture Finding 1 (`docs/notes/2026-07-18-real-capture-findings.md`):
+figure-heavy German spreads (`de_01`/`de_02`) ingested sideways because OSD
+starved (conf ~0.04–1.97) and the old fallback kept the spurious
+`exif_transpose` rotation.
+
+Gate 1 harness (whole-spread raw Tesseract, `--preprocess none`), the 3 text-GT
+spreads — **identical to history → zero OCR regression**:
+
+| image | lang | whole WER (pre) | whole WER (post) |
+|---|---|---|---|
+| en_coins_01 | eng | 83.1% | 83.1% |
+| bg_01 | bul | 12.7% | 12.7% |
+| bg_02 | bul | 38.1% | 38.1% |
+
+Provable: for an orientation-6 spread with confident OSD, the old path was
+`exif_transpose` (raw +90 CW) then OSD undoing it (−90) = the raw landscape
+buffer; the cascade returns that same raw buffer directly. Only the OSD-can't-
+decide case changes. End-to-end on the **original** (un-stripped) German
+captures: Stage 04 recovers from `blocks=1` to 21 (de_01) / 47 (de_02) blocks;
+all 15 `testset/gt/orientation.json` fixtures resolve upright
+(`tools/tests/test_normalize.py`). de_* remain the guard for the figure-heavy
+OSD-starve case.

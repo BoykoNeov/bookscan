@@ -258,9 +258,10 @@ def run(page_dir: Path, cfg: dict, src: Path | None = None,
         params={"min_osd_conf": min_conf},
         timings_ms={"orient": round(orient_ms, 1), "total": round(total_ms, 1)},
         warnings=warnings + [
-            "orientation via shared tools.normalize (exif_transpose + OSD); "
-            "RAW decode deferred (rawpy absent); 180/portrait-single branches "
-            "unexercised by the current all-landscape-spread testset.",
+            "orientation via shared tools.normalize (priority cascade: capture-hint"
+            " / text-baseline [both stubs] -> OSD -> EXIF mirror-only, pure-rotation"
+            " tag distrusted -> landscape prior); RAW decode deferred (rawpy absent);"
+            " 180 branch still OSD-only; de_* fixtures guard the figure-heavy case.",
         ],
     )
     (out_dir / "meta.json").write_text(

@@ -99,17 +99,38 @@ relative to the page and never clears the confident-gutter bar.
 
 Even with `realtest_de1_fixed` (correctly oriented, 22 blocks assembled):
 
-- **Icon sidebar → junk words interleaved into the flow.** The star-rating /
-  difficulty / duration / GPS pictogram panel OCRs into scattered noise blocks
-  ("a ER", "Wa", "PM. 12).", "NN Juni – ARH Sept.") that land *early* in reading
-  order. The panel is not recognised as a structured info-box to lift out or skip.
-- **Within-column order inverted on the right page.** German column emitted
-  Route → Zustieg → Anreise; the page order top-to-bottom is Anreise → Zustieg →
-  Route. (DE and EN columns do *not* badly interleave — English clusters at the
-  end, roughly correct.)
-- A same-page ordering wrinkle also shows on the Bulgarian left page (the two
-  "Експерти…" paragraphs are swapped) — an XY-Cut ordering issue independent of
-  the gutter, so Finding 2 is not the whole reading-order story.
+- **Within-column order inverted on the right page. FIXED 2026-07-18 (Stage 04
+  v0.2.0).** German column emitted Route → Zustieg → Anreise; the page order
+  top-to-bottom is Anreise → Zustieg → Route. Root cause: both XY-cuts are
+  defeated on this page — the top photo spans both columns (no vertical cut) and
+  the tall English translation block bridges the mid-page (no horizontal cut) —
+  so every block falls into the `_reading_rows` tie-break, where the tall English
+  block transitively swallowed the German column into one "row" that was then
+  **x-sorted**; the German paragraphs' ragged left margins grow downward, so
+  x-sort emitted them bottom-to-top. Fix: `_reading_rows` sub-clusters each row
+  into x-COLUMNS and reads each column top-to-bottom (columns left-to-right). New
+  block-order GT `testset/gt/de_01.blocks.json` (proposed-from-photo, order fixed
+  by the German text flow — NOT owner-validated) graded by `layout_order_eval`:
+  de_01-right tau **+0.60 → +1.00**, seg 8/8, type 8/8. The Tesseract-native
+  order was already +1.00, so Stage 04's fallback had been *degrading* an order
+  Tesseract got right — the fix removes that self-inflicted regression. Left
+  subpage tau +1.00 unchanged. Non-regression: `it_geo_04..07` taus
+  byte-identical, `split_eval` 15/15, full suite 218 green (+ a new
+  bridged-column `_reading_rows` regression test). See docs/RESULTS.md.
+- **Icon sidebar → junk words interleaved into the flow. DEFERRED (owner call).**
+  The star-rating / difficulty / duration / GPS pictogram panel OCRs into
+  scattered noise blocks ("a ER", "Wa", "PM. 12).", "NN Juni – ARH Sept.") that
+  land *early* in reading order. This is a content-*typing* issue, not an
+  ordering bug (the panel is correctly leftmost-first); and in a climbing guide
+  that difficulty/time/GPS panel is *high-value* structured info, not junk to
+  drop — rendering it as a structured info-box is a real feature and an owner
+  modeling decision, so it is scoped OUT of the de_01 block-order GT (documented
+  in the GT `grading.scoped_out`).
+- **The Bulgarian same-page swap was Finding 2, not a residual Stage-04 bug.**
+  The two "Експерти…" paragraphs were swapped on the pre-split Taleb spread
+  (`realtest_bg`, not in testset) — the cross-gutter scramble Finding 2 fixed.
+  On the testset Bulgarian fixture `bg_01`, both subpages read cleanly
+  top-to-bottom post-split, so there is no independent XY-Cut ordering issue here.
 
 ## Recommendation — promote these as regression fixtures (highest leverage)
 

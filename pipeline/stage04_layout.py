@@ -54,7 +54,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import BBox, Block, BlockType, StageMeta
 
 STAGE = "stage04_layout"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -343,11 +343,24 @@ def _separators(intervals: list[tuple[float, float]], min_gap: float
 
 
 def _reading_rows(items: list[int], boxes: list[BBox]) -> list[int]:
-    """Tie-break ordering when no clean projection cut exists: group boxes into
+    """Tie-break ordering when no clean XY-Cut separator exists: group boxes into
     reading ROWS by vertical overlap (a box joins a row if it overlaps the row's
     y-span by more than half its own height — SIZE-RELATIVE, so a line of jittery
-    words groups but two tall stacked blocks do not), rows top->bottom, each row
-    left->right."""
+    words groups but two tall stacked blocks do not), rows top->bottom.
+
+    Within a multi-box row, a flat left->right sort is WRONG when a tall neighbour
+    (a page-height second column, or a wide spanning figure) has BRIDGED
+    column-stacked blocks into one row: x-sorting then emits that column by x
+    instead of by y. On de_01-right the tall English body block bridged the German
+    instruction column (Anreise/Zustieg/Route) into one row, and because those
+    paragraphs have ragged left margins that grow downward (x 118<106<99), the
+    x-sort emitted them Route->Zustieg->Anreise — fully reversed (Finding 3). So we
+    sub-cluster each row into x-COLUMNS (``_separators`` on the x-intervals, any gap
+    splits), order the columns left->right, and recurse each multi-box column
+    top->bottom. A row that is a single x-cluster (genuine same-line boxes, or
+    mutually overlapping boxes with no clean column split) keeps the left->right
+    sort — so a line of jittery footnote words still reads left->right and two
+    diagonally-stacked blocks (separate rows) still read top->bottom."""
     rows: list[dict] = []
     for i in sorted(items, key=lambda i: boxes[i].y):
         b = boxes[i]
@@ -362,9 +375,23 @@ def _reading_rows(items: list[int], boxes: list[BBox]) -> list[int]:
                 break
         if not placed:
             rows.append({"ymin": b.y, "ymax": b.y2, "members": [i]})
+
     out: list[int] = []
     for row in sorted(rows, key=lambda r: r["ymin"]):
-        out += sorted(row["members"], key=lambda i: boxes[i].x)
+        members = row["members"]
+        if len(members) <= 1:
+            out += members
+            continue
+        # Sub-cluster the row into x-columns; ``_separators`` returns groups of
+        # LOCAL indices (into ``members``) already ordered left->right.
+        xiv = [(boxes[i].x, boxes[i].x2) for i in members]
+        colgroups = _separators(xiv, 1.0)
+        if len(colgroups) >= 2:                  # real columns bridged into one row
+            for g in colgroups:
+                col = [members[k] for k in g]
+                out += _reading_rows(col, boxes) if len(col) > 1 else col
+        else:                                    # one x-cluster -> same-line, L->R
+            out += sorted(members, key=lambda i: boxes[i].x)
     return out
 
 
@@ -768,6 +795,12 @@ def run(page_dir: Path, cfg: dict, method: str = "auto", debug: bool = False
             "is MEASURED by tools/layout_ab.py (block-ordered vs whole-page OCR "
             "WER). See docs/GATE3_SPEC.md — multi-column order is UNPROVEN until "
             "multi-column GT is added.",
+            "v0.2 (Finding 3): the _reading_rows XY-Cut tie-break sub-clusters a "
+            "reading-row into x-columns and reads each column top->bottom, so a "
+            "tall neighbour (page-height 2nd column / spanning figure) that bridges "
+            "a column-stacked group into one row no longer x-sorts it into reverse "
+            "order (de_01-right German column, tau +0.60 -> +1.00; "
+            "gt/de_01.blocks.json).",
         ],
     )
     (out_dir / "meta.json").write_text(

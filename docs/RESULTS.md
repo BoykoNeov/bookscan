@@ -1313,3 +1313,57 @@ captures: Stage 04 recovers from `blocks=1` to 21 (de_01) / 47 (de_02) blocks;
 all 15 `testset/gt/orientation.json` fixtures resolve upright
 (`tools/tests/test_normalize.py`). de_* remain the guard for the figure-heavy
 OSD-starve case.
+
+## Gate 3 block-order eval — 2026-07-18, tesseract 5.4.0.20240606, image=de_01
+
+Stage 04 block structure graded DIRECTLY against the per-subpage block-order GT (`gt/de_01.blocks.json`): segmentation, type, caption<->figure grouping, and linear order. Owner priority: segmentation/type/grouping OUTRANK exact order (tau is secondary). Tau is over TEXT blocks only (figures excluded from BOTH the Stage-04 and Tesseract-native arms, so the two arms compare the same block set); figures match by GT-bbox overlap. Split+dewarp = UVDoc auto (Gate-2 path). N=1 spread — read the rows.
+
+| subpage | seg recall | type acc | tau (Stage04) | tau (Tess-native) | grouping | det blocks | misses |
+|---|---|---|---|---|---|---|---|
+| left.png | 4/4 (100%) | 4/4 (100%) | +1.00 | +1.00 (n=2) | — | 7 | — |
+| right.png | 8/8 (100%) | 8/8 (100%) | +1.00 | +1.00 (n=6) | — | 8 | — |
+
+**Segmentation** 12/12 GT blocks matched. **Type** 12/12 matched blocks correctly typed. **Grouping** 0/0 captions associate to their partner figure (0/0 also typed 'caption'); but only 0/0 on a subpage with >=2 figures (the rest are single-figure: association POSSIBLE, not discriminated).
+
+**Figura-NN parser arm** (`pipeline.caption_parser`, shown ALONGSIDE the detector-only numbers above — improvement is measured, not asserted). The parser re-types a paragraph/other block as `caption` iff its OCR text starts with a figure keyword+number (`Figura NN`, optional directional prefix); it never demotes a block or touches figures.
+- **Caption typing:** detector 0/0 vs **parser 0/0** captions typed `caption` (0 paragraph blocks promoted). **Type accuracy over matched blocks:** detector 12/12 vs **parser 12/12**.
+- **Pairing by number:** figure corner labels recovered from pixels = 0 → number-keyed C→F pairs credited = 0/0 (bbox-matched, manually verified). Figure numbers do NOT survive OCR here (figure blocks empty), so the number-keyed C→F pairing has no figure-side signal — the caption side is typed+numbered but pairing stays detector-under-segmentation-limited (honest scope, see caption_parser docstring).
+
+### Finding 3 (symptom 2) — within-column reading order fix (Stage 04 v0.2.0), 2026-07-18
+
+Real-capture Finding 3 symptom 2: on the German via-ferrata spread `de_01`, the
+right-page instruction column was emitted **fully reversed** (Route → Zustieg →
+Anreise instead of Anreise → Zustieg → Route). Root cause: both XY-cuts are
+defeated (the top photo spans both columns → no vertical cut; the tall English
+translation block bridges the mid-page → no horizontal cut), so every block
+falls into the `_reading_rows` tie-break. There the tall English block
+transitively swallowed the German column into one "row", which was then
+**x-sorted** — and the German paragraphs' ragged left margins grow downward, so
+x-sort emitted them bottom-to-top. Fix: `_reading_rows` now sub-clusters each row
+into x-COLUMNS (`_separators` on the x-intervals) and reads each column
+top-to-bottom, left-to-right across columns.
+
+New block-order GT `testset/gt/de_01.blocks.json` (proposed-from-photo, NOT
+owner-validated — order objectively fixed by the German text flow), graded by
+`tools/layout_order_eval`:
+
+| de_01 right.png | seg recall | type acc | tau (Stage04) | tau (Tess-native) |
+|---|---|---|---|---|
+| before | 8/8 | 8/8 | **+0.60** | +1.00 |
+| after  | 8/8 | 8/8 | **+1.00** | +1.00 |
+
+The German column goes from partially-reversed to correct. The Tesseract-native
+order was already +1.00, so Stage 04's fallback had been **degrading an order
+Tesseract got right** — the fix removes that self-inflicted regression. Left
+subpage tau +1.00 unchanged (prose was already ordered; non-regression on the
+same page). Non-regression: `it_geo_04..07` block-order taus **byte-identical**
+before/after (those fixtures get clean cuts and never enter the changed
+fallback); `split_eval` 15/15; full suite 218 green (incl. a new
+`_reading_rows` bridged-column regression test).
+
+Symptom 1 (icon sidebar OCRs to junk, lands early) is **deferred** — it is a
+content-*typing* issue (in a climbing guide that difficulty/time/GPS panel is
+high-value structured info, not junk to drop), so rendering it as a structured
+info-box is a real feature and an owner call, not an ordering bug. Symptom 3 (a
+Bulgarian paragraph swap) was the pre-split Taleb spread's cross-gutter scramble,
+already resolved by Finding 2; `bg_01` reads cleanly post-split.

@@ -86,6 +86,30 @@ def test_reading_rows_stacked_blocks_top_to_bottom():
     assert _reading_rows([0, 1], same_line) == [1, 0]
 
 
+def test_reading_rows_bridged_column_not_inverted():
+    """REGRESSION (Finding 3, de_01-right): a tall neighbour (a page-height second
+    column) bridges a column-STACKED group into one reading-row. A flat x-sort then
+    emits that column by x — and because the paragraphs have ragged left margins
+    that GROW downward, the column comes out fully reversed (Route->Zustieg->Anreise
+    became blocks 0,1,2 -> emitted 2,1,0). The row must sub-cluster into x-columns
+    and read each column top-to-bottom: left column A->B->C first, then the tall
+    bridging column."""
+    boxes = [
+        _b(118, 1211, 1417, 285),   # 0: 'Anreise'  (top,    left margin 118)
+        _b(106, 1501, 1431, 200),   # 1: 'Zustieg'  (middle, left margin 106)
+        _b(99, 1704, 1443, 319),    # 2: 'Route'    (bottom, left margin  99)
+        _b(1574, 1246, 262, 956),   # 3: tall English column bridging all three
+        _b(28, 148, 1801, 1029),    # 4: top figure spanning BOTH columns
+    ]
+    # The bridged row alone (blocks 0-3): left column top-to-bottom, then the tall
+    # bridging column. A flat x-sort would give [2, 1, 0, 3] (German reversed).
+    assert _reading_rows([0, 1, 2, 3], boxes) == [0, 1, 2, 3]
+    # Whole-page path: the spanning figure (4) kills the vertical cut and the tall
+    # column (3) kills the horizontal cut, so all five blocks fall into the
+    # tie-break. Figure first, then the German column top-to-bottom, then English.
+    assert xy_cut_order(boxes, DEFAULTS, page_w=2057, page_h=3000) == [4, 0, 1, 2, 3]
+
+
 def test_map_abandon_by_position():
     h = 3000
     assert _map_abandon(_b(200, 100, 600, 50), h) == BlockType.HEADER

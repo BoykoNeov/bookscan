@@ -1,0 +1,72 @@
+{
+  "image_id": "de_01",
+  "gt_type": "block_reading_order",
+  "schema_version": 1,
+  "book": "Alpine via-ferrata guide, Latemartuerme-Klettersteig (Latemargruppe), pp.276-277 (alpinverlag). Same capture as the de_01 orientation + gutter fixtures.",
+  "pages": "276-277",
+  "language": "german",
+  "validated_by": "PROPOSED by Claude from the source photo 2026-07-18 (Finding 3). Per-subpage reading order objectively determined by the German text flow (the right-page instruction column reads Anreise -> Zustieg -> Route top-to-bottom) and column geometry (each column read top-to-bottom, German column before the parallel English column). NOT owner-confirmed — do not treat like the owner-validated it_geo_* fixtures.",
+  "grading": {
+    "unit": "per subpage",
+    "why": "Stage 02 gutter-splits the spread into left.png (p.276) + right.png (p.277); Stage 04 orders each half independently.",
+    "anchor_match": "Match each GT anchor to a detected block by token overlap ANYWHERE in the block, not by prefix. The leading label words garble badly on this ornate colored-banner page ('Anreise' -> '‚reise', 'Route' -> 'te:'), so anchors deliberately use interior distinctive tokens (place-names, road numbers, altitudes) that survive.",
+    "primary_invariants": "This is a READING-ORDER fixture (Finding 3, symptom 2). The load-bearing assertion is: on the RIGHT subpage the German instruction column reads Anreise -> Zustieg -> Route TOP-TO-BOTTOM (it came out fully reversed, Route -> Zustieg -> Anreise, before the fix), and each column reads top-to-bottom with the German column before the parallel English column. Segmentation/type are secondary here and the detector has known wrinkles on this page (the graphical title banner is typed 'figure', not 'heading').",
+    "scoped_out": "The left-page ICON SIDEBAR (star rating / difficulty / Gehzeiten / GPS pictogram panel) is Finding 3 symptom 1 and is DELIBERATELY NOT in the graded reading_order below. Its correct linear position is an open modeling choice (in a climbing guide that panel is high-value structured info, not junk to drop) and an owner call. The detector fragments it into extra blocks ('other'/'caption'); those are unmatched extras here and do not affect segmentation recall (recall = matched GT / total GT).",
+    "caption_figure_pairs": [],
+    "metric": "tools/layout_order_eval.py: per-subpage segmentation recall, type accuracy over matched blocks, and Kendall-tau (GT order vs Stage-04 order) over TEXT blocks. Tau on the right subpage is the headline for symptom 2."
+  },
+  "subpages": {
+    "left": {
+      "page_number": 276,
+      "stripped": [
+        {"type": "page_number", "anchor": "alpinverlag.at 276"}
+      ],
+      "reading_order": [
+        {"order": 0, "id": "T1", "type": "figure", "anchor": null,
+         "desc": "Graphical title banner 'Latemartuerme-Klettersteig / Latemargruppe / Sehr schoener Panoramaklettersteig...'. Rendered as a colored graphic, so the detector types it 'figure' and its text does not OCR cleanly; matched by figure rank (1st figure top-to-bottom)."},
+        {"order": 1, "id": "P1", "type": "paragraph",
+         "anchor": "Besonderheiten Prachtferrata unweit des Karerpasses 1,4 km lange Latemartuerme",
+         "desc": "Main body prose (Besonderheiten). Center column, below the banner."},
+        {"order": 2, "id": "P2", "type": "paragraph",
+         "anchor": "Talort Obereggen 1561 Ausgangspunkt Bergstation Oberholz Karten Tabacco",
+         "desc": "Talort / Ausgangspunkt / Karten info block, below the Besonderheiten prose."},
+        {"order": 3, "id": "F1", "type": "figure", "anchor": null,
+         "desc": "Large summit photo at the bottom of the left page; matched by figure rank (2nd figure)."}
+      ]
+    },
+    "right": {
+      "page_number": 277,
+      "stripped": [
+        {"type": "page_number", "anchor": "277"}
+      ],
+      "reading_order": [
+        {"order": 0, "id": "F2", "type": "figure", "anchor": null,
+         "desc": "Top photo ('Schoener Gesteinswechsel'), spans nearly the full width of the right page; matched by figure rank (1st right-page figure)."},
+        {"order": 1, "id": "R1", "type": "paragraph",
+         "anchor": "Anreise Autobahn A22 Ausfahrt Bozen Nord Staatsstrasse Oberholz",
+         "desc": "Anreise paragraph (getting-there). TOP of the German instruction column (y~1211)."},
+        {"order": 2, "id": "R2", "type": "paragraph",
+         "anchor": "Zustieg Oberholz erreichbar 45 Min Epircher Laner Weg",
+         "desc": "Zustieg paragraph (approach). MIDDLE of the German column (y~1501)."},
+        {"order": 3, "id": "R3", "type": "paragraph",
+         "anchor": "Vom Einstieg bequemes Band im Gehgelaende Rinne Felsblock Scharte",
+         "desc": "Route paragraph (the climb). BOTTOM of the German column (y~1704). The Anreise->Zustieg->Route order is the symptom-2 assertion; the fix takes it from fully reversed to correct."},
+        {"order": 4, "id": "H1", "type": "heading", "anchor": "English Version",
+         "desc": "'English Version' heading, top of the narrow parallel English column on the right."},
+        {"order": 5, "id": "E1", "type": "paragraph",
+         "anchor": "gorgeous 1.4 km long ferrata crosses up down sunny side",
+         "desc": "English translation body, the tall block that bridges the mid-page and (before the fix) merged the German column into one x-sorted reading row."},
+        {"order": 6, "id": "F3", "type": "figure", "anchor": null,
+         "desc": "Bottom photo (climber on the route); matched by figure rank (2nd right-page figure)."},
+        {"order": 7, "id": "E2", "type": "paragraph",
+         "anchor": "ascend Gamsstallscharte 2590 head north Rotlahnscharte 2685 descend",
+         "desc": "English Route paragraph, bottom of the English column."}
+      ]
+    }
+  },
+  "notes": [
+    "FINDING 3 (2026-07-18): first real phone capture of a figure-heavy multi-column spread. Symptom 2 = within-column reading order fully inverted on the right page. Root cause: both XY-cuts are defeated (the top figure spans both columns -> no vertical cut; the tall English body block bridges the mid-page -> no horizontal cut), so all blocks fall into the _reading_rows tie-break, where the tall English block transitively swallowed the German column into one row that was then x-sorted; the German paragraphs' ragged left margins grow downward, so x-sort emitted them bottom-to-top. Fix (stage04 v0.2.0): _reading_rows sub-clusters each row into x-columns and reads each column top-to-bottom.",
+    "SYMPTOM 1 (icon sidebar) is scoped out of the graded order — see grading.scoped_out. SYMPTOM 3 (a Bulgarian paragraph swap) was the pre-split Taleb spread's cross-gutter scramble, already resolved by Finding 2; bg_01 (in testset) reads cleanly post-split.",
+    "The title banner is graphical and types 'figure' in the detector; GT follows that so it matches by figure rank rather than a text anchor. GT COVERS per-subpage reading order + segmentation + type on the graded blocks ONLY; there is no verbatim WER ground truth for this ornate page."
+  ]
+}

@@ -81,6 +81,28 @@ def _curved_spread_no_ink_valley(w: int = 4000, h: int = 3000,
     return img
 
 
+def _single_page_dark_bg(w: int = 4000, h: int = 3000) -> np.ndarray:
+    """One page (bright rectangle) on DARK fabric, no central spine — the exact
+    conditions under which the pinch cue fires, minus the pinch. This is the
+    single-page safety the more eager resolver must not erode: ink has no valley
+    AND the page extent is flat, so BOTH layers must decline (-> single.png)."""
+    img = np.full((h, w), 30, np.uint8)                       # dark background
+    page_x0, page_x1 = int(w * 0.08), int(w * 0.92)
+    img[int(h * 0.05):int(h * 0.95), page_x0:page_x1] = 235   # one bright page
+    _text_block(img, page_x0 + 40, page_x1 - 40)              # full-width text
+    return img
+
+
+def test_dark_bg_single_page_not_split_by_pinch():
+    img = _single_page_dark_bg()
+    gx, diag = detect_gutter(img, DEFAULTS)
+    assert gx is None, (
+        f"single page on dark bg wrongly split (method={diag['method']}, "
+        f"ink ratio={diag['ratio']:.2f}, pinch depth={diag['pinch_depth']:.2f})")
+    assert diag["method"] == "none"
+    assert diag["pinch_depth"] < DEFAULTS["pinch_min_depth"]
+
+
 def test_curved_spread_splits_via_pinch():
     img = _curved_spread_no_ink_valley(gutter=2000)
     gx, diag = detect_gutter(img, DEFAULTS)

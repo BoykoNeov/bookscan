@@ -109,6 +109,17 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
     (03_dewarp output, NOT a downscaled copy) and inline it as a tiny `<img>`.
   - Markers are **per-word**: a marker clears only when *that* word is edited or
     deleted (Stage 08 renders on `Word.flag_visible`), never wholesale.
+- **Reading-order mode (user-selectable, parallel to the uncertainty modes).**
+  `DocSettings.order_mode`: `auto` (trust Stage 04's proposed order) or `review`
+  (the editor surfaces every block's reading order for the user to confirm/correct
+  before reconstruction). Unlike the uncertainty modes it changes **zero pipeline
+  computation** — it is editor-review state over an already-assembled document.
+  A block's "needs review" marker clears **per-block** and keyed on the *order
+  field specifically* (`Block.order_review_visible`): the user renumbers
+  (`reading_order` ≠ `order_auto`) OR explicitly accepts (`order_confirmed`); a
+  type-only edit must NOT clear it. This is the *linear-order review* half only —
+  caption↔figure **grouping** (ranked above exact order by the owner) is a
+  separate, still-open concern.
 - **Editable document before finalize (Stages 07–08).** The pipeline must save an
   editable-by-the-program `document.json` BEFORE finalizing to PDF, so the text
   can be corrected/translated first — or a PDF baked now and edited later.

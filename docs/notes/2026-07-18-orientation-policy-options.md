@@ -96,14 +96,50 @@ OSD is low-conf → ignore the EXIF rotation. A minimal special-case of A's tieb
 
 ---
 
-## Recommendation (layered)
+## These are not either/or — they are one layered resolver
 
-1. **Now:** Option A — principled minimal fix in `tools/normalize.py`, guarded by
-   re-running the Gate 1 harness + at least one promoted real fixture.
-2. **Next:** promote 1–2 real captures to `testset/` with GT orientation (needed
-   to guard A's behavior flip and to measure B).
-3. **Medium-term:** Option B text-baseline detector, measured on those fixtures.
-4. **Product:** Option C orientation stamp when the Android app lands (Gate 5).
+A/B/C cover **different, non-overlapping failure modes**, so the end state keeps
+all of them, not one. Each signal is blind where another sees:
 
-Sequencing matters: **promote fixtures (step 2) before merging A**, so the
+- **OSD** (exists) needs enough *text* — starves on figure-heavy pages (the
+  observed German failure).
+- **B (text-baseline geometry)** needs *line structure* — robust where OSD
+  starves, but blind on an all-figure page.
+- **C (capture stamp)** needs the *Android app* — ground truth when present,
+  absent for loose JPEGs / the testset.
+- **EXIF** is unreliable but occasionally right — keep it as the *lowest* signal:
+  mirror component always, rotation only as a last resort.
+
+So the real design is a **confidence-gated priority cascade**, each layer winning
+only when it is confident, with the landscape prior as final tiebreak:
+
+```
+resolve_orientation(signals...) -> (rotation, provenance, confidence)
+  1. explicit capture hint (C)      <- device ground truth, if present
+  2. text-baseline detector (B)     <- if strong axis confidence
+  3. Tesseract OSD (existing)       <- if OSD conf >= gate
+  4. EXIF: mirror always; rotation only if nothing above decided   (A)
+  5. prior: prefer landscape (a book spread must be landscape)     (D folds in here)
+```
+
+**Caveat — this raises, not removes, the need for fixtures.** Stacking signals
+only helps if each layer is confidence-gated; otherwise a wrong high-priority
+signal silently overrides a right low-priority one. That is only verifiable
+against fixtures with GT orientation. So the sequencing below is about *build
+order under measurement*, not about shipping a single option.
+
+## Build order
+
+1. **Now:** build the resolver skeleton = Option A wired in as layers 4–5
+   (mirror-only EXIF + raw fallback + landscape prior), with B and C as
+   declared-but-empty layers the cascade simply skips. Guard by re-running the
+   Gate 1 harness + at least one promoted real fixture.
+2. **Before merging step 1:** promote 1–2 real captures to `testset/` with GT
+   orientation — needed to guard A's fallback flip and to measure B later.
+3. **Medium-term:** land Option B into layer 2, measured on those fixtures.
+4. **Product:** land Option C into layer 1 when the Android app can stamp
+   orientation (Gate 5).
+
+B and C are absent layers the cascade skips until their inputs exist — pluggable
+slots, not blockers. **Promote fixtures (step 2) before merging step 1**, so the
 behavior change is measured, not assumed.

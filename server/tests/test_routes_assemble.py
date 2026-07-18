@@ -74,6 +74,31 @@ def test_assemble_success(client: TestClient, tmp_path: Path):
     assert (tmp_path / job_id / "document.json").exists()
 
 
+def test_assemble_defaults_to_auto_order(client: TestClient, tmp_path: Path):
+    job_id = client.post("/api/jobs").json()["job_id"]
+    _seed_page(tmp_path / job_id)
+    body = client.post(f"/api/jobs/{job_id}/assemble").json()
+    assert body["order_mode"] == "auto"
+
+
+def test_assemble_order_mode_review_persists(client: TestClient, tmp_path: Path):
+    job_id = client.post("/api/jobs").json()["job_id"]
+    _seed_page(tmp_path / job_id)
+    r = client.post(f"/api/jobs/{job_id}/assemble?order_mode=review")
+    assert r.status_code == 200, r.text
+    assert r.json()["order_mode"] == "review"
+    import json
+    d = json.loads((tmp_path / job_id / "document.json").read_text(encoding="utf-8"))
+    assert d["settings"]["order_mode"] == "review"
+
+
+def test_assemble_rejects_bad_order_mode(client: TestClient, tmp_path: Path):
+    job_id = client.post("/api/jobs").json()["job_id"]
+    _seed_page(tmp_path / job_id)
+    r = client.post(f"/api/jobs/{job_id}/assemble?order_mode=bogus")
+    assert r.status_code == 422
+
+
 def test_assemble_409_refuses_clobber_without_force(client: TestClient, tmp_path: Path):
     job_id = client.post("/api/jobs").json()["job_id"]
     _seed_page(tmp_path / job_id)

@@ -25,10 +25,14 @@ router = APIRouter(prefix="/api/jobs/{job_id}", tags=["assemble"])
 
 
 @router.post("/assemble")
-def assemble(job_id: str, request: Request, force: bool = False) -> dict:
+def assemble(job_id: str, request: Request, force: bool = False,
+             order_mode: str = "auto") -> dict:
     job_dir = J.resolve_job_dir(request.app.state.jobs_root, job_id)
     if job_dir is None:
         raise HTTPException(404, f"no such job: {job_id}")
+    if order_mode not in ("auto", "review"):
+        raise HTTPException(
+            422, f"order_mode must be 'auto' or 'review', got {order_mode!r}")
 
     if not force:
         try:
@@ -43,7 +47,8 @@ def assemble(job_id: str, request: Request, force: bool = False) -> dict:
                 "and re-assemble from the pipeline.")
 
     try:
-        doc = S7.run(job_dir, request.app.state.cfg, force=force)
+        doc = S7.run(job_dir, request.app.state.cfg, force=force,
+                     order_mode=order_mode)
     except FileNotFoundError as e:
         raise HTTPException(404, str(e))
     except RuntimeError as e:
@@ -57,4 +62,5 @@ def assemble(job_id: str, request: Request, force: bool = False) -> dict:
     return {
         "ok": True, "pages": len(doc.pages), "words": n_words,
         "mode": doc.settings.uncertainty_mode,
+        "order_mode": doc.settings.order_mode,
     }

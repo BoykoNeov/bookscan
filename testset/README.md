@@ -39,6 +39,18 @@ anchor.
     table + 3-column inset.
 
   Graded by `tools/layout_order_eval.py` (the sequence-order + grouping metric).
+- **Orientation GT** (a third GT type) lives in `gt/orientation.json`: one entry
+  per `image_id` giving the spread's correct **upright** orientation, independent
+  of its (often spurious) EXIF tag — `upright_aspect` (always `landscape` for a
+  book spread), `raw_is_upright` (the stored buffer is already upright, so the
+  resolver must apply net-0 rotation and ignore the EXIF), and the
+  `exif_orientation` actually present. This is the ground truth for the Stage 00
+  orientation resolver (`tools/normalize`). Every capture from this owner's phone
+  carries a spurious `EXIF=6/8` on already-upright landscape pixels (14×6, 1×8),
+  so `exif_transpose` alone rotates them sideways; the file both pins the two
+  `de_*` orientation-break fixtures (figure-heavy → OSD can't rescue) and guards
+  that the resolver keeps the existing OSD-rescued spreads upright. Checked by the
+  `tools/normalize` orientation test.
 
 ## Composition
 
@@ -53,6 +65,7 @@ spread, before split/dewarp).
 | `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01` |
 | `bg_*`        | Bulgarian (Cyrillic) history: clean single-column  | 3 spreads | `01`, `02`   |
 | `it_geo_*`    | Italian (Dolomites/Veneto geology): main col + figure sidebars | 7 spreads | `04`, `05`, `06`, `07` (block-order) |
+| `de_*`        | German (via-ferrata guide): banners + icon sidebar + parallel DE/EN cols | 2 spreads | `01`, `02` (orientation) |
 
 Ground truth is present for **6 pages** (2 English + 4 Bulgarian, all with
 footnotes) — clears the ≥5-page / ≥2-English / ≥1-Bulgarian / ≥1-footnote bar.
@@ -67,7 +80,6 @@ mild justified-line-split scramble); `bg_01` is the pristine one.
 
 | ID prefix     | Content                                                   | Count    |
 |---------------|-----------------------------------------------------------|----------|
-| `de_*`        | German pages                                               | 2 spreads |
 | `en_multicol_*` | a genuine multi-column English page                     | 2 spreads |
 | `old_*`       | older book / worn typeface                                 | 2 spreads |
 | `zoomset_*`   | 1 full-spread anchor + 4 quadrant close-ups (same spread)  | 3–4 sets |

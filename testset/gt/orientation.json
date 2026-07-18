@@ -1,0 +1,140 @@
+{
+  "_doc": "Orientation ground truth for the Stage 00 resolver (tools/normalize). Each spread's correct UPRIGHT orientation, independent of the (spurious) EXIF tag. upright_aspect = required output aspect; raw_is_upright = the stored pixel buffer is ALREADY upright and any EXIF rotation is spurious (resolver must apply net 0 rotation, ignoring EXIF); exif_orientation = the tag actually present. All of this owner's phone captures share this spurious EXIF-on-upright-landscape pattern, so this file also guards that the resolver keeps the existing (OSD-rescued today) testset images upright.",
+  "bg_01": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "bg_02": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "bg_03": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "de_01": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "German via-ferrata guide (Latemartuerme), sharpest of 3-frame set 1/2/1; spurious EXIF 6, figure-heavy so OSD conf ~0.04-1.46 fails today -> ingests sideways. THE orientation-break fixture."
+  },
+  "de_02": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "German via-ferrata guide (Rotwand), sharpest of 3-frame set 1/2/2; spurious EXIF 8; same failure mode as de_01."
+  },
+  "en_coins_01": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "en_coins_02": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "en_coins_03": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "it_geo_01": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "it_geo_02": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "it_geo_03": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "it_geo_04": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "it_geo_05": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "it_geo_06": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  },
+  "it_geo_07": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ]
+  }
+}

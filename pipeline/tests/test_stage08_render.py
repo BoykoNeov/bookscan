@@ -209,6 +209,43 @@ def test_font_face_degrades_gracefully_when_dir_missing(tmp_path: Path):
 # ---- PDF backend dispatch -------------------------------------------------
 
 
+def test_render_meta_reports_unreviewed_order(tmp_path: Path):
+    """In review mode, render honestly counts blocks whose reading order is still
+    unreviewed (auto order used) in meta + warns — an editor-only signal, never
+    shown in the print output."""
+    import json as _json
+    blocks = [
+        Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 20},
+              reading_order=0, order_auto=0, words=[_w("alpha")]),          # unreviewed
+        Block(id=1, type="paragraph", bbox={"x": 0, "y": 30, "w": 100, "h": 20},
+              reading_order=1, order_auto=1, order_confirmed=True, words=[_w("beta")]),  # confirmed
+    ]
+    page, jd = _page_with(blocks, tmp_path)
+    doc = _doc(page, order_mode="review")
+    (jd / "document.json").write_text(doc.model_dump_json(indent=2), encoding="utf-8")
+    S8.run(jd, {"reconstruct": {"pdf_backend": "none"}})
+    meta = _json.loads((jd / "render" / "meta.json").read_text(encoding="utf-8"))
+    assert meta["params"]["order_mode"] == "review"
+    assert meta["params"]["order_unreviewed"] == 1        # only block 0
+    assert any("unreviewed reading order" in w for w in meta["warnings"])
+    # the signal never leaks into the print output
+    html = (jd / "render" / "page.html").read_text(encoding="utf-8")
+    assert "unreviewed" not in html.lower()
+
+
+def test_render_meta_no_order_warning_in_auto_mode(tmp_path: Path):
+    import json as _json
+    blocks = [Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 20},
+                    reading_order=0, order_auto=0, words=[_w("alpha")])]
+    page, jd = _page_with(blocks, tmp_path)
+    (jd / "document.json").write_text(_doc(page).model_dump_json(indent=2), encoding="utf-8")
+    S8.run(jd, {"reconstruct": {"pdf_backend": "none"}})
+    meta = _json.loads((jd / "render" / "meta.json").read_text(encoding="utf-8"))
+    assert meta["params"]["order_mode"] == "auto"
+    assert meta["params"]["order_unreviewed"] == 0
+    assert not any("unreviewed reading order" in w for w in meta["warnings"])
+
+
 def test_pdf_backend_none_skips_and_notes():
     ok, note = S8.try_render_pdf("<h1>x</h1>", Path("nope.pdf"), backend="none")
     assert ok is False and "HTML only" in note

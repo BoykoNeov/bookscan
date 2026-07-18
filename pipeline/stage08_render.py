@@ -466,6 +466,9 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
     n_flag = sum(w.flag_visible for p in doc.pages for b in p.blocks for w in b.words)
     n_trans = sum(1 for p in doc.pages for b in p.blocks if b.text is not None)
     n_fig = sum(1 for p in doc.pages for b in p.blocks if b.type is BlockType.FIGURE)
+    order_mode = doc.settings.order_mode
+    n_order_unreviewed = sum(
+        b.order_review_visible(order_mode) for p in doc.pages for b in p.blocks)
 
     embedded = [fam for fname, fam, *_ in _FONT_FACES if (FONTS_DIR / fname).exists()]
     if embedded:
@@ -484,6 +487,8 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
             "pages": len(doc.pages), "blocks": n_blocks, "words": n_words,
             "flag_visible": n_flag, "translated_blocks": n_trans, "figures": n_fig,
             "mode": doc.settings.uncertainty_mode,
+            "order_mode": order_mode,
+            "order_unreviewed": n_order_unreviewed,
             "source_language": doc.settings.source_language,
             "target_language": doc.settings.target_language,
             "pdf_backend": backend,
@@ -502,7 +507,13 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
             "Render is a pure function of document.json + document_assets/ (reads "
             "no per-stage folders); re-run any time after edits. Images inlined as "
             "data URIs -> the HTML is self-contained and portable.",
-        ],
+        ] + ([
+            f"order_mode=review and {n_order_unreviewed} block(s) still have an "
+            "unreviewed reading order (not renumbered, not confirmed) — the output "
+            "used Stage 04's automatic order for them. Open the editor to confirm/"
+            "correct before treating this render as final. Editor-only signal; not "
+            "shown in the print output.",
+        ] if order_mode == "review" and n_order_unreviewed else []),
     )
     (out_dir / "meta.json").write_text(meta.model_dump_json(indent=2), encoding="utf-8")
     return html_path

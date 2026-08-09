@@ -2309,3 +2309,108 @@ label-free fixtures:
   behaviour including the real pre-despeckle `{'32':2,'22':2,'33':2,'93':2}` tally,
   the recognizer being absent or raising, and the F28 fused-speckle box reproduced
   synthetically.
+
+
+## Caption printed inside a figure — it_geo_05-left C2 recovered — 2026-08-10
+
+`FIGURE_SEPARATION_SCOPE.md` §5 recorded this as blocked on detection: *"with no
+text detection there is no evidence to eject on... it needs the caption to be
+detected in the first place."* **That premise was false**, and it is the second
+§5-class note this session's measurements have overturned (see the corner-label
+entry above). The pattern is the same both times: a claim about what the LAYOUT
+DETECTOR emitted, read later as a claim about what the pipeline holds.
+
+### What was actually wrong
+
+On it_geo_05-left the whole page is one hand-drawn map, and caption C2 is printed
+on the drawing's pale margin, inside the figure box. Measured:
+
+- **Tesseract finds 60 words at conf ~96 in exactly that region** — 58% of the
+  subpage's 103 words — reading as the caption verbatim.
+- They are not orphans. `attach_words` routes a word to the smallest-area block
+  containing its centre; the only block there is the figure, so the caption text
+  was attached to the **FIGURE block** (64 words, mixed with map lettering
+  `'T IE BELLUNO LE'`).
+- `stage08_render` renders a figure from "the crop from the full-res page image at
+  its bbox (**NOT its OCR words**)" — so the caption was dropped from the document
+  as text while surviving inside the crop as pixels.
+
+Nothing needed detecting. The words were in `document.json` the whole time, on the
+wrong block.
+
+The one genuinely missing piece is the small italic header, "In questa pagina: /
+Figura 2", which the full-subpage psm-3 pass does not recognise at all — the first
+line it finds is the bold body below. Re-OCR'ing just the cluster's region as a
+uniform block (psm 6, 2x) recovers it on 4/4 settings.
+
+### What was built
+
+`pipeline/caption_eject.py`, hooked into Stage 05 immediately after `attach_words`:
+cluster the words routed inside a figure into paragraphs, re-OCR each qualifying
+cluster, and **eject only if a caption header parses** — number-first, exactly as
+`figure_grouping` pairs. Density and alignment are floors that keep a subprocess
+off obvious non-candidates, never an alternative route to acceptance. Ejecting is
+destructive twice over (it takes text off a figure AND repaints that region of the
+artwork), so the bar is the repo's usual one: abstain unless the printed header
+says otherwise.
+
+- **Words are MOVED, never created or dropped**, so Stage 05's asserted
+  word-conservation invariant still covers the new path (verified 103 -> 103 on the
+  real page, and testset-wide in the gate).
+- The ejected block is re-ranked by the **same XY-Cut** Stage 04 uses, so it lands
+  in geometric reading order — F2 then C2, as GT has it — not appended.
+- Its bbox spans the region the **header was read from**, not just the words. This
+  is load-bearing: the header sits above the first recognised line and has no word
+  boxes, so a words-only bbox masks the caption body and leaves "In questa pagina:
+  Figura 2" stranded on the artwork — the same defect again. Verified by rendering
+  the crop both ways.
+- **Stage 08 masks** any TEXT block contained in a figure's bbox out of the crop.
+  Nested FIGURES are never masked (a sub-figure is artwork). The fill is sampled
+  from the crop's own border rather than a fixed white, because these regions sit
+  on a map's pale margin, not on page background.
+
+### The gate — built BEFORE the fix, over the whole testset
+
+The regression surface here is much wider than the corner-label work's: this
+touches every figure block with words routed into it, and a figure legitimately
+full of lettering (a topographic map, a geological section) must never be cut.
+
+| | count |
+|---|---|
+| figure blocks across all 15 testset images | 50 |
+| ... with a cluster dense enough to qualify | 6 |
+| ... whose re-OCR parses a caption header | **1** |
+
+The one hit is the defect. The five that abstain are de_02's topographic lettering
+(29/16/8 words) and it_geo_02's geological-section labels (35/9 words) — real
+artwork text that a density-or-alignment acceptance rule would have cut out of the
+picture. Re-run with the production module: **1 ejection testset-wide, IoU 0.615
+against GT C2, no word-conservation violation on any subpage.**
+
+### Honest limits
+
+- **The recovered header is evidence only — it is NOT added as words.** The
+  ejected caption's rendered text therefore begins "La geografia nei dintorni..."
+  and omits its own "In questa pagina: Figura 2" line. Adding those words would
+  break Stage 05's conservation assert (they are not in `twords`), which is a
+  schema/invariant question deserving its own commit. Today the whole caption is
+  lost, so this is a strict improvement, but it is not the complete caption.
+- **A consequence of that:** Stage 07's grouping reads a caption's number from its
+  TEXT, and the ejected block's text no longer contains "Figura 2" — so this
+  caption does not gain a `pair_by_number` partner from the ejection. On
+  it_geo_05-left that costs nothing (the subpage has exactly one figure), but on a
+  multi-figure page it would.
+- **N=1.** One caption, one page, one book. The gate shows the *abstention* side is
+  exercised 5 ways across three books, which is the half that carries the risk; the
+  acceptance side rests on a single fixture.
+- **This is a Stage 05 behaviour and `tools/layout_order_eval` does not grade it.**
+  The eval has its own `_route_words` and never runs Stage 05, so it grades Stage
+  04 block structure — the ejection deliberately does NOT appear as a Stage-04
+  segmentation-recall gain, and no such claim is made here. The number above (IoU
+  0.615 vs GT C2) was measured directly.
+- Suite **338 -> 356** (+18 in `pipeline/tests/test_caption_eject.py`, both counts
+  from full `pytest -q` runs). Tests pin the header parse against the real
+  abstaining clusters, the anchoring (a "Figura 12" cross-reference deep in a
+  paragraph must not eject a body paragraph), word conservation, the
+  header-covering bbox, XY-Cut placement, the floors keeping the re-OCR off sparse
+  lettering, and the masking rules including never masking a nested figure.

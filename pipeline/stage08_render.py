@@ -165,14 +165,49 @@ def _data_uri_from_file(path: Path) -> str | None:
         return None
 
 
-def _crop_data_uri(page_bgr: np.ndarray, box: BBox) -> str | None:
+def _crop_data_uri(page_bgr: np.ndarray, box: BBox,
+                   mask: list[BBox] | None = None) -> str | None:
     h, w = page_bgr.shape[:2]
     x0, y0 = max(0, box.x), max(0, box.y)
     x1, y1 = min(w, box.x2), min(h, box.y2)
     if x1 <= x0 or y1 <= y0:
         return None
-    ok, buf = cv2.imencode(".png", page_bgr[y0:y1, x0:x1])
+    crop = page_bgr[y0:y1, x0:x1]
+    if mask:
+        # A caption printed INSIDE the figure box is now its own block (Stage 05
+        # ejects it), but it is still in these pixels — so the crop would show the
+        # caption a second time, in the photo, right next to its own rendered text.
+        # Paint it out. The fill is sampled from the crop's border rather than a
+        # fixed white, because these regions sit on artwork (a map's pale margin),
+        # not on page background. Cutting instead of masking is not an option here:
+        # the only cut that separates this caption slices the map in half.
+        crop = crop.copy()
+        edge = np.concatenate([crop[0, :], crop[-1, :], crop[:, 0], crop[:, -1]])
+        fill = np.median(edge.reshape(-1, edge.shape[-1]), axis=0)
+        for m in mask:
+            mx0, my0 = max(x0, m.x) - x0, max(y0, m.y) - y0
+            mx1, my1 = min(x1, m.x2) - x0, min(y1, m.y2) - y0
+            if mx1 > mx0 and my1 > my0:
+                crop[my0:my1, mx0:mx1] = fill
+    ok, buf = cv2.imencode(".png", crop)
     return _data_uri_from_bytes(buf.tobytes()) if ok else None
+
+
+def _contained_text_boxes(blk: Block, blocks: list[Block]) -> list[BBox]:
+    """Text blocks whose bbox lies inside this figure's — i.e. text that is
+    printed ON the artwork and therefore appears twice in the output unless the
+    figure crop is masked. Figures nested in figures are NOT masked: a sub-figure
+    is artwork, and painting it out would destroy the picture."""
+    out = []
+    for b in blocks:
+        if b.id == blk.id or b.type is BlockType.FIGURE:
+            continue
+        if not b.words and b.text is None:
+            continue
+        if (b.bbox.x >= blk.bbox.x and b.bbox.y >= blk.bbox.y
+                and b.bbox.x2 <= blk.bbox.x2 and b.bbox.y2 <= blk.bbox.y2):
+            out.append(b.bbox)
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -224,11 +259,18 @@ _TAG = {
 
 def _figure_html(blk: Block, page_bgr: np.ndarray | None,
                  caption: Block | None, mode: str, job_dir: Path,
-                 dictionary: set[str] | None) -> str:
+                 dictionary: set[str] | None,
+                 siblings: list[Block] | None = None) -> str:
     """A FIGURE block: crop from the full-res page image at its bbox (NOT its OCR
-    words), optionally with the following CAPTION grouped in the same <figure>."""
+    words), optionally with the following CAPTION grouped in the same <figure>.
+
+    ``siblings`` are the page's other blocks; any TEXT block contained in this
+    figure's bbox is masked out of the crop, so text printed on the artwork is not
+    shown twice (once as pixels, once as its own rendered block)."""
     inner = ""
-    uri = _crop_data_uri(page_bgr, blk.bbox) if page_bgr is not None else None
+    mask = _contained_text_boxes(blk, siblings) if siblings else None
+    uri = (_crop_data_uri(page_bgr, blk.bbox, mask)
+           if page_bgr is not None else None)
     if uri:
         inner += f'<img class="figure" src="{uri}" alt="figure">'
     else:
@@ -318,7 +360,8 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
                         and nxt.pair_source is not PairSource.USER):
                     cap = nxt
                     i += 1                          # consume the grouped caption
-            parts.append(_figure_html(blk, page_bgr, cap, mode, job_dir, dictionary))
+            parts.append(_figure_html(blk, page_bgr, cap, mode, job_dir,
+                                      dictionary, blocks))
             i += 1
             continue
         tag, cls = _TAG.get(blk.type, ("p", "other"))

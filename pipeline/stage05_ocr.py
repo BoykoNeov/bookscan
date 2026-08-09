@@ -71,6 +71,7 @@ from pydantic import BaseModel, Field
 
 from pipeline.page_model import BBox, Block, BlockType, StageMeta, Word
 from pipeline import stage04_layout as S4
+from pipeline import caption_eject as CE
 from pipeline.second_opinion import (
     EasyOCRSecondOpinion, find_disagreements, load_lexicon)
 
@@ -389,6 +390,17 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
 
         twords, scale = ocr_subpage(binary, cfg, img, lang_code_used)
         ordered, n_orphan = attach_words(twords, pl.blocks, scale, w, h, p)
+
+        # A caption PRINTED INSIDE a figure box routes to the figure (it is the
+        # smallest block containing those words), and Stage 08 renders a figure
+        # from its crop, not its words — so the caption would be lost as text and
+        # kept as pixels. Move it out into its own CAPTION block. Words are MOVED,
+        # so the conservation assert below still covers this. Abstains unless a
+        # caption header parses; see pipeline/caption_eject.py.
+        ordered, eject_notes = CE.eject_inline_captions(
+            ordered, img, binary, resolve_tessdata_dir(cfg), lang_code_used,
+            p, w, h)
+        warnings.extend(eject_notes)
 
         # Word-conservation invariant: every recognized word in exactly one block.
         attached = sum(len(b.words) for b in ordered)

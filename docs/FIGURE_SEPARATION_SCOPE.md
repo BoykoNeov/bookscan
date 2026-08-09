@@ -271,6 +271,39 @@ evidence to eject on, and the only cut that would separate C2 slices the map in 
 — which is precisely the false-split §8 documents. **The fix for this class is
 masking (paint the caption region out of the crop), not cutting**, and it needs the
 caption to be detected in the first place.
+
+**FIXED 2026-08-10 — and the "needs the caption detected first" premise above was
+false.** Half of that paragraph holds up: masking, not cutting, is right, and the
+only cut that would separate C2 does slice the map in half. But there was nothing
+to detect. Measured: **Tesseract finds 60 words at conf ~96 in exactly that
+region** — 58% of the subpage's words, reading as the caption verbatim. They are
+not even orphans. `attach_words` routes a word to the smallest-area block
+containing its centre, and the only block there is the figure, so the caption text
+was attached to the **FIGURE** all along; Stage 08 then renders a figure from "the
+crop, NOT its OCR words", which is what dropped it. The claim "the detector emits
+no text detection there at all" was about the LAYOUT detector, and got read as a
+claim about OCR.
+
+The one thing genuinely missing was the small italic header ("In questa pagina:
+Figura 2"), which the full-subpage psm-3 pass does not recognise at all —
+re-OCR'ing just the cluster's region as a uniform block recovers it on 4/4
+settings. `pipeline/caption_eject.py` therefore: clusters the words routed inside a
+figure, re-OCRs the cluster, and **ejects it into its own CAPTION block only if a
+caption header parses** — number-first, exactly like `figure_grouping`, because
+ejecting is destructive twice over (it takes text off a figure AND paints that
+region out of the artwork). Words are MOVED, so Stage 05's word-conservation
+assert still covers it, and the new block is re-ranked by the same XY-Cut, landing
+after the figure as GT has it. Stage 08 masks any TEXT block contained in a
+figure's bbox out of the crop (nested FIGURES are never masked — a sub-figure is
+artwork), filling from the crop's own border rather than white, since these
+regions sit on a map's pale margin, not on page background.
+
+**The gate, run before the code existed:** over all 15 testset images, 50 figure
+blocks yield **6 clusters dense enough to qualify, of which exactly 1 header
+parses** — this defect. The other five (de_02's topographic lettering,
+it_geo_02's geological-section labels) abstain, which is the entire point.
+Re-run with the production module: 1 ejection testset-wide, IoU 0.615 against
+GT C2, no conservation violation anywhere.
 - **Ejection is explicit, not left to NMS.** `nms_and_dedup` would also prune the
   it_geo_06-right caption column (0.82 contained in the conf-0.856 C29 text det, over
   the 0.80 `contain_frac`) — but a 2-point margin is not a mechanism, so ejection is

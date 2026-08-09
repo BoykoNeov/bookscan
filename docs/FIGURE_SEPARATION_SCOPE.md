@@ -107,6 +107,16 @@ same class as the existing XY-cut gaps — NOT the forbidden global OCR threshol
   high-confidence win.
 - **Phase B — right L-shape (H-then-V + text ejection).** Recursive cut + eject the
   absorbed C29 caption. Separately scoped; lower confidence.
+  **Known OUTPUT defect Phase B would fix (measured 2026-08-09 on the real assembled
+  `grouping_it06` document, not inferred):** the right subpage's remaining merged box
+  (block #3, `154,1341 1554x842`) contains caption C29's box (`156,1487 440x720`) at
+  **0.97** — and the crop confirms it visually. So the rendered deliverable shows the
+  **Figura 29 caption twice**: once as PIXELS inside the Figura 30 `<figure>` image,
+  once as reflowed text in Figura 29's own `<figcaption>`. No amount of pairing
+  (including the editor's new manual pairing control) can fix this — it is a crop-
+  boundary problem, i.e. exactly Phase B's ejection step. Grouping itself is already
+  correct here (the containment guard reads the nesting as an abstain signal, so
+  C29→F29 and C30→F30 both land right).
 
 ## 6. How to prove it (metric)
 

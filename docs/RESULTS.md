@@ -2098,8 +2098,12 @@ label in. This entry is that follow-up.
 | it_geo_07 | 0 → 0 | 0/1 → 0/1 | 0 → 0 |
 | de_01 | 0 → 0 | 0/0 → 0/0 | 0 → 0 |
 
-All four non-target fixtures are byte-identical to their pre-change baselines
-(measured by `git stash`, not assumed). Beyond the count, the **provenance**
+On all four non-target fixtures the corner-label count, pairs, wrong pairs and
+per-caption abstain reasons are unchanged from their pre-change baselines, each
+re-measured by `git stash` rather than assumed. (That is the comparison actually
+run — not a full report diff. It is decisive for these four because
+`read_figure_numbers` returns `{}` on both sides there, so the grouping pass has
+nothing to diverge on.) Beyond the count, the **provenance**
 improved: all four it_geo_06 pairs now come from the printed number, where before
 one (C29→F29) was a geometry guess. Verified carried into the deliverable — a
 **fresh** job `cornerocr_it06` (no `--force`, so the human pairing rulings in

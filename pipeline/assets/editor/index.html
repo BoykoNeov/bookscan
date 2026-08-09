@@ -202,15 +202,31 @@ function pairedFigure(blk){                       // the figure this caption poi
   if(!blk.figure_ref || refIsOffPage(blk)) return null;
   return page().blocks.find(b=>b.id===blk.figure_ref.block_id) || null;
 }
-function captionForFigure(fig){                   // first claimant wins (mirrors _caption_bindings)
-  return page().blocks.find(b=>isCaption(b) && b.figure_ref
-    && b.figure_ref.page_id===page().page_id && b.figure_ref.block_id===fig.id) || null;
+// Which caption the RENDERER will actually put inside this figure. Mirrors
+// stage08_render._caption_bindings exactly: a human ruling outranks an inferred one,
+// then reading order breaks the tie. A figure holds ONE caption, so a caption that
+// loses the figure renders standalone — the UI must say so rather than show a pair
+// the deliverable ignores.
+function captionForFigure(fig){
+  const claims = page().blocks.filter(b=>isCaption(b) && b.figure_ref
+      && b.figure_ref.page_id===page().page_id && b.figure_ref.block_id===fig.id)
+    .sort((a,b)=>a.reading_order-b.reading_order);
+  return claims.find(b=>b.pair_source==="user") || claims[0] || null;
 }
-// "needs pairing" = the pass abstained AND no human has ruled. A user's deliberate
-// unpair is a decision, so it clears the marker — the per-block analogue of
-// order_review_visible keying on the order field specifically.
+function captionClaimLost(blk){                   // paired in the data, standalone in the output
+  const f = isCaption(blk) ? pairedFigure(blk) : null;
+  if(!f) return false;
+  const w = captionForFigure(f);
+  return !!w && w.id!==blk.id;
+}
+// "needs pairing" = nothing will attach this caption to a figure in the rendered
+// output: the pass abstained and no human has ruled, OR its claim lost the figure to
+// another caption. A user's deliberate unpair is a decision, so it clears the marker —
+// the per-block analogue of order_review_visible keying on the order field specifically.
 function captionNeedsPairing(blk){
-  return isCaption(blk) && !blk.figure_ref && blk.pair_source!=="user"; }
+  if(!isCaption(blk)) return false;
+  if(captionClaimLost(blk)) return true;
+  return !blk.figure_ref && blk.pair_source!=="user"; }
 function pageCaptionsNeedingPairing(){ return page().blocks.filter(captionNeedsPairing); }
 function partnerId(blk){                          // block to highlight alongside the selection
   if(isCaption(blk)){ const f=pairedFigure(blk); return f ? f.id : null; }
@@ -263,7 +279,8 @@ function drawOverlays(){
     if(partner===blk.id) b.classList.add("partner");   // the caption/figure of the selection
     if(state.selBlock===blk.id) b.classList.add("sel");
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
-    const pairMark = fig ? ` →#${fig.id}` : (needsPair ? " ⛓" : "");
+    const pairMark = fig ? (captionClaimLost(blk) ? ` →#${fig.id} ⚠` : ` →#${fig.id}`)
+                         : (needsPair ? " ⛓" : "");
     const lbl = el("span","lbl",
       `${blk.reading_order} ${blk.type}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}${pairMark}`);
     b.appendChild(lbl); ovB.appendChild(b);
@@ -340,7 +357,8 @@ function blockEditor(blk){
       orderNeedsReview(blk) ? "order: review" : "order: ok"));
   }
   if(isCaption(blk)){
-    if(captionNeedsPairing(blk)) head.appendChild(el("span","badge pair","no figure"));
+    if(captionClaimLost(blk)) head.appendChild(el("span","badge pair","figure taken"));
+    else if(captionNeedsPairing(blk)) head.appendChild(el("span","badge pair","no figure"));
     else if(blk.pair_source==="user")
       head.appendChild(el("span","badge edited", blk.figure_ref ? "pair: you" : "unpaired: you"));
     else if(blk.figure_ref)
@@ -464,6 +482,20 @@ function pairingField(blk){
         ? "unpaired by you — the renderer will keep it standing alone"
         : "not paired — the grouping pass abstained rather than guess"));
   f.appendChild(el("div","small muted", bits.join(" · ")));
+  if(captionClaimLost(blk)){
+    // Never let the badge/dropdown imply a pairing the renderer drops.
+    const other = captionForFigure(pairedFigure(blk));
+    const warn = el("div","small");
+    warn.style.color="var(--pair)";
+    warn.textContent = `⚠ that figure already belongs to caption #${other.id}`
+      + `${other.pair_source==="user" ? " (also yours)" : ` (paired by ${other.pair_source||"?"})`}`
+      + ", which the renderer keeps — this caption will still print on its own."
+      + " Unpair that one first if this is the correction you want.";
+    f.appendChild(warn);
+    const go = el("button",null,`Go to caption #${other.id}`);
+    go.style.marginTop="6px"; go.onclick=()=>selectBlock(other.id);
+    f.appendChild(go);
+  }
   if(blk.figure_ref){
     const un=el("button",null,"Unpair"); un.style.marginTop="6px";
     un.onclick=()=>setPair(blk,null); f.appendChild(un);
@@ -491,7 +523,8 @@ function renderBlockList(){
     const bar = el("div","reviewbar pair small");
     bar.appendChild(el("span","dot pair"));
     bar.appendChild(el("span","grow",
-      `${unpaired} caption${unpaired>1?"s":""} on this page not paired to a figure`));
+      `${unpaired} caption${unpaired>1?"s":""} on this page will print on their own `
+      + "(no figure, or the figure went to another caption)"));
     host.appendChild(bar);
   }
   const blocks=[...page().blocks].sort((a,b)=>a.reading_order-b.reading_order);
@@ -499,7 +532,8 @@ function renderBlockList(){
     const row=el("div","blockrow"+(state.selBlock===blk.id?" sel":""));
     row.appendChild(el("span","ord", String(blk.reading_order)));
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
-    const t=el("span","grow", blk.type + (fig?` → #${fig.id}`:"") + (blk.text!=null?" · translated":""));
+    const t=el("span","grow", blk.type + (fig?` → #${fig.id}${captionClaimLost(blk)?" ⚠":""}`:"")
+      + (blk.text!=null?" · translated":""));
     row.appendChild(t);
     if(orderNeedsReview(blk)) row.appendChild(el("span","dot review"));
     if(captionNeedsPairing(blk)) row.appendChild(el("span","dot pair"));

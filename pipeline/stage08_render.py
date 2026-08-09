@@ -253,19 +253,31 @@ def _caption_bindings(page: DocPage, blocks: list[Block]
     schema can express it, this renderer does not yet float across pages), and a
     second caption claiming a figure that is already spoken for. Neither can
     silently lose text.
+
+    **A HUMAN ruling outranks an inferred one.** When two captions claim the same
+    figure, ``pair_source=user`` wins regardless of reading order; only then does
+    reading order break the tie. Correcting a wrong pair is the entire point of
+    the editor's pairing control, and the case it exists for — it_geo_06's
+    cross-paired caption stack — is exactly the case where the pipeline's own
+    guess would otherwise beat the user to the figure and their correction would
+    vanish from the output while the editor still showed it as paired. The loser
+    still renders standalone, so no text is lost either way.
     """
     fig_ids = {b.id for b in blocks if b.type is BlockType.FIGURE}
+    claims = [b for b in blocks
+              if b.type is BlockType.CAPTION and b.figure_ref is not None
+              and b.figure_ref.page_id == page.page_id
+              and b.figure_ref.block_id in fig_ids]
     cap_for_fig: dict[int, Block] = {}
     bound: set[int] = set()
-    for b in blocks:
-        if b.type is not BlockType.CAPTION or b.figure_ref is None:
-            continue
-        if b.figure_ref.page_id != page.page_id or b.figure_ref.block_id not in fig_ids:
-            continue
-        if b.figure_ref.block_id in cap_for_fig:
-            continue
-        cap_for_fig[b.figure_ref.block_id] = b
-        bound.add(b.id)
+    for user_tier in (True, False):        # human rulings first, then inferred pairs
+        for b in claims:                   # `blocks` is reading-order sorted by the caller
+            if (b.pair_source is PairSource.USER) is not user_tier:
+                continue
+            if b.figure_ref.block_id in cap_for_fig:
+                continue
+            cap_for_fig[b.figure_ref.block_id] = b
+            bound.add(b.id)
     return cap_for_fig, bound
 
 

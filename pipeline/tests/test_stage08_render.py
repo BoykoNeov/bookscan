@@ -273,6 +273,49 @@ def test_user_pairing_flips_a_standalone_caption_into_its_figure(tmp_path: Path)
     assert after.index("ABSTAINEDCAPTION") > after.index("<figure")  # inside the figure
 
 
+def test_user_pairing_outranks_an_inferred_claim_on_the_same_figure(tmp_path: Path):
+    """Repointing a caption at a figure the pipeline already gave to someone else is
+    the normal way to FIX a wrong pair, and it_geo_06's cross-paired caption stack is
+    exactly that shape. Binding was first-claimant-by-reading-order, so the pipeline's
+    guess could beat the user to the figure and the correction would silently vanish
+    from the output. A human ruling now wins regardless of position; the displaced
+    caption still renders (no text lost)."""
+    blocks = [
+        Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
+              reading_order=0),
+        Block(id=1, type="caption", bbox={"x": 0, "y": 70, "w": 60, "h": 20},
+              reading_order=1, words=[_w("GUESSEDBYPIPELINE")],
+              figure_ref={"page_id": "pg", "block_id": 0}, pair_source="geometry"),
+        Block(id=2, type="caption", bbox={"x": 0, "y": 100, "w": 60, "h": 20},
+              reading_order=2, words=[_w("CORRECTEDBYUSER")],     # LATER in reading order
+              figure_ref={"page_id": "pg", "block_id": 0}, pair_source="user"),
+    ]
+    page, jd = _page_with(blocks, tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "<figcaption" in html and "CORRECTEDBYUSER" in html.split("<figcaption")[1]
+    assert '<p class="caption">GUESSEDBYPIPELINE' in html   # displaced, not dropped
+    assert html.count("GUESSEDBYPIPELINE") == 1
+
+
+def test_two_user_claims_on_one_figure_fall_back_to_reading_order(tmp_path: Path):
+    """Within the same provenance tier the old first-claimant rule still applies, so
+    the outcome stays deterministic and the loser still renders."""
+    blocks = [
+        Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
+              reading_order=0),
+        Block(id=1, type="caption", bbox={"x": 0, "y": 70, "w": 60, "h": 20},
+              reading_order=1, words=[_w("FIRSTUSERCLAIM")],
+              figure_ref={"page_id": "pg", "block_id": 0}, pair_source="user"),
+        Block(id=2, type="caption", bbox={"x": 0, "y": 100, "w": 60, "h": 20},
+              reading_order=2, words=[_w("SECONDUSERCLAIM")],
+              figure_ref={"page_id": "pg", "block_id": 0}, pair_source="user"),
+    ]
+    page, jd = _page_with(blocks, tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "FIRSTUSERCLAIM" in html.split("<figcaption")[1]
+    assert '<p class="caption">SECONDUSERCLAIM' in html
+
+
 def test_user_unpair_is_not_undone_by_the_adjacency_fallback(tmp_path: Path):
     """A caption sitting right under the WRONG figure is the commonest thing a user
     detaches — and it is exactly the shape the adjacency fallback would re-pair. The

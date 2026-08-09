@@ -562,5 +562,51 @@ def test_e2e_pair_and_unpair_a_caption_via_dom(job: Path):
     assert blocks[3].figure_ref is None and blocks[3].pair_source is PairSource.USER
 
 
+@pytest.mark.e2e
+def test_e2e_pairing_to_a_taken_figure_is_flagged_not_silently_dropped(job: Path):
+    """A figure holds ONE caption. If the user points a caption at a figure another
+    caption already holds, the renderer keeps one and the other prints alone — so the
+    editor must SAY so on the loser, instead of showing a pair the deliverable ignores.
+
+    Here the user's new claim DISPLACES the pipeline's number-sourced one (the same
+    precedence stage08_render applies), so the warning has to land on block #3 — the
+    displaced caption the user never touched and would otherwise never think to check.
+    """
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    _add_abstained_pair(job)
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            rows = pg.query_selector_all("#blocklist .blockrow")
+            rows[5].click()                                   # the loose caption
+            sels = pg.query_selector_all("#inspector .card select")
+            sels[1].select_option("2")                        # figure ALREADY held by caption #3
+            # the user's own caption reads as cleanly paired...
+            assert "figure taken" not in pg.text_content("#inspector")
+            # ...and the caption it displaced is flagged, in the list and on inspection
+            pg.wait_for_selector("#blocklist .blockrow .dot.pair")
+            rows = pg.query_selector_all("#blocklist .blockrow")
+            assert "⚠" in rows[3].text_content()
+            rows[3].click()
+            pg.wait_for_selector("#inspector .card .badge.pair")
+            body = pg.text_content("#inspector")
+            assert "figure taken" in body
+            assert "already belongs to caption #5 (also yours)" in body
+            assert "will still print on its own" in body
+            # exactly one caption on the page is unattached in the output — the loser
+            assert pg.query_selector("#blocklist .reviewbar.pair") is not None
+            assert len(pg.query_selector_all("#blocklist .blockrow .dot.pair")) == 1
+        finally:
+            browser.close()
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))

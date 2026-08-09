@@ -2079,3 +2079,100 @@ than assumed.
   words, so a figure moving among word-bearing blocks cannot move a word metric:
   another instance of the harness being quiet about a real order change, the same
   gap `tau+figures` was built to close.
+
+## Corner-label OCR #2 — caption↔figure pairing 3/6 → 4/6, still 0 wrong — 2026-08-09
+
+Owner's #1 priority. `docs/FIGURE_SEPARATION_SCOPE.md` §7 named corner-label OCR as
+the *only* route to caption↔figure grouping (geometry provably mispairs C26), and
+Phase A/B finally supplied its precondition: a tight per-figure box to hunt the
+label in. This entry is that follow-up.
+
+**Headline, from `tools/layout_order_eval` on real pixels — the same
+`pipeline.figure_grouping` pass Stage 07 runs, not an eval-only arm:**
+
+| fixture | corner labels read | GT pairs recovered | WRONG pairs |
+|---|---|---|---|
+| it_geo_06 | **2 → 4** | **3/6 → 4/6** | 0 → **0** |
+| it_geo_04 | 0 → 0 | 1/2 → 1/2 | 0 → 0 |
+| it_geo_05 | 0 → 0 | 0/2 → 0/2 | 0 → 0 |
+| it_geo_07 | 0 → 0 | 0/1 → 0/1 | 0 → 0 |
+| de_01 | 0 → 0 | 0/0 → 0/0 | 0 → 0 |
+
+All four non-target fixtures are byte-identical to their pre-change baselines
+(measured by `git stash`, not assumed). Beyond the count, the **provenance**
+improved: all four it_geo_06 pairs now come from the printed number, where before
+one (C29→F29) was a geometry guess. Verified carried into the deliverable — a
+**fresh** job `cornerocr_it06` (no `--force`, so the human pairing rulings in
+`grouping_it06`/`phaseb_it06` survive) has C25→F25, C26→F26 (the trap), C27→F27
+and C29→F29 in `document.json`, each with `pair_source: number`.
+
+### The old diagnosis was wrong, and wrong in the believable direction
+
+`figure_label`'s docstring had recorded, since 2026-07-03, that the four
+texture-swamped labels were a glyph-isolation limit needing "a real text detector
+(EAST/MSER/CNN)". Two of the four were not that at all:
+
+- **F27 was localized correctly the whole time.** The debug overlay's winning
+  cluster sits exactly on the "27". What failed was the OCR *input*: the module
+  painted the localizer's own CC mask, and its 7×7 CLOSE fused the two digits into
+  one blob that read as nothing on all four PSMs. Re-cropping that same
+  localization from the ORIGINAL pixels reads "27" on 4/4.
+- **F29 was a filter rejection, and the filter was the wrong shape.** Its digits
+  measured 50px against a 62px floor. That floor is `glyph_h_min_frac` × the
+  *search region* height — i.e. it scales with the FIGURE box — while a printed
+  corner label's cap-height is a constant of the BOOK. Measured across the six
+  figures: 25, 26, 27, 30, 30, 37px = **0.83%–1.23% of page height**, tightly
+  clustered, against a region-relative floor wandering over 0.62%–1.03%. F29 is
+  simply the tallest figure, so it set itself the highest bar for an
+  identically-sized label.
+
+So: `read_corner_label` takes an optional `page_h` and switches to a page-relative
+glyph band; and OCR input is re-cropped from the original figure pixels, upscaled
+to a fixed `target_glyph_px`, and binarized there.
+
+### Two negative results that shaped the change
+
+- **A "best of both" hybrid is worse, and dangerously so.** Binarizing the re-crop
+  but keeping only the components the localizer's mask already found sounds
+  strictly safer. Measured: it clipped F29's "9" into a "3" and returned **23** —
+  turning a clean miss into a plausible wrong number, the one failure this module
+  exists to prevent. The mask is for localization only. Pinned by comment, not
+  just memory.
+- **The re-crop alone breaks the "0 wrong" invariant on it_geo_07.** Baseline read
+  0 numbers there; with the re-crop it read **7** off a geological cross-section's
+  brick hatching. it_geo_07's diagrams are ink on pale PAGE BACKGROUND, which
+  inverts the module's founding premise (bright glyph, darker ground): the bright
+  side of the threshold is the page, not a glyph. That is not cosmetic — a
+  fabricated number puts the subpage into "numbered regime", which *suppresses*
+  the geometry arm for every numbered caption on it.
+  **The guard, and why it is a measurement rather than a knob:** the bright side's
+  share of the re-crop separates the two classes with a wide gap — real labels
+  **0.10–0.38**, label-free diagrams **0.82–0.86** — so `max_glyph_cover = 0.55`
+  sits in open space, not on a boundary. Contrast would NOT have worked: F30's
+  fg−bg delta is 61, inside the diagrams' 54–73.
+
+### Honest limits
+
+- **F28 and F30 still read `None`, deliberately.** F28's digits merge into bright
+  rock speckle (best read is a lone "38", which the acceptance rule rejects); F30's
+  light-grey digits on light rubble produce a top-hat mask that is pure noise, so
+  no localization is possible at all. These two ARE the "needs a real text
+  detector" cases the old note described — the note was just wrong about F27/F29
+  being in the same club. 5/6 or 6/6 was not worth a fabricated number.
+- **C28 and C30 therefore stay unpaired**, correctly: their captions carry printed
+  numbers on a subpage that prints figure numbers, so the numbering-regime guard
+  abstains rather than letting geometry overrule the printed numbering.
+- **The page-relative band is calibrated on ONE book.** 0.4%–2.5% of page height is
+  ~2× margin either side of a spread measured on six figures of a single fixture.
+  A book printing conspicuously larger or smaller plate numbers would need it
+  re-measured, and `max_glyph_cover` likewise rests on two fixtures (one with
+  labels, one without).
+- **`page_h` is optional and the fallback is the old, worse band.** Callers that do
+  not pass it silently keep the figure-relative behaviour. `figure_grouping` passes
+  it; anything new should too.
+- Suite **314 → 318** (+4 in `pipeline/tests/test_figure_label.py`, counts measured
+  by `--collect-only` on both sides, not inferred): the tall-figure band defect
+  reproduced synthetically — same-size mark, taller figure, found only with
+  `page_h` — plus its ceiling counterpart, and the polarity guard with an
+  inverted-tone positive control. The band test also asserts the coordinate
+  round-trip, since `_locate_label` now returns the box in the caller's own space.

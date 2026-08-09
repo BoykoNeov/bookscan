@@ -173,11 +173,29 @@ five are legible to the eye). Verdict: corner-label OCR is **feasible but not fr
 — reliable 6/6 needs real digit-localization (a tight glyph bbox via white-glyph
 connected-components, not a fixed corner fraction) + de-textured preprocessing.
 
+**#2 BUILT 2026-08-09 — 2/6 → 4/6 numbers, pairs 3/6 → 4/6, 0 wrong.** Numbers,
+the two negative results that shaped it, and the remaining limits are in
+`docs/RESULTS.md`. The short version, because it corrects this section's own
+framing: **only two of the four "texture-swamped" labels ever were that.** F27 was
+localized correctly all along and lost at the OCR-input step (the painted CC mask
+fused its two digits); F29 was rejected by a glyph-height floor that scales with
+the FIGURE box while a printed label's size is a constant of the BOOK — F29 being
+the tallest figure set itself the highest bar. Fixes: an optional page-relative
+glyph band, and OCR from a re-crop of the original pixels. **F28 and F30 remain
+`None` on purpose** and are the genuine "needs a real text detector" cases.
+A polarity guard (`max_glyph_cover`) was forced by measurement: the re-crop alone
+fabricated a "7" from a cross-section's brick hatching on it_geo_07, whose diagrams
+are ink on pale page background — the inverse of this module's premise.
+
 **Consequence for framing:** #1 is **step one of the grouping win**, not a dead-end
 segmentation nicety — but #1 alone shows **zero** grouping-metric movement. Build
 #1 (seg-recall, OCR-ready boxes) → then #2 (localize+OCR the label per split box) →
 `pair_by_number` 0→6, defeating the trap. Do not expect the owner's #1 to move
 until #2 lands.
+
+*Both have now landed. The aspired 0→6 finished at 0→4 with zero wrong pairs, and
+the two shortfalls are named above; §9's C30→F30 is one of them, so that route
+stays open exactly as written there.*
 
 ## 8. Risks / caveats
 

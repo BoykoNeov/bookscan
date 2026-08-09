@@ -207,10 +207,15 @@ def promote_captions(views: Sequence[BlockView], lang: str) -> dict[str, int]:
 
 
 def read_figure_numbers(views: Sequence[BlockView], page_bgr: np.ndarray | None,
-                        tess_bin: str | None) -> dict[str, int]:
+                        tess_bin: str | None,
+                        page_h: int | None = None) -> dict[str, int]:
     """Recover each figure's printed number: first from routed text (the cheap,
     pure path — a corner label that happened to OCR into the block), else from
     the figure's PIXELS via ``figure_label.read_corner_label``.
+
+    ``page_h`` is passed straight through to ``figure_label``, which needs it to
+    size the label it is hunting for: the number is printed at a page-relative
+    size, not a figure-relative one.
 
     Only successful reads appear in the result; ``figure_label`` returns None
     rather than guessing (its "0 wrong" invariant), and that conservatism is what
@@ -224,7 +229,7 @@ def read_figure_numbers(views: Sequence[BlockView], page_bgr: np.ndarray | None,
             b = v.bbox
             crop = page_bgr[max(0, b.y):b.y2, max(0, b.x):b.x2]
             if crop.size:
-                n = FL.read_corner_label(crop, tess_bin)
+                n = FL.read_corner_label(crop, tess_bin, page_h=page_h)
         if n is not None:
             out[v.key] = n
     return out
@@ -320,7 +325,7 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
     # skip it. Consequence, stated rather than hidden: on such a subpage
     # ``figure_number`` is not recorded as provenance either.
     if g.caption_numbers:
-        g.figure_numbers = read_figure_numbers(figs, page_bgr, tess_bin)
+        g.figure_numbers = read_figure_numbers(figs, page_bgr, tess_bin, page_h)
 
     # --- arm 1: printed number (authoritative) ---
     num_pairs = CP.pair_by_number(g.caption_numbers, dict(g.figure_numbers))

@@ -30,7 +30,7 @@ from pipeline import figure_label as FL
 def _run_with_reads(monkeypatch, per_psm: dict[int, str]):
     """Drive read_corner_label with a fixed {psm: ocr_string} mapping."""
     dummy = np.zeros((10, 10), np.uint8)
-    monkeypatch.setattr(FL, "_isolate_label", lambda fig, p: dummy)
+    monkeypatch.setattr(FL, "_isolate_label", lambda fig, p, page_h=None: dummy)
     monkeypatch.setattr(FL, "_ocr_digits",
                         lambda img, tb, psm: per_psm.get(psm, ""))
     fig = np.zeros((100, 100, 3), np.uint8)
@@ -94,7 +94,7 @@ def test_no_digits_read(monkeypatch):
 
 def test_isolation_none_short_circuits(monkeypatch):
     # If localization fails, we never OCR and return None (a miss, not a crash).
-    monkeypatch.setattr(FL, "_isolate_label", lambda fig, p: None)
+    monkeypatch.setattr(FL, "_isolate_label", lambda fig, p, page_h=None: None)
     called = {"n": 0}
 
     def _boom(*a, **k):
@@ -134,3 +134,68 @@ def test_param_overrides_are_whitelisted():
     flat = np.full((200, 200, 3), 120, np.uint8)
     # bogus key ignored; still returns None on a blank patch.
     assert FL.read_corner_label(flat, "x", {"not_a_real_knob": 999}) is None
+
+
+# --------------------------------------------------------------------------
+# Page-relative glyph band. Real cv2 path, no Tesseract.
+# --------------------------------------------------------------------------
+
+def _dark_figure_with_corner_mark(w: int, h: int, mw: int = 20, mh: int = 30):
+    """A dark figure carrying one bright digit-sized mark in the bottom-right."""
+    fig = np.full((h, w, 3), 20, np.uint8)
+    fig[h - mh - 12:h - 12, w - mw - 12:w - 12] = 245
+    return fig
+
+
+def test_page_relative_band_finds_label_a_tall_figure_hides():
+    # THE it_geo_06 F29 defect, reproduced synthetically. The mark is the same
+    # size in both figures; only the figure's HEIGHT differs. The region-relative
+    # floor scales with that height, so on the tall figure it rises above the mark
+    # and the label vanishes — while the page-relative floor, which tracks the
+    # printed page instead, finds it in both.
+    tall = _dark_figure_with_corner_mark(400, 1200)
+    p = dict(FL.DEFAULTS)
+    assert FL._locate_label(tall, p) is None, "region-relative band must miss it"
+    box = FL._locate_label(tall, p, page_h=3000)
+    assert box is not None, "page-relative band must find it"
+    x, y, bw, bh, glyph_h = box
+    # Coordinates come back in the FIGURE CROP's own space (not the search
+    # region's), which is what lets the caller re-crop from the original pixels.
+    assert 1200 - 30 - 12 - 6 <= y <= 1200 - 30 - 12 + 6
+    assert 400 - 20 - 12 - 6 <= x <= 400 - 20 - 12 + 6
+    assert 24 <= glyph_h <= 36
+
+
+def test_page_relative_band_rejects_a_page_sized_blob():
+    # A bright region far larger than any printed label (25% of page height) is
+    # outside the band's ceiling, so widening the floor did not open the door to
+    # arbitrary bright shapes.
+    fig = _dark_figure_with_corner_mark(1200, 1200, mw=600, mh=750)
+    assert FL._locate_label(fig, dict(FL.DEFAULTS), page_h=3000) is None
+
+
+# --------------------------------------------------------------------------
+# Polarity guard — the it_geo_07 fabrication (a hatched diagram read as "7").
+# --------------------------------------------------------------------------
+
+def test_extract_rejects_dark_on_pale_drawing():
+    # An ink mark on PAGE BACKGROUND inverts the module's premise: the bright side
+    # of the threshold is the page, not the glyph, so it covers most of the crop.
+    # Whatever Tesseract read off that would be a fabrication -> refuse to produce
+    # an OCR image at all.
+    fig = np.full((300, 300, 3), 210, np.uint8)      # pale page
+    fig[200:230, 210:230] = 30                       # dark ink mark
+    box = (210.0, 200.0, 20.0, 30.0, 30.0)
+    assert FL._extract_for_ocr(fig, box, dict(FL.DEFAULTS)) is None
+
+
+def test_extract_accepts_light_glyph_on_dark_ground():
+    # The positive control for the guard above, same geometry, inverted tones:
+    # a bright mark on a dark photo IS the module's premise and must survive.
+    fig = np.full((300, 300, 3), 30, np.uint8)       # dark photo
+    fig[200:230, 210:230] = 235                      # bright glyph
+    box = (210.0, 200.0, 20.0, 30.0, 30.0)
+    out = FL._extract_for_ocr(fig, box, dict(FL.DEFAULTS))
+    assert out is not None and out.ndim == 2
+    # Tesseract wants dark glyphs on white: the majority of the image is white.
+    assert (out > 127).mean() > 0.5

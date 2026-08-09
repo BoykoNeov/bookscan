@@ -42,9 +42,21 @@ Contract:
     ``<job>/debug/07_assemble.png`` (assembled blocks + reading order per page).
   * Never modifies the per-page artifacts.
 
+**Caption<->figure grouping happens here** (``pipeline/figure_grouping.py``).
+CLAUDE.md requires a figure to be placed *with its caption as a single block in
+reading order*, and that association cannot be derived at render time from
+adjacency (it_geo_06's captions are a stack on the far side of the subpage whose
+order does not track figure position). So assemble types the captions, reads the
+printed numbers on both sides, pairs them — printed number first, guarded
+geometry second, ABSTAIN when ambiguous — and records the result on the blocks
+(``figure_ref``/``pair_source``). It runs BEFORE ``_enrich_block`` so an
+automatic caption promotion lands in ``type_auto`` too and is never mistaken for
+a user override. Stage 08 then floats the pair; the editor can correct it.
+
 Usage:
     python -m pipeline.stage07_assemble jobs/<job>/ [--force] [--debug]
                                         [--order-mode auto|review]
+                                        [--no-group-figures]
 """
 
 from __future__ import annotations
@@ -59,10 +71,12 @@ import cv2
 import numpy as np
 
 from pipeline.page_model import (
-    Block, Document, DocPage, DocSettings, StageMeta, Word,
+    Block, BlockType, Document, DocPage, DocSettings, StageMeta, Word,
 )
+from pipeline import figure_grouping as FG
 from pipeline import stage04_layout as S4
 from pipeline import stage06_uncertainty as S6
+from tools.gate1_harness import find_tesseract
 
 STAGE = "stage07_assemble"
 VERSION = "0.1.0"
@@ -78,16 +92,23 @@ ASSETS_DIRNAME = "document_assets"
 
 
 def _ocr_language(page_dir: Path, default: str = "eng") -> str:
-    """Best-effort source language for the spread: the ``lang`` Stage 05 ran with,
+    """Best-effort source language for the spread: the language Stage 05 ran with,
     read from ``05_ocr/meta.json``. Per-document language DETECTION is a future
-    seam; for now we faithfully carry the OCR language forward."""
+    seam; for now we faithfully carry the OCR language forward.
+
+    Stage 05 records this under ``params.language``; ``params.lang`` is accepted
+    as a fallback for documents assembled from an older meta. (Reading only
+    ``lang`` silently defaulted EVERY document to ``eng`` — caught by a real
+    Italian run whose captions then failed to parse, since the caption keyword
+    table is per-language.)"""
     meta = page_dir / "05_ocr" / "meta.json"
     if meta.exists():
         try:
             params = json.loads(meta.read_text(encoding="utf-8")).get("params", {})
-            lang = params.get("lang")
-            if isinstance(lang, str) and lang:
-                return lang
+            for key in ("language", "lang"):
+                lang = params.get(key)
+                if isinstance(lang, str) and lang:
+                    return lang
         except (ValueError, OSError):
             pass
     return default
@@ -170,7 +191,7 @@ def _assemble_panel(bgr: np.ndarray, page: DocPage, panel_w: int = 1100) -> np.n
 
 
 def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
-        order_mode: str = "auto") -> Document:
+        order_mode: str = "auto", group_figures: bool = True) -> Document:
     t0 = time.perf_counter()
     warnings: list[str] = []
 
@@ -206,6 +227,17 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
     pages: list[DocPage] = []
     panels: list[np.ndarray] = []
     n_blocks = n_words = n_patches = 0
+    n_promoted = n_fig_numbers = n_pairs_number = n_pairs_geom = n_abstained = 0
+
+    # Corner-label OCR (figure_grouping's number arm) needs Tesseract; without it
+    # the arm degrades to routed text and geometry still runs, so a missing binary
+    # is a WARNING, never a failure — assemble must not become GPU/OCR-dependent.
+    tess_bin = find_tesseract(cfg) if group_figures else None
+    if group_figures and not tess_bin:
+        warnings.append(
+            "tesseract not found — caption<->figure grouping ran without the "
+            "corner-label number arm (guarded geometry only). Set tesseract.binary "
+            "in config.yaml to recover printed figure numbers.")
 
     for pd in page_dirs:
         resolved = S6.UncertaintyResult.model_validate_json(
@@ -238,12 +270,32 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                 patch_map[(pref.block_id, pref.word_index)] = f"{ASSETS_DIRNAME}/{dst_name}"
                 n_patches += 1
 
-            blocks = [_enrich_block(blk, patch_map) for blk in rp.blocks]
+            # --- caption<->figure grouping (BEFORE _enrich_block) ------------
+            # Order matters: _enrich_block seeds type_auto from type, so a
+            # caption promoted here is recorded as the AUTOMATIC type and the
+            # editor never mistakes it for a user override. Running it after
+            # would leave type_auto='paragraph' next to type='caption'.
+            page_id = f"{pd.name}__{stem}"
+            grouped = rp.blocks
+            if group_figures:
+                page_bgr = cv2.imread(str(src_img), cv2.IMREAD_COLOR)
+                g = FG.group_figures(
+                    FG.views_from_blocks(rp.blocks), page_h=rp.height,
+                    lang=_ocr_language(pd), page_bgr=page_bgr, tess_bin=tess_bin,
+                    params=(cfg.get("reconstruct", {}) or {}).get("grouping"))
+                grouped = FG.apply_to_blocks(list(rp.blocks), g, page_id)
+                n_promoted += len(g.promoted)
+                n_fig_numbers += len(g.figure_numbers)
+                n_pairs_number += g.n_by_number
+                n_pairs_geom += g.n_by_geometry
+                n_abstained += len(g.abstained)
+
+            blocks = [_enrich_block(blk, patch_map) for blk in grouped]
             n_blocks += len(blocks)
             n_words += sum(bool(w.text.strip()) for blk in blocks for w in blk.words)
 
             dp = DocPage(
-                page_id=f"{pd.name}__{stem}",
+                page_id=page_id,
                 source_spread=pd.name,
                 subpage=stem,
                 width=rp.width,
@@ -295,6 +347,15 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             "uncertainty_mode": settings.uncertainty_mode,
             "order_mode": settings.order_mode,
             "assets_dir": ASSETS_DIRNAME,
+            # caption<->figure grouping (pipeline/figure_grouping.py). The bar is
+            # ZERO WRONG pairs, so `abstained` is reported beside `pairs` — a
+            # caption left unpaired is a deliberate outcome, not a silent gap.
+            "group_figures": group_figures,
+            "captions_promoted": n_promoted,
+            "figure_numbers_read": n_fig_numbers,
+            "pairs_by_number": n_pairs_number,
+            "pairs_by_geometry": n_pairs_geom,
+            "captions_abstained": n_abstained,
             "reads": ["page_*/06_uncertain/resolved.json",
                       "page_*/03_dewarp/<subpage>", "page_*/06_uncertain/patches/"],
             "force": force,
@@ -329,6 +390,11 @@ def main(argv: list[str] | None = None) -> int:
                     help="reading-order handling: 'auto' trusts Stage 04's order; "
                          "'review' marks every block for editor confirm/correct before "
                          "reconstruction. Editor-review state only — no pipeline effect.")
+    ap.add_argument("--no-group-figures", action="store_true",
+                    help="skip the caption<->figure grouping pass (caption typing + "
+                         "printed-number/geometry pairing). Diagnostic escape hatch: "
+                         "the document then carries no figure_ref and Stage 08 falls "
+                         "back to adjacency-only grouping.")
     ap.add_argument("--debug", action="store_true",
                     help="also write debug/07_assemble.png (blocks + reading order)")
     args = ap.parse_args(argv)
@@ -341,7 +407,7 @@ def main(argv: list[str] | None = None) -> int:
 
     cfg = S4.load_config(args.config)
     doc = run(args.job_dir, cfg, force=args.force, debug=args.debug,
-              order_mode=args.order_mode)
+              order_mode=args.order_mode, group_figures=not args.no_group_figures)
     nword = sum(bool(w.text.strip()) for pg in doc.pages for blk in pg.blocks
                 for w in blk.words)
     nflag = sum(w.flag_visible for pg in doc.pages for blk in pg.blocks
@@ -351,7 +417,14 @@ def main(argv: list[str] | None = None) -> int:
           f"order={doc.settings.order_mode})")
     print(f"  pages={len(doc.pages)} words={nword} flagged-visible={nflag}")
     for pg in doc.pages:
+        caps = [b for b in pg.blocks if b.type is BlockType.CAPTION]
+        paired = [b for b in caps if b.figure_ref is not None]
         print(f"  {pg.page_id}: blocks={len(pg.blocks)} img={pg.image_asset}")
+        if caps:
+            srcs = ",".join(sorted({b.pair_source.value for b in paired
+                                    if b.pair_source})) or "-"
+            print(f"      captions={len(caps)} paired={len(paired)} ({srcs}) "
+                  f"unpaired={len(caps) - len(paired)}")
     return 0
 
 

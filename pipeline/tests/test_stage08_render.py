@@ -171,6 +171,77 @@ def test_figure_cropped_and_caption_grouped(tmp_path: Path):
     assert "garbageocr" not in html             # figure words NOT rendered
 
 
+def test_paired_caption_floats_to_its_figure_across_the_page(tmp_path: Path):
+    """Stage 07's pairing wins over adjacency. Mirrors it_geo_06: the caption
+    stack sits far from the figures and its order does not track figure position,
+    so CAP-26 must land in FIG-26's <figure> even though FIG-25 precedes it."""
+    blocks = [
+        Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
+              reading_order=0),
+        Block(id=1, type="figure", bbox={"x": 120, "y": 0, "w": 60, "h": 60},
+              reading_order=1),
+        Block(id=2, type="caption", bbox={"x": 120, "y": 150, "w": 60, "h": 20},
+              reading_order=2, words=[_w("CAPTIONTWENTYSIX")],
+              figure_ref={"page_id": "pg", "block_id": 1}, pair_source="number"),
+    ]
+    page, jd = _page_with(blocks, tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    figs = html.split("<figure")
+    assert len(figs) == 3                                   # two <figure> blocks
+    assert "CAPTIONTWENTYSIX" not in figs[1]                # NOT swallowed by figure 0
+    assert "CAPTIONTWENTYSIX" in figs[2]                    # floated into figure 1
+    assert html.count("CAPTIONTWENTYSIX") == 1              # rendered exactly once
+
+
+def test_adjacent_caption_bound_elsewhere_is_not_swallowed(tmp_path: Path):
+    """The adjacency fallback must not fire for a caption that claims a different
+    figure — otherwise promoting captions (which Stage 07 now does) would make
+    grouping WORSE than before by handing the first figure the wrong caption."""
+    blocks = [
+        Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
+              reading_order=0),
+        Block(id=1, type="caption", bbox={"x": 0, "y": 70, "w": 60, "h": 20},
+              reading_order=1, words=[_w("BELONGSTOTWO")],
+              figure_ref={"page_id": "pg", "block_id": 2}, pair_source="geometry"),
+        Block(id=2, type="figure", bbox={"x": 0, "y": 100, "w": 60, "h": 60},
+              reading_order=2),
+    ]
+    page, jd = _page_with(blocks, tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    figs = html.split("<figure")
+    assert "BELONGSTOTWO" not in figs[1]                    # the preceding figure
+    assert "BELONGSTOTWO" in figs[2]                        # its actual partner
+
+
+def test_caption_ref_to_another_page_still_renders_in_place(tmp_path: Path):
+    """The cross-gutter case the schema can express but this renderer cannot yet
+    float. It must render the caption where it sits — never drop the text."""
+    blocks = [
+        Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
+              reading_order=0),
+        Block(id=1, type="caption", bbox={"x": 0, "y": 70, "w": 60, "h": 20},
+              reading_order=1, words=[_w("FACINGPAGECAPTION")],
+              figure_ref={"page_id": "some_other_page", "block_id": 3}),
+    ]
+    page, jd = _page_with(blocks, tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "FACINGPAGECAPTION" in html
+
+
+def test_unpaired_caption_still_groups_by_adjacency(tmp_path: Path):
+    """Non-regression: a document assembled before grouping existed (schema 1.0,
+    no figure_ref anywhere) must render exactly as it used to."""
+    blocks = [
+        Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
+              reading_order=0),
+        Block(id=1, type="caption", bbox={"x": 0, "y": 70, "w": 60, "h": 20},
+              reading_order=1, words=[_w("LEGACYCAPTION")]),
+    ]
+    page, jd = _page_with(blocks, tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "<figcaption" in html and "LEGACYCAPTION" in html
+
+
 def test_reading_order_drives_output_sequence(tmp_path: Path):
     blocks = [
         Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 20},

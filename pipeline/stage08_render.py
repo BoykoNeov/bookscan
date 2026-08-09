@@ -21,8 +21,12 @@ edit round-trips. In particular:
     plain text, because editing it cleared the marker.
   * **Figures are cropped from the full-res page image** (``image_asset``) at the
     block bbox and placed in reading order; a FIGURE block renders the crop, not
-    its (meaningless) OCR words. A CAPTION immediately following a figure is
-    grouped into the same ``<figure>``.
+    its (meaningless) OCR words. Its caption is the one Stage 07's grouping pass
+    PAIRED to it (``Block.figure_ref`` — by printed number, else guarded
+    geometry), rendered inside the same ``<figure>`` however far away it sits on
+    the page. Only when a figure has no paired caption does the old adjacency
+    rule apply, and then only to a following caption that claims no figure of its
+    own — a caption bound elsewhere is never swallowed.
   * **Running headers / page numbers are stripped by default** (per the CURRENT
     block type, so a user retype is honored); toggles in ``DocSettings``.
   * Output text is real text -> the HTML (and any PDF made from it) is searchable;
@@ -204,7 +208,12 @@ _TAG = {
     BlockType.LIST: ("p", "list"),
     BlockType.TABLE: ("p", "table"),
     BlockType.FOOTNOTE: ("p", "footnote"),
-    BlockType.CAPTION: ("figcaption", "caption"),
+    # A caption PAIRED to a figure is emitted by _figure_html as a real
+    # <figcaption> inside its <figure>. This entry is only reached by an UNPAIRED
+    # caption, which must not emit a bare <figcaption> — that tag is invalid
+    # outside a <figure>. Unpaired captions are now common by design (the grouping
+    # pass abstains rather than guess), so they render as a styled paragraph.
+    BlockType.CAPTION: ("p", "caption"),
     BlockType.HEADER: ("p", "header"),
     BlockType.PAGE_NUMBER: ("p", "page-number"),
     BlockType.OTHER: ("p", "other"),
@@ -227,6 +236,37 @@ def _figure_html(blk: Block, page_bgr: np.ndarray | None,
     return f'<figure class="figure-block">{inner}</figure>'
 
 
+def _caption_bindings(page: DocPage, blocks: list[Block]
+                      ) -> tuple[dict[int, Block], set[int]]:
+    """Resolve Stage 07's ``figure_ref`` pairings into (figure_id -> caption,
+    bound caption ids) for this page.
+
+    A caption floats with the figure it was PAIRED to (by printed number, or by
+    the guarded geometry rule), not with whatever block precedes it in reading
+    order — that adjacency assumption is exactly what cannot express it_geo_06,
+    where the captions are a stack on the far side of the subpage.
+
+    Two references are deliberately left rendering in place rather than dropped:
+    a ref to a figure on ANOTHER page (the cross-gutter panorama case — the
+    schema can express it, this renderer does not yet float across pages), and a
+    second caption claiming a figure that is already spoken for. Neither can
+    silently lose text.
+    """
+    fig_ids = {b.id for b in blocks if b.type is BlockType.FIGURE}
+    cap_for_fig: dict[int, Block] = {}
+    bound: set[int] = set()
+    for b in blocks:
+        if b.type is not BlockType.CAPTION or b.figure_ref is None:
+            continue
+        if b.figure_ref.page_id != page.page_id or b.figure_ref.block_id not in fig_ids:
+            continue
+        if b.figure_ref.block_id in cap_for_fig:
+            continue
+        cap_for_fig[b.figure_ref.block_id] = b
+        bound.add(b.id)
+    return cap_for_fig, bound
+
+
 def _page_html(page: DocPage, doc: Document, job_dir: Path,
                dictionary: set[str] | None) -> str:
     """One physical page: blocks in reading order, stripped/figured/typed."""
@@ -234,6 +274,8 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
     page_bgr = cv2.imread(str(job_dir / page.image_asset), cv2.IMREAD_COLOR)
 
     blocks = sorted(page.blocks, key=lambda b: b.reading_order)
+    cap_for_fig, bound_caps = _caption_bindings(page, blocks)
+
     parts: list[str] = [f'<section class="page" data-page="{html.escape(page.page_id)}">']
     i = 0
     while i < len(blocks):
@@ -242,11 +284,21 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
         if strip_key and getattr(doc.settings, strip_key):
             i += 1
             continue
+        if blk.id in bound_caps:
+            i += 1                                  # rendered inside its figure below
+            continue
         if blk.type is BlockType.FIGURE:
-            cap = None
-            if i + 1 < len(blocks) and blocks[i + 1].type is BlockType.CAPTION:
-                cap = blocks[i + 1]
-                i += 1                              # consume the grouped caption
+            cap = cap_for_fig.get(blk.id)           # explicit pairing wins
+            if cap is None and i + 1 < len(blocks):
+                nxt = blocks[i + 1]
+                # Adjacency fallback — ONLY for a caption that claims no figure of
+                # its own. A caption bound to a DIFFERENT figure must never be
+                # swallowed by whichever figure happens to precede it (on
+                # it_geo_06 that would hand the top-left cliff the whole caption
+                # stack's first entry).
+                if nxt.type is BlockType.CAPTION and nxt.figure_ref is None:
+                    cap = nxt
+                    i += 1                          # consume the grouped caption
             parts.append(_figure_html(blk, page_bgr, cap, mode, job_dir, dictionary))
             i += 1
             continue

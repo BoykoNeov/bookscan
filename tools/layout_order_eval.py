@@ -81,8 +81,7 @@ from tools.gate1_harness import (
 from tools.dewarp_ab import split_halves, dewarp_halves, lang_code
 from tools.layout_ab import ocr_words, _word_box, _center_in
 from pipeline import stage04_layout as S4
-from pipeline import caption_parser as CP
-from pipeline import figure_label as FL
+from pipeline import figure_grouping as FG
 from pipeline.page_model import BBox
 
 # Fraction of a GT anchor's tokens that must be present in a detected block's
@@ -356,8 +355,13 @@ class SubpageGrade:
     caption_typed_parser: dict[str, bool] = field(default_factory=dict)  # caption_id -> typed ok
     n_promoted: int = 0                # paragraph/other blocks the parser re-typed caption
     n_fig_numbers: int = 0            # detected figures whose corner-label number OCR'd
-    n_pairs_by_number: int = 0        # GT (cap,fig) pairs recovered by number-keyed pairing
+    n_pairs_by_number: int = 0        # emitted pairs that match the GT partner (CORRECT)
     n_pairs_gt: int = 0               # GT pairs on this subpage (denominator)
+    n_pairs_wrong: int = 0            # emitted pairs contradicting the GT — the bar is 0
+    n_pairs_geometry: int = 0         # of the emitted pairs, how many came from geometry
+    n_abstained: int = 0              # captions deliberately left unpaired
+    abstain_reasons: dict[str, str] = field(default_factory=dict)
+    pairs_detail: list[dict] = field(default_factory=list)  # every emitted pair + verdict
 
     @property
     def seg_recall(self) -> float:
@@ -464,22 +468,20 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
             sub_pairs = [pr for pr in pairs if pr.get("subpage") == sub]
             groups = grouping_eval(sub_pairs, matched, det)
 
-            # ---- Figura-NN parser arm (pipeline.caption_parser) -------------
-            # Re-type paragraph/other/list blocks whose OCR text starts with a
-            # caption header ("Figura NN"); NEVER demote a block or touch figures.
-            # Then recompute type accuracy and caption-typed flags so the parser's
-            # effect on typing is MEASURED next to the detector baseline above.
-            promoted: set[int] = set()
-            cap_numbers: dict[int, int] = {}     # det.idx -> parsed caption number
-            for d in det:
-                if d.btype in ("paragraph", "other", "list"):
-                    ref = CP.parse_caption(d.text, lang)
-                    if ref is not None:
-                        promoted.add(d.idx)
-                        cap_numbers[d.idx] = ref.number
+            # ---- PRODUCTION grouping pass (pipeline.figure_grouping) --------
+            # This is the SAME function Stage 07 runs on the editable document —
+            # not a parallel "parser arm". The eval used to re-implement caption
+            # promotion + number pairing here, which is precisely how the measured
+            # win stayed outside the pipeline; the numbers below now grade
+            # production code on real pixels.
+            gr = FG.group_figures(
+                [FG.BlockView(key=str(d.idx), btype=d.btype, bbox=d.bbox, text=d.text)
+                 for d in det],
+                page_h=img.shape[0], lang=lang, page_bgr=img, tess_bin=binary)
 
             def eff_type(di: int) -> str:
-                return "caption" if (det[di].btype == "caption" or di in promoted) else det[di].btype
+                return "caption" if (det[di].btype == "caption"
+                                     or str(di) in gr.promoted) else det[di].btype
 
             type_ok_parser = {gid: eff_type(di) == by_id[gid]["type"]
                               for gid, di in matched.items()}
@@ -488,24 +490,31 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
                                and eff_type(matched[g.caption_id]) == "caption")
                 for g in groups}
 
-            # Number-keyed pairing arm: caption numbers (parsed) vs figure numbers
-            # (the in-photo corner label "25", localized + OCR'd from the figure's
-            # PIXELS by pipeline.figure_label — NOT routed word text, which is empty
-            # for figures). Conservative: read_corner_label returns None unless a
-            # plausible label localizes with strong multi-PSM agreement (the "0
-            # wrong" invariant, verified non-regressive on single-figure pages).
-            fig_numbers: dict[str, int | None] = {}
-            for gid, di in matched.items():
-                if by_id[gid]["type"] == "figure":
-                    fb = det[di].bbox
-                    crop = img[max(0, fb.y):fb.y2, max(0, fb.x):fb.x2]
-                    fig_numbers[gid] = FL.read_corner_label(crop, binary)
-            cap_num_by_gid = {gid: cap_numbers[di]
-                              for gid, di in matched.items() if di in cap_numbers}
-            num_pairs = CP.pair_by_number(cap_num_by_gid, fig_numbers)
+            # Grade the pairs the pass actually emitted, translated from detected
+            # block indices back to GT ids via the (bbox/anchor) match. The bar is
+            # ZERO WRONG, so a pair whose GT partner disagrees is counted as
+            # `wrong` — never rounded into the miss column.
             gt_pair_map = {pr["caption"]: pr["figure"] for pr in sub_pairs}
-            pairs_ok = sum(1 for c, f in num_pairs.items()
-                           if gt_pair_map.get(c) == f)
+            det_to_gt = {di: gid for gid, di in matched.items()}
+            pairs_ok = pairs_wrong = 0
+            pairs_detail: list[dict] = []
+            for cid_key, fid_key in gr.pairs.items():
+                ci, fi = int(cid_key), int(fid_key)
+                c_gt, f_gt = det_to_gt.get(ci), det_to_gt.get(fi)
+                if c_gt is not None and c_gt in gt_pair_map:
+                    verdict = "ok" if gt_pair_map[c_gt] == f_gt else "wrong"
+                else:
+                    # The GT anchors no pair for this caption. NOT silently dropped:
+                    # a pair the GT cannot adjudicate is still a pair the renderer
+                    # will act on, so it is surfaced as UNGRADED for a human to read.
+                    verdict = "ungraded"
+                pairs_ok += verdict == "ok"
+                pairs_wrong += verdict == "wrong"
+                pairs_detail.append({
+                    "caption": c_gt or f"det{ci}", "figure": f_gt or f"det{fi}",
+                    "caption_text": det[ci].text[:60], "source": gr.pair_source[cid_key],
+                    "verdict": verdict,
+                })
 
             n_header = sum(1 for d in det if d.btype in ("header", "page_number"))
             grade.subpages.append(SubpageGrade(
@@ -514,9 +523,13 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
                 n_native=len(nat), groups=groups, n_det_blocks=len(det),
                 n_header_det=n_header, n_stripped_gt=len(gsub.get("stripped", [])),
                 type_ok_parser=type_ok_parser, caption_typed_parser=caption_typed_parser,
-                n_promoted=len(promoted),
-                n_fig_numbers=sum(1 for v in fig_numbers.values() if v is not None),
+                n_promoted=len(gr.promoted),
+                n_fig_numbers=len(gr.figure_numbers),
                 n_pairs_by_number=pairs_ok, n_pairs_gt=len(sub_pairs),
+                n_pairs_wrong=pairs_wrong, pairs_detail=pairs_detail,
+                n_pairs_geometry=gr.n_by_geometry, n_abstained=len(gr.abstained),
+                abstain_reasons={det_to_gt.get(int(k), f"det{k}"): v
+                                 for k, v in gr.abstained.items()},
             ))
     finally:
         if det_model is not None:
@@ -590,43 +603,36 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
     fig_nums = sum(s.n_fig_numbers for s in grade.subpages)
     pairs_by_num = sum(s.n_pairs_by_number for s in grade.subpages)
     pairs_gt = sum(s.n_pairs_gt for s in grade.subpages)
+    pairs_wrong = sum(s.n_pairs_wrong for s in grade.subpages)
+    pairs_geom = sum(s.n_pairs_geometry for s in grade.subpages)
+    abstained = sum(s.n_abstained for s in grade.subpages)
     L.append("")
-    L.append("**Figura-NN parser arm** (`pipeline.caption_parser`, shown ALONGSIDE "
-             "the detector-only numbers above — improvement is measured, not asserted). "
-             "The parser re-types a paragraph/other block as `caption` iff its OCR text "
-             "starts with a figure keyword+number (`Figura NN`, optional directional "
-             "prefix); it never demotes a block or touches figures.")
+    L.append("**Caption↔figure grouping** (`pipeline.figure_grouping` — the SAME pass "
+             "Stage 07 runs on the editable document, so these numbers grade production "
+             "code, not a parallel eval arm). Captions are typed by the printed header "
+             "(`Figura NN`, start-anchored, never demoting a block or touching figures), "
+             "then paired: **printed number first** (a figure's number comes from its "
+             "in-photo corner label, read from PIXELS by `pipeline.figure_label`), "
+             "**guarded geometry second** (column overlap + gap limit + mutual-nearest + "
+             "unambiguous, and suppressed entirely for a numbered caption on a subpage "
+             "that prints figure numbers). Everything else ABSTAINS — the bar is **zero "
+             "wrong pairs**, because a caption printed under the wrong photo is worse "
+             "output than a caption standing alone.")
     L.append(f"- **Caption typing:** detector {typed}/{len(all_groups)} vs "
              f"**parser {typed_p}/{len(all_groups)}** captions typed `caption` "
              f"({promoted} paragraph blocks promoted). "
              f"**Type accuracy over matched blocks:** detector {typ}/{typ_tot} vs "
              f"**parser {typ_p}/{typ_p_tot}**.")
-    pair_note = ("Figure numbers do NOT survive OCR here (figure blocks empty), so the "
-                 "number-keyed C→F pairing has no figure-side signal — the caption side "
-                 "is typed+numbered but pairing stays detector-under-segmentation-limited "
-                 "(honest scope, see caption_parser docstring)." if fig_nums == 0 else
-                 "Figure numbers now come from the in-photo corner label "
-                 "(`pipeline.figure_label`, OCR'd from figure PIXELS, not routed text). "
-                 "Two labels localize and read correctly — '25' and '26' — and were "
-                 "MANUALLY eyeball-verified against the source photo (the boxes are "
-                 "physically figures 25 and 26). In production `pair_by_number` pairs "
-                 "C25/C26 to those boxes BY THEIR PRINTED NUMBER, order-independently, "
-                 "which defeats BOTH (a) the C26→F26 geometry trap AND (b) Stage 04's "
-                 "reading-order deviation here — Stage 04 emits the figures top-band-major "
-                 "(F25, F26-plate, F27, F28), NOT the §6 column-major (F25, F27, F28, F26), "
-                 "so the top-right plate lands 2nd. The four texture-swamped labels "
-                 "(F27/F28/F29/F30) return None rather than guess (0 wrong), so their "
-                 "captions stay correctly UNPAIRED; textured-label OCR is the honest open "
-                 "limit (needs a text detector; out of scope at N=1). The eval matches "
-                 "figures to the GT's overlay figure bboxes by IoU overlap (POSITION-honest), "
-                 "so the credited count here is the true pairing — the correct '26' read on "
-                 "Stage 04's 2nd-emitted figure is no longer rank-relabeled into a mispair. "
-                 "The check stays non-circular: bbox matching is independent of the recovered "
-                 "number, so a WRONG read would still be caught.")
-    L.append(f"- **Pairing by number:** figure corner labels recovered from pixels = "
-             f"{fig_nums} → number-keyed C→F pairs credited = "
-             f"{pairs_by_num}/{pairs_gt} (bbox-matched, manually verified). "
-             f"{pair_note}")
+    L.append(f"- **Pairing:** figure corner labels recovered from pixels = {fig_nums}; "
+             f"**{pairs_by_num}/{pairs_gt} GT pairs recovered, {pairs_wrong} WRONG** "
+             f"({pairs_geom} of the emitted pairs came from the geometry arm, the rest "
+             f"from the printed number); {abstained} captions abstained. "
+             f"Figures are matched to the GT's overlay bboxes by IoU overlap, which is "
+             f"independent of the recovered number — so a wrong read is still caught "
+             f"(the check is not circular).")
+    for s in grade.subpages:
+        for cid, why in sorted(s.abstain_reasons.items()):
+            L.append(f"  - abstained `{cid}` ({s.name}): {why}")
     return "\n".join(L) + "\n"
 
 
@@ -644,6 +650,9 @@ def grade_to_json(grade: ImageGrade) -> dict:
             "caption_typed_parser": s.caption_typed_parser,
             "n_promoted": s.n_promoted, "n_fig_numbers": s.n_fig_numbers,
             "n_pairs_by_number": s.n_pairs_by_number, "n_pairs_gt": s.n_pairs_gt,
+            "n_pairs_wrong": s.n_pairs_wrong, "n_pairs_geometry": s.n_pairs_geometry,
+            "n_abstained": s.n_abstained, "abstain_reasons": s.abstain_reasons,
+            "pairs_detail": s.pairs_detail,
             "groups": [{
                 "caption": g.caption_id, "figure": g.figure_id,
                 "caption_typed_ok": g.caption_typed_ok, "nearest_ok": g.nearest_ok,

@@ -1650,3 +1650,129 @@ and still **ships inert** (`models/` gitignored — a fresh clone has no lexicon
 `load_lexicon` returns None → gate flags nothing). Activating it also feeds the
 Stage 08 de-hyphenation rule (same dependency). Full suite **255 green**
 (18 in `test_second_opinion.py`).
+
+---
+
+## 2026-08-09 — Caption↔figure GROUPING lands in production (Stage 07 + Stage 08)
+
+**The owner's #1 layout priority, finally moving real output.** `caption_parser`
+(Task #4, 2026-07-03) and `figure_label` (Task #2, 2026-07-03) were both built
+and measured — caption typing 0/6→6/6, `pair_by_number` 0→2 on it_geo_06 — but a
+grep this session found neither module was imported by **any pipeline stage**:
+only by `tools/layout_order_eval` and their own tests. Production grouping was
+adjacency (`stage08_render`: a FIGURE followed immediately by a CAPTION), which
+provably cannot express it_geo_06, where the four captions form a stack on the
+far side of the subpage and their order does not track figure position. So every
+measured win to date moved **zero** of the re-typeset document.
+
+New `pipeline/figure_grouping.py` is the single decision point, called by **both**
+Stage 07 (production) and the eval (measurement) — so the numbers below grade the
+code the pipeline runs, not a parallel arm. Schema commit `66b84d6` added
+`Block.caption_number / figure_number / figure_ref / pair_source / type_promoted`
+(document schema 1.0→1.1, purely additive; `figure_ref` is a page-scoped
+`BlockRef`, not a bare id, because it_geo_04's Fig.21 panorama is already split
+across two DocPages by the gutter cut).
+
+### The policy: number first, geometry guarded, ABSTAIN by default
+
+The bar is **zero wrong pairs, not N pairs** — a caption printed under the wrong
+photo is worse output than a caption standing alone (the same invariant
+`figure_label` holds for its digit reads). Arms:
+
+1. **Printed number** (authoritative) — caption "Figura 26" pairs to the figure
+   whose in-photo corner label OCRs as 26, wherever it sits. This is what defeats
+   the C26→F26 trap the it_geo_06 fixture was purpose-built around.
+2. **Guarded geometry** (the ordinary book, which prints no corner labels) —
+   requires ALL of: column overlap ≥0.50 of the narrower box, vertical gap ≤0.08
+   of page height, mutual-nearest, an unambiguous runner-up (≥1.6× further), a
+   non-empty caption, and **not nested inside the figure's box**; plus a
+   **numbering-regime guard** — on a subpage where some figure number DID read, a
+   caption that carries a printed number and found no numeric partner abstains
+   rather than overrule the printed numbering.
+
+Two guards were **forced by measurement, not designed up front**:
+
+* **Containment (`_nest_frac`).** it_geo_06-right's L-shaped F29+F30 detection
+  absorbed the C29 caption column (Phase B's caption ejection was never built), so
+  C29's box sits **97% inside** the box the eval matches to GT F30, and the naive
+  vertical gap scored that nesting as **0 = maximal adjacency** → `C29→F30`, a
+  wrong pair. Reading containment as an ABSTAIN signal instead not only removed
+  the wrong pair, it left C29's only remaining candidate as the figure genuinely
+  above it → **C29→F29 and C30→F30, both correct**. A merge Phase B was supposed
+  to fix is now survivable without fixing it.
+* **Numbering-regime guard.** Probed directly: with it disabled and F25's label
+  unreadable, C25 pairs geometrically to the top-right F26 plate — the exact
+  mispairing the fixture traps. It is load-bearing, not defensive decoration.
+
+### Measured — all five block-order fixtures, production code path
+
+| fixture | pairs correct | **WRONG** | abstained | notes |
+|---|---|---|---|---|
+| it_geo_04 | 1/2 | **0** | 1 | B7→B6R by geometry (solo-case gap relaxation) |
+| it_geo_05 | 0/2 | **0** | 1 | both captions are gutter-side columns |
+| **it_geo_06** | **4/6** | **0** | 2 | 2 by number (incl. the C26 trap), 2 by geometry |
+| it_geo_07 | 0/1 | **0** | 2 | GT partner D1 is undetected (IoU 0.000) |
+| de_01 | 0/0 | **0** | 1 | no GT pairs |
+| **total** | **5/11** | **0** | **7** | |
+
+**it_geo_06 (the grouping fixture) goes 2/6 → 4/6 with zero wrong pairs.**
+Caption typing is unchanged at 6/6 (type accuracy over matched blocks 8/14 →
+**14/14**). The eval now also reports every emitted pair with a verdict, including
+`UNGRADED` ones (a pair on a block the GT anchors no pair for) — 2 such pairs
+exist on it_geo_07's diagram pages, surfaced rather than silently dropped.
+
+### What abstains, and why it is not a defect
+
+The 7 abstentions are 3 distinct causes, all honest:
+* **it_geo_04-left / it_geo_05-right (2)** — the caption is a *gutter-side column*
+  physically detached from its figure (x-overlap 0.04 and 0.00; gaps 1151px and
+  1170px). No sound geometry recovers these; only the printed number can, and
+  those figures carry no readable corner label. **Finding: in this Italian book
+  the caption columns are not physically attached to their figures, so the number
+  arm — not geometry — is the load-bearing one for this corpus.**
+* **it_geo_06 C27/C28 (2)** — the numbering-regime guard, correctly declining to
+  guess on the trap page.
+* **it_geo_07 C31 + empty/edge cases (3)** — C31's GT partner D1 is genuinely
+  undetected, so any pair would have been wrong.
+
+### Verified on the production path, not just in the eval
+
+Ran the real chain on `it_geo_06`: `run_all` 00→06 → `stage07_assemble` →
+`stage08_render`. `document.json` (schema 1.1) carries `figure_ref`/`pair_source`
+exactly as the eval measured (left: 2 by number; right: 2 by geometry), and the
+rendered HTML puts **"Figura 25" inside Figure 25's `<figure>` and "Figura 26"
+inside Figure 26's** — the trap defeated in the actual re-typeset output. 6
+figures, 4 with grouped captions, 2 unpaired captions rendered standalone.
+
+Two real bugs this run exposed, both fixed:
+* **`_ocr_language` read `params.lang`; Stage 05 writes `params.language`** — so
+  EVERY document assembled to date recorded `source_language="eng"` regardless of
+  the OCR language. Pre-existing and independent of grouping, but it silently
+  disabled the Italian caption keywords (0 captions promoted on the first real
+  run). Now reads `language` with `lang` as fallback.
+* **Unpaired captions emitted a bare `<figcaption>` outside any `<figure>`** —
+  invalid HTML, and newly common because the pass deliberately abstains. Standalone
+  captions now render as `<p class="caption">`.
+
+### Honest limits
+
+* **`document_order_gate4` is now PARTIALLY gradeable** (it was deferred as
+  "ungradeable until figures are separable"). The rendered order on it_geo_06-left
+  is F25,C25,F26,C26,F27,F28,C27,C28 against the GT's
+  F25,C25,F26,C26,F27,C27,F28,C28 — the first four positions match exactly, and
+  the whole residual gap is the two abstained captions. A document-order metric is
+  still not written, and Stage 08 does not reorder ACROSS pages, so the
+  cross-gutter half of that GT stays ungraded.
+* **N is small and Italian.** The geometry knobs are fractions (not pixels) but are
+  exercised on 5 spreads from 3 books; `geom_solo_max_gap_frac=0.25` in particular
+  is justified by exactly one subpage (it_geo_04-right).
+* **Unchanged open levers:** Phase B (right L-shape figure split + caption
+  ejection) and a real digit text-detector for the 4 texture-swamped corner labels
+  (F27/F28/F29/F30). Both would raise coverage above 4/6; neither is needed to make
+  grouping *real*, which is what was missing.
+* **Editor UI for correcting a wrong pair is deliberately NOT built.**
+  `pair_source` is stored as provenance so a later pass can surface a geometric
+  guess for review while leaving a number-keyed pair alone.
+
+Full suite **284 green** (was 255): +25 `test_figure_grouping.py`, +4 render
+grouping/non-regression tests.

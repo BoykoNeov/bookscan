@@ -149,8 +149,14 @@ same class as the existing XY-cut gaps — NOT the forbidden global OCR threshol
   reads `+0.87` / `F29,F30,C29,C30` against Phase B's `+1.00` / GT, while the text-only
   arm reads `+1.00` for both. On its first run it found a NEW unfixed defect:
   **it_geo_06-LEFT is `+0.86`** — the top-right plate F26 is emitted 2nd, not last, so
-  the column-major order this section demanded is in fact WRONG there. Numbers in
-  `docs/RESULTS.md`. **Still by hand:** the metric grades Stage 04's per-subpage
+  the column-major order this section demanded is in fact WRONG there.
+  **FIXED 2026-08-09** (`_column_split` / `xy_column_first`): the running head ended
+  7px above F26, so the H-cut banded them together and the full-width header then
+  blocked the V-cut, hiding a globally-valid column gutter. left.png `+0.86 → +1.00`,
+  the other nine graded subpages byte-identical, and verified carried into a fresh
+  `document.json` (`figorder_it06`) — so the by-hand gap below is closed for this
+  page. Numbers, the three guards and which subpage demanded each in `docs/RESULTS.md`.
+  **Still by hand in general:** the metric grades Stage 04's per-subpage
   `reading_order`, not Stage 07's carrying of it into `document.json`.
 - Expect the geometric grouping arm to stay red (or dip) — annotate, don't chase.
 

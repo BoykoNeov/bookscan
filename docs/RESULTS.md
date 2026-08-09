@@ -1952,3 +1952,104 @@ the new arm does not), the circular-rank refusal, the goes-quiet-on-a-lost-figur
 pin, the <2-blocks n/a, and two `--set` coercion tests. That last pair is load-bearing:
 `--set fig_vsplit=False` stored as the string `"False"` is **truthy**, so the A/B above
 would have silently compared a run against itself and reported "the metric is blind".
+
+## Column-major reading order behind a spanner — the defect `tau+figures` found (2026-08-09)
+
+The figure-order metric's first run flagged **it_geo_06-left at `+0.86`**: the
+top-right plate F26 was emitted **second** instead of last. That was filed unfixed
+because a metric commit should not change the thing it measures. Fixed here.
+
+**Cause (traced on the real post-split boxes, not assumed).** Recursive XY-Cut is
+axis-order sensitive, and `xy_cut_order` cuts horizontally first. The page is two
+columns — `F25,F27,F28` at x203..1561 and `F26,C25..C28` at x1595..2109, gutter 34px
+— but the running head ends at **y246** and F26 starts at **y253**. That 7px gap is
+under `xy_gap_frac`, so the first H-cut banded `{header, header2, F26, F25}`
+together; inside that band the full-width header spans both columns, so the V-cut
+could not fire either, and the band fell to the `_reading_rows` tie-break, which
+emitted F25 then F26. The globally-valid column gutter was **never consulted**.
+
+**Fix.** A `_column_split` pre-pass at each XY-Cut node (knob `xy_column_first`),
+consulted **before** the H-cut: find an x position splitting the node into a left
+group, a right group, and a small set of **bridges** that cross it; emit
+bridges → left → right (or left → right → bridges when the bridges sit below).
+
+### The three guards, and the fixture that put each one there
+
+The first draft carried only the bridge-fraction and gap guards. It fixed
+it_geo_06-left **and gave the +0.14 straight back on two other subpages** — the
+measurement below is why the shipped version is narrower, and each guard is pinned
+by a unit test built from that subpage's real box geometry.
+
+| guard | fixture that demanded it | what went wrong without it |
+|---|---|---|
+| `>= 1` bridge | — (blast-radius claim) | with no bridge the plain V-cut already finds the same partition, so the pre-pass would only be flipping H-first row-major into column-major on nodes with **no** spanner — a case no fixture covers |
+| each column has a **common x-core** (`min(x2) > max(x)`) | **it_geo_06-right** | geometrically a twin of the left subpage (spanning F29 over two side-by-side groups) but its GT order is **row-major**; the right-hand group is not a column — body paragraphs P1/P2 and P3 are x-disjoint. Forcing column-major moved F30 behind C30: `+1.00 → +0.87` |
+| columns y-overlap `xy_column_yov_frac` of the **longer** span | **it_geo_05-right** | against the *shorter* span, a 292px caption at the page foot (C3) posed as a column parallel to an 881px text run, and C3 lost its GT slot ahead of P1: `+1.00 → +0.87` |
+| bridges all ABOVE or all BELOW the columns | — | a spanner in the middle abstains rather than guessing where the columns restart |
+
+The x-core guard is the interesting one: it says a *column* is a set of boxes
+sharing one horizontal extent, and a group that splits into its own columns is a
+**region**, which reads row-major. That is what lets it_geo_06's two subpages —
+same page, opposite GT conventions — both come out right.
+
+### Measured: one subpage moves, nine do not
+
+`--set xy_column_first=false` reproduces the pre-fix arm. Both arms run on all five
+block-order fixtures; the **whole `--json-out` dump** is diffed, not the printed row
+(it_geo_04 and de_01 print `n/a` for `tau+figures`, so the dump is the only thing
+that would catch an order change there).
+
+| image | dump diff old vs new |
+|---|---|
+| it_geo_04 | **identical** |
+| it_geo_05 | **identical** |
+| it_geo_06 | differs — left.png only (below); right.png byte-identical |
+| it_geo_07 | **identical** |
+| de_01 | **identical** |
+
+| it_geo_06 left.png | seg recall | type acc | tau (text) | tau (native) | **tau+figures** | grouping |
+|---|---|---|---|---|---|---|
+| before | 8/8 | 4/8 | +1.00 | +1.00 | **+0.86** | 2/6 assoc, 3/6 pairs, 0 wrong |
+| after | 8/8 | 4/8 | +1.00 | +1.00 | **+1.00** | 2/6 assoc, 3/6 pairs, 0 wrong |
+
+- GT:       `F25, F27, F28, F26, C25, C26, C27, C28`
+- Stage 04: `F25, F27, F28, F26, C25, C26, C27, C28` ✓ identical
+
+Matching is by anchor tokens (text) and GT-bbox IoU (figures), **neither of which
+depends on emitted order**, so segmentation, type and every pairing number are
+required to be unchanged — and are. The only fields that moved in the dump are
+`order_all` and the block *indices* inside `matched` (same GT ids, same physical
+boxes, renumbered by the new order). Worth restating: `tau+figures` goes **quiet,
+not red**, when a figure drops out of the matched set, so seg recall being pinned
+at 8/8 is load-bearing here, not decorative.
+
+### Carried into the document, not just Stage 04
+
+The metric grades Stage 04's per-subpage `reading_order`. Assembled a **fresh** job
+`figorder_it06` (no `--force`, so the human pairing rulings in `grouping_it06` and
+`phaseb_it06` survive) and read `document.json` directly:
+
+```
+page_001__left   ro2 figure y272 (F25)  ro3 figure y1091 (F27)
+                 ro4 figure y1973 (F28) ro5 figure y253  (F26)  <- last, as GT
+page_001__right  ro2 F29, ro3 C29, ro4 F30, ro5 C30, ro6..8 P1,P2,P3  (unchanged)
+```
+
+So the Gate-4 reflow now emits the top-right plate after the cliff column in the
+actual deliverable.
+
+### Honest limits
+
+- **The above/below guard passes on it_geo_06-left by 7 pixels** (header y2=246 vs
+  F26 y=253). One fixture exercises it; that margin is not a safety margin.
+- **Three of the four guards are calibrated, not derived.** Each was added because a
+  named subpage regressed without it — 10 graded subpages total. A sixth fixture
+  could plausibly need a fifth guard, or contradict one of these.
+- **it_geo_06's two subpages carry opposite GT conventions** (left column-major,
+  right row-major) and the GT header declares only "spatial column-major". The
+  x-core rule reconciles them, but it is a *reconstruction* of the author's intent
+  from geometry, not a rule the GT states.
+- Suite **314 green** (was 310): +4 in `pipeline/tests/test_stage04_layout.py` — the
+  fix with its knob-off counterpart (so the A/B is provably real, not a run against
+  itself), the two abstain regressions above built from real box geometry, and the
+  no-bridge / mid-page-spanner declines.

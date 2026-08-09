@@ -15,8 +15,8 @@ import numpy as np
 
 from pipeline.page_model import BBox, BlockType
 from pipeline.stage04_layout import (
-    DEFAULTS, RawDet, _contain_frac, _map_abandon, _reading_rows, dets_to_blocks,
-    nms_and_dedup, split_merged_figures, xy_cut_order,
+    DEFAULTS, RawDet, _column_split, _contain_frac, _map_abandon, _reading_rows,
+    dets_to_blocks, nms_and_dedup, split_merged_figures, xy_cut_order,
 )
 
 
@@ -139,6 +139,103 @@ def test_reading_rows_bridged_column_not_inverted():
     # column (3) kills the horizontal cut, so all five blocks fall into the
     # tie-break. Figure first, then the German column top-to-bottom, then English.
     assert xy_cut_order(boxes, DEFAULTS, page_w=2057, page_h=3000) == [4, 0, 1, 2, 3]
+
+
+# --- Spanner-blocked column gutter (_column_split) -------------------------
+#
+# Real Stage-04 post-split box geometry, copied from the three subpages that
+# decided each guard (probe of the dewarped halves, docs/RESULTS.md). One of them
+# must flip to column-major and the other two must not move at all.
+
+_IT06_LEFT = ([                     # 2129x3000 — two clean columns under the head
+    _b(7, 65, 2113, 181),           # 0 running header (full width)
+    _b(665, 67, 1405, 65),          # 1 header line 2
+    _b(212, 272, 1345, 777),        # 2 F25   left column, cliff photo
+    _b(1611, 253, 498, 622),        # 3 F26   RIGHT column, top plate
+    _b(203, 1091, 1358, 835),       # 4 F27   left column
+    _b(203, 1973, 1358, 836),       # 5 F28   left column
+    _b(1608, 1267, 459, 181),       # 6 C25   right column, caption stack
+    _b(1604, 1480, 467, 631),       # 7 C26
+    _b(1605, 2139, 442, 218),       # 8 C27
+    _b(1595, 2398, 441, 429),       # 9 C28
+], 2129, 3000)
+
+_IT06_RIGHT = ([                    # 1951x3000 — a BANDED region, not two columns
+    _b(121, 84, 1254, 54),          # 0 running header
+    _b(1685, 111, 52, 31),          # 1 page number
+    _b(154, 279, 1554, 1030),       # 2 F29 (spans)
+    _b(156, 1487, 440, 720),        # 3 C29   caption column
+    _b(640, 1341, 1068, 842),       # 4 F30
+    _b(154, 2239, 439, 581),        # 5 C30   caption column
+    _b(636, 2221, 529, 252),        # 6 P1  ] these two are x-DISJOINT, so the
+    _b(638, 2475, 525, 338),        # 7 P2  ] right-hand group has no common
+    _b(1193, 2225, 519, 465),       # 8 P3  ] x-core: it is a region, not a column
+], 1951, 3000)
+
+_IT05_RIGHT = ([                    # 2028x3000 — a short caption beside a tall run
+    _b(79, 86, 1312, 61),           # 0 running header
+    _b(1735, 94, 60, 33),           # 1 page number
+    _b(609, 285, 1140, 1065),       # 2 F3
+    _b(600, 1389, 1141, 534),       # 3 P1
+    _b(87, 2520, 466, 292),         # 4 C3  (292px tall, at the page foot)
+    _b(602, 1925, 1139, 481),       # 5 P2
+    _b(609, 2410, 1135, 396),       # 6 P3
+], 2028, 3000)
+
+
+def test_column_split_recovers_order_hidden_by_a_spanner():
+    """REGRESSION (it_geo_06-left, `tau+figures` +0.86 -> +1.00). The running head
+    ends 7px above the top-right plate F26, so the H-cut banded header+F26+F25
+    together and the full-width header then blocked the V-cut inside that band:
+    F26 came out SECOND instead of last. The column gutter at x1561|1595 is
+    globally valid and must be consulted before the H-cut."""
+    boxes, w, h = _IT06_LEFT
+    assert xy_cut_order(boxes, DEFAULTS, page_w=w, page_h=h) == [
+        0, 1, 2, 4, 5, 3, 6, 7, 8, 9]          # hdrs, F25,F27,F28, F26, C25..C28
+    # ...and the knob restores the pre-fix order exactly, so the A/B is real.
+    off = dict(DEFAULTS, xy_column_first=False)
+    assert xy_cut_order(boxes, off, page_w=w, page_h=h) == [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9]          # F26 second — the defect
+
+
+def test_column_split_abstains_on_a_region_without_a_common_x_core():
+    """REGRESSION (it_geo_06-right). Geometrically this looks identical to the
+    left subpage — a spanning figure over two side-by-side groups — but its GT
+    order is row-major (F29, C29, F30, C30, ...), because the right-hand group is
+    not a column: P1/P2 and P3 are x-disjoint. Forcing column-major here traded
+    the left subpage's +0.14 straight back. The x-core guard must reject it."""
+    boxes, w, h = _IT06_RIGHT
+    order = xy_cut_order(boxes, DEFAULTS, page_w=w, page_h=h)
+    assert order == xy_cut_order(boxes, dict(DEFAULTS, xy_column_first=False),
+                                 page_w=w, page_h=h)
+    assert order == [0, 1, 2, 3, 4, 5, 6, 7, 8]      # F29, C29, F30, C30, P1,P2,P3
+
+
+def test_column_split_abstains_when_the_columns_are_not_parallel():
+    """REGRESSION (it_geo_05-right). C3 is a 292px caption at the page foot; P2/P3
+    a 881px text run beside it. Measuring the y-overlap against the SHORTER span
+    let that pass as a parallel column and pushed C3 behind P1, losing its GT
+    slot. Against the LONGER span it is correctly not a column."""
+    boxes, w, h = _IT05_RIGHT
+    order = xy_cut_order(boxes, DEFAULTS, page_w=w, page_h=h)
+    assert order == xy_cut_order(boxes, dict(DEFAULTS, xy_column_first=False),
+                                 page_w=w, page_h=h)
+    assert order == [0, 1, 2, 4, 3, 5, 6]            # F3, C3, P1, P2, P3
+
+
+def test_column_split_needs_a_bridge_and_an_unambiguous_one():
+    """The blast-radius claim: with NO box crossing the gutter the plain V-cut
+    already finds the same partition, so the pre-pass must decline and leave those
+    nodes byte-identical. And a spanner sitting BETWEEN the columns abstains
+    rather than guessing where the columns restart."""
+    no_bridge = [_b(100, 100, 300, 900), _b(600, 100, 300, 900),
+                 _b(100, 1100, 300, 400)]
+    assert _column_split([0, 1, 2], no_bridge, 20.0, DEFAULTS) is None
+    # Same columns, but the spanner is now in the middle of them, not above.
+    mid = [_b(100, 100, 300, 900), _b(600, 100, 300, 900),
+           _b(100, 1050, 800, 100), _b(100, 1200, 300, 900),
+           _b(600, 1200, 300, 900)]
+    assert _column_split([0, 1, 2, 3, 4], mid, 20.0, DEFAULTS) is None
 
 
 def test_map_abandon_by_position():

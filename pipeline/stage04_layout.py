@@ -54,7 +54,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import BBox, Block, BlockType, StageMeta
 
 STAGE = "stage04_layout"
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -68,6 +68,9 @@ DEFAULTS = {
     "nms_iou": 0.45,             # class-agnostic NMS: merge boxes overlapping >= this
     "contain_frac": 0.80,        # drop a box this-fraction-contained in a stronger one
     "xy_gap_frac": 0.012,        # min projection gap (frac of the cut dimension) = a separator
+    "xy_column_first": True,     # consult a spanner-blocked column gutter BEFORE the H-cut
+    "xy_bridge_frac": 0.25,      # max fraction of a node's boxes allowed to cross that gutter
+    "xy_column_yov_frac": 0.50,  # the two columns must y-overlap this much of the LONGER one
     # Figure separation (split under-segmented merged figure boxes at page-background
     # gutters — see split_merged_figures). Phase A: full-width horizontal seams.
     # Phase B: full-height vertical seams on each horizontal band (H-then-V), plus
@@ -475,6 +478,97 @@ def _reading_rows(items: list[int], boxes: list[BBox]) -> list[int]:
     return out
 
 
+def _x_core(group: list[int], boxes: list[BBox]) -> bool:
+    """True if every box in ``group`` shares one common horizontal extent — the
+    test for 'this is a column', as opposed to a region with internal columns."""
+    return min(boxes[i].x2 for i in group) > max(boxes[i].x for i in group)
+
+
+def _column_split(items: list[int], boxes: list[BBox], min_gap: float, p: dict
+                  ) -> list[list[int]] | None:
+    """Find a column gutter that a SPANNING box hides from the plain vertical cut.
+
+    Recursive XY-Cut is axis-order sensitive: this module cuts horizontally first
+    (peel full-width bands), so on a two-column page a horizontal valley that
+    happens to cross both columns is taken BEFORE the column gutter is ever
+    considered, and the page comes out row-major. On it_geo_06-left that emitted
+    the top-right plate F26 second instead of last (`tau+figures` +0.86): the
+    running head ends 7px above F26, so header+F26+F25 were banded together, and
+    inside that band the full-width header blocked the vertical cut.
+
+    So: before the H-cut, look for an x position that splits the node into a left
+    group, a right group, and a small set of BRIDGES that cross it. Returns
+    the groups ALREADY IN EMISSION ORDER (``[bridges, left, right]`` when the
+    bridges sit above the columns, ``[left, right, bridges]`` when below), or
+    ``None`` (no such gutter -> caller falls through to the unchanged H/V cut).
+    Guards, all of which must hold:
+
+    * ``>= 1`` bridge. With zero bridges the plain V-cut already produces this
+      partition, so the pre-pass would only be flipping H-first row-major into
+      column-major on nodes with NO spanner -- a case no fixture covers. This
+      guard is what makes the change's blast radius statable: a node whose V-cut
+      is not blocked by a spanner is byte-identical to before.
+    * ``<= xy_bridge_frac`` of the node's boxes bridge (min 1), so a genuinely
+      interleaved region does not get forced into two columns.
+    * The inter-column gap is at least ``min_gap`` (same threshold as the V-cut).
+    * The two columns y-overlap by ``xy_column_yov_frac`` of the LONGER one --
+      they must be PARALLEL columns running side by side down the page, not a
+      short block that happens to sit beside a tall one. Measured against the
+      longer span, not the shorter: on it_geo_05-right the shorter-span form let a
+      292px caption at the page foot pose as a column parallel to an 881px text
+      run, and C3 lost its GT slot ahead of P1.
+    * Each column has a COMMON X-CORE -- ``min(x2) > max(x)`` over its members, so
+      every box in it shares one horizontal extent. This is what separates a real
+      column from a banded REGION that has its own internal columns, and it is the
+      guard that keeps it_geo_06-right (whose right-hand group holds the x-disjoint
+      body paragraphs P1|P3) reading row-major as its GT demands, while
+      it_geo_06-left (two clean columns) goes column-major as its GT demands.
+    * Every bridge lies entirely ABOVE (or entirely BELOW) every column box, so
+      its place in reading order is unambiguous. A spanner in the MIDDLE of the
+      columns abstains to the existing behaviour rather than guessing where the
+      columns restart.
+
+    HONEST LIMIT: the last three guards were each derived from a fixture that
+    regressed without them (it_geo_05-right, it_geo_06-right, it_geo_06-right
+    again), so they are calibrated on 10 graded subpages, not proven general.
+    """
+    if len(items) < 3:
+        return None
+    n_max_bridge = max(1, int(round(p["xy_bridge_frac"] * len(items))))
+    cuts = sorted({boxes[i].x for i in items} | {boxes[i].x2 for i in items})
+    best_key: tuple[int, float] | None = None
+    best: list[list[int]] | None = None
+    for cut in cuts:
+        left = [i for i in items if boxes[i].x2 <= cut]
+        right = [i for i in items if boxes[i].x >= cut]
+        bridges = [i for i in items if i not in left and i not in right]
+        if not left or not right or not bridges or len(bridges) > n_max_bridge:
+            continue
+        gap = min(boxes[i].x for i in right) - max(boxes[i].x2 for i in left)
+        if gap < min_gap:
+            continue
+        if not (_x_core(left, boxes) and _x_core(right, boxes)):
+            continue
+        ly0, ly1 = min(boxes[i].y for i in left), max(boxes[i].y2 for i in left)
+        ry0, ry1 = min(boxes[i].y for i in right), max(boxes[i].y2 for i in right)
+        yov = min(ly1, ry1) - max(ly0, ry0)
+        if yov < p["xy_column_yov_frac"] * max(ly1 - ly0, ry1 - ry0):
+            continue
+        by1 = max(boxes[i].y2 for i in bridges)
+        by0 = min(boxes[i].y for i in bridges)
+        above = by1 <= min(ly0, ry0)
+        below = by0 >= max(ly1, ry1)
+        if not (above or below):
+            continue
+        # Deterministic pick: fewest bridges, then the widest gutter.
+        key = (len(bridges), -gap)
+        if best_key is None or key < best_key:
+            best_key = key
+            best = ([bridges, left, right] if above
+                    else [left, right, bridges])
+    return best
+
+
 def xy_cut_order(boxes: list[BBox], p: dict, page_w: int, page_h: int
                  ) -> list[int]:
     """Recursive XY-Cut reading order over block boxes; returns box indices in
@@ -486,6 +580,14 @@ def xy_cut_order(boxes: list[BBox], p: dict, page_w: int, page_h: int
     no internal horizontal gap by construction, recursion self-alternates H/V.
     When neither axis has a clean separator (overlapping boxes) we sort the
     remainder by (top, left) — a stable, sensible fallback.
+
+    H-first is axis-order sensitive, though: a horizontal valley that crosses both
+    columns of a two-column page is taken before the column gutter is considered,
+    and the page reads row-major. So each node first consults ``_column_split``
+    (``xy_column_first``), which recovers a column gutter that a SPANNING box —
+    typically the running head — hides from the plain V-cut. It fires only when a
+    bridge exists (without one the V-cut already finds the same partition, so
+    nothing changes) and abstains otherwise.
     """
     h_gap = p["xy_gap_frac"] * page_h
     v_gap = p["xy_gap_frac"] * page_w
@@ -493,11 +595,19 @@ def xy_cut_order(boxes: list[BBox], p: dict, page_w: int, page_h: int
     def rec(items: list[int]) -> list[int]:
         if len(items) <= 1:
             return list(items)
+        # Spanner-blocked column gutter (see _column_split) -> column-major.
+        if p.get("xy_column_first", True):
+            groups = _column_split(items, boxes, v_gap, p)
+            if groups is not None:
+                out: list[int] = []
+                for g in groups:                # already in emission order
+                    out += rec(g)
+                return out
         # Horizontal cut: gaps in Y -> stacked bands.
         yiv = [(boxes[i].y, boxes[i].y2) for i in items]
         hgroups = _separators(yiv, h_gap)
         if len(hgroups) > 1:
-            out: list[int] = []
+            out = []
             for g in hgroups:                       # already top->bottom
                 out += rec([items[k] for k in g])
             return out
@@ -892,6 +1002,17 @@ def run(page_dir: Path, cfg: dict, method: str = "auto", debug: bool = False
             "background columns, and an unguarded V-cut sliced it_geo_05-left's "
             "full-page map in two (IoU 1.000 -> 0.702). See "
             "docs/FIGURE_SEPARATION_SCOPE.md.",
+            "v0.4 (column-major order): each XY-Cut node now consults "
+            "_column_split (xy_column_first) BEFORE the H-cut, recovering a column "
+            "gutter that a SPANNING box hides from the plain V-cut — on "
+            "it_geo_06-left the running head ended 7px above the top-right plate, "
+            "so H banded them together and the full-width head then blocked V "
+            "(tau+figures +0.86 -> +1.00; nine other graded subpages byte-"
+            "identical). It fires only for a bridged gutter whose two sides each "
+            "have a common x-core and run parallel down the page; a group without "
+            "an x-core is a banded REGION and keeps reading row-major. Three of "
+            "the four guards are calibrated on 10 subpages, not proven general — "
+            "see docs/RESULTS.md.",
         ],
     )
     (out_dir / "meta.json").write_text(

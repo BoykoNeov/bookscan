@@ -11,26 +11,48 @@ WHY A SEPARATE MODULE (cv2 here, not in caption_parser):
   call, so it lives here; ``caption_parser.figure_number`` stays the pure text
   gate and ``pair_by_number`` stays pure.
 
-MEASURED CAPABILITY (it_geo_06, N=1 — six figures, one page). Updated 2026-08-09;
-the original 2026-07-03 reading of "textured photos are hopeless" was WRONG about
-its own cause, which is worth recording because the wrong diagnosis is the
+MEASURED CAPABILITY (it_geo_06, N=1 — six figures, one page). Updated 2026-08-10.
+This module's history is three rounds of the SAME mistake — diagnosing a failure
+from the localizer's *output* instead of its internals — so each correction is
+recorded with what the wrong reading was, because the wrong reading is always the
 plausible one:
-- **4/6 numbers recovered, 0 wrong** (F25, F26, F27, F29). Was 2/6.
-- The two that had been written off as "texture swamps the glyph" were nothing of
-  the kind. **F27's label was localized correctly all along** — the green box in
-  the debug overlay sits exactly on the "27" — and it was the OCR *input* that
-  failed: the painted-CC mask fused the two digits into one blob. Re-cropping the
-  same localization from the original pixels reads "27" on 4/4 PSMs. **F29 was a
-  filter rejection**: its 50px-tall digits fell under a 62px floor that the
-  figure-relative glyph band happened to put there because F29 is a TALL figure.
-- Still ``None``, and correctly so: **F28** (digits merge with bright rock
-  speckle; best read is a 1-vote "38", which the acceptance rule rejects) and
-  **F30** (light-grey digits on light rubble — the white top-hat mask there is
-  pure noise, so no localization is possible). These two are the genuine
-  "needs a real text detector (EAST/MSER/CNN)" cases; the other two were not.
+- **5/6 numbers recovered, 0 wrong** (F25, F26, F27, F28, F29). Was 2/6, then 4/6.
+- Round 1 (2026-07-03) called textured photos hopeless. Round 2 (2026-08-09)
+  disproved that for **F27** (localized correctly all along; the painted-CC mask
+  fused its two digits, and re-cropping from the original pixels reads "27" on
+  4/4 PSMs) and **F29** (a filter rejection — 50px digits under a 62px floor the
+  figure-relative band put there because F29 is a TALL figure; hence ``page_h``).
+- Round 2 then wrote off F28 and F30 as needing "a real text detector
+  (EAST/MSER/CNN)". **Both halves of that were wrong**, and differently:
+  * **F28** was never a texture problem. The top-hat mask's CLOSE welded a
+    speckle onto the digits, so one CC spanned 44x37 where the label is 38x27.
+    Since the padding AND the OCR upscale both scale by ``glyph_h``, that
+    inflated height mis-framed and under-zoomed the crop. Re-measuring the box
+    with a local Otsu (``_refine_box``) gives 39x29, and from there a re-crop
+    sweep reads "28" 78 times against a runner-up of 4. It is now recovered.
+  * **F30** IS localizable — MSER lands on it (IoU 0.45), and the earlier note's
+    "no localization is possible at all" came from inspecting a zoom that was
+    mid-figure rubble rather than the corner. What F30 actually is, is a
+    **recognizer ceiling**: given a HAND-MEASURED perfect box, a 432-read
+    Tesseract knob sweep never once produces "30" (10 digit reads total, no
+    2-digit read at all), and EasyOCR returns nothing on 4/4 framings. Do not
+    re-attempt F30 with a better detector — the detector was never the problem.
 - Net effect on grouping: ``pair_by_number`` recovers C25->F25, C26->F26 (the
-  trap), C27->F27 and C29->F29 — 4/6 GT pairs, **0 wrong**, and every one of them
-  now comes from the printed number rather than the geometry arm.
+  trap), C27->F27, C28->F28 and C29->F29 — 5/6 GT pairs, **0 wrong**, and every
+  one of them comes from the printed number rather than the geometry arm. C30
+  abstains correctly (its number is printed on a subpage that numbers its
+  figures, so geometry is suppressed rather than allowed to overrule).
+
+THE SECOND RECOGNIZER, AND WHY IT DOES NOT BREACH THE TESSERACT-BACKBONE RULE.
+Recovering F28 needs a relaxed acceptance rule, and a relaxed rule needs a second
+opinion to stay safe — so ``second_opinion=True`` brings EasyOCR in. CLAUDE.md
+forbids a non-Tesseract engine being the SOLE TEXT SOURCE or the CONFIDENCE
+SOURCE; neither applies here. A corner label is never rendered into the document
+and never reaches Stage 06's thresholds — it is a grouping KEY, used only to
+decide which caption floats with which photo. EasyOCR is already a sanctioned
+second opinion in this repo (Stage 05, Cyrillic). The dependency is optional and
+non-fatal: with no EasyOCR installed, no GPU, or a model that fails to load, this
+module degrades to exactly its previous behaviour — a miss, never a fabrication.
 
 CONSERVATISM IS THE INVARIANT: ``pair_by_number`` attributes by NUMBER, so a
 single wrong read on a mispairing-trap fixture is worse than a miss. We accept a
@@ -104,8 +126,51 @@ DEFAULTS = {
     # re-crop, while it_geo_07's ink-on-page-background diagrams — which print no
     # label at all — cover 0.82..0.86, because there the bright side IS the page.
     # That inversion is what let a brick-hatching pattern read as "7".
+    #
+    # SCOPE, measured 2026-08-10 — this clean separation is a property of the
+    # STRICT arm's single top-hat-derived re-crop and does NOT carry to the sweep
+    # below. Over the refined boxes and 36 sweep variants, the real labels cover
+    # 0.03..0.41 while it_geo_04/05's label-free figures cover 0.00..0.34 — fully
+    # inside the label range, so the guard kills 0/36 variants there (it still
+    # kills 18/36 on it_geo_07, whose ground really is the pale page). The guard
+    # is therefore NOT what keeps the second-opinion arm honest on those fixtures;
+    # two-recognizer agreement is. Do not treat 0.55 as a fabrication defense for
+    # the relaxed path, and do not "tighten" it to try to make it one — it would
+    # start cutting real labels first.
     "max_glyph_cover": 0.55,
+    # ---- SECOND-OPINION ARM (below) ----------------------------------------
+    # Box refinement. The coarse mask can fuse a neighbouring speckle into a digit
+    # CC — it_geo_06 F28's 27px digits are reported as one 37px blob — and since
+    # BOTH the padding and the OCR upscale key off glyph_h, an inflated height
+    # mis-frames and under-zooms the crop. A local Otsu inside a slightly larger
+    # neighbourhood separates them: F28 refines to 39x29 against a hand-measured
+    # 38x27. The keep-band is deliberately generous (0.35..1.6 of the coarse
+    # glyph_h) — it is re-MEASURING a box we already believe in, not re-finding it.
+    "refine_pad_frac": 0.60,
+    "refine_h_min_frac": 0.35,
+    "refine_h_max_frac": 1.60,
+    "refine_baseline_frac": 0.75,   # |CC centre - box centre| in y, frac of glyph_h
+    "refine_span_frac": 1.60,       # ... and in x, frac of max(box_w, glyph_h)
+    # Despeckle before OCR: drop components too short to be a glyph, as a fraction
+    # of the target glyph size. THE decisive knob on F28 — every one of the 48
+    # sweep combinations that read "28" has it on, because the rock speckle around
+    # the digits is what Tesseract was otherwise reading as a third glyph.
+    "sweep_despeckle_frac": 0.25,
+    # A wrong number is worse than a miss, so the relaxed arm demands a landslide,
+    # not a majority: >= min votes AND >= this multiple of the runner-up.
+    "sweep_min_votes": 2,
+    "sweep_dominance": 2.0,
+    # Second-opinion recognizer (EasyOCR) agreement requirement.
+    "second_min_agree": 3,          # of the 4 crop variants it is shown
+    "second_min_conf": 0.80,
 }
+
+# The relaxed arm's re-crop sweep: (pad_frac, target_glyph_px, blur_k, adaptive_k).
+# One fragile re-crop is what made F28 unreadable; the point of a sweep is that no
+# single framing/binarization choice is load-bearing. Measured on F28's refined
+# box: "28" x78 against a runner-up x4.
+_SWEEP = tuple((pf, t, b, a) for pf in (0.25, 0.45) for t in (80, 110, 160)
+               for b in (0, 3, 5) for a in (0, 31))
 
 _PSMS = (7, 8, 10, 13)          # single line / word / char / raw line
 
@@ -269,9 +334,187 @@ def _isolate_label(fig_bgr: np.ndarray, p: dict, page_h: int | None = None):
     return _extract_for_ocr(fig_bgr, box, p)
 
 
+# ---------------------------------------------------------------------------
+# THE SECOND-OPINION ARM. Everything below runs ONLY when the strict arm above
+# returned None, and it can only ever turn a miss into a number — it never
+# revisits, and so never changes, a number the strict arm already accepted.
+# That is why adding it cannot regress the four labels that already worked.
+# ---------------------------------------------------------------------------
+
+def _refine_box(fig_bgr: np.ndarray, box, p: dict):
+    """Re-measure a located label box from the ORIGINAL pixels with a local Otsu.
+
+    The coarse box comes from a white top-hat sized to *find* blobs across a whole
+    corner region; where the ground is busy it can weld a neighbouring speckle onto
+    a digit. Re-thresholding a small neighbourhood of the box alone separates them,
+    because there the label and its immediate surround are the only two populations.
+
+    Returns a box in the same 5-tuple form, or the input unchanged if the refined
+    view finds nothing plausible (never a wilder box than it was given).
+    """
+    bx, by, bw_, bh_, glyph_h = box
+    h, w = fig_bgr.shape[:2]
+    pad = p["refine_pad_frac"] * glyph_h
+    x0, y0 = int(max(0, bx - pad)), int(max(0, by - pad))
+    x1, y1 = int(min(w, bx + bw_ + pad)), int(min(h, by + bh_ + pad))
+    crop = fig_bgr[y0:y1, x0:x1]
+    if crop.size == 0 or crop.shape[0] < 3 or crop.shape[1] < 3:
+        return box
+    gray = cv2.GaussianBlur(cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY), (3, 3), 0)
+    _, th = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    n, _lbl, stats, _ = cv2.connectedComponentsWithStats(th, 8)
+    cx, cy = (bx + bw_ / 2) - x0, (by + bh_ / 2) - y0
+    keep = []
+    for i in range(1, n):
+        x, y, cw, ch, area = stats[i]
+        if not (p["refine_h_min_frac"] * glyph_h <= ch <= p["refine_h_max_frac"] * glyph_h):
+            continue
+        if not (p["glyph_ar_min"] <= cw / ch <= p["glyph_ar_max"]):
+            continue
+        if area / (cw * ch) < p["glyph_fill_min"]:
+            continue
+        if abs((y + ch / 2) - cy) > p["refine_baseline_frac"] * glyph_h:
+            continue
+        if abs((x + cw / 2) - cx) > p["refine_span_frac"] * max(bw_, glyph_h):
+            continue
+        keep.append((x, y, cw, ch))
+    if not keep:
+        return box
+    gx = min(k[0] for k in keep)
+    gy = min(k[1] for k in keep)
+    gx2 = max(k[0] + k[2] for k in keep)
+    gy2 = max(k[1] + k[3] for k in keep)
+    return (x0 + gx, y0 + gy, gx2 - gx, gy2 - gy,
+            float(np.median([k[3] for k in keep])))
+
+
+def _sweep_variant(fig_bgr: np.ndarray, box, p: dict,
+                   pad_frac: float, target: int, blur: int, adaptive: int):
+    """One (framing, binarization) hypothesis for the relaxed arm's OCR input.
+
+    Same shape as ``_extract_for_ocr`` — including its polarity guard, which is the
+    fabrication defense and is NOT relaxed here — plus a despeckle pass and the
+    option of a local threshold. Returns ``None`` when the guard fires.
+    """
+    bx, by, bw_, bh_, glyph_h = box
+    h, w = fig_bgr.shape[:2]
+    pad = pad_frac * glyph_h
+    x0, y0 = int(max(0, bx - pad)), int(max(0, by - pad))
+    x1, y1 = int(min(w, bx + bw_ + pad)), int(min(h, by + bh_ + pad))
+    crop = fig_bgr[y0:y1, x0:x1]
+    if crop.size == 0 or crop.shape[0] < 3 or crop.shape[1] < 3:
+        return None
+    s = target / max(1.0, glyph_h)
+    big = cv2.resize(crop, None, fx=s, fy=s, interpolation=cv2.INTER_CUBIC)
+    gray = cv2.cvtColor(big, cv2.COLOR_BGR2GRAY)
+    if blur:
+        gray = cv2.GaussianBlur(gray, (blur, blur), 0)
+    if adaptive:
+        th = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                   cv2.THRESH_BINARY, adaptive | 1, -8)
+    else:
+        _, th = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    if th.size and float((th > 0).sum()) / th.size > p["max_glyph_cover"]:
+        return None
+    n, lbl, stats, _ = cv2.connectedComponentsWithStats(th, 8)
+    kept = np.zeros_like(th)
+    for i in range(1, n):
+        if stats[i, cv2.CC_STAT_HEIGHT] >= p["sweep_despeckle_frac"] * target:
+            kept[lbl == i] = 255
+    return cv2.copyMakeBorder(cv2.bitwise_not(kept), 30, 30, 30, 30,
+                              cv2.BORDER_CONSTANT, value=255)
+
+
+def _tess_plurality(fig_bgr: np.ndarray, box, tess_bin: str, p: dict) -> int | None:
+    """Pool 2-digit reads over the whole re-crop sweep; accept only a landslide.
+
+    The strict arm asks for a SOLE 2-digit reading, which one bad framing can veto.
+    Here no single framing is load-bearing: we pool every hypothesis and require the
+    winner to clear both an absolute vote floor and a multiple of the runner-up.
+    """
+    votes: Counter[str] = Counter()
+    for pad_frac, target, blur, adaptive in _SWEEP:
+        img = _sweep_variant(fig_bgr, box, p, pad_frac, target, blur, adaptive)
+        if img is None:
+            continue
+        for psm in _PSMS:
+            o = _ocr_digits(img, tess_bin, psm)
+            if o.isdigit() and len(o) == 2 and p["num_min"] <= int(o) <= p["num_max"]:
+                votes[o] += 1
+    if not votes:
+        return None
+    val, cnt = votes.most_common(1)[0]
+    runner = max((c for v, c in votes.items() if v != val), default=0)
+    if cnt >= p["sweep_min_votes"] and cnt >= p["sweep_dominance"] * max(1, runner):
+        return int(val)
+    return None
+
+
+_READER = None
+_READER_FAILED = False
+
+
+def _easyocr_reader():
+    """Lazily build the second-opinion recognizer; ``None`` if unavailable.
+
+    OPTIONAL AND NON-FATAL BY DESIGN. Without it this module falls back to exactly
+    its previous behaviour (a miss, never a fabrication), so no caller acquires a
+    hard dependency on a GPU, a model download, or the package being installed.
+    """
+    global _READER, _READER_FAILED
+    if _READER is None and not _READER_FAILED:
+        try:
+            import easyocr
+            _READER = easyocr.Reader(["en"], gpu=True, verbose=False)
+        except Exception:
+            _READER_FAILED = True
+    return _READER
+
+
+def _second_opinion(fig_bgr: np.ndarray, box, p: dict) -> int | None:
+    """Read the label with the second recognizer over several crop framings.
+
+    Shown the raw (un-binarized) pixels, because its strength is precisely the case
+    that defeats a threshold: digits touching, or sitting on a busy ground.
+    Requires one value, on most framings, at high confidence.
+    """
+    reader = _easyocr_reader()
+    if reader is None:
+        return None
+    bx, by, bw_, bh_, glyph_h = box
+    h, w = fig_bgr.shape[:2]
+    reads: list[tuple[str, float]] = []
+    for pad_frac in (0.5, 1.0):
+        pad = int(pad_frac * glyph_h)
+        x0, y0 = int(max(0, bx - pad)), int(max(0, by - pad))
+        x1, y1 = int(min(w, bx + bw_ + pad)), int(min(h, by + bh_ + pad))
+        crop = fig_bgr[y0:y1, x0:x1]
+        if crop.size == 0 or crop.shape[0] < 3 or crop.shape[1] < 3:
+            continue
+        for s in (4, 8):
+            big = cv2.resize(crop, None, fx=s, fy=s, interpolation=cv2.INTER_CUBIC)
+            try:
+                found = reader.readtext(big, allowlist="0123456789")
+            except Exception:
+                return None
+            for _bx, txt, conf in found:
+                if txt.isdigit() and len(txt) == 2 and \
+                        p["num_min"] <= int(txt) <= p["num_max"]:
+                    reads.append((txt, float(conf)))
+    if not reads:
+        return None
+    tally = Counter(t for t, _ in reads)
+    val, cnt = tally.most_common(1)[0]
+    if len(tally) > 1 or cnt < p["second_min_agree"]:
+        return None                    # any competing value at all is doubt
+    mean_conf = float(np.mean([c for t, c in reads if t == val]))
+    return int(val) if mean_conf >= p["second_min_conf"] else None
+
+
 def read_corner_label(fig_bgr: np.ndarray, tess_bin: str,
                       p: dict | None = None,
-                      page_h: int | None = None) -> int | None:
+                      page_h: int | None = None,
+                      second_opinion: bool = False) -> int | None:
     """Recover a figure's printed corner-label number from its crop.
 
     ``fig_bgr``: the figure box cropped from the full-res dewarped subpage (BGR).
@@ -285,12 +528,39 @@ def read_corner_label(fig_bgr: np.ndarray, tess_bin: str,
     the bottom-right AND at least ``min_psm_agree`` of the PSM modes agree on it;
     otherwise ``None``. Never raises on unreadable input — a miss is ``None``, not
     an exception, and never a fabricated number (the "0 wrong" invariant).
+
+    ``second_opinion``: when True, a label the strict rule above rejects gets a
+    second look — the box is re-measured and TWO independent recognizers must agree
+    (see the module docstring). Opt-in, because it costs a recognizer load and a
+    ~144-call Tesseract sweep, and it fires only on figures that would otherwise be
+    a miss. It can only turn ``None`` into a number; a number already accepted
+    above is returned before this ever runs.
     """
     if fig_bgr is None or fig_bgr.size == 0:
         return None
     pp = dict(DEFAULTS)
     if p:
         pp.update({k: v for k, v in p.items() if k in DEFAULTS})
+    strict = _read_strict(fig_bgr, tess_bin, pp, page_h)
+    if strict is not None or not second_opinion:
+        return strict
+    box = _locate_label(fig_bgr, pp, page_h)
+    if box is None:
+        return None
+    box = _refine_box(fig_bgr, box, pp)
+    tess = _tess_plurality(fig_bgr, box, tess_bin, pp)
+    if tess is None:
+        return None
+    # Both recognizers, or nothing. This is not ceremony: on it_geo_06's F30 the
+    # sweep above returns a confident, wholly fabricated "88" (6 votes, no runner-up)
+    # off bright rubble, and the only thing that stops it becoming a caption pairing
+    # is the second recognizer declining to see a number there at all.
+    return tess if _second_opinion(fig_bgr, box, pp) == tess else None
+
+
+def _read_strict(fig_bgr: np.ndarray, tess_bin: str, pp: dict,
+                 page_h: int | None) -> int | None:
+    """The original, unchanged acceptance path — see ``read_corner_label``."""
     clean = _isolate_label(fig_bgr, pp, page_h)
     if clean is None:
         return None

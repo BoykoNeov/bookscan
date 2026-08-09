@@ -199,3 +199,192 @@ def test_extract_accepts_light_glyph_on_dark_ground():
     assert out is not None and out.ndim == 2
     # Tesseract wants dark glyphs on white: the majority of the image is white.
     assert (out > 127).mean() > 0.5
+
+
+# --------------------------------------------------------------------------
+# THE SECOND-OPINION ARM (it_geo_06 F28). Two properties carry the design:
+#   * it is PURELY ADDITIVE — it runs only after the strict rule returned None,
+#     so no number the strict arm accepts can be changed by it;
+#   * acceptance needs TWO independent recognizers. That is not ceremony: on
+#     it_geo_06's F30 the Tesseract sweep returns a confident, wholly fabricated
+#     "88" (6 votes, no runner-up) off bright rubble, and the ONLY thing that
+#     stops it becoming a caption pairing is the second recognizer declining to
+#     see a number there. The polarity guard does NOT cover this arm — measured,
+#     the bright-side cover of it_geo_04/05's label-free figures (0.00..0.34)
+#     sits entirely inside the real labels' range (0.03..0.41), so the guard
+#     kills 0/36 sweep variants there. Agreement is the fabrication defense here.
+# --------------------------------------------------------------------------
+
+def _boom(*a, **k):
+    raise AssertionError("this code path must not run")
+
+
+def _arm2(monkeypatch, tess_plurality, second_opinion, strict=None):
+    """Drive ONLY the second arm: strict returns ``strict``, then replay both
+    recognizers' verdicts."""
+    monkeypatch.setattr(FL, "_read_strict", lambda f, tb, pp, ph: strict)
+    monkeypatch.setattr(FL, "_locate_label",
+                        lambda f, p, ph=None: (10.0, 10.0, 20.0, 15.0, 15.0))
+    monkeypatch.setattr(FL, "_refine_box", lambda f, b, p: b)
+    monkeypatch.setattr(FL, "_tess_plurality", lambda f, b, tb, p: tess_plurality)
+    monkeypatch.setattr(FL, "_second_opinion", lambda f, b, p: second_opinion)
+    fig = np.zeros((100, 100, 3), np.uint8)
+    return FL.read_corner_label(fig, "tesseract-not-used", second_opinion=True)
+
+
+def test_second_arm_accepts_when_both_recognizers_agree(monkeypatch):
+    # The real F28 outcome: sweep plurality 28 (x78 vs x4), EasyOCR 28 on 4/4.
+    assert _arm2(monkeypatch, 28, 28) == 28
+
+
+def test_second_arm_rejects_a_lone_confident_tesseract_read(monkeypatch):
+    # THE F30 case, and the reason the arm needs two recognizers at all.
+    assert _arm2(monkeypatch, 88, None) is None
+
+
+def test_second_arm_rejects_when_recognizers_disagree(monkeypatch):
+    assert _arm2(monkeypatch, 28, 26) is None
+
+
+def test_second_arm_rejects_a_lone_second_opinion(monkeypatch):
+    # Symmetry: the second recognizer cannot carry a number on its own either.
+    assert _arm2(monkeypatch, None, 28) is None
+
+
+def test_second_arm_never_revisits_an_accepted_number(monkeypatch):
+    # Purely additive: with a strict read in hand the arm must not even run, so
+    # a recognizer that would disagree cannot change the answer.
+    monkeypatch.setattr(FL, "_read_strict", lambda f, tb, pp, ph: 25)
+    monkeypatch.setattr(FL, "_tess_plurality", _boom)
+    fig = np.zeros((100, 100, 3), np.uint8)
+    assert FL.read_corner_label(fig, "x", second_opinion=True) == 25
+
+
+def test_second_arm_is_opt_in(monkeypatch):
+    # Default OFF: callers keep the cheap path and the old behaviour exactly.
+    monkeypatch.setattr(FL, "_read_strict", lambda f, tb, pp, ph: None)
+    monkeypatch.setattr(FL, "_tess_plurality", _boom)
+    fig = np.zeros((100, 100, 3), np.uint8)
+    assert FL.read_corner_label(fig, "x") is None
+
+
+def test_second_arm_needs_a_localization(monkeypatch):
+    monkeypatch.setattr(FL, "_read_strict", lambda f, tb, pp, ph: None)
+    monkeypatch.setattr(FL, "_locate_label", lambda f, p, ph=None: None)
+    monkeypatch.setattr(FL, "_tess_plurality", _boom)
+    fig = np.zeros((100, 100, 3), np.uint8)
+    assert FL.read_corner_label(fig, "x", second_opinion=True) is None
+
+
+# ---- the sweep plurality rule ---------------------------------------------
+
+def _plurality(monkeypatch, reads):
+    """Replay ``reads`` (one string per (variant, psm) call) through the sweep."""
+    it = iter(reads)
+    monkeypatch.setattr(FL, "_sweep_variant",
+                        lambda f, b, p, pf, t, bl, a: np.zeros((10, 10), np.uint8))
+    monkeypatch.setattr(FL, "_ocr_digits", lambda img, tb, psm: next(it, ""))
+    fig = np.zeros((100, 100, 3), np.uint8)
+    return FL._tess_plurality(fig, (0, 0, 1, 1, 10.0), "x", dict(FL.DEFAULTS))
+
+
+def test_plurality_accepts_a_landslide(monkeypatch):
+    assert _plurality(monkeypatch, ["28"] * 10 + ["38"] * 2) == 28
+
+
+def test_plurality_rejects_a_bare_majority(monkeypatch):
+    # 3 vs 2 clears the vote floor but not the 2.0x dominance — the F28 failure
+    # mode was a runner-up ("38") that a plain majority rule would have let past.
+    assert _plurality(monkeypatch, ["28"] * 3 + ["38"] * 2) is None
+
+
+def test_plurality_rejects_a_four_way_tie(monkeypatch):
+    # The real pre-despeckle F28 tally: {'32':2,'22':2,'33':2,'93':2}.
+    assert _plurality(monkeypatch, ["32", "22", "33", "93"] * 2) is None
+
+
+def test_plurality_rejects_a_single_vote(monkeypatch):
+    assert _plurality(monkeypatch, ["28"]) is None
+
+
+def test_plurality_ignores_single_digits_and_out_of_range(monkeypatch):
+    # The relaxed arm is 2-digit only: a 1-digit truncation cannot carry it, and
+    # 3-digit texture noise is out of range.
+    assert _plurality(monkeypatch, ["2"] * 8 + ["999"] * 8) is None
+
+
+def test_plurality_none_when_the_guard_kills_every_variant(monkeypatch):
+    monkeypatch.setattr(FL, "_sweep_variant", lambda f, b, p, pf, t, bl, a: None)
+    monkeypatch.setattr(FL, "_ocr_digits", _boom)
+    fig = np.zeros((100, 100, 3), np.uint8)
+    assert FL._tess_plurality(fig, (0, 0, 1, 1, 10.0), "x", dict(FL.DEFAULTS)) is None
+
+
+# ---- the second recognizer -------------------------------------------------
+
+class _FakeReader:
+    def __init__(self, results):
+        self._results = results
+
+    def readtext(self, img, allowlist=None):
+        return [(None, t, c) for t, c in self._results]
+
+
+def _second(monkeypatch, results, reader=True):
+    monkeypatch.setattr(FL, "_easyocr_reader",
+                        lambda: _FakeReader(results) if reader else None)
+    fig = np.zeros((200, 200, 3), np.uint8)
+    return FL._second_opinion(fig, (50.0, 50.0, 30.0, 20.0, 20.0), dict(FL.DEFAULTS))
+
+
+def test_second_opinion_accepts_a_confident_unanimous_read(monkeypatch):
+    assert _second(monkeypatch, [("28", 1.0)]) == 28       # 4 framings -> 4 reads
+
+
+def test_second_opinion_rejects_any_competing_value(monkeypatch):
+    # The real it_geo_07 D2 tally ('43','73','72'): more than one value is doubt.
+    assert _second(monkeypatch, [("43", 1.0), ("73", 1.0)]) is None
+
+
+def test_second_opinion_rejects_low_confidence(monkeypatch):
+    assert _second(monkeypatch, [("28", 0.4)]) is None
+
+
+def test_second_opinion_none_when_recognizer_unavailable(monkeypatch):
+    # Optional and non-fatal: no EasyOCR -> the module degrades to its old
+    # behaviour (a miss), it does not raise and does not guess.
+    assert _second(monkeypatch, [], reader=False) is None
+
+
+def test_second_opinion_survives_a_recognizer_that_raises(monkeypatch):
+    class Boom:
+        def readtext(self, img, allowlist=None):
+            raise RuntimeError("model exploded")
+    monkeypatch.setattr(FL, "_easyocr_reader", lambda: Boom())
+    fig = np.zeros((200, 200, 3), np.uint8)
+    assert FL._second_opinion(fig, (50.0, 50.0, 30.0, 20.0, 20.0),
+                              dict(FL.DEFAULTS)) is None
+
+
+# ---- box refinement --------------------------------------------------------
+
+def test_refine_strips_a_speckle_fused_onto_the_glyph():
+    # THE F28 defect, synthetic: a bright mark plus a separate speckle above it,
+    # handed to the refiner as ONE tall box (which is what the top-hat mask's
+    # CLOSE produces on rock texture). The refined box must measure the glyph,
+    # not the union — everything downstream scales by glyph_h.
+    fig = np.full((300, 300, 3), 20, np.uint8)
+    fig[200:227, 210:248] = 240                      # the "28": 27px tall
+    fig[186:192, 206:212] = 240                      # a speckle 8px above it
+    coarse = (206.0, 186.0, 42.0, 41.0, 41.0)        # fused: 41px "glyph"
+    x, y, w, h, glyph_h = FL._refine_box(fig, coarse, dict(FL.DEFAULTS))
+    assert 24 <= glyph_h <= 30, glyph_h              # measures the digits
+    assert y >= 198 and h <= 32                      # speckle excluded
+
+
+def test_refine_returns_its_input_when_nothing_plausible_is_found():
+    # It re-MEASURES a box we already believe in; on featureless input it must
+    # hand back what it was given rather than invent a wilder one.
+    flat = np.full((300, 300, 3), 128, np.uint8)
+    box = (100.0, 100.0, 30.0, 20.0, 20.0)
+    assert FL._refine_box(flat, box, dict(FL.DEFAULTS)) == box

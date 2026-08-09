@@ -187,15 +187,48 @@ A polarity guard (`max_glyph_cover`) was forced by measurement: the re-crop alon
 fabricated a "7" from a cross-section's brick hatching on it_geo_07, whose diagrams
 are ink on pale page background — the inverse of this module's premise.
 
+**#2 EXTENDED 2026-08-10 — 4/6 → 5/6 numbers, pairs 4/6 → 5/6, still 0 wrong.**
+And the paragraph immediately above is wrong twice over, in the same way it was
+itself correcting: *"F28 and F30 are the genuine needs-a-real-text-detector cases"*
+survived one round of scrutiny and did not survive a second. Neither is a detector
+case, and they are not the same kind of failure at all.
+
+- **F28 was a localization arithmetic bug, not texture.** The top-hat mask's CLOSE
+  welded a speckle onto the digits: one CC spanning `44x37` where the label is
+  `38x27`. Both the crop padding and the OCR upscale scale by `glyph_h`, so a 37px
+  "glyph" mis-frames and under-zooms the very pixels being read — which is how a
+  clean, human-legible "28" came out as "38". Re-measuring the box with a local
+  Otsu gives `39x29`; from there a re-crop sweep reads "28" **78 times against a
+  runner-up of 4**. Recovered, so **C28→F28 now pairs**.
+- **F30 is a RECOGNIZER CEILING — close this lead, do not re-open it.** The old
+  claim that "no localization is possible at all" was read off a debug zoom that
+  showed mid-figure rubble rather than the corner; MSER localizes the label fine
+  (IoU 0.45). But given a **hand-measured perfect box**, a 432-read Tesseract knob
+  sweep produces **no `30` even once** (10 digit reads total, not one of them
+  2-digit), and EasyOCR returns nothing on 4/4 framings. A better *detector*
+  cannot help something no *recognizer* can read. §9's C30→F30 route via
+  corner-label OCR is therefore **closed as unreachable**, not open.
+
+The relaxed acceptance this needs is kept safe by requiring **two independent
+recognizers to agree**, which is load-bearing rather than decorative: on F30 the
+Tesseract sweep returns a confident, wholly fabricated `88` (6 votes, no
+runner-up) off bright rubble, and the second recognizer's abstention is the only
+thing standing between that and a wrong caption pairing. Note also that the
+polarity guard does **not** cover the new arm — measured over the sweep, the
+label-free it_geo_04/05 figures cover 0.00..0.34 of their crop against the real
+labels' 0.03..0.41, so it kills 0/36 variants there. Agreement is the defense.
+
 **Consequence for framing:** #1 is **step one of the grouping win**, not a dead-end
 segmentation nicety — but #1 alone shows **zero** grouping-metric movement. Build
 #1 (seg-recall, OCR-ready boxes) → then #2 (localize+OCR the label per split box) →
 `pair_by_number` 0→6, defeating the trap. Do not expect the owner's #1 to move
 until #2 lands.
 
-*Both have now landed. The aspired 0→6 finished at 0→4 with zero wrong pairs, and
-the two shortfalls are named above; §9's C30→F30 is one of them, so that route
-stays open exactly as written there.*
+*Both have now landed. The aspired 0→6 finished at **0→5** with zero wrong pairs.
+The one remaining shortfall is C30→F30, and it is no longer a shortfall with a
+route: §9 sends it to corner-label OCR, and corner-label OCR has now been measured
+to a ceiling on that figure (above). 5/6 with zero wrong is where this stops until
+a different fixture, or a different class of recognizer, changes the evidence.*
 
 ## 8. Risks / caveats
 
@@ -261,6 +294,14 @@ displayed the *other* caption's text, so the old output was worse on both counts
 The legitimate route to C30→F30 is unchanged and still open: **corner-label OCR for
 the number 30** (§7 / the texture-swamped labels F27/F28/F29/F30). Do not loosen the
 geometry arm's column guard to buy this pair back — the bar is zero wrong pairs.
+
+**Update 2026-08-10 — that route has been measured and is CLOSED.** Corner-label OCR
+now recovers F28 (so C28→F28 pairs, §7), but F30 is unreadable by both available
+recognizers *from a hand-measured perfect box*: 432 Tesseract reads yield no "30" at
+all, EasyOCR 0/4. So C30 stays unpaired, and the standing instruction above is now
+the whole story rather than an interim one — **do not loosen the geometry guard to
+buy this pair back**, because there is no longer a pending fix that would make the
+loosening unnecessary. The bar remains zero wrong pairs.
 
 ## 10. Bonus, found only by hand: figure reading order on it_geo_06-right
 

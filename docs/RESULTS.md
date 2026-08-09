@@ -2180,3 +2180,132 @@ to a fixed `target_glyph_px`, and binarized there.
   `page_h` — plus its ceiling counterpart, and the polarity guard with an
   inverted-tone positive control. The band test also asserts the coordinate
   round-trip, since `_locate_label` now returns the box in the caller's own space.
+
+
+## Corner-label OCR, round 3 — F28 recovered, F30 measured to a ceiling — 2026-08-10
+
+Third pass over `pipeline/figure_label.py`, and the third time the previous note's
+diagnosis was wrong. Round 1 called every textured photo hopeless; round 2
+disproved that for F27/F29 and then wrote off **F28 and F30** as "the genuine
+needs-a-real-text-detector cases". Neither of them is. They are not even the same
+kind of failure, and the difference is the whole result.
+
+**Headline: 4/6 → 5/6 numbers, pairs 4/6 → 5/6, still 0 WRONG.**
+
+`python -m tools.layout_order_eval --image it_geo_06`:
+`figure corner labels recovered from pixels = 5; 5/6 GT pairs recovered, 0 WRONG;
+1 caption abstained` (C30, correctly). Segmentation 14/14, parser typing 6/6,
+tau +1.00 / tau+figures +1.00 on both subpages — all unchanged.
+
+### Why the old diagnosis kept being wrong, and how it was settled
+
+Both prior errors came from reading the localizer's *output* instead of its
+internals. So this round started by dumping **every connected component in the
+corner region before any filter**, with the filter that rejected it, against a
+hand-measured true label box. That one instrument split the two figures apart
+immediately:
+
+| | pre-filter CC on the true label? | verdict |
+|---|---|---|
+| F28 | yes — a single CC `(1280,778) 44x37`, **passes every filter** | localization arithmetic bug |
+| F30 | **none at all** — the mask is blind there | not a localization problem either (see below) |
+
+- **F28 was never texture.** The top-hat mask's CLOSE welds a speckle onto the
+  digits, giving one CC of `44x37` where the label is `38x27`. Both the crop
+  padding and the OCR upscale scale by `glyph_h`, so a 37px "glyph" mis-frames and
+  **under-zooms by ~30% the very pixels being read** — which is how a
+  human-legible "28" came out as "38". A local Otsu re-measure inside the box's
+  neighbourhood (`_refine_box`) returns `39x29` against the hand-measured `38x27`.
+- **F30 is a recognizer ceiling, and the "no localization is possible" claim was
+  read off the wrong pixels.** The round-2 note inspected a debug zoom that showed
+  mid-figure rubble, not the corner. MSER on the raw Value channel localizes the
+  label fine (IoU 0.45 against the hand box). But **given the hand-measured
+  perfect box**, a 432-read Tesseract knob sweep produces **no `30` even once** —
+  10 digit reads in total, not one of them 2-digit — and EasyOCR returns nothing
+  on 4/4 framings. A better detector cannot rescue what no recognizer can read.
+  **This lead is closed, not open.** MSER was therefore dropped from the shipped
+  code: it moved no number, and it costs a 141-candidate noise surface.
+
+### What was built
+
+A **second-opinion arm** that runs only after the strict rule returns `None`, so
+it can turn a miss into a number but can never revisit one already accepted — the
+four labels that already worked are byte-identical, by construction rather than by
+measurement (and the ship gate checks it anyway).
+
+1. `_refine_box` — local-Otsu re-measure of the located box (above).
+2. A **re-crop sweep** (2 paddings x 3 upscales x 3 blurs x {global, adaptive}
+   threshold = 36 hypotheses x 4 PSMs) pooled into one plurality vote, accepted
+   only on a landslide (>=2 votes AND >=2x the runner-up). One fragile re-crop was
+   the whole F28 failure; the point is that no single framing is load-bearing.
+   The decisive knob is **despeckle** — all 48 sweep combinations that read "28"
+   have it on, because the rock speckle around the digits was being read as a
+   third glyph. On F28's refined box the sweep gives **"28" x78 vs a runner-up
+   of 4**.
+3. **Two independent recognizers must agree** (Tesseract sweep + EasyOCR).
+
+### The agreement requirement is load-bearing, not ceremony
+
+On F30 the Tesseract sweep returns a **confident, wholly fabricated `88`** — 6
+votes, no runner-up at all — off bright rubble. The only thing between that and a
+wrong caption pairing is EasyOCR declining to see a number there. Had the relaxed
+arm shipped on Tesseract dominance alone, this change would have broken the "0
+wrong" invariant on the very fixture it was built for.
+
+### On the Tesseract-backbone rule (CLAUDE.md)
+
+Bringing in EasyOCR does not breach it. The rule forbids a non-Tesseract engine
+being the **sole text source** or the **confidence source**; a corner label is
+neither — it is never rendered into the document and never reaches Stage 06's
+thresholds, it is a grouping KEY deciding which caption floats with which photo.
+EasyOCR is already a sanctioned second opinion in this repo (Stage 05, Cyrillic).
+The dependency is **optional and non-fatal**: no package, no GPU, or a model that
+fails to load all degrade to the previous behaviour — a miss, never a fabrication
+— and the arm is **opt-in** (`second_opinion=False` by default; `figure_grouping`
+turns it on).
+
+### Ship gate — real crops, both settings, all four corner-label fixtures
+
+`read_corner_label` run over every figure crop of it_geo_04/05/06/07 with the arm
+off and on, asserting (1) no accepted number changes and (2) no fabrication on the
+label-free fixtures:
+
+| fixture | figures | prints labels | strict | +second opinion |
+|---|---|---|---|---|
+| it_geo_06 | 6 | yes | 25,26,27,29 (4) | 25,26,27,**28**,29 (5) |
+| it_geo_07 | 8 | no | none | none |
+| it_geo_04 | 2 | no | none | none |
+| it_geo_05 | 2 | no | none | none |
+
+`GATE PASSED: no changed number, no fabrication.`
+
+### Honest limits
+
+- **F30 stays `None` and should be left alone.** Recorded as a measured ceiling
+  precisely so a future session does not spend a day re-attempting it with a
+  better text detector. C30 therefore stays unpaired, correctly — its number is
+  printed on a subpage that numbers its figures, so the geometry arm is suppressed
+  rather than allowed to overrule the printed numbering. The route
+  `FIGURE_SEPARATION_SCOPE.md` §9 left open for C30→F30 is now closed.
+- **The polarity guard does NOT cover the new arm, and must not be trusted to.**
+  `max_glyph_cover = 0.55` was calibrated on the strict arm's single top-hat
+  re-crop, where real labels covered 0.10..0.38 and it_geo_07's ink-on-pale
+  diagrams 0.82..0.86. Re-measured over the refined boxes and the 36 sweep
+  variants that separation is **gone**: real labels 0.03..0.41, label-free
+  it_geo_04/05 figures 0.00..0.34 — fully inside the label range, guard kills
+  **0/36** variants there (it still kills 18/36 on it_geo_07). What keeps the
+  relaxed arm honest on those fixtures is two-recognizer agreement, not the guard.
+  Tightening 0.55 would cut real labels before it cut diagrams.
+- **Cost.** The arm fires only on figures whose label localizes but does not read,
+  and then costs a recognizer load plus up to 144 Tesseract calls for that one
+  figure. Callers wanting the cheap path pass `second_opinion=False`.
+- **Still N=1 on one book.** Five of six labels on a single spread. The sweep
+  space, the despeckle fraction and the dominance multiple are all tuned against
+  that one fixture; a second corner-label book is what would test them.
+- Suite **318 → 338** (+20 in `pipeline/tests/test_figure_label.py`, both counts
+  from a full `pytest -q` run, not inferred). The new tests pin the additive
+  property (a strict read is never revisited), the F30 fabrication case (a lone
+  confident Tesseract read is refused), the plurality rule's floor/dominance/tie
+  behaviour including the real pre-despeckle `{'32':2,'22':2,'33':2,'93':2}` tally,
+  the recognizer being absent or raising, and the F28 fused-speckle box reproduced
+  synthetically.

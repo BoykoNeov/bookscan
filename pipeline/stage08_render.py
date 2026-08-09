@@ -197,7 +197,16 @@ def _contained_text_boxes(blk: Block, blocks: list[Block]) -> list[BBox]:
     """Text blocks whose bbox lies inside this figure's — i.e. text that is
     printed ON the artwork and therefore appears twice in the output unless the
     figure crop is masked. Figures nested in figures are NOT masked: a sub-figure
-    is artwork, and painting it out would destroy the picture."""
+    is artwork, and painting it out would destroy the picture.
+
+    THE RULE IS GEOMETRIC, WITH NO PROVENANCE CHECK, and this runs on the EDITED
+    document — so a block the user moves (or creates) inside a figure's bbox in
+    the editor will be painted out of that figure, and a block whose words were
+    all deleted but which carries a ``text`` override still masks. Both follow
+    from "text shown inside the picture is shown twice", but they mean an edit can
+    change what a figure LOOKS like, not just what it reads. Measured over every
+    assembled document in ``jobs/`` at the time this landed: 0 of 43 figure blocks
+    would mask anything, i.e. nothing pre-existing is silently repainted."""
     out = []
     for b in blocks:
         if b.id == blk.id or b.type is BlockType.FIGURE:

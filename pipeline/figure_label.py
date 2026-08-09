@@ -471,6 +471,26 @@ def _easyocr_reader():
     return _READER
 
 
+def close_reader() -> None:
+    """Drop the second-opinion model and free its VRAM.
+
+    The cache above is module-level, so without this it would live for the whole
+    process — and Stage 05 holds its OWN EasyOCR reader (``second_opinion.
+    EasyOCRSecondOpinion``, a different language set, hence a different model).
+    Two models resident on one consumer card is exactly what CLAUDE.md's per-stage
+    GPU hygiene rule exists to prevent, so whoever turns the arm on releases it
+    when the pass is done (``figure_grouping.read_figure_numbers`` does).
+    """
+    global _READER
+    _READER = None
+    try:
+        import torch
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except Exception:
+        pass
+
+
 def _second_opinion(fig_bgr: np.ndarray, box, p: dict) -> int | None:
     """Read the label with the second recognizer over several crop framings.
 

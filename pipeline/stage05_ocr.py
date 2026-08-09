@@ -400,7 +400,12 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
         ordered, eject_notes = CE.eject_inline_captions(
             ordered, img, binary, resolve_tessdata_dir(cfg), lang_code_used,
             p, w, h)
-        warnings.extend(eject_notes)
+        # These are NOT warnings — an ejection is a successful, intended outcome,
+        # and a page that correctly recovered a caption must not read as a page
+        # with a problem to a human scanning meta.json. StageMeta has no notes
+        # channel today; adding one is a page_model schema change and CLAUDE.md
+        # requires that in its own commit, so they are prefixed instead.
+        warnings.extend(f"note: {n}" for n in eject_notes)
 
         # Word-conservation invariant: every recognized word in exactly one block.
         attached = sum(len(b.words) for b in ordered)

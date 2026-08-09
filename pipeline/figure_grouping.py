@@ -227,18 +227,26 @@ def read_figure_numbers(views: Sequence[BlockView], page_bgr: np.ndarray | None,
     rather than guessing (its "0 wrong" invariant), and that conservatism is what
     the number arm's authority rests on."""
     out: dict[str, int] = {}
-    for v in views:
-        if v.btype != "figure":
-            continue
-        n = CP.figure_number(v.text)
-        if n is None and page_bgr is not None and tess_bin:
-            b = v.bbox
-            crop = page_bgr[max(0, b.y):b.y2, max(0, b.x):b.x2]
-            if crop.size:
-                n = FL.read_corner_label(crop, tess_bin, page_h=page_h,
-                                         second_opinion=second_opinion)
-        if n is not None:
-            out[v.key] = n
+    try:
+        for v in views:
+            if v.btype != "figure":
+                continue
+            n = CP.figure_number(v.text)
+            if n is None and page_bgr is not None and tess_bin:
+                b = v.bbox
+                crop = page_bgr[max(0, b.y):b.y2, max(0, b.x):b.x2]
+                if crop.size:
+                    n = FL.read_corner_label(crop, tess_bin, page_h=page_h,
+                                             second_opinion=second_opinion)
+            if n is not None:
+                out[v.key] = n
+    finally:
+        # Release the second-opinion model here rather than leaving it resident
+        # for the process: Stage 05 keeps its own EasyOCR reader, and two models
+        # on one consumer card is what the GPU-hygiene rule forbids. Loading is
+        # lazy, so this is a no-op when the arm never fired.
+        if second_opinion:
+            FL.close_reader()
     return out
 
 

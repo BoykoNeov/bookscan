@@ -1899,8 +1899,9 @@ Same image, same GT, the V-cut toggled with the new `--set fig_vsplit=false`:
 
 The text-only arm is **identical** across the two runs; the new arm separates them,
 and the recovered sequence is exactly the one §10 recorded by hand. Non-circular: the
-figures are matched to GT bboxes, and left.png is byte-identical between the runs
-(the V-cut only ever fired on the right subpage). The pairing arm moves 4/6 → 3/6 as
+figures are matched to GT bboxes, and left.png's **entire** subpage record is identical
+between the runs — verified by diffing the two `--json-out` dumps whole, not by reading
+the printed row (the V-cut only ever fired on the right subpage). The pairing arm moves 4/6 → 3/6 as
 already recorded — the honest cost of the correct box, not a new regression.
 
 ### What the metric found on its first run (a genuinely new, unfixed defect)

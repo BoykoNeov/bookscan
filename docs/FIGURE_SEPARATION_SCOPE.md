@@ -135,14 +135,23 @@ same class as the existing XY-cut gaps — NOT the forbidden global OCR threshol
   figure boxes — the likeliest false-split is a V-cut through a cliff photo) and
   **de_01**. The Phase A scoping forgot the left subpage; the false-split it missed
   turned up on it_geo_05-left (§8).
-- **GAP — figure reading order is UNGRADED, so the sentence above about verifying
-  column-major order has no metric behind it.** When the eval moved figure matching
-  from reading-order rank to GT-bbox IoU (task #3, deliberately, to stop the match
-  being circular), figures stopped being ordered by the metric at all: `tau` is
-  computed over TEXT blocks only, in both arms. Phase B in fact **fixed** the right
-  subpage's figure order and nothing in the harness noticed (§10). Until a
-  figure-inclusive order metric exists, check it by hand: read `reading_order` off
-  the figure/caption blocks in the assembled `document.json`.
+- **GAP CLOSED 2026-08-09 — `tau+figures`.** The gap was: figure reading order was
+  UNGRADED, so the sentence above about verifying column-major order had no metric
+  behind it. When the eval moved figure matching from reading-order rank to GT-bbox
+  IoU (task #3, deliberately, to stop the match being circular), figures stopped being
+  ordered by the metric at all — `tau` is computed over TEXT blocks only, in both arms
+  (correctly: the Tesseract-native arm cannot order an imageless region). Phase B in
+  fact **fixed** the right subpage's figure order and nothing in the harness noticed
+  (§10). `tools/layout_order_eval.order_with_figures` now adds a **third, Stage-04-only**
+  tau over text PLUS the **bbox-matched** figures; rank-matched figures (it_geo_04,
+  de_01) are excluded as circular and print `n/a`, never a passing score. Validated as
+  a **differential on real pixels** — with `--set fig_vsplit=false`, it_geo_06-right
+  reads `+0.87` / `F29,F30,C29,C30` against Phase B's `+1.00` / GT, while the text-only
+  arm reads `+1.00` for both. On its first run it found a NEW unfixed defect:
+  **it_geo_06-LEFT is `+0.86`** — the top-right plate F26 is emitted 2nd, not last, so
+  the column-major order this section demanded is in fact WRONG there. Numbers in
+  `docs/RESULTS.md`. **Still by hand:** the metric grades Stage 04's per-subpage
+  `reading_order`, not Stage 07's carrying of it into `document.json`.
 - Expect the geometric grouping arm to stay red (or dip) — annotate, don't chase.
 
 ## 7. Relationship to #2 (corner-label OCR) — the actual grouping win
@@ -230,6 +239,10 @@ the number 30** (§7 / the texture-swamped labels F27/F28/F29/F30). Do not loose
 geometry arm's column guard to buy this pair back — the bar is zero wrong pairs.
 
 ## 10. Bonus, found only by hand: figure reading order on it_geo_06-right
+
+**Now graded** — `tau+figures` reproduces this table by measurement (§6), scoring the
+Phase A sequence `+0.87` and the Phase B one `+1.00`. Kept as written because it is the
+worked example the metric was validated against.
 
 Phase B also **corrected the reading order**, which no metric graded (§6 gap). Over
 the right subpage's figure/caption blocks in the assembled `document.json`:

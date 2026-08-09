@@ -8,10 +8,11 @@ Run: ``python -m pytest tools/tests/test_layout_order_eval.py`` or directly.
 
 from __future__ import annotations
 
+from pipeline import stage04_layout as S4
 from pipeline.page_model import BBox
 from tools.layout_order_eval import (
-    DetBlock, _bbox_iou, anchor_score, grouping_eval, kendall_tau, match_subpage,
-    norm_tokens,
+    DetBlock, _bbox_iou, anchor_score, apply_param_overrides, grouping_eval,
+    kendall_tau, match_subpage, norm_tokens, order_with_figures,
 )
 
 
@@ -275,6 +276,152 @@ def test_two_figure_subpage_discriminates_both_captions_end_to_end():
     assert all(g.caption_typed_ok for g in groups)
     discriminated = sum(1 for g in groups if g.nearest_ok and g.n_figures >= 2)
     assert discriminated == 2
+
+
+# --- figure-INCLUSIVE order (order_with_figures) ---------------------------
+
+def _it06_right_gt():
+    """it_geo_06-right's GT block set (the §10 fixture): F29, C29, F30, C30 over
+    two paragraphs. Bboxes are the real GT figure boxes, scaled down for the test
+    only in that the detected boxes below are made to coincide with them."""
+    return [
+        {"order": 0, "id": "F29", "type": "figure",    "bbox": [154, 279, 1554, 1000]},
+        {"order": 1, "id": "C29", "type": "caption",   "anchor": "figura ventinove"},
+        {"order": 2, "id": "F30", "type": "figure",    "bbox": [640, 1341, 1068, 842]},
+        {"order": 3, "id": "C30", "type": "caption",   "anchor": "a lato figura trenta"},
+        {"order": 4, "id": "P1",  "type": "paragraph", "anchor": "corpo del testo"},
+    ]
+
+
+def _it06_right_det(fig30_bbox, ro):
+    """Detected blocks for the fixture above. ``fig30_bbox`` is F30's box and
+    ``ro`` the Stage-04 reading_order per block id, so a test can express both the
+    merged-box (pre-Phase-B) and tight-box (post) worlds."""
+    return [
+        _db(0, ro["F29"], "figure",    154,  279, 1554, 1000),
+        _db(1, ro["C29"], "caption",   156, 1487,  440,  720,
+            text="figura ventinove veduta"),
+        _db(2, ro["F30"], "figure",    *fig30_bbox),
+        _db(3, ro["C30"], "caption",   154, 2239,  439,  581,
+            text="a lato figura trenta"),
+        _db(4, ro["P1"],  "paragraph", 154, 2900,  439,  300,
+            text="corpo del testo e altro"),
+    ]
+
+
+def test_order_with_figures_grades_what_text_only_tau_cannot():
+    """The §10 defect in miniature. Stage 04 emits F29, **F30, C29**, C30 — the
+    merged full-width F30 box got peeled as a band ABOVE its caption. Text-only tau
+    sees C29 < C30 < P1 and reports a perfect +1.00; the figure-inclusive arm sees
+    the transposition."""
+    gt = _it06_right_gt()
+    ro = {"F29": 0, "F30": 1, "C29": 2, "C30": 3, "P1": 4}
+    det = _it06_right_det((154, 1341, 1554, 842), ro)
+    matched, misses = match_subpage(gt, det)
+    assert misses == []
+
+    by_id = {g["id"]: g for g in gt}
+    text_only = kendall_tau([(by_id[gid]["order"], det[di].ro)
+                             for gid, di in matched.items()
+                             if by_id[gid]["type"] != "figure"])
+    assert text_only == 1.0          # blind to the figure being in the wrong place
+
+    oa = order_with_figures(gt, matched, det)
+    assert oa.n_fig_graded == 2 and oa.n_blocks == 5
+    assert oa.seq_det == ["F29", "F30", "C29", "C30", "P1"]
+    assert oa.seq_gt == ["F29", "C29", "F30", "C30", "P1"]
+    assert oa.tau is not None and oa.tau < 1.0     # exactly one transposition
+
+
+def test_order_with_figures_scores_the_corrected_order_perfect():
+    """Same fixture, tight F30 box -> Stage 04 places it after C29 (the Phase B
+    output, == GT). The metric must go to +1.00, else it can't credit the fix."""
+    gt = _it06_right_gt()
+    ro = {"F29": 0, "C29": 1, "F30": 2, "C30": 3, "P1": 4}
+    det = _it06_right_det((640, 1341, 1068, 842), ro)
+    matched, _ = match_subpage(gt, det)
+    oa = order_with_figures(gt, matched, det)
+    assert oa.tau == 1.0
+    assert oa.seq_det == oa.seq_gt == ["F29", "C29", "F30", "C30", "P1"]
+
+
+def test_order_with_figures_refuses_rank_matched_figures_as_circular():
+    """A GT authored before figure bboxes (it_geo_04 / de_01) matches figures by
+    reading-order RANK, which makes those pairs concordant BY CONSTRUCTION. Grading
+    order off them would be circular, so they are dropped — and with no gradeable
+    figure left the arm reports n/a, never a passing +1.00 that is really text."""
+    gt = [
+        {"order": 0, "id": "F1", "type": "figure", "anchor": None},   # no bbox
+        {"order": 1, "id": "P1", "type": "paragraph", "anchor": "alpha beta gamma"},
+        {"order": 2, "id": "P2", "type": "paragraph", "anchor": "delta epsilon zeta"},
+    ]
+    det = [
+        _db(0, 0, "figure",    0,   0, 400, 300),
+        _db(1, 1, "paragraph", 0, 320, 400, 100, text="alpha beta gamma testo"),
+        _db(2, 2, "paragraph", 0, 440, 400, 100, text="delta epsilon zeta testo"),
+    ]
+    matched, _ = match_subpage(gt, det)
+    assert matched == {"F1": 0, "P1": 1, "P2": 2}     # figure DID match, by rank
+    oa = order_with_figures(gt, matched, det)
+    assert oa.tau is None and not oa.gradeable
+    assert oa.n_fig_graded == 0
+    assert "no gradeable figure" in oa.note
+    assert oa.seq_gt == ["P1", "P2"]                  # figure excluded from the set
+
+
+def test_order_with_figures_goes_quiet_not_red_when_a_figure_is_lost():
+    """The graded set is the MATCHED blocks, so a figure the detector loses leaves
+    the set entirely. Pinned deliberately: this metric answers 'is the order right',
+    NOT 'is everything there' — a segmentation regression makes it QUIETER. Read it
+    beside seg recall."""
+    gt = _it06_right_gt()
+    ro = {"F29": 0, "C29": 1, "F30": 2, "C30": 3, "P1": 4}
+    det = _it06_right_det((640, 1341, 1068, 842), ro)
+    del det[2]                                   # F30 not detected at all
+    matched, misses = match_subpage(gt, det)
+    assert misses == ["F30"]
+    oa = order_with_figures(gt, matched, det)
+    assert oa.tau == 1.0                         # still +1.00 ...
+    assert oa.n_fig_graded == 1                  # ... but on ONE figure, and it says so
+
+
+def test_order_with_figures_needs_two_blocks():
+    """it_geo_05-left: one figure + a caption that is a known segmentation MISS.
+    One matched block cannot be ordered -> n/a with a reason, not 0.00."""
+    gt = [
+        {"order": 0, "id": "F2", "type": "figure", "bbox": [231, 331, 1806, 2658]},
+        {"order": 1, "id": "C2", "type": "caption", "anchor": "mai rilevata"},
+    ]
+    det = [_db(0, 0, "figure", 231, 331, 1806, 2658)]
+    matched, misses = match_subpage(gt, det)
+    assert misses == ["C2"]
+    oa = order_with_figures(gt, matched, det)
+    assert oa.tau is None and "<2 matched blocks" in oa.note
+
+
+# --- --set knob overrides --------------------------------------------------
+
+def test_param_override_coerces_bool_not_truthy_string():
+    """``--set fig_vsplit=False`` stored as the STRING "False" is truthy, so the
+    knob stays ON and an A/B silently compares a run against itself. Pin the
+    coercion, since a null result would otherwise read as 'the metric is blind'."""
+    p = apply_param_overrides(dict(S4.DEFAULTS), ["fig_vsplit=False"])
+    assert p["fig_vsplit"] is False
+    assert apply_param_overrides(dict(S4.DEFAULTS), ["fig_split=0"])["fig_split"] is False
+    assert apply_param_overrides(dict(S4.DEFAULTS), ["fig_vsplit=yes"])["fig_vsplit"] is True
+
+
+def test_param_override_coerces_numbers_and_rejects_unknown_keys():
+    p = apply_param_overrides(dict(S4.DEFAULTS), ["imgsz=1536",
+                                                  "fig_eject_text_cover=0.75"])
+    assert p["imgsz"] == 1536 and isinstance(p["imgsz"], int)
+    assert p["fig_eject_text_cover"] == 0.75
+    for bad in ["nope=1", "fig_vsplit", "fig_vsplit=maybe"]:
+        try:
+            apply_param_overrides(dict(S4.DEFAULTS), [bad])
+        except ValueError:
+            continue
+        raise AssertionError(f"{bad!r} should have raised")
 
 
 if __name__ == "__main__":

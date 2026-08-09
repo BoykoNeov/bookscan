@@ -49,14 +49,28 @@ Method (per subpage — Stage 02 splits the spread, Stage 04 orders each half):
          way, over the word-bearing matched blocks, so "did Stage 04 IMPROVE on
          Tesseract's implicit order" is measured, not asserted (figures excluded
          — Tesseract emits no order for imageless regions).
+       * FIGURE-INCLUSIVE order (``tau_all``, Stage-04 arm only): the same
+         Kendall-tau over text blocks PLUS the figures whose match is
+         position-honest (matched by GT-bbox overlap). Rank-matched figures are
+         excluded because rank matching pairs the i-th GT figure with the i-th
+         detected figure BY ORDER — grading order off that is circular. There is
+         deliberately no Tesseract-native counterpart (native has no order for
+         imageless regions). See ``order_with_figures``.
 
 N=1 spread. This proves reading-order CORRECTNESS on one genuine multi-column
 page; it does NOT by itself prove grouping DISCRIMINATION (see the single-figure
 caveat) — that needs a fixture with >=2 figures sharing one column.
 
+SCOPE of the order numbers: they grade Stage 04's per-subpage ``reading_order``,
+which is where the figure-order defect of FIGURE_SEPARATION_SCOPE.md §10 lived and
+where its fix landed. They do NOT prove Stage 07 assemble carries that order
+through into ``document.json`` — that end of the chain is still a by-hand check.
+
 Usage:
     python -m tools.layout_order_eval --image it_geo_04 [--report docs/RESULTS.md]
     python -m tools.layout_order_eval --image it_geo_04 --json-out out.json
+    # A/B a layout knob (types are coerced from stage04_layout.DEFAULTS):
+    python -m tools.layout_order_eval --image it_geo_06 --set fig_vsplit=false
 """
 
 from __future__ import annotations
@@ -289,6 +303,76 @@ def kendall_tau(pairs: list[tuple[float, float]]) -> float | None:
 
 
 # --------------------------------------------------------------------------
+# Figure-INCLUSIVE order (pure) — the metric `tau_layout` deliberately omits
+# --------------------------------------------------------------------------
+
+
+@dataclass
+class OrderAll:
+    """Figure-inclusive order grade for one subpage (Stage-04 arm only)."""
+
+    tau: float | None
+    n_fig_graded: int      # figures included (bbox-matched only)
+    n_blocks: int          # total blocks in the graded set
+    seq_gt: list[str]      # graded block ids in GT order
+    seq_det: list[str]     # the same ids in Stage 04's order
+    note: str              # why tau is None, when it is
+
+    @property
+    def gradeable(self) -> bool:
+        return self.tau is not None
+
+
+def order_with_figures(gt_blocks: list[dict], matched: dict[str, int],
+                       det: list[DetBlock]) -> OrderAll:
+    """Kendall-tau over matched TEXT blocks **plus position-honest figures**.
+
+    ``tau_layout`` excludes figures from both arms on purpose (the Tesseract-native
+    arm cannot order an imageless region, so including them would compare unequal
+    block sets). The cost was that figure order went **entirely ungraded**: Phase B
+    of the figure split corrected it_geo_06-right from ``F29,F30,C29,C30`` to the GT
+    ``F29,C29,F30,C30`` and no number in this harness moved
+    (docs/FIGURE_SEPARATION_SCOPE.md §6/§10). This closes that gap as a THIRD,
+    Stage-04-only number rather than by touching the two comparable arms.
+
+    **A figure is graded only when its match is position-honest**, i.e. it was
+    matched by GT-bbox overlap. Figures in GT files authored before figure bboxes
+    existed (it_geo_04, de_01) are matched by reading-order RANK — the i-th GT
+    figure to the i-th detected figure — so those pairs are concordant *by
+    construction* and grading order off them would be circular. They are dropped,
+    and ``n_fig_graded`` reports how many figures actually counted so an
+    all-text-in-disguise ``+1.00`` cannot read as a figure-order pass.
+
+    **Read this only alongside seg-recall.** The set is the MATCHED blocks, so a
+    figure the detector loses (or false-splits until it no longer overlaps its GT
+    box) leaves the graded set entirely: a segmentation regression makes this
+    metric quieter, not worse.
+    """
+    by_id = {g["id"]: g for g in gt_blocks}
+    by_idx = {d.idx: d for d in det}     # keyed on idx, like grouping_eval
+    graded: list[tuple[str, float, float]] = []
+    for gid, di in sorted(matched.items()):
+        g = by_id[gid]
+        if g["type"] == "figure" and not g.get("bbox"):
+            continue                     # rank-matched -> circular, not gradeable
+        graded.append((gid, g["order"], by_idx[di].ro))
+
+    n_fig = sum(1 for gid, _, _ in graded if by_id[gid]["type"] == "figure")
+    seq_gt = [gid for gid, _, _ in sorted(graded, key=lambda t: t[1])]
+    seq_det = [gid for gid, _, _ in sorted(graded, key=lambda t: t[2])]
+
+    if n_fig == 0:
+        return OrderAll(None, 0, len(graded), seq_gt, seq_det,
+                        "no gradeable figure — GT carries no figure bbox, so "
+                        "figures are rank-matched (circular)")
+    if len(graded) < 2:
+        return OrderAll(None, n_fig, len(graded), seq_gt, seq_det,
+                        "<2 matched blocks to order")
+    return OrderAll(kendall_tau([(o, r) for _, o, r in graded]),
+                    n_fig, len(graded), seq_gt, seq_det, "")
+
+
+# --------------------------------------------------------------------------
 # Grouping (pure): does each caption's nearest figure == its GT partner figure?
 # --------------------------------------------------------------------------
 
@@ -348,6 +432,7 @@ class SubpageGrade:
     tau_layout: float | None
     tau_native: float | None
     n_native: int                      # word-bearing matched blocks (native arm)
+    order_all: OrderAll                # figure-INCLUSIVE order (Stage-04 arm only)
     groups: list[GroupResult]
     n_det_blocks: int
     n_header_det: int                  # detected header+page_number blocks
@@ -409,8 +494,43 @@ def _route_words(pl: "S4.PageLayout", words: list, scale: float) -> list[DetBloc
     return det
 
 
-def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
-                ) -> tuple[ImageGrade, dict]:
+_BOOL_WORDS = {"true": True, "1": True, "yes": True, "on": True,
+               "false": False, "0": False, "no": False, "off": False}
+
+
+def apply_param_overrides(p: dict, sets: list[str]) -> dict:
+    """Apply ``key=value`` layout-knob overrides, COERCED to the type of the
+    ``stage04_layout.DEFAULTS`` entry, failing loudly on an unknown key.
+
+    The coercion is the whole point: ``--set fig_vsplit=False`` naively stored the
+    string ``"False"``, which is TRUTHY, so ``if not p["fig_vsplit"]`` never fired
+    and the A/B silently compared a run against itself. A knob that appears to be
+    off while being on turns a null result into a false conclusion."""
+    out = dict(p)
+    for item in sets:
+        if "=" not in item:
+            raise ValueError(f"--set expects key=value, got {item!r}")
+        key, _, raw = item.partition("=")
+        key, raw = key.strip(), raw.strip()
+        if key not in S4.DEFAULTS:
+            raise ValueError(f"--set: unknown layout knob {key!r} "
+                             f"(known: {', '.join(sorted(S4.DEFAULTS))})")
+        proto = S4.DEFAULTS[key]
+        if isinstance(proto, bool):
+            if raw.lower() not in _BOOL_WORDS:
+                raise ValueError(f"--set {key}: expected a boolean, got {raw!r}")
+            out[key] = _BOOL_WORDS[raw.lower()]
+        elif isinstance(proto, int):
+            out[key] = int(raw)
+        elif isinstance(proto, float):
+            out[key] = float(raw)
+        else:
+            out[key] = raw
+    return out
+
+
+def grade_image(image_id: str, testset: Path, cfg: dict, binary: str,
+                param_sets: list[str] | None = None) -> tuple[ImageGrade, dict]:
     gt_path = testset / "gt" / f"{image_id}.blocks.json"
     gt = json.loads(gt_path.read_text(encoding="utf-8"))
     if gt.get("gt_type") != "block_reading_order":
@@ -421,7 +541,7 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
     bgr, _ = NORM.load_upright_bgr(img_file, binary, tessdata)
     lang = lang_code(gt.get("language", "eng"))
 
-    p = S4.resolve_params(cfg)
+    p = apply_param_overrides(S4.resolve_params(cfg), param_sets or [])
     halves, _ = split_halves(bgr, cfg)
     dw = dewarp_halves(halves, cfg, "auto")
 
@@ -466,6 +586,9 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
                    if by_id[gid]["type"] != "figure" and det[di].native_key is not None]
             tau_layout = kendall_tau([(g, d) for g, d in lay_pairs])
             tau_native = kendall_tau([(g, d) for g, d in nat]) if len(nat) >= 2 else None
+            # Third arm: the same Stage-04 order WITH the position-honest figures
+            # in it — what the two comparable arms above cannot grade.
+            order_all = order_with_figures(gt_blocks, matched, det)
 
             sub_pairs = [pr for pr in pairs if pr.get("subpage") == sub]
             groups = grouping_eval(sub_pairs, matched, det)
@@ -522,7 +645,8 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str
             grade.subpages.append(SubpageGrade(
                 name=name, n_gt=len(gt_blocks), matched=matched, misses=misses,
                 type_ok=type_ok, tau_layout=tau_layout, tau_native=tau_native,
-                n_native=len(nat), groups=groups, n_det_blocks=len(det),
+                n_native=len(nat), order_all=order_all,
+                groups=groups, n_det_blocks=len(det),
                 n_header_det=n_header, n_stripped_gt=len(gsub.get("stripped", [])),
                 type_ok_parser=type_ok_parser, caption_typed_parser=caption_typed_parser,
                 n_promoted=len(gr.promoted),
@@ -559,11 +683,15 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
              "segmentation/type/grouping OUTRANK exact order (tau is secondary). "
              "Tau is over TEXT blocks only (figures excluded from BOTH the Stage-04 "
              "and Tesseract-native arms, so the two arms compare the same block set); "
-             "figures match by GT-bbox overlap. "
+             "figures match by GT-bbox overlap. **tau+figures** is a third, "
+             "Stage-04-only number over text PLUS the bbox-matched (position-honest) "
+             "figures — rank-matched figures are excluded as circular, so `figs=0` "
+             "prints `n/a`, never a passing score. It grades Stage 04's per-subpage "
+             "order, not Stage 07's carrying of it into `document.json`. "
              "Split+dewarp = UVDoc auto (Gate-2 path). N=1 spread — read the rows.\n")
     L.append("| subpage | seg recall | type acc | tau (Stage04) | tau (Tess-native) | "
-             "grouping | det blocks | misses |")
-    L.append("|---|---|---|---|---|---|---|---|")
+             "tau+figures | grouping | det blocks | misses |")
+    L.append("|---|---|---|---|---|---|---|---|---|")
     for s in grade.subpages:
         grp = "; ".join(
             f"{g.caption_id}->{g.figure_id}:"
@@ -571,10 +699,14 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
             f"{'' if g.caption_typed_ok else '/type!'}"
             f"{'/1fig' if g.n_figures == 1 else ''}"
             for g in s.groups) or "—"
+        oa = s.order_all
+        tau_all = (f"{_tau_str(oa.tau)} (figs={oa.n_fig_graded}/n={oa.n_blocks})"
+                   if oa.gradeable else f"n/a ({oa.note})")
         L.append(
             f"| {s.name} | {len(s.matched)}/{s.n_gt} ({s.seg_recall:.0%}) | "
             f"{sum(s.type_ok.values())}/{len(s.type_ok)} ({s.type_acc:.0%}) | "
             f"{_tau_str(s.tau_layout)} | {_tau_str(s.tau_native)} (n={s.n_native}) | "
+            f"{tau_all} | "
             f"{grp} | {s.n_det_blocks} | {', '.join(s.misses) or '—'} |")
 
     # Aggregate numbers.
@@ -595,6 +727,24 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
              f"but only {discriminated}/{len(all_groups)} on a subpage with >=2 "
              f"figures (the rest are single-figure: association POSSIBLE, not "
              f"discriminated).")
+
+    # --- Figure-inclusive order detail -----------------------------------------
+    gradeable = [s for s in grade.subpages if s.order_all.gradeable]
+    L.append("")
+    L.append("**Figure-inclusive reading order** (`tau+figures`, Stage-04 arm only). "
+             "A scalar says something is wrong but not what, so the graded sequence is "
+             "printed both ways. The graded set is the MATCHED blocks — a figure the "
+             "detector loses drops OUT of it, so this number goes quiet on a "
+             "segmentation regression rather than red: read it next to seg recall.")
+    if not gradeable:
+        L.append("- no subpage is gradeable on this image (see the `n/a` reasons above).")
+    for s in gradeable:
+        oa = s.order_all
+        L.append(f"- `{s.name}` tau={_tau_str(oa.tau)} over {oa.n_blocks} blocks "
+                 f"({oa.n_fig_graded} figures):")
+        L.append(f"  - GT:       {', '.join(oa.seq_gt)}")
+        L.append(f"  - Stage 04: {', '.join(oa.seq_det)}"
+                 f"{'  ✓ identical' if oa.seq_det == oa.seq_gt else ''}")
 
     # --- Figura-NN parser arm --------------------------------------------------
     typ_p = sum(sum(s.type_ok_parser.values()) for s in grade.subpages)
@@ -646,7 +796,13 @@ def grade_to_json(grade: ImageGrade) -> dict:
             "misses": s.misses, "type_ok": s.type_ok,
             "seg_recall": s.seg_recall, "type_acc": s.type_acc,
             "tau_layout": s.tau_layout, "tau_native": s.tau_native,
-            "n_native": s.n_native, "n_det_blocks": s.n_det_blocks,
+            "n_native": s.n_native,
+            "order_all": {
+                "tau": s.order_all.tau, "n_fig_graded": s.order_all.n_fig_graded,
+                "n_blocks": s.order_all.n_blocks, "seq_gt": s.order_all.seq_gt,
+                "seq_det": s.order_all.seq_det, "note": s.order_all.note,
+            },
+            "n_det_blocks": s.n_det_blocks,
             "n_header_det": s.n_header_det, "n_stripped_gt": s.n_stripped_gt,
             "type_ok_parser": s.type_ok_parser,
             "caption_typed_parser": s.caption_typed_parser,
@@ -678,6 +834,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--report", type=Path, default=None,
                     help="append a dated section to this file (e.g. docs/RESULTS.md)")
     ap.add_argument("--json-out", type=Path, default=None)
+    ap.add_argument("--set", dest="sets", action="append", default=[],
+                    metavar="KEY=VALUE",
+                    help="override a stage04_layout layout knob for this run "
+                         "(value coerced to the DEFAULTS type), e.g. "
+                         "--set fig_vsplit=false")
     args = ap.parse_args(argv)
 
     try:
@@ -694,8 +855,14 @@ def main(argv: list[str] | None = None) -> int:
     tver = tesseract_version(binary)
     print(f"tesseract: {binary} (v{tver})")
 
-    grade, extra = grade_image(args.image, args.testset, cfg, binary)
+    try:
+        grade, extra = grade_image(args.image, args.testset, cfg, binary, args.sets)
+    except ValueError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        return 2
     report = build_report(grade, tver, datetime.date.today().isoformat())
+    if args.sets:
+        report += f"\nLayout knobs overridden for this run: {', '.join(args.sets)}\n"
     print("\n" + report)
     for w in extra["warns"]:
         print(f"  [warn] {w}", file=sys.stderr)

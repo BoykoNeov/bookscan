@@ -1869,3 +1869,85 @@ Suite **303 green** (was 288): +5 `test_stage04_layout.py` — the L-shape split
 ejection, the it_geo_05 false-split regression in miniature (a diagram on page
 background must survive intact), the band-with-no-absorbed-text refusal, the
 `fig_vsplit=False` escape hatch, and the all-sub-boxes-are-text abstain.
+
+
+## Figure-inclusive reading order — a metric for what the harness could not see (2026-08-09)
+
+`tools/layout_order_eval` graded reading order over **TEXT blocks only**, in both
+the Stage-04 and the Tesseract-native arm. That exclusion is deliberate and stays
+(native emits no order for an imageless region, so including figures would compare
+unequal block sets) — but its cost was that **figure order went entirely ungraded**.
+FIGURE_SEPARATION_SCOPE.md §6 recorded the gap and §10 recorded the consequence:
+Phase B corrected it_geo_06-right's figure order to GT and **no number moved**.
+
+**New: `tau+figures`** — a third, Stage-04-only Kendall-tau over text blocks PLUS the
+figures whose match is **position-honest** (matched by GT-bbox overlap). Figures in
+GT files authored before figure bboxes (it_geo_04, de_01) are matched by reading-order
+RANK — i-th GT figure to i-th detected figure — so those pairs are concordant *by
+construction*; grading order off them is circular, and they are **excluded**, with
+`n_fig_graded` printed so an all-text `+1.00` cannot pass as a figure-order result.
+The graded sequence is printed GT-vs-Stage-04 next to the scalar.
+
+### The differential that proves it grades the historical defect (real pixels)
+
+Same image, same GT, the V-cut toggled with the new `--set fig_vsplit=false`:
+
+| it_geo_06 right.png | tau (Stage04, text-only) | **tau+figures** | Stage-04 sequence |
+|---|---|---|---|
+| V-split ON (shipped Phase B) | +1.00 | **+1.00** | `F29, C29, F30, C30, P1, P2` = GT ✓ |
+| V-split OFF | +1.00 | **+0.87** | `F29, **F30, C29**, C30, P1, P2` |
+
+The text-only arm is **identical** across the two runs; the new arm separates them,
+and the recovered sequence is exactly the one §10 recorded by hand. Non-circular: the
+figures are matched to GT bboxes, and left.png is byte-identical between the runs
+(the V-cut only ever fired on the right subpage). The pairing arm moves 4/6 → 3/6 as
+already recorded — the honest cost of the correct box, not a new regression.
+
+### What the metric found on its first run (a genuinely new, unfixed defect)
+
+**it_geo_06-left is `+0.86`, not `+1.00`** — figure order is WRONG there and nothing
+had ever said so:
+
+- GT (column-major): `F25, F27, F28, F26, C25, C26, C27, C28`
+- Stage 04:          `F25, **F26**, F27, F28, C25, ...`
+
+The top-right plate F26 (`x1611 y253`) is emitted **second** instead of last: XY-Cut
+peels it early because it starts high on the page, rather than after the left column's
+stack. This is precisely the "verify post-split order is column-major" check §6 asked
+for and could not perform. **Not fixed here** — a metric commit should not also change
+the thing it measures. Filed for the next figure-order pass.
+
+### Full sweep (all five block-order fixtures)
+
+| image | subpage | seg recall | tau (text) | **tau+figures** |
+|---|---|---|---|---|
+| it_geo_06 | left | 8/8 | +1.00 | **+0.86** (figs=4/n=8) — F26 misplaced, above |
+| it_geo_06 | right | 6/6 | +1.00 | **+1.00** (figs=2/n=6) ✓ |
+| it_geo_07 | left | 15/17 | +0.96 | **+0.94** (figs=4/n=15) — D3 before T2mid |
+| it_geo_07 | right | 13/13 | +1.00 | **+1.00** (figs=4/n=13) ✓ identical to GT |
+| it_geo_05 | left | 1/2 | n/a | **n/a** (<2 matched blocks — C2 is the known MISS) |
+| it_geo_05 | right | 5/5 | +1.00 | **+1.00** (figs=1/n=5) |
+| it_geo_04 | both | 4/5, 4/4 | +1.00 | **n/a** (no gradeable figure — GT has no figure bbox) |
+| de_01 | both | 4/4, 8/8 | +1.00 | **n/a** (no gradeable figure — GT has no figure bbox) |
+
+it_geo_07-right is the real workout — 4 diagrams interleaved with 9 text blocks,
+ordered perfectly. it_geo_04/de_01 print `n/a` rather than the `+1.00` they would
+have scored if rank-matched figures had been let in.
+
+### Two honest limits, stated not fixed
+
+- **The graded set is the MATCHED blocks**, so a figure the detector loses (or
+  false-splits until it no longer overlaps its GT box) leaves the set entirely: a
+  segmentation regression makes this metric **quieter, not red**. Read it beside seg
+  recall — the same trap as the Phase B recall number that hid the it_geo_05 map
+  false-split. Pinned by a test.
+- **It grades Stage 04's per-subpage `reading_order`**, where the §10 defect lived and
+  where its fix landed. It does **not** prove Stage 07 assemble carries that order into
+  `document.json`; that end of the chain is still a by-hand check.
+
+Suite **310 green** (was 303): +7 in `tools/tests/test_layout_order_eval.py` — the §10
+defect and its fix in miniature (text-only tau reads +1.00 on the broken order while
+the new arm does not), the circular-rank refusal, the goes-quiet-on-a-lost-figure
+pin, the <2-blocks n/a, and two `--set` coercion tests. That last pair is load-bearing:
+`--set fig_vsplit=False` stored as the string `"False"` is **truthy**, so the A/B above
+would have silently compared a run against itself and reported "the metric is blind".

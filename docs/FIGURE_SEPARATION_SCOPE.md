@@ -135,6 +135,14 @@ same class as the existing XY-cut gaps — NOT the forbidden global OCR threshol
   figure boxes — the likeliest false-split is a V-cut through a cliff photo) and
   **de_01**. The Phase A scoping forgot the left subpage; the false-split it missed
   turned up on it_geo_05-left (§8).
+- **GAP — figure reading order is UNGRADED, so the sentence above about verifying
+  column-major order has no metric behind it.** When the eval moved figure matching
+  from reading-order rank to GT-bbox IoU (task #3, deliberately, to stop the match
+  being circular), figures stopped being ordered by the metric at all: `tau` is
+  computed over TEXT blocks only, in both arms. Phase B in fact **fixed** the right
+  subpage's figure order and nothing in the harness noticed (§10). Until a
+  figure-inclusive order metric exists, check it by hand: read `reading_order` off
+  the figure/caption blocks in the assembled `document.json`.
 - Expect the geometric grouping arm to stay red (or dip) — annotate, don't chase.
 
 ## 7. Relationship to #2 (corner-label OCR) — the actual grouping win
@@ -176,6 +184,27 @@ until #2 lands.
   full-height background column AND has a text detection overlapping one side would
   still be sliced. Ejecting text printed *inside* a figure needs masking, not
   cutting — out of scope.
+- **`_absorbed_text` scans every non-figure detection, `abandon` included.** Those
+  can be page-wide (`7,65 2113x181` on it_geo_06-left), so in principle a thin figure
+  sub-box near the top edge could be >=0.60 inside a header box and be ejected.
+  **Zero effect on all five fixtures** — left as-is rather than changed on
+  speculation, since narrowing the eject set to text-bearing labels would also stop
+  it ejecting a genuinely swallowed running header. Revisit with a fixture.
+
+### A SIBLING defect this does NOT fix (measured 2026-08-09, it_geo_05-left)
+
+Same output symptom, different cause, recorded here because §5 exists to record
+exactly this. On it_geo_05-left, caption C2 (`255,2040 540x760`) is printed **inside**
+the full-page map, and its `coverage BY a figure` is **1.000 both before and after
+Phase B** — so the map crop carries the caption as pixels, while C2 is simultaneously
+**absent from the document as text** (the detector emits no text detection there at
+all; C2 was a straight segmentation MISS before this change and still is).
+
+Phase B cannot reach it, and shouldn't try: with no text detection there is no
+evidence to eject on, and the only cut that would separate C2 slices the map in half
+— which is precisely the false-split §8 documents. **The fix for this class is
+masking (paint the caption region out of the crop), not cutting**, and it needs the
+caption to be detected in the first place.
 - **Ejection is explicit, not left to NMS.** `nms_and_dedup` would also prune the
   it_geo_06-right caption column (0.82 contained in the conf-0.856 C29 text det, over
   the 0.80 `contain_frac`) — but a 2-point margin is not a mechanism, so ejection is
@@ -199,3 +228,19 @@ displayed the *other* caption's text, so the old output was worse on both counts
 The legitimate route to C30→F30 is unchanged and still open: **corner-label OCR for
 the number 30** (§7 / the texture-swamped labels F27/F28/F29/F30). Do not loosen the
 geometry arm's column guard to buy this pair back — the bar is zero wrong pairs.
+
+## 10. Bonus, found only by hand: figure reading order on it_geo_06-right
+
+Phase B also **corrected the reading order**, which no metric graded (§6 gap). Over
+the right subpage's figure/caption blocks in the assembled `document.json`:
+
+| | sequence |
+|---|---|
+| Phase A (`grouping_it06`) | F29, **F30**, **C29**, C30 |
+| Phase B (`phaseb_it06`) | F29, C29, F30, C30 |
+| GT | F29, C29, F30, C30 ✓ |
+
+Cause: the merged box spanned the full page width, so XY-Cut peeled it as a
+full-width band *above* C29. Tightened to `640,1341 1068x842`, F30 is a
+right-column box and falls into its correct place. This is a real Gate-4 reflow
+improvement — it was invisible to the harness, not absent from the output.

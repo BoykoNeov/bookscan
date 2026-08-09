@@ -1973,7 +1973,7 @@ consulted **before** the H-cut: find an x position splitting the node into a lef
 group, a right group, and a small set of **bridges** that cross it; emit
 bridges → left → right (or left → right → bridges when the bridges sit below).
 
-### The three guards, and the fixture that put each one there
+### The four guards, and the fixture that put each one there
 
 The first draft carried only the bridge-fraction and gap guards. It fixed
 it_geo_06-left **and gave the +0.14 straight back on two other subpages** — the
@@ -2053,3 +2053,29 @@ actual deliverable.
   fix with its knob-off counterpart (so the A/B is provably real, not a run against
   itself), the two abstain regressions above built from real box geometry, and the
   no-bridge / mid-page-spanner declines.
+
+### The two callers the fixture sweep does not reach (measured after review)
+
+`xy_cut_order` is not Stage 04's alone. `stage05_ocr` re-ranks the real blocks
+together with **synthetic orphan-WORD blocks**, and `tools/layout_ab.py` orders
+blocks plus orphan word singletons — box populations where `n` is much larger and
+"column" means something else, and which every number above misses because both
+arms of the sweep enter through `layout_page`. Advisor flagged it; measured rather
+than assumed.
+
+- **Stage 05, five real job pages** (`figorder_it06`, `bg_01`, `dw_en_coins_01`,
+  `realtest_de1_fixed`, `realtest_bg`), knob on vs off: block order **identical on
+  all five**, and `_column_split` fired on **0 nodes** — once word-sized orphan
+  boxes join the population the guards decline, which is the intended behaviour
+  rather than luck.
+- **`tools/layout_ab.py`** (the Gate-3 WER A/B), both arms: report **identical**.
+  That is an aggregate-WER claim, though, so the run was repeated with every
+  `xy_cut_order` call instrumented — its input boxes and the sequence it emits:
+  **60 calls, 4 pre-pass fires, and exactly one call emits a different sequence** —
+  the it_geo_06-left node this commit exists for. (A second call differs only in its
+  *input*, being the same reordered blocks arriving at the cell-ordering step.) The
+  two other fires — it_geo_05-left and one 5-box node — emit the sequence the plain
+  H/V cut already gave. WER is unchanged because F26 is a figure and carries no
+  words, so a figure moving among word-bearing blocks cannot move a word metric:
+  another instance of the harness being quiet about a real order change, the same
+  gap `tau+figures` was built to close.

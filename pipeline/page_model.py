@@ -147,6 +147,35 @@ class Word(BaseModel):
         return self.decision in (WordDecision.FLAG, WordDecision.PATCH) and not edited
 
 
+class BlockRef(BaseModel):
+    """A page-scoped pointer to another block in the same document.
+
+    Deliberately NOT a bare ``block_id``: block ids are unique only WITHIN a
+    ``DocPage`` (one physical subpage), and this corpus already contains a
+    cross-gutter figure — it_geo_04's Fig.21 panorama is cut by Stage 02's
+    gutter split into a left and a right fragment on two different DocPages. A
+    caption that must eventually point at a figure on the facing page needs the
+    page in the pointer, so the pointer carries it from the start (one
+    deliberate schema commit rather than two).
+    """
+
+    page_id: str     # DocPage.page_id, e.g. "page_001__left"
+    block_id: int    # Block.id within that page
+
+
+class PairSource(str, Enum):
+    """How a caption->figure association was established (provenance).
+
+    Kept as data rather than recomputed at render time so the editor can later
+    surface a geometric guess for review while leaving a number-keyed pair
+    alone (the number is printed in the book; the geometry is inferred).
+    """
+
+    NUMBER = "number"      # printed caption number == printed figure corner label
+    GEOMETRY = "geometry"  # guarded proximity rule (see pipeline/figure_grouping.py)
+    USER = "user"          # set/corrected by a human in the editor
+
+
 class Block(BaseModel):
     """A layout block with reading-order position (Stage 04).
 
@@ -170,6 +199,23 @@ class Block(BaseModel):
     structure_edited: bool = False       # True if type/reading_order was overridden
     order_confirmed: bool = False        # user explicitly accepted the auto reading order
     text: str | None = None              # block-level translated/edited text override
+
+    # --- caption<->figure grouping (Stage 07 assemble; see figure_grouping.py) ---
+    # CLAUDE.md's non-negotiable: "Figures are cropped from the full-resolution
+    # dewarped image and placed with their captions as a single block in reading
+    # order." Grouping cannot be derived at render time from adjacency alone —
+    # on it_geo_06 the four captions form a stack on the far side of the subpage
+    # and the caption order does NOT track figure position, so the association
+    # has to be COMPUTED (from the printed number, else guarded geometry) and
+    # RECORDED here, where the editor can also correct it.
+    caption_number: int | None = None    # CAPTION: printed number parsed off "Figura NN"
+    figure_number: int | None = None     # FIGURE: number read off the in-photo corner label
+    figure_ref: BlockRef | None = None   # CAPTION: the figure this caption belongs to
+    pair_source: PairSource | None = None  # how figure_ref was established (provenance)
+    type_promoted: bool = False          # type was re-typed CAPTION by the caption parser
+                                         # (an AUTOMATIC promotion, not a user override —
+                                         # it lands in type_auto too, so the editor never
+                                         # mistakes it for an edit)
 
     def order_review_visible(self, order_mode: str) -> bool:
         """Reading-order analogue of ``Word.flag_visible``: in REVIEW mode a block's
@@ -228,7 +274,10 @@ class StageMeta(BaseModel):
 # ONLY a Document + its document_assets/ — never the per-page stage folders — so
 # a document saved months ago keeps rendering after an upstream stage re-runs.
 
-DOCUMENT_SCHEMA_VERSION = "1.0"
+# 1.1 adds the caption<->figure grouping fields on Block (caption_number /
+# figure_number / figure_ref / pair_source / type_promoted). Purely additive with
+# safe defaults, so a 1.0 document still validates and simply carries no pairs.
+DOCUMENT_SCHEMA_VERSION = "1.1"
 
 
 class DocSettings(BaseModel):

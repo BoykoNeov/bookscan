@@ -236,6 +236,90 @@ def test_pristine_grouped_document_does_not_read_as_edited(job: Path):
     assert _document_has_edits(doc) is False
 
 
+def _add_abstained_pair(job: Path) -> Path:
+    """Append a second FIGURE (id 4) plus a caption the grouping pass ABSTAINED on
+    (id 5: no figure_ref, no pair_source) — the state the editor's pairing control
+    exists to resolve. Kept out of the shared fixture so the existing DOM counts
+    (4 word boxes) stay meaningful."""
+    doc = ED.load_document(job)
+    pg = doc.pages[0]
+    pg.blocks.append(Block(
+        id=4, type=BlockType.FIGURE, bbox={"x": 10, "y": 200, "w": 180, "h": 60},
+        reading_order=4, type_auto=BlockType.FIGURE, order_auto=4))
+    pg.blocks.append(Block(
+        id=5, type=BlockType.CAPTION, bbox={"x": 10, "y": 265, "w": 180, "h": 20},
+        reading_order=5, type_auto=BlockType.CAPTION, order_auto=5,
+        words=[Word(text="Loose", text_ocr="Loose",
+                    bbox={"x": 10, "y": 265, "w": 60, "h": 18}, conf=90.0,
+                    decision=WordDecision.KEEP, line_id=3, block_id=5)]))
+    (job / "document.json").write_text(doc.model_dump_json(indent=2), encoding="utf-8")
+    return job
+
+
+def test_abstained_caption_does_not_read_as_edited(job: Path):
+    """Precondition for the two tests below: an abstained caption (no ref, no
+    provenance) is the pipeline's own output, so it must NOT protect the document."""
+    _add_abstained_pair(job)
+    doc = ED.load_document(job)
+    assert doc.pages[0].blocks[5].figure_ref is None
+    assert doc.pages[0].blocks[5].pair_source is None
+    assert ED._document_has_edits(doc) is False
+
+
+def test_user_pairing_marks_document_edited(job: Path):
+    """A pairing the user set is protected work — without this the next
+    ``POST /assemble`` (no ?force) silently discards it."""
+    _add_abstained_pair(job)
+    doc = ED.load_document(job)
+    cap = doc.pages[0].blocks[5]
+    cap.figure_ref = BlockRef(page_id="page_001__single", block_id=4)
+    cap.pair_source = PairSource.USER
+    ED.normalize_edits(doc)
+    assert ED._document_has_edits(doc)
+    from pipeline import stage07_assemble as S7
+    assert S7._document_has_edits(doc)          # both mirrors agree
+
+
+def test_user_unpair_marks_document_edited(job: Path):
+    """The inverse, and the easy one to get wrong: detaching a wrong pair leaves
+    ``figure_ref`` None — indistinguishable from an abstain EXCEPT for the USER
+    provenance stamp. Keying the guard on figure_ref would drop this correction."""
+    doc = ED.load_document(job)
+    cap = doc.pages[0].blocks[3]                 # was paired by NUMBER
+    cap.figure_ref = None
+    cap.pair_source = PairSource.USER
+    ED.normalize_edits(doc)
+    assert ED._document_has_edits(doc)
+    from pipeline import stage07_assemble as S7
+    assert S7._document_has_edits(doc)
+
+
+def test_http_put_persists_user_pairing_and_unpair(job: Path):
+    """Through the real server, exactly as the SPA sends it: pair the abstained
+    caption and detach the number-paired one in one PUT."""
+    _add_abstained_pair(job)
+    with _Server(job) as srv:
+        doc = _get_json(srv.url("/api/document"))
+        blocks = doc["pages"][0]["blocks"]
+        blocks[5]["figure_ref"] = {"page_id": "page_001__single", "block_id": 4}
+        blocks[5]["pair_source"] = "user"
+        blocks[3]["figure_ref"] = None            # detach the NUMBER-sourced pair
+        blocks[3]["pair_source"] = "user"
+        req = urllib.request.Request(
+            srv.url("/api/document"), data=json.dumps(doc).encode("utf-8"),
+            method="PUT", headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as r:
+            body = json.loads(r.read().decode("utf-8"))
+        assert body["ok"] and body["has_edits"] is True   # UI reports it as protected
+    reloaded = ED.load_document(job).pages[0].blocks
+    assert reloaded[5].figure_ref is not None
+    assert reloaded[5].figure_ref.block_id == 4
+    assert reloaded[5].pair_source is PairSource.USER
+    assert reloaded[3].figure_ref is None
+    assert reloaded[3].pair_source is PairSource.USER
+    assert reloaded[3].caption_number == 7            # provenance untouched by the unpair
+
+
 def test_http_put_word_edit_preserves_figure_grouping(job: Path):
     """THE regression this guards: the SPA PUTs the whole fetched document back,
     so a word edit in an unrelated block must not drop figure_ref/pair_source.
@@ -423,6 +507,59 @@ def test_e2e_review_mode_confirm_all_via_dom(job: Path):
     assert reloaded.settings.order_mode == "review"
     assert all(b.order_confirmed for b in reloaded.pages[0].blocks)
     assert not any(b.order_review_visible("review") for b in reloaded.pages[0].blocks)
+
+
+@pytest.mark.e2e
+def test_e2e_pair_and_unpair_a_caption_via_dom(job: Path):
+    """Drive the pairing control through the real UI: select the abstained caption,
+    pick its figure from the dropdown, then detach the number-paired caption with
+    Unpair, Save, and assert both rulings landed on disk with USER provenance."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    _add_abstained_pair(job)
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            # the abstained caption is flagged on the page and in the list
+            assert pg.query_selector("#blocklist .reviewbar.pair") is not None
+            assert len(pg.query_selector_all("#blocklist .blockrow .dot.pair")) == 1
+            assert len(pg.query_selector_all("#ovBlocks .bbox.pairing")) == 1
+
+            rows = pg.query_selector_all("#blocklist .blockrow")   # reading order 0..5
+            assert len(rows) == 6
+            rows[5].click()                                        # the loose caption
+            pg.wait_for_selector("#inspector .card select")
+            # block card selects: [type, figure-pairing]
+            sels = pg.query_selector_all("#inspector .card select")
+            assert len(sels) == 2
+            sels[1].select_option("4")                             # pair to FIGURE id 4
+            pg.wait_for_selector("#blocklist .blockrow .dot.pair", state="detached")
+
+            rows = pg.query_selector_all("#blocklist .blockrow")
+            rows[3].click()                                        # the NUMBER-paired caption
+            pg.wait_for_selector("#inspector .card button:has-text('Unpair')")
+            pg.click("#inspector .card button:has-text('Unpair')")
+
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+            # the UI must tell the user their pairing is now protected
+            assert "edits protected" in pg.text_content("#status")
+        finally:
+            browser.close()
+
+    blocks = ED.load_document(job).pages[0].blocks
+    assert blocks[5].figure_ref is not None and blocks[5].figure_ref.block_id == 4
+    assert blocks[5].figure_ref.page_id == "page_001__single"
+    assert blocks[5].pair_source is PairSource.USER
+    assert blocks[3].figure_ref is None and blocks[3].pair_source is PairSource.USER
 
 
 if __name__ == "__main__":

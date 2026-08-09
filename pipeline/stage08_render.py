@@ -68,7 +68,9 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from pipeline.page_model import BBox, Block, BlockType, Document, DocPage, StageMeta, Word
+from pipeline.page_model import (
+    BBox, Block, BlockType, Document, DocPage, PairSource, StageMeta, Word,
+)
 from pipeline import stage04_layout as S4
 
 STAGE = "stage08_render"
@@ -292,11 +294,16 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
             if cap is None and i + 1 < len(blocks):
                 nxt = blocks[i + 1]
                 # Adjacency fallback — ONLY for a caption that claims no figure of
-                # its own. A caption bound to a DIFFERENT figure must never be
-                # swallowed by whichever figure happens to precede it (on
-                # it_geo_06 that would hand the top-left cliff the whole caption
-                # stack's first entry).
-                if nxt.type is BlockType.CAPTION and nxt.figure_ref is None:
+                # its own AND that no human has ruled on. A caption bound to a
+                # DIFFERENT figure must never be swallowed by whichever figure
+                # happens to precede it (on it_geo_06 that would hand the top-left
+                # cliff the whole caption stack's first entry); and a caption the
+                # user DELIBERATELY UNPAIRED in the editor (pair_source=user with
+                # figure_ref None) must not be silently re-paired here — that would
+                # make "detach this caption" a no-op in the rendered output for the
+                # commonest case, a caption sitting right under the wrong figure.
+                if (nxt.type is BlockType.CAPTION and nxt.figure_ref is None
+                        and nxt.pair_source is not PairSource.USER):
                     cap = nxt
                     i += 1                          # consume the grouped caption
             parts.append(_figure_html(blk, page_bgr, cap, mode, job_dir, dictionary))

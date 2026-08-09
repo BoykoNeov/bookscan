@@ -242,6 +242,56 @@ def test_unpaired_caption_still_groups_by_adjacency(tmp_path: Path):
     assert "<figcaption" in html and "LEGACYCAPTION" in html
 
 
+def test_user_pairing_flips_a_standalone_caption_into_its_figure(tmp_path: Path):
+    """The end-to-end point of the editor's pairing control: an abstained caption
+    renders as a standalone <p class="caption">, and the user's correction must move
+    it INSIDE the <figure> as a real <figcaption>. Asserting the rendered output, not
+    just that the field round-tripped."""
+    def blocks(ref, src):
+        return [
+            Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
+                  reading_order=0),
+            Block(id=1, type="paragraph", bbox={"x": 0, "y": 70, "w": 60, "h": 20},
+                  reading_order=1, words=[_w("Body")]),
+            Block(id=2, type="caption", bbox={"x": 0, "y": 150, "w": 60, "h": 20},
+                  reading_order=2, words=[_w("ABSTAINEDCAPTION")],
+                  figure_ref=ref, pair_source=src),
+        ]
+
+    # before: the grouping pass abstained (no ref, no provenance)
+    page, jd = _page_with(blocks(None, None), tmp_path)
+    before = S8.render_html(_doc(page), jd)
+    assert '<p class="caption">ABSTAINEDCAPTION' in before
+    assert "<figcaption" not in before          # a bare figcaption here would be invalid HTML
+
+    # after: the user paired it in the editor
+    page2, _ = _page_with(blocks({"page_id": "pg", "block_id": 0}, "user"), tmp_path)
+    after = S8.render_html(_doc(page2), jd)
+    assert "<figcaption" in after and "ABSTAINEDCAPTION" in after
+    assert '<p class="caption">' not in after
+    assert after.count("ABSTAINEDCAPTION") == 1  # moved, not duplicated
+    assert after.index("ABSTAINEDCAPTION") > after.index("<figure")  # inside the figure
+
+
+def test_user_unpair_is_not_undone_by_the_adjacency_fallback(tmp_path: Path):
+    """A caption sitting right under the WRONG figure is the commonest thing a user
+    detaches — and it is exactly the shape the adjacency fallback would re-pair. The
+    user's ruling (pair_source=user with figure_ref None) must survive rendering, or
+    'Unpair' is a no-op in the deliverable."""
+    blocks = [
+        Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
+              reading_order=0),
+        Block(id=1, type="caption", bbox={"x": 0, "y": 70, "w": 60, "h": 20},
+              reading_order=1, words=[_w("DETACHEDBYUSER")], pair_source="user"),
+    ]
+    page, jd = _page_with(blocks, tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "<figcaption" not in html
+    assert '<p class="caption">DETACHEDBYUSER' in html
+    # ...while an untouched caption in the same position still groups (prior test),
+    # so the fallback is narrowed by the user's decision, not removed.
+
+
 def test_reading_order_drives_output_sequence(tmp_path: Path):
     blocks = [
         Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 20},

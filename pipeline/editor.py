@@ -26,9 +26,11 @@ server-side regardless of what the browser sent:
     patch-mode render the correction instead of the stale crop);
   * block ``type``/``reading_order`` diverged from ``type_auto``/``order_auto``
     -> ``structure_edited = True``.
-``order_confirmed`` (the review-mode "accept auto order" action) is sent by the browser
-and saved as-is — it needs no divergence to infer. ``text_ocr``/``*_auto`` provenance is
-NEVER touched.
+``order_confirmed`` (the review-mode "accept auto order" action) and ``pair_source =
+"user"`` (a caption<->figure pairing the human set or cleared) are sent by the browser
+and saved as-is — neither can be inferred from a divergence, because accepting the auto
+order leaves the numbers equal and an unpair leaves ``figure_ref`` None exactly as an
+abstain does. ``text_ocr``/``*_auto`` provenance is NEVER touched.
 
 **Preview is HTML-only.** Re-rendering the HTML (``stage08_render.render_html``) is
 cheap; the Chromium/Playwright PDF path is slow/flaky, so it stays a separate
@@ -57,7 +59,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from pipeline.page_model import Block, Document, DocPage, Word
+from pipeline.page_model import Block, Document, DocPage, PairSource, Word
 from pipeline import stage08_render as S8
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -248,12 +250,17 @@ class _Handler(BaseHTTPRequestHandler):
 def _document_has_edits(doc: Document) -> bool:
     """Mirror of stage07_assemble._document_has_edits (kept local to avoid importing
     the whole assemble stage just for one predicate) — reported to the UI so the user
-    sees when their edits are now protected against a re-assemble."""
+    sees when their edits are now protected against a re-assemble.
+
+    Keep the two in lockstep: ``pair_source is USER`` (a caption the human paired or
+    deliberately unpaired) is protected work exactly like ``order_confirmed``."""
     if doc.settings.target_language:
         return True
     for pg in doc.pages:
         for blk in pg.blocks:
             if blk.structure_edited or blk.order_confirmed or blk.text is not None:
+                return True
+            if blk.pair_source is PairSource.USER:
                 return True
             if any(w.edited for w in blk.words):
                 return True

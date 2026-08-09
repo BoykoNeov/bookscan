@@ -71,7 +71,7 @@ import cv2
 import numpy as np
 
 from pipeline.page_model import (
-    Block, BlockType, Document, DocPage, DocSettings, StageMeta, Word,
+    Block, BlockType, Document, DocPage, DocSettings, PairSource, StageMeta, Word,
 )
 from pipeline import figure_grouping as FG
 from pipeline import stage04_layout as S4
@@ -136,12 +136,22 @@ def _enrich_block(blk: Block, patch_map: dict[tuple[int, int], str]) -> Block:
 
 
 def _document_has_edits(doc: Document) -> bool:
-    """Whether an existing document carries human edits worth protecting."""
+    """Whether an existing document carries human edits worth protecting.
+
+    ``pair_source is USER`` is the caption<->figure analogue of ``order_confirmed``:
+    a pairing the human set (or deliberately CLEARED — an unpair keeps the USER
+    provenance with ``figure_ref=None``) is real work, and it is the ONLY signal
+    for it. Keying on ``figure_ref`` being non-None instead would be wrong in both
+    directions: a pristine auto-grouped document would read as edited and could
+    never be re-assembled without --force, and a deliberate unpair would read as
+    untouched and be silently discarded."""
     if doc.settings.target_language:
         return True
     for pg in doc.pages:
         for blk in pg.blocks:
             if blk.structure_edited or blk.order_confirmed or blk.text is not None:
+                return True
+            if blk.pair_source is PairSource.USER:
                 return True
             if any(w.edited for w in blk.words):
                 return True

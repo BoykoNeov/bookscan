@@ -8,7 +8,7 @@
   :root {
     --bg:#1e2127; --panel:#262b33; --panel2:#2f3640; --line:#3a424e;
     --fg:#e6e9ee; --muted:#9aa4b2; --accent:#5aa9ff; --flag:#e8c400; --patch:#d9534f;
-    --edited:#5ad18b; --review:#e08b3a;
+    --edited:#5ad18b; --review:#e08b3a; --pair:#b07de0;
   }
   * { box-sizing:border-box; }
   html,body { margin:0; height:100%; font:14px/1.4 system-ui,Segoe UI,sans-serif;
@@ -45,6 +45,10 @@
   .bbox { border:1.5px dashed rgba(255,255,255,.25); pointer-events:none; }
   .bbox.review { border-color:var(--review); border-style:solid;
                  background:rgba(224,139,58,.08); }
+  .bbox.pairing { border-color:var(--pair); border-style:solid;
+                  background:rgba(176,125,224,.08); }
+  .bbox.partner { border-color:var(--pair); border-style:solid; border-width:2.5px;
+                  background:rgba(176,125,224,.14); }
   .bbox.sel { border-color:var(--accent); border-style:solid;
               background:rgba(90,169,255,.06); }
   .bbox .lbl { position:absolute; top:-16px; left:0; font-size:11px; padding:0 4px;
@@ -62,11 +66,14 @@
   .badge.patch { color:var(--patch); border-color:var(--patch); }
   .badge.edited { color:var(--edited); border-color:var(--edited); }
   .badge.review { color:var(--review); border-color:var(--review); }
+  .badge.pair { color:var(--pair); border-color:var(--pair); }
   .dot { display:inline-block; width:8px; height:8px; border-radius:50%; }
   .dot.review { background:var(--review); }
+  .dot.pair { background:var(--pair); }
   .reviewbar { display:flex; gap:8px; align-items:center; margin:0 0 8px;
                padding:6px 8px; border:1px solid var(--review); border-radius:6px;
                background:rgba(224,139,58,.08); }
+  .reviewbar.pair { border-color:var(--pair); background:rgba(176,125,224,.08); }
   .card { background:var(--panel2); border:1px solid var(--line); border-radius:8px;
           padding:10px; margin-bottom:12px; }
   .blocklist { display:flex; flex-direction:column; gap:4px; }
@@ -174,6 +181,48 @@ function confirmOrder(blk, on){ blk.order_confirmed=!!on; markDirty();
 function confirmAllOnPage(){ for(const blk of page().blocks){ if(orderNeedsReview(blk)) blk.order_confirmed=true; }
   markDirty(); renderPage(); renderBlockList(); renderInspector(); }
 
+// ---- caption<->figure pairing helpers (mirror page_model.Block.figure_ref / PairSource) ----
+// The grouping pass (pipeline/figure_grouping.py) ABSTAINS whenever it cannot prove a
+// pair — its bar is zero WRONG pairs, not many pairs — so unpaired captions are normal,
+// not a bug, and this is where a human resolves them. Everything a human sets here is
+// stamped pair_source="user", including an UNPAIR (figure_ref null): that stamp is the
+// only thing standing between the correction and the next re-assemble (see
+// editor.py:_document_has_edits) and the only thing stopping stage08_render's
+// adjacency fallback from silently re-pairing a caption the user just detached.
+// v1 is SAME-PAGE ONLY: figure_ref is a page-scoped BlockRef and the schema can express
+// a cross-page pair (it_geo_04's gutter-split Fig.21 panorama), but neither this editor
+// nor stage08_render floats a caption across pages yet — an existing off-page ref is
+// shown read-only rather than silently rewritten or dropped.
+function isCaption(blk){ return blk.type==="caption"; }
+function isFigure(blk){ return blk.type==="figure"; }
+function pageFigures(){ return page().blocks.filter(isFigure)
+  .sort((a,b)=>a.reading_order-b.reading_order); }
+function refIsOffPage(blk){ return !!blk.figure_ref && blk.figure_ref.page_id!==page().page_id; }
+function pairedFigure(blk){                       // the figure this caption points at, this page
+  if(!blk.figure_ref || refIsOffPage(blk)) return null;
+  return page().blocks.find(b=>b.id===blk.figure_ref.block_id) || null;
+}
+function captionForFigure(fig){                   // first claimant wins (mirrors _caption_bindings)
+  return page().blocks.find(b=>isCaption(b) && b.figure_ref
+    && b.figure_ref.page_id===page().page_id && b.figure_ref.block_id===fig.id) || null;
+}
+// "needs pairing" = the pass abstained AND no human has ruled. A user's deliberate
+// unpair is a decision, so it clears the marker — the per-block analogue of
+// order_review_visible keying on the order field specifically.
+function captionNeedsPairing(blk){
+  return isCaption(blk) && !blk.figure_ref && blk.pair_source!=="user"; }
+function pageCaptionsNeedingPairing(){ return page().blocks.filter(captionNeedsPairing); }
+function partnerId(blk){                          // block to highlight alongside the selection
+  if(isCaption(blk)){ const f=pairedFigure(blk); return f ? f.id : null; }
+  if(isFigure(blk)){ const c=captionForFigure(blk); return c ? c.id : null; }
+  return null;
+}
+function setPair(blk, figId){
+  blk.figure_ref = (figId==null) ? null : { page_id: page().page_id, block_id: figId };
+  blk.pair_source = "user";
+  markDirty(); renderPage(); renderBlockList(); renderInspector();
+}
+
 // ---- load ----
 async function load(){
   const meta = await (await fetch("api/meta")).json();
@@ -201,14 +250,22 @@ function drawOverlays(){
   ovB.style.display = $("#showBlocks").checked ? "block":"none";
   ovW.style.display = $("#showWords").checked ? "block":"none";
   const blocks = [...p.blocks].sort((a,b)=>a.reading_order-b.reading_order);
+  const sel = state.selBlock==null ? null : findBlock(state.selBlock);
+  const partner = sel ? partnerId(sel) : null;
   for(const blk of p.blocks){
     const b = el("div","box bbox"); const bb=blk.bbox;
     b.style.left=pct(bb.x,W); b.style.top=pct(bb.y,H);
     b.style.width=pct(bb.w,W); b.style.height=pct(bb.h,H);
     const needsRev = orderNeedsReview(blk);
+    const needsPair = captionNeedsPairing(blk);
     if(needsRev) b.classList.add("review");
+    if(needsPair) b.classList.add("pairing");
+    if(partner===blk.id) b.classList.add("partner");   // the caption/figure of the selection
     if(state.selBlock===blk.id) b.classList.add("sel");
-    const lbl = el("span","lbl", `${blk.reading_order} ${blk.type}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}`);
+    const fig = isCaption(blk) ? pairedFigure(blk) : null;
+    const pairMark = fig ? ` →#${fig.id}` : (needsPair ? " ⛓" : "");
+    const lbl = el("span","lbl",
+      `${blk.reading_order} ${blk.type}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}${pairMark}`);
     b.appendChild(lbl); ovB.appendChild(b);
     (blk.words||[]).forEach((w,wi)=>{
       const e = el("div","box wbox "+wordClass(w));
@@ -282,6 +339,13 @@ function blockEditor(blk){
     head.appendChild(el("span", "badge " + (orderNeedsReview(blk)?"review":"edited"),
       orderNeedsReview(blk) ? "order: review" : "order: ok"));
   }
+  if(isCaption(blk)){
+    if(captionNeedsPairing(blk)) head.appendChild(el("span","badge pair","no figure"));
+    else if(blk.pair_source==="user")
+      head.appendChild(el("span","badge edited", blk.figure_ref ? "pair: you" : "unpaired: you"));
+    else if(blk.figure_ref)
+      head.appendChild(el("span","badge","pair: "+(blk.pair_source||"?")));
+  }
   c.appendChild(head);
 
   const f1 = el("div","field");
@@ -321,6 +385,8 @@ function blockEditor(blk){
     c.appendChild(rv);
   }
 
+  if(isCaption(blk) || isFigure(blk)) c.appendChild(pairingField(blk));
+
   const f3 = el("div","field");
   f3.appendChild(el("label","small muted","translation / block-level text override (supersedes words when set)"));
   const ta = el("textarea"); ta.rows=3; ta.value = blk.text==null ? "" : blk.text;
@@ -339,6 +405,72 @@ function blockEditor(blk){
   return c;
 }
 
+// ---- caption<->figure pairing control ----
+// Editing happens on the CAPTION side only, because figure_ref lives on the caption
+// (a figure has no field to point back with). The figure side shows the resolved
+// partner read-only so selecting a photo still answers "which caption is this?".
+function pairingField(blk){
+  const f = el("div","field");
+  if(isFigure(blk)){
+    const cap = captionForFigure(blk);
+    f.appendChild(el("label","small muted","caption paired to this figure"));
+    if(cap){
+      const row=el("div","row");
+      const go=el("button",null,`Block #${cap.id} — "${(cap.words||[]).slice(0,4).map(w=>w.text).join(" ")||"(no text)"}"`);
+      go.onclick=()=>selectBlock(cap.id); row.appendChild(go); f.appendChild(row);
+      f.appendChild(el("div","small muted",`pair source: ${cap.pair_source||"—"} · edit it from that caption`));
+    } else {
+      f.appendChild(el("div","small muted",
+        "none — select the caption you want and pair it there"));
+    }
+    if(blk.figure_number!=null)
+      f.appendChild(el("div","small muted",`printed figure number read from the photo: ${blk.figure_number}`));
+    return f;
+  }
+
+  // --- caption side ---
+  f.appendChild(el("label","small muted","figure this caption belongs to"));
+  if(refIsOffPage(blk)){
+    f.appendChild(el("div","small muted",
+      `paired ACROSS PAGES to ${blk.figure_ref.page_id} · block #${blk.figure_ref.block_id} — `
+      + "this editor only pairs within a page, so that ref is shown read-only."));
+    const un=el("button",null,"Unpair");
+    un.onclick=()=>setPair(blk,null); f.appendChild(un);
+    return f;
+  }
+  const figs = pageFigures();
+  const sel = el("select");
+  const none = el("option",null,"— not paired —"); none.value=""; sel.appendChild(none);
+  for(const fg of figs){
+    const claimed = captionForFigure(fg);
+    const taken = claimed && claimed.id!==blk.id ? `  (has caption #${claimed.id})` : "";
+    const num = fg.figure_number!=null ? ` · figure ${fg.figure_number}` : "";
+    const o = el("option",null,`Block #${fg.id} · order ${fg.reading_order}${num}${taken}`);
+    o.value = String(fg.id);
+    if(blk.figure_ref && blk.figure_ref.block_id===fg.id) o.selected = true;
+    sel.appendChild(o);
+  }
+  if(!blk.figure_ref) none.selected = true;
+  sel.onchange = () => setPair(blk, sel.value==="" ? null : parseInt(sel.value,10));
+  f.appendChild(sel);
+  if(!figs.length)
+    f.appendChild(el("div","small muted","no FIGURE blocks on this page — re-type a block to figure first"));
+
+  const bits = [];
+  if(blk.caption_number!=null) bits.push(`printed caption number: ${blk.caption_number}`);
+  bits.push(blk.figure_ref
+    ? `paired by: ${blk.pair_source==="user" ? "you" : (blk.pair_source||"—")}`
+    : (blk.pair_source==="user"
+        ? "unpaired by you — the renderer will keep it standing alone"
+        : "not paired — the grouping pass abstained rather than guess"));
+  f.appendChild(el("div","small muted", bits.join(" · ")));
+  if(blk.figure_ref){
+    const un=el("button",null,"Unpair"); un.style.marginTop="6px";
+    un.onclick=()=>setPair(blk,null); f.appendChild(un);
+  }
+  return f;
+}
+
 function renderBlockList(){
   const host=$("#blocklist"); host.innerHTML="";
   if(orderMode()==="review"){
@@ -352,13 +484,25 @@ function renderBlockList(){
       btn.onclick=confirmAllOnPage; bar.appendChild(btn); }
     host.appendChild(bar);
   }
+  // Pairing bar — no bulk "pair all" counterpart on purpose: guessing the pairs in
+  // bulk is exactly what the grouping pass refuses to do (zero wrong pairs).
+  const unpaired = pageCaptionsNeedingPairing().length;
+  if(unpaired){
+    const bar = el("div","reviewbar pair small");
+    bar.appendChild(el("span","dot pair"));
+    bar.appendChild(el("span","grow",
+      `${unpaired} caption${unpaired>1?"s":""} on this page not paired to a figure`));
+    host.appendChild(bar);
+  }
   const blocks=[...page().blocks].sort((a,b)=>a.reading_order-b.reading_order);
   for(const blk of blocks){
     const row=el("div","blockrow"+(state.selBlock===blk.id?" sel":""));
     row.appendChild(el("span","ord", String(blk.reading_order)));
-    const t=el("span","grow", blk.type + (blk.text!=null?" · translated":""));
+    const fig = isCaption(blk) ? pairedFigure(blk) : null;
+    const t=el("span","grow", blk.type + (fig?` → #${fig.id}`:"") + (blk.text!=null?" · translated":""));
     row.appendChild(t);
     if(orderNeedsReview(blk)) row.appendChild(el("span","dot review"));
+    if(captionNeedsPairing(blk)) row.appendChild(el("span","dot pair"));
     if(blk.structure_edited) row.appendChild(el("span","ty","*"));
     row.onclick=()=>selectBlock(blk.id);
     host.appendChild(row);
@@ -381,8 +525,9 @@ function renderSettings(){
   omode.onchange=()=>{ s.order_mode=omode.value; markDirty(); renderPage(); renderBlockList(); renderInspector(); };
   mk("reading-order mode", omode);
   host.appendChild(el("div","small muted",
-    "review: mark every block's reading order for confirm/correct before reconstruction "
-    + "(caption↔figure grouping is not addressed by this toggle)."));
+    "review: mark every block's reading order for confirm/correct before reconstruction. "
+    + "Caption↔figure grouping is separate and has no mode — select a caption to pair, "
+    + "repair or detach it (unpaired captions are marked on every page)."));
 
   const src=el("input"); src.value=s.source_language||"";
   src.onchange=()=>{ s.source_language=src.value; markDirty(); };

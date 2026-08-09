@@ -313,7 +313,14 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
             if ref is not None:
                 g.caption_numbers[c.key] = ref.number
 
-    g.figure_numbers = read_figure_numbers(figs, page_bgr, tess_bin)
+    # Corner-label OCR is the expensive step (a localization pass + 4 Tesseract
+    # invocations per figure, ~2.7s on a 6-figure spread vs ~12ms for the rest of
+    # assemble). The number arm needs BOTH sides, so reading figure labels on a
+    # subpage where no caption carries a printed number can never produce a pair —
+    # skip it. Consequence, stated rather than hidden: on such a subpage
+    # ``figure_number`` is not recorded as provenance either.
+    if g.caption_numbers:
+        g.figure_numbers = read_figure_numbers(figs, page_bgr, tess_bin)
 
     # --- arm 1: printed number (authoritative) ---
     num_pairs = CP.pair_by_number(g.caption_numbers, dict(g.figure_numbers))

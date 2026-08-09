@@ -31,7 +31,8 @@ import pytest
 
 from pipeline import editor as ED
 from pipeline.page_model import (
-    Block, BlockType, Document, DocPage, DocSettings, Word, WordDecision,
+    Block, BlockRef, BlockType, Document, DocPage, DocSettings, PairSource, Word,
+    WordDecision,
 )
 
 
@@ -58,12 +59,30 @@ def _mini_doc() -> Document:
                  conf=41.0, decision=WordDecision.FLAG, line_id=1, block_id=1),
         ],
     )
+    # A figure + the caption Stage 07's grouping pass PAIRED to it. Present in the
+    # fixture so every editor test exercises a document that carries grouping
+    # provenance — the fields must survive an unrelated edit, or the first thing a
+    # user does silently unpairs the document.
+    b2 = Block(
+        id=2, type=BlockType.FIGURE, bbox={"x": 10, "y": 90, "w": 180, "h": 60},
+        reading_order=2, type_auto=BlockType.FIGURE, order_auto=2, figure_number=7,
+    )
+    b3 = Block(
+        id=3, type=BlockType.CAPTION, bbox={"x": 10, "y": 155, "w": 180, "h": 20},
+        reading_order=3, type_auto=BlockType.CAPTION, order_auto=3,
+        caption_number=7, type_promoted=True, pair_source=PairSource.NUMBER,
+        figure_ref=BlockRef(page_id="page_001__single", block_id=2),
+        words=[Word(text="Figure", text_ocr="Figure",
+                    bbox={"x": 10, "y": 155, "w": 60, "h": 18}, conf=90.0,
+                    decision=WordDecision.KEEP, line_id=2, block_id=3)],
+    )
     return Document(
         document_id="mini", job_id="mini",
         settings=DocSettings(source_language="eng", uncertainty_mode="flag"),
         pages=[DocPage(page_id="page_001__single", source_spread="page_001",
                        subpage="single", width=200, height=100,
-                       image_asset="document_assets/page_001__single.png", blocks=[b0, b1])],
+                       image_asset="document_assets/page_001__single.png",
+                       blocks=[b0, b1, b2, b3])],
     )
 
 
@@ -195,6 +214,48 @@ def test_confirming_order_marks_document_edited(job: Path):
     assert S7._document_has_edits(doc)
 
 
+def test_grouping_survives_a_load_save_roundtrip(job: Path):
+    """Grouping lives in the editable document, so it only means anything if it
+    survives editing. Pure layer first."""
+    doc = ED.load_document(job)
+    ED.save_document(job, doc)
+    cap = ED.load_document(job).pages[0].blocks[3]
+    assert cap.figure_ref is not None and cap.figure_ref.block_id == 2
+    assert cap.pair_source is PairSource.NUMBER
+    assert cap.caption_number == 7 and cap.type_promoted is True
+
+
+def test_pristine_grouped_document_does_not_read_as_edited(job: Path):
+    """An automatic caption promotion must not trip the clobber guard: Stage 07
+    writes the promoted type into type_auto as well, so re-assembling without
+    --force stays possible on a document nobody has touched."""
+    doc = ED.load_document(job)
+    ED.normalize_edits(doc)
+    assert doc.pages[0].blocks[3].structure_edited is False
+    from pipeline.stage07_assemble import _document_has_edits
+    assert _document_has_edits(doc) is False
+
+
+def test_http_put_word_edit_preserves_figure_grouping(job: Path):
+    """THE regression this guards: the SPA PUTs the whole fetched document back,
+    so a word edit in an unrelated block must not drop figure_ref/pair_source.
+    A green suite could not detect this before the fixture carried the fields."""
+    with _Server(job) as srv:
+        doc = _get_json(srv.url("/api/document"))
+        doc["pages"][0]["blocks"][1]["words"][1]["text"] = "world"   # unrelated edit
+        req = urllib.request.Request(
+            srv.url("/api/document"), data=json.dumps(doc).encode("utf-8"),
+            method="PUT", headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as r:
+            assert json.loads(r.read().decode("utf-8"))["ok"]
+    cap = ED.load_document(job).pages[0].blocks[3]
+    assert cap.figure_ref is not None
+    assert cap.figure_ref.page_id == "page_001__single" and cap.figure_ref.block_id == 2
+    assert cap.pair_source is PairSource.NUMBER
+    assert cap.caption_number == 7 and cap.type_promoted is True
+    assert ED.load_document(job).pages[0].blocks[2].figure_number == 7
+
+
 def test_http_put_persists_order_confirmed(job: Path):
     """The review-mode 'accept auto order' action round-trips through the server and
     is saved as-is (no divergence to infer it from)."""
@@ -310,9 +371,10 @@ def test_e2e_edit_word_via_dom(job: Path):
             pg = browser.new_page()
             pg.goto(srv.url("/"), wait_until="networkidle")
             pg.wait_for_selector("#ovWords .wbox")
-            # the flagged word "wrold" is the 3rd word box (Title, hello, wrold)
+            # word boxes in reading order: Title, hello, wrold, Figure (the last
+            # belongs to the paired caption block). The flagged word is the 3rd.
             boxes = pg.query_selector_all("#ovWords .wbox")
-            assert len(boxes) == 3
+            assert len(boxes) == 4
             boxes[2].click()
             inp = pg.wait_for_selector("#inspector .card input")   # the editable text field
             inp.fill("world")

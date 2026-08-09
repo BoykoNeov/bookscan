@@ -1776,3 +1776,26 @@ Two real bugs this run exposed, both fixed:
 
 Full suite **284 green** (was 255): +25 `test_figure_grouping.py`, +4 render
 grouping/non-regression tests.
+
+### Follow-ups closed the same day (advisor review)
+
+* **Editing must not unpair the document.** Grouping only means anything if it
+  survives the editor, and `test_editor.py` predated these fields, so a green suite
+  could not have detected a drop. Verified on the real path: the SPA PUTs the whole
+  fetched document back (`JSON.stringify(state.doc)`), and a word edit in an
+  unrelated block provably preserves `figure_ref`/`pair_source`/`caption_number`/
+  `figure_number`/`type_promoted` through the HTTP round-trip. The editor fixture now
+  carries a paired figure+caption so every editor test exercises a grouped document,
+  and a pristine grouped document still reads as un-edited — an automatic caption
+  promotion does not trip assemble's clobber guard (re-ran `stage07_assemble`
+  WITHOUT `--force` over the grouped job: accepted, as intended).
+* **Cost.** Grouping is the expensive part of assemble now: warm, a 2-subpage
+  it_geo_06 spread takes **~12ms without** it and **~3–12s with** (high variance;
+  Windows Tesseract process startup × 4 PSMs per localizing figure). Mitigated where
+  it buys nothing — the number arm needs BOTH sides, so corner-label OCR is skipped
+  entirely on a subpage where no caption carries a printed number (that subpage then
+  records no `figure_number` provenance either, stated rather than hidden). Pages
+  like it_geo_06, whose captions ARE numbered, still pay it. Worth revisiting before
+  a long book runs through the server, which calls assemble in-process.
+
+Suite **288 green**.

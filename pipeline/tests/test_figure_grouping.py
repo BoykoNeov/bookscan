@@ -235,12 +235,41 @@ def test_geometry_still_runs_for_an_unnumbered_caption_on_a_numbered_page():
     caption is still eligible for the geometry arm."""
     views = [
         _v("f26", "figure", 1611, 253, 498, 622, "26"),
-        _v("f", "figure", 100, 1000, 600, 400),
-        _v("c", "caption", 110, 1440, 580, 90, "An unnumbered caption"),
+        _v("c26", "caption", 1611, 940, 498, 90, "Figura 26 Fossili"),   # numbered
+        _v("f", "figure", 100, 1400, 600, 400),
+        _v("c", "caption", 110, 1840, 580, 90, "An unnumbered caption"),
     ]
     g = FG.group_figures(views, page_h=PAGE_H)
-    assert g.pairs == {"c": "f"}
+    assert g.figure_numbers == {"f26": 26}          # the page IS in numbered regime
+    assert g.pairs["c26"] == "f26" and g.pair_source["c26"] == "number"
+    assert g.pairs["c"] == "f"
     assert g.pair_source["c"] == "geometry"
+
+
+def test_corner_label_ocr_is_skipped_when_no_caption_carries_a_number():
+    """The number arm needs BOTH sides, so localizing + OCR'ing figure labels on a
+    subpage with no numbered caption can never produce a pair. Skipping it is the
+    difference between ~2.7s and ~12ms of assemble time per spread."""
+    calls: list = []
+
+    def _boom(*a, **k):                      # would be the expensive pixel path
+        calls.append(a)
+        return 42
+
+    views = [
+        _v("f", "figure", 100, 100, 600, 400),
+        _v("c", "caption", 110, 540, 580, 90, "An unnumbered caption"),
+    ]
+    import numpy as np
+    fake_img = np.zeros((PAGE_H, 800, 3), np.uint8)
+    orig = FG.FL.read_corner_label
+    FG.FL.read_corner_label = _boom
+    try:
+        g = FG.group_figures(views, page_h=PAGE_H, page_bgr=fake_img, tess_bin="tesseract")
+    finally:
+        FG.FL.read_corner_label = orig
+    assert calls == []                       # never entered the expensive path
+    assert g.pairs == {"c": "f"}             # geometry still groups
 
 
 def test_no_figure_numbers_anywhere_leaves_geometry_fully_enabled():

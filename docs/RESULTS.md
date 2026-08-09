@@ -1799,3 +1799,73 @@ grouping/non-regression tests.
   a long book runs through the server, which calls assemble in-process.
 
 Suite **288 green**.
+
+## 2026-08-09 — Figure separation Phase B: the L-shape split + caption ejection
+
+Closes the output defect recorded in `docs/FIGURE_SEPARATION_SCOPE.md` §5 the same
+day it was measured: on it_geo_06-right the detector's merged figure box swallowed
+caption C29, so the rendered deliverable printed **Figura 29 twice** — once as
+reflowed `<figcaption>` text, once as PIXELS baked into the Figura 30 `<figure>`
+image. Pairing could never fix it; it is a crop-boundary problem.
+
+Phase A cut figures only at full-**width** page-background seams. Phase B adds the
+second axis (`_cut_figure(..., axis)`), runs **H-then-V at depth 2** — not general
+recursion — and then **ejects** any sub-box that a non-figure detection covers by
+`fig_eject_text_cover` (0.60).
+
+### The two numbers that discriminate (it_geo_06-right, real pixels)
+
+| measurement | Phase A | Phase B |
+|---|---|---|
+| **C29 caption's coverage BY a figure box** (the defect) | **0.967** | **0.000** |
+| **F30 IoU vs GT** `636,1400 1072x800` (the metric) | **0.633** | **0.908** |
+| F30's detected box | `154,1341 1554x842` | `640,1341 1068x842` |
+| F29 IoU vs GT | 0.971 | 0.971 |
+
+Both re-measured end-to-end in a **fresh job** (`phaseb_it06`, run_all → assemble →
+render), not just in Stage 04 — `grouping_it06` was left alone so the human pairing
+rulings from commit 90f1143 survive. At the document level, C29's `max coverage by a
+figure` reads 0.967 in `grouping_it06` and 0.000 in `phaseb_it06`; the extracted F30
+crops confirm it visually.
+
+### Regression: 9 of 10 graded subpages byte-identical
+
+`tools/layout_order_eval` over it_geo_04 / 05 / 06 / 07 / de_01, before vs after,
+comparing seg-recall, type accuracy, tau, block count, misses and every pairing
+counter: **identical on every subpage except it_geo_06-right.** Criterion 3.2 (zero
+false-splits) holds, including on it_geo_06-**left**, which the Phase A scoping had
+forgotten to list and which keeps all four figure boxes at IoU 0.974 / 0.928 / 0.919
+/ 1.000.
+
+### The false-split the guard exists to stop (measured, not hypothetical)
+
+The first, unguarded implementation **did** false-split. On it_geo_05-left the single
+full-page MAP `231,331 1806x2658` was sliced into two vertical strips and **GT F2
+fell from IoU 1.000 to 0.702**. The eval reported this as an apparent *improvement*
+(seg-recall 0.5 → 1.0) because one strip happened to contain enough of caption C2's
+text to match its anchor — a reminder that a recall number can rise while the
+segmentation gets worse.
+
+Cause: **the two axes are not symmetric.** A stacked photo has no full-WIDTH cream
+band inside it, which is what makes Phase A's full-span guard sound; but a diagram
+drawn *on page background* legitimately has full-HEIGHT background columns. So the
+V-cut carries an extra guard — **accepted only when it ejects a detector-confirmed
+text column.** With it, it_geo_05 returns to identical. Residual and unfixed (no
+fixture): a figure that both has an interior full-height background column and a text
+detection overlapping one side would still be sliced.
+
+### Honest cost: one pair lost, and it was right for the wrong reason
+
+it_geo_06-right's recovered pairs go **4/6 → 3/6 (still 0 wrong)**: C30→F30 is no
+longer emitted. The geometry arm requires a shared column, and C30 (`154,2239
+439x581`) shares neither column nor y-band with the true F30 (`636,1400 1072x800`) —
+the caption is printed "**A lato**" (*to the side*). The old pair existed **only
+because the figure box was wrong** and accidentally overlapped C30's column; and the
+figure it pointed at rendered the *other* caption's text. The arm now abstains, which
+is correct. The legitimate route back is corner-label OCR for the number 30 (§7), not
+loosening the column guard.
+
+Suite **303 green** (was 288): +5 `test_stage04_layout.py` — the L-shape split with
+ejection, the it_geo_05 false-split regression in miniature (a diagram on page
+background must survive intact), the band-with-no-absorbed-text refusal, the
+`fig_vsplit=False` escape hatch, and the all-sub-boxes-are-text abstain.

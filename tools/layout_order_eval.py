@@ -90,10 +90,12 @@ from pipeline.page_model import BBox
 MATCH_TAU = 0.5
 
 # Minimum IoU for a GT figure (that carries a bbox) to match a detected figure
-# box. Lenient: correct figure matches on it_geo_06 land at IoU 0.63-1.00 while
+# box. Lenient: correct figure matches on it_geo_06 land at IoU 0.91-1.00 while
 # every wrong (opposite-column / non-overlapping) pairing is ~0, so 0.2 clears
 # the wrong pairs with a wide margin yet tolerates GT-bbox truncation (the
-# "sofa-shot" clipped cliff bottoms, e.g. F30 at IoU 0.63). A partial-figure
+# "sofa-shot" clipped cliff bottoms; the floor's original justifying case, F30 at
+# IoU 0.63, rose to 0.91 when Phase B stopped its box swallowing the C29 caption
+# column — 2026-08-09). A partial-figure
 # fragment (top third of a tall figure, IoU ~0.33) can exceed this floor but is
 # harmless: greedy claims the whole-figure match first, and the fragment overlaps
 # no OTHER GT figure, so it stays unmatched rather than stealing a match.

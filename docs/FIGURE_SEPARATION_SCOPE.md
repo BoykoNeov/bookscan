@@ -4,11 +4,15 @@
 `stage04_layout`, horizontal seams only; proven on it_geo_06 (figures left 3→4,
 right 1→2; seg-recall 7/8→8/8 and 5/6→6/6), zero false-splits on it_geo_04/05/07,
 6 new unit tests, full suite 84 green. Results + the honest grouping-arm annotation
-in `docs/RESULTS.md`. **Phase B (right L-shape H-then-V + caption ejection) not
-started.** **Date scoped:** 2026-07-03. **Fixture:** it_geo_06 (the
-grouping fixture). **Grounding:** empirical probe of the real DocLayout-YOLO output
-+ crops + a corner-label OCR spike (artifacts in
-`M:\claud_projects\temp\bookscan_fig_sep\`). **N=1** — tuned to one page.
+in `docs/RESULTS.md`. **Phase B BUILT (2026-08-09)** — H-then-V + absorbed-text
+ejection; the duplicated-caption output defect of §5 is GONE (C29 coverage by a
+figure **0.967 → 0.000**, F30 IoU **0.633 → 0.908**), at the cost of one
+geometry pair that only existed *because* of the defect (§9). **Date scoped:**
+2026-07-03. **Fixture:** it_geo_06 (the grouping fixture). **Grounding:** empirical
+probe of the real DocLayout-YOLO output + crops + a corner-label OCR spike
+(artifacts in `M:\claud_projects\temp\bookscan_fig_sep\`; the Phase B probe +
+before/after crops in `M:\claud_projects\temp\bookscan_phaseb\`). **N=1** — tuned
+to one page.
 
 ## 1. Problem
 
@@ -105,18 +109,20 @@ same class as the existing XY-cut gaps — NOT the forbidden global OCR threshol
 - **Phase A — left column (clean stacked split).** Wide full-width cream gutters,
   unambiguous valleys. Ship this alone: left figure seg-recall 3→4. This is the
   high-confidence win.
-- **Phase B — right L-shape (H-then-V + text ejection).** Recursive cut + eject the
-  absorbed C29 caption. Separately scoped; lower confidence.
-  **Known OUTPUT defect Phase B would fix (measured 2026-08-09 on the real assembled
+- **Phase B — right L-shape (H-then-V + text ejection). BUILT 2026-08-09.**
+  **The OUTPUT defect it fixed (measured 2026-08-09 on the real assembled
   `grouping_it06` document, not inferred):** the right subpage's remaining merged box
-  (block #3, `154,1341 1554x842`) contains caption C29's box (`156,1487 440x720`) at
-  **0.97** — and the crop confirms it visually. So the rendered deliverable shows the
+  (block #3, `154,1341 1554x842`) contained caption C29's box (`156,1487 440x720`) at
+  **0.97** — and the crop confirmed it visually. So the rendered deliverable showed the
   **Figura 29 caption twice**: once as PIXELS inside the Figura 30 `<figure>` image,
   once as reflowed text in Figura 29's own `<figcaption>`. No amount of pairing
-  (including the editor's new manual pairing control) can fix this — it is a crop-
-  boundary problem, i.e. exactly Phase B's ejection step. Grouping itself is already
-  correct here (the containment guard reads the nesting as an abstain signal, so
-  C29→F29 and C30→F30 both land right).
+  (including the editor's manual pairing control) could fix this — it is a crop-
+  boundary problem, i.e. exactly Phase B's ejection step.
+  **What shipped:** `_cut_figure(..., axis)` generalizes Phase A's row-seam cut to
+  either axis; `_split_figure_hv` runs H then V at **depth 2, not general recursion**;
+  `_absorbed_text` ejects a sub-box that a non-figure detection covers by
+  `fig_eject_text_cover` (0.60). Verified in a **fresh job** (`phaseb_it06` — the
+  human pairing rulings in `grouping_it06` were left intact, no `--force`).
 
 ## 6. How to prove it (metric)
 
@@ -125,7 +131,10 @@ same class as the existing XY-cut gaps — NOT the forbidden global OCR threshol
   column-major**: F25,F27,F28 then F26 — else a correct split won't be credited).
 - **Regression guard:** run the eval on **it_geo_04 / 05 / 07** and confirm
   `n figures unchanged` (zero false-splits) — this is criterion 3.2 and the main
-  risk.
+  risk. **Phase B additions:** also grade **it_geo_06-LEFT** (must stay exactly 4
+  figure boxes — the likeliest false-split is a V-cut through a cliff photo) and
+  **de_01**. The Phase A scoping forgot the left subpage; the false-split it missed
+  turned up on it_geo_05-left (§8).
 - Expect the geometric grouping arm to stay red (or dip) — annotate, don't chase.
 
 ## 7. Relationship to #2 (corner-label OCR) — the actual grouping win
@@ -152,7 +161,41 @@ until #2 lands.
 - **N=1.** Params tuned to it_geo_06. `sample-the-margin + full-span + min-gap-as-
   fraction` keeps it from being pixel-tuned, but generalization is **unproven** until
   a second merged-figure fixture exists. State this in RESULTS.
-- **Right L-case fragility** (absorbed caption text, F30 overlapping the body
-  column) — deferred to Phase B; may not fully resolve.
 - **False-split on a single photo with an internal margin-like band** — guarded by
-  full-span + sampled-margin, must be verified on it_geo_04/05/07.
+  full-span + sampled-margin, verified on it_geo_04/05/07 (+ it_geo_06-left and
+  de_01 for Phase B).
+- **The two axes are NOT symmetric — measured, not assumed.** An unguarded V-cut
+  sliced it_geo_05-left's single full-page MAP into two vertical strips
+  (GT F2 IoU **1.000 → 0.702**), because a diagram drawn *on page background* legit-
+  imately contains full-height background columns, whereas a stacked photo has no
+  full-WIDTH cream band inside it. So Phase A's guard does not transfer to the
+  x-axis, and the V-cut carries an extra one: **it is accepted only when it ejects a
+  detector-confirmed text column.** With that guard, 9 of the 10 graded subpages are
+  byte-identical to Phase A.
+- **Residual, unfixed (no fixture):** a single figure that BOTH contains an interior
+  full-height background column AND has a text detection overlapping one side would
+  still be sliced. Ejecting text printed *inside* a figure needs masking, not
+  cutting — out of scope.
+- **Ejection is explicit, not left to NMS.** `nms_and_dedup` would also prune the
+  it_geo_06-right caption column (0.82 contained in the conf-0.856 C29 text det, over
+  the 0.80 `contain_frac`) — but a 2-point margin is not a mechanism, so ejection is
+  its own step and NMS is the backstop.
+
+## 9. Phase B's honest cost: C30→F30 was right for the wrong reason
+
+Phase B **loses** one caption↔figure pair on it_geo_06-right (recovered pairs
+4/6 → 3/6; **still 0 wrong**). This is not a capability regression — read it
+carefully before "fixing" it:
+
+The geometry arm pairs a caption to a figure that shares its **column**. C30
+(`154,2239 439x581`) and the true F30 (GT `636,1400 1072x800`) share neither a
+column nor a y-band — the caption is printed "**A lato**" (*to the side*), down in
+the left caption column, while its photo is up and to the right. The pre-Phase-B
+pair existed **only because the figure box was wrong**: the merged box spanned
+`x154..1708`, so it overlapped C30's column by accident. With a correct box the arm
+abstains, which is what it should do. And the pair it "won" pointed at a crop that
+displayed the *other* caption's text, so the old output was worse on both counts.
+
+The legitimate route to C30→F30 is unchanged and still open: **corner-label OCR for
+the number 30** (§7 / the texture-swamped labels F27/F28/F29/F30). Do not loosen the
+geometry arm's column guard to buy this pair back — the bar is zero wrong pairs.

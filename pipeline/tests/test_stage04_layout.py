@@ -15,7 +15,7 @@ import numpy as np
 
 from pipeline.page_model import BBox, BlockType
 from pipeline.stage04_layout import (
-    DEFAULTS, RawDet, _map_abandon, _reading_rows, dets_to_blocks,
+    DEFAULTS, RawDet, _contain_frac, _map_abandon, _reading_rows, dets_to_blocks,
     nms_and_dedup, split_merged_figures, xy_cut_order,
 )
 
@@ -40,6 +40,37 @@ def _stacked_photos_page(w=400, h=600) -> np.ndarray:
     img[50:250, 20:380] = _BLUE       # top photo
     # rows 250..290 stay cream = the full-width gutter seam
     img[290:540, 20:380] = _GREEN     # bottom photo
+    return img
+
+
+_INK = (30, 30, 30)
+
+
+def _lshape_page(w=400, h=600) -> np.ndarray:
+    """The it_geo_06-right geometry in miniature: a full-width photo on top, a
+    full-width cream gutter, then a band of ``caption text | cream gutter | photo``.
+    The figure box (20,50,360,490) swallows all of it — including the caption."""
+    img = np.zeros((h, w, 3), np.uint8)
+    img[:] = _CREAM
+    img[50:250, 20:380] = _BLUE           # top photo (full width of the box)
+    # rows 250..290 stay cream = the full-WIDTH horizontal seam (Phase A cuts here)
+    for ln in range(310, 520, 30):        # caption text lines, left column
+        img[ln:ln + 12, 30:140] = _INK
+    # cols 140..190 stay cream = the full-HEIGHT vertical seam (Phase B cuts here)
+    img[290:540, 190:380] = _GREEN        # the second photo, right of the caption
+    return img
+
+
+def _diagram_on_page_background(w=400, h=600) -> np.ndarray:
+    """ONE figure that must never be cut: a diagram drawn in ink directly on the
+    page, whose two halves are separated by a full-HEIGHT cream column. Every row
+    carries ink on both sides, so there is no horizontal seam — but the vertical
+    seam is real. This is it_geo_05-left (the full-page map) in miniature."""
+    img = np.zeros((h, w, 3), np.uint8)
+    img[:] = _CREAM
+    for ln in range(60, 530, 20):
+        img[ln:ln + 10, 20:170] = _INK    # left half of the diagram
+        img[ln:ln + 10, 210:380] = _INK   # right half
     return img
 
 
@@ -176,6 +207,73 @@ def test_split_leaves_non_figures_untouched():
     ]
     out = split_merged_figures(dets, img, DEFAULTS)
     assert [d.label for d in out] == ["plain text", "figure_caption"]
+
+
+def test_lshape_splits_h_then_v_and_ejects_the_caption():
+    """Phase B: the merged L-shape box becomes the top photo + the right photo,
+    and the swallowed caption column is EJECTED — so no figure crop contains the
+    caption's pixels (docs/FIGURE_SEPARATION_SCOPE.md §5, the it_geo_06-right
+    duplicated-caption defect)."""
+    img = _lshape_page()
+    caption = RawDet(label="plain text", bbox=_b(25, 295, 130, 240), conf=0.86)
+    dets = [RawDet(label="figure", bbox=_b(20, 50, 360, 490), conf=0.44), caption]
+    figs = [d for d in split_merged_figures(dets, img, DEFAULTS)
+            if d.label == "figure"]
+    assert len(figs) == 2, [(d.bbox.x, d.bbox.y, d.bbox.w, d.bbox.h) for d in figs]
+    top, side = sorted(figs, key=lambda d: d.bbox.y)
+    assert 45 <= top.bbox.y <= 60 and 240 <= top.bbox.y2 <= 260   # H-cut, as Phase A
+    assert side.bbox.x >= 180 and side.bbox.x2 >= 370             # V-cut kept the photo
+    # the defect, expressed as the metric that caught it on the real page:
+    for d in figs:
+        assert _contain_frac(caption.bbox, d.bbox) < 0.05
+
+
+def test_vsplit_refused_without_text_evidence():
+    """REGRESSION (it_geo_05-left, measured): an unguarded V-cut sliced a single
+    full-page MAP into two vertical strips (GT F2 IoU 1.000 -> 0.702), because a
+    diagram drawn on page background legitimately contains full-height background
+    columns. The vertical cut is therefore accepted only when it ejects a detected
+    text column — here there is none, so the figure passes through untouched."""
+    img = _diagram_on_page_background()
+    dets = [RawDet(label="figure", bbox=_b(20, 50, 360, 490), conf=0.66)]
+    out = split_merged_figures(dets, img, DEFAULTS)
+    assert len(out) == 1 and out[0].bbox.w == 360 and out[0].bbox.h == 490
+
+
+def test_vsplit_refused_on_a_band_with_no_absorbed_text():
+    """The same guard one level down: the L-shape page WITHOUT the caption
+    detection keeps Phase A's horizontal cut but leaves the lower band whole."""
+    img = _lshape_page()
+    dets = [RawDet(label="figure", bbox=_b(20, 50, 360, 490), conf=0.44)]
+    out = split_merged_figures(dets, img, DEFAULTS)
+    assert len(out) == 2
+    assert all(d.bbox.w == 360 for d in out)      # full-width bands, no V-cut
+
+
+def test_fig_vsplit_disabled_leaves_phase_a_intact():
+    img = _lshape_page()
+    dets = [
+        RawDet(label="figure", bbox=_b(20, 50, 360, 490), conf=0.44),
+        RawDet(label="plain text", bbox=_b(25, 295, 130, 240), conf=0.86),
+    ]
+    out = [d for d in split_merged_figures(dets, img, dict(DEFAULTS,
+                                                           fig_vsplit=False))
+           if d.label == "figure"]
+    assert len(out) == 2 and all(d.bbox.w == 360 for d in out)
+
+
+def test_all_subboxes_text_covered_abstains():
+    """If EVERY sub-box looks like absorbed text we keep the original figure box
+    rather than delete a figure outright."""
+    img = _stacked_photos_page()
+    dets = [
+        RawDet(label="figure", bbox=_b(20, 50, 360, 490), conf=0.4),
+        RawDet(label="plain text", bbox=_b(15, 45, 370, 210), conf=0.9),
+        RawDet(label="plain text", bbox=_b(15, 285, 370, 260), conf=0.9),
+    ]
+    figs = [d for d in split_merged_figures(dets, img, DEFAULTS)
+            if d.label == "figure"]
+    assert len(figs) == 1 and figs[0].bbox.h == 490
 
 
 def test_fig_split_disabled_is_noop():

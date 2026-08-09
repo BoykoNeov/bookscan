@@ -54,7 +54,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import BBox, Block, BlockType, StageMeta
 
 STAGE = "stage04_layout"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -68,16 +68,20 @@ DEFAULTS = {
     "nms_iou": 0.45,             # class-agnostic NMS: merge boxes overlapping >= this
     "contain_frac": 0.80,        # drop a box this-fraction-contained in a stronger one
     "xy_gap_frac": 0.012,        # min projection gap (frac of the cut dimension) = a separator
-    # Figure separation (split under-segmented merged figure boxes at full-width
-    # page-background gutters — see split_merged_figures). Phase A: horizontal only.
+    # Figure separation (split under-segmented merged figure boxes at page-background
+    # gutters — see split_merged_figures). Phase A: full-width horizontal seams.
+    # Phase B: full-height vertical seams on each horizontal band (H-then-V), plus
+    # ejection of an absorbed text column.
     "fig_split": True,           # enable splitting of merged figure detections
+    "fig_vsplit": True,          # Phase B: also cut each band at full-height seams
     "fig_bg_sample_frac": 0.03,  # subpage margin strip width (frac) to sample page-bg color
     "fig_bg_htol": 18,           # page-bg HSV match tolerance: hue (circular, 0..180)
     "fig_bg_stol": 60,           #   saturation
     "fig_bg_vtol": 60,           #   value
-    "fig_seam_bg_frac": 0.90,    # a seam row must be >= this fraction page-background
-    "fig_seam_min_frac": 0.012,  # min seam-run height (frac of box H) to cut on
+    "fig_seam_bg_frac": 0.90,    # a seam row/col must be >= this fraction page-background
+    "fig_seam_min_frac": 0.012,  # min seam-run thickness (frac of the cut dimension)
     "fig_min_subbox_frac": 0.06, # each sub-box must be >= this frac of the original area
+    "fig_eject_text_cover": 0.60,  # drop a figure sub-box this-covered by a text det
     # Classical fallback:
     "cls_col_gap_frac": 0.06,    # min vertical valley width (frac of W) to call a column boundary
     "cls_row_gap_frac": 0.012,   # min horizontal gap (frac of H) between blocks in a column
@@ -255,61 +259,130 @@ def _runs_true(mask_1d: np.ndarray) -> list[tuple[int, int]]:
     return runs
 
 
-def _hsplit_figure(box: BBox, bgr: np.ndarray, bg: np.ndarray, p: dict
-                   ) -> list[BBox]:
-    """Split ONE figure box horizontally at interior full-width page-background
-    seams (a seam = a run of rows each >= ``fig_seam_bg_frac`` background, at
-    least ``fig_seam_min_frac`` of the box tall). Content bands between seams are
-    tightened to their non-seam extent so each sub-box hugs its photo. Returns
-    >=2 sub-boxes only if the cut is real (each >= ``fig_min_subbox_frac`` of the
-    original area); otherwise ``[box]`` unchanged — a single photo has no
-    full-width cream band inside it, so it never over-splits (the over-split guard
-    is full-span + sampled-margin together)."""
+def _cut_figure(box: BBox, bgr: np.ndarray, bg: np.ndarray, p: dict, axis: int
+                ) -> list[BBox]:
+    """Split ONE figure box along ``axis`` at interior FULL-SPAN page-background
+    seams — ``axis=0`` cuts in y at full-width seams (rows), ``axis=1`` cuts in x
+    at full-height seams (columns).
+
+    A seam is a run of lines (rows resp. columns) each >= ``fig_seam_bg_frac``
+    background, at least ``fig_seam_min_frac`` of the cut dimension thick. Content
+    bands between seams are tightened to their non-seam extent so each sub-box
+    hugs its photo. Returns >=2 sub-boxes only if the cut is real (each
+    >= ``fig_min_subbox_frac`` of the original area); otherwise ``[box]``
+    unchanged — a single photo has no full-span cream band inside it, so it never
+    over-splits (the over-split guard is full-span + sampled-margin together)."""
     x, y, w, h = box.x, box.y, box.w, box.h
     crop = bgr[max(0, y):y + h, max(0, x):x + w]
     if crop.size == 0 or crop.shape[0] < 4 or crop.shape[1] < 4:
         return [box]
-    rowfrac = _bg_mask(crop, bg, p).mean(axis=1)
-    seam = rowfrac >= p["fig_seam_bg_frac"]
-    min_seam = max(8, int(p["fig_seam_min_frac"] * h))
+    span = crop.shape[axis]                     # length along the cut axis
+    other = crop.shape[1 - axis]                # full-span width of a seam line
+    prof = _bg_mask(crop, bg, p).mean(axis=1 - axis)
+    seam = prof >= p["fig_seam_bg_frac"]
+    min_seam = max(8, int(p["fig_seam_min_frac"] * span))
     interior = [(a, b) for (a, b) in _runs_true(seam)
-                if b - a >= min_seam and a > 0 and b < crop.shape[0]]
+                if b - a >= min_seam and a > 0 and b < span]
     if not interior:
         return [box]
-    cuts = [0] + [(a + b) // 2 for (a, b) in interior] + [crop.shape[0]]
+    cuts = [0] + [(a + b) // 2 for (a, b) in interior] + [span]
     area0 = w * h
     subs: list[BBox] = []
     for lo, hi in zip(cuts, cuts[1:]):
-        nz = np.where(~seam[lo:hi])[0]          # non-seam (content) rows in band
+        nz = np.where(~seam[lo:hi])[0]          # non-seam (content) lines in band
         if nz.size == 0:
             continue
         t0, t1 = lo + int(nz[0]), lo + int(nz[-1]) + 1
-        if w * (t1 - t0) >= p["fig_min_subbox_frac"] * area0:
-            subs.append(BBox(x=x, y=y + t0, w=w, h=t1 - t0))
+        if other * (t1 - t0) < p["fig_min_subbox_frac"] * area0:
+            continue
+        subs.append(BBox(x=x, y=y + t0, w=w, h=t1 - t0) if axis == 0
+                    else BBox(x=x + t0, y=y, w=t1 - t0, h=h))
     return subs if len(subs) >= 2 else [box]
+
+
+def _split_figure_hv(box: BBox, bgr: np.ndarray, bg: np.ndarray, p: dict,
+                     text_boxes: list[BBox]) -> list[BBox]:
+    """Cut one figure box HORIZONTALLY, then cut each resulting band VERTICALLY —
+    depth 2, deliberately NOT general recursion.
+
+    Phase A (H alone) handles a clean vertical stack of photos. The L-shape needs
+    the second axis: on it_geo_06-right the detector emitted ONE box over
+    ``F29 (top, full width)`` above a band of ``C29 caption | F30 photo``, so the
+    H-cut peels F29 and the V-cut separates the caption column from F30. Each
+    extra level multiplies false-split risk on an N=1 fixture with nothing
+    measuring it, so we stop here (docs/FIGURE_SEPARATION_SCOPE.md §5).
+
+    **The V-cut carries a guard the H-cut does not: it is accepted only when it
+    ejects a detector-confirmed TEXT column** (``_absorbed_text``). Measured
+    reason, not caution — on it_geo_05-left the single full-page MAP is drawn on
+    page background, so it contains genuine full-height background columns, and an
+    unguarded V-cut sliced that one figure into two vertical strips (GT F2 IoU
+    1.000 -> 0.702). A stacked photo has no full-WIDTH cream band inside it, but a
+    printed diagram absolutely can have a full-HEIGHT one, so the axes are not
+    symmetric and the y-axis guard does not transfer. Requiring an ejection ties
+    the cut to the defect it exists to fix.
+
+    RESIDUAL RISK (unfixed, no fixture): a single figure that both contains an
+    interior full-height background column AND has a text detection overlapping
+    one side would still be sliced. Ejecting text that is printed *inside* a
+    figure needs masking, not cutting — out of scope here."""
+    bands = _cut_figure(box, bgr, bg, p, axis=0)
+    if not p.get("fig_vsplit", True):
+        return bands
+    out: list[BBox] = []
+    for b in bands:
+        cols = _cut_figure(b, bgr, bg, p, axis=1)
+        if len(cols) >= 2 and any(_absorbed_text(c, text_boxes, p) for c in cols):
+            out.extend(cols)
+        else:
+            out.append(b)               # no ejection to justify the cut -> abstain
+    return out
+
+
+def _absorbed_text(sub: BBox, text_boxes: list[BBox], p: dict) -> bool:
+    """Is this figure sub-box really a swallowed TEXT column? True when some
+    non-figure detection covers >= ``fig_eject_text_cover`` of the sub-box's area.
+
+    Evidence-based on purpose: the caller ejects only where the detector already
+    found text at that spot, so a genuine photo is never dropped for looking
+    texture-poor. ``nms_and_dedup`` would ALSO prune the it_geo_06-right caption
+    column (it is 0.82 contained in the conf-0.856 C29 text det, over the 0.80
+    ``contain_frac``) — but a 2-point margin is not a mechanism, so ejection is
+    explicit here and NMS stays a backstop."""
+    return any(_contain_frac(sub, t) >= p["fig_eject_text_cover"]
+               for t in text_boxes)
 
 
 def split_merged_figures(dets: list[RawDet], bgr: np.ndarray, p: dict
                          ) -> list[RawDet]:
     """Replace under-segmented ``figure`` detections with per-figure boxes cut at
-    full-width page-background gutters (Phase A: horizontal seams). Non-figure
-    dets and un-splittable figures pass through unchanged; split sub-boxes inherit
-    the parent's confidence. Caller should re-run ``nms_and_dedup`` afterwards to
+    page-background gutters (H-then-V, ``_split_figure_hv``), then EJECT any
+    sub-box that is really an absorbed text column. Non-figure dets and
+    un-splittable figures pass through unchanged; split sub-boxes inherit the
+    parent's confidence. Caller should re-run ``nms_and_dedup`` afterwards to
     reconcile a sub-box against any partial-figure duplicate the detector emitted.
+
+    The "did this split?" test is applied BEFORE ejection and the survivors are
+    kept even if only one remains: on the L-shape the whole point is 1 merged box
+    -> 1 tight figure + 1 ejected caption. If EVERY sub-box looks like text we
+    abstain and keep the original box rather than delete a figure outright.
     See docs/FIGURE_SEPARATION_SCOPE.md."""
     if not p.get("fig_split", True):
         return dets
     bg = _page_bg_hsv(bgr, p)
+    text_boxes = [d.bbox for d in dets if d.label != "figure"]
     out: list[RawDet] = []
     for d in dets:
         if d.label != "figure":
             out.append(d)
             continue
-        subs = _hsplit_figure(d.bbox, bgr, bg, p)
-        if len(subs) == 1:
+        subs = _split_figure_hv(d.bbox, bgr, bg, p, text_boxes)
+        kept = ([b for b in subs if not _absorbed_text(b, text_boxes, p)]
+                if len(subs) >= 2 else [])
+        if not kept:                            # no real cut, or all text -> abstain
             out.append(d)
         else:
-            out.extend(RawDet(label="figure", bbox=b, conf=d.conf) for b in subs)
+            out.extend(RawDet(label="figure", bbox=b, conf=d.conf) for b in kept)
     return out
 
 
@@ -466,9 +539,10 @@ def dets_to_blocks(dets: list[RawDet], page_w: int, page_h: int, p: dict,
     with reading_order set (0-based, reading sequence).
 
     When ``bgr`` (the subpage image) is supplied, under-segmented figure boxes are
-    split at full-width page-background gutters (``split_merged_figures``) between
-    the NMS and ordering steps, then NMS is re-run to reconcile a split sub-box
-    against any partial-figure duplicate. The classical arm passes ``bgr=None``
+    split at page-background gutters (``split_merged_figures``: full-width seams,
+    then full-height seams per band, then absorbed-text ejection) between the NMS
+    and ordering steps, then NMS is re-run to reconcile a split sub-box against
+    any partial-figure duplicate. The classical arm passes ``bgr=None``
     (it can't type figures, so there is nothing to split)."""
     dets = nms_and_dedup(dets, p)
     if bgr is not None and p.get("fig_split", True):
@@ -808,6 +882,16 @@ def run(page_dir: Path, cfg: dict, method: str = "auto", debug: bool = False
             "a column-stacked group into one row no longer x-sorts it into reverse "
             "order (de_01-right German column, tau +0.60 -> +1.00; "
             "gt/de_01.blocks.json).",
+            "v0.3 (figure separation Phase B): merged figure boxes are now cut "
+            "H-THEN-V (depth 2, not general recursion) and a sub-box that a "
+            "non-figure detection covers by fig_eject_text_cover is EJECTED, so a "
+            "figure crop can no longer carry a neighbouring caption's pixels "
+            "(it_geo_06-right: caption coverage 0.967 -> 0.000, F30 IoU 0.633 -> "
+            "0.908). The vertical cut is accepted ONLY when it ejects text: a "
+            "diagram drawn on page background legitimately contains full-height "
+            "background columns, and an unguarded V-cut sliced it_geo_05-left's "
+            "full-page map in two (IoU 1.000 -> 0.702). See "
+            "docs/FIGURE_SEPARATION_SCOPE.md.",
         ],
     )
     (out_dir / "meta.json").write_text(

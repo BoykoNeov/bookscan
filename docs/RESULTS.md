@@ -2531,3 +2531,72 @@ count would pass on the flat middle and mean nothing).
 - The gutter GT was keyed from the *face-on* dewarp. That is what makes it a fair test of the
   oblique (the words were chosen without reference to it), but it also means GT coverage is
   bounded by which lines were legible enough to key at all.
+
+### STEP 3 (re-scoped) — matched WORDS as the registration primitive — 2026-08-18
+
+The plan's Phase 1 is a **pixel** composite: register the views, pick the sharpest source per
+region, blend, hand the composite to Stage 03. 0b is what makes that research — ORB cannot
+align an oblique frame's gutter to a face-on anchor.
+
+The headroom probe above quietly undermines that framing. It aligned the **word streams** of
+the two views well enough to produce every number in the table — a working cross-view
+correspondence, obtained without ORB, on exactly the pages where ORB fails. So the route
+changes: **fuse text, not pixels.** Pixel blending needs sub-character accuracy in the gutter
+or it doubles glyphs; a word merge needs only enough geometry to put a word on the right
+**line**. There is evidence for the second requirement and none for the first.
+
+That reduces Phase 1's open question to one measurable thing: *can matched words alone pin a
+transform that places an unmatched word on the correct line?*
+
+**Design — a hold-out, so the transform is never scored on what it was fitted to.**
+Correspondences are word pairs from the aligned OCR streams (tokens ≥3 chars). The transform
+is **fitted only on non-gutter pairs** and **scored only on gutter pairs** — the gutter is
+precisely where the face-on frame fails, so a transform that works only where both frames
+read well is worthless; it has to **extrapolate**. Words both frames happened to read in the
+gutter are the only honest ground truth for "where should this land".
+
+**Bar, pre-registered:** median |Δy| < 0.5 × median word height. Line placement (Δy) is the
+verdict; Δx is screen only — a word merge needs the right line, not the right column offset.
+
+**Model choice is made blind.** Picking the best of three families by their gutter score is
+selecting on the hold-out. Instead an inner validation slice is carved out of the fit set —
+carved **spatially** (the band just outside the gutter, [.24–.40]), not at random, because
+the task is extrapolation leftward, and a random k-fold only ever tests interpolation and
+would happily crown a polynomial that flies apart past its last data point.
+
+| page | word h | fit / held-out pairs | identity baseline | **selected model** | **median &#124;Δy&#124;** | bar | verdict |
+|---|---|---|---|---|---|---|---|
+| skew  | 71.0px | 43 / 16 | 32.6px (0.46 wh) | affine (RANSAC) | **5.2px** (0.07 wh) | 35.5px | **PASS** |
+| curl3 | 44.0px | 102 / 64 | 45.2px (1.03 wh) | affine (RANSAC) | **5.4px** (0.12 wh) | 22.0px | **PASS** |
+| curl5 | 44.0px | 79 / 24 | 59.0px (1.34 wh) | similarity (RANSAC) | **21.3px** (0.48 wh) | 22.0px | **PASS (marginal)** |
+
+The identity baseline (oblique coordinates merely rescaled to the face-on canvas) sits at
+0.46–1.34 word heights, so the transform is doing real work — this is not "the frames were
+already aligned".
+
+**The weak component is the model selector, not the capability.** On curl5 the blind selector
+picks similarity at 21.3px — 97% of the bar — where affine scores 11.4px and the quadratic
+4.6px. On skew it earns its keep in the other direction: it rejects the quadratic (inner
+score 137px), which would indeed have blown up on the hold-out (29.4px vs affine's 5.2px).
+A **fixed affine** model would have scored 5.2 / 5.4 / 11.4 — comfortably under bar on all
+three — but that choice is **post-hoc on N=3** and does not count until it is pre-registered
+on a fixture that has not been looked at. Recorded as the thing to pre-register, not as a
+result.
+
+**Verdict: the text route is viable.** Matched words pin the geometry to line accuracy, so
+Phase 1 becomes *a word merge with provenance* rather than a pixel composite — which also
+leaves the CLAUDE.md invariant intact, since every word keeps the box and confidence
+Tesseract gave it **in the frame it was read in**. Design consequences, all with precedent in
+this repo: choosing between two reads of the same word reuses the `second_opinion.py`
+mechanism rather than a new confidence-as-truth path; each word carries a **source-frame**
+field (Stage 06 patch mode has to know which dewarp to crop from).
+
+**What the cheap route does NOT fix, stated now rather than as a later surprise:** nothing
+merges pixels, so a **figure** crossing the gutter stays foreshortened, and so does any
+region with no text to anchor on. That is the honest boundary of text fusion and the reason
+Phase 2 (developable-surface unwrap) stays on the books.
+
+**Still blocking a shippable win: the far-side GT band.** A merge that prefers the oblique's
+reading is unfalsifiable while no arm is charged for what it loses on the far side — and the
+conf screen says the oblique is worse there on all three pages. Keying that band is the next
+step; it does not block building the merge, it blocks quoting a number as a win.

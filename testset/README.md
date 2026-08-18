@@ -123,11 +123,11 @@ Read together with:
 
 | id | language | book | curl | role |
 |---|---|---|---|---|
-| `skewset_en_01` | english | *Chopmarked Coins* p.12 | strong | largest gutter headroom in the batch; a clean complementary-halves pair |
-| `skewset_en_02` | english | *Chopmarked Coins* p.191 | strong | second largest; facing page is mostly plates |
-| `skewset_it_01` | italian | Italian via-ferrata atlas p.62 (a **new** book, not `it_geo_*`) | strong | the Italian arm |
-| `skewset_de_01` | german | German via-ferrata guide pp.40-41 (same book as `de_*`) | mild | the German arm, and **the weakest fixture here** — see below |
-| `skewset_orient_01` | italian | — | — | orientation fixture: OSD 180° accepted at conf 2.58 |
+| `skewset_en_01` | english | *Chopmarked Coins* p.12 | strong | **win case** — clearest headroom; a clean complementary-halves pair |
+| `skewset_en_02` | english | *Chopmarked Coins* p.191 | strong | **guard case** — large but symmetric exchange; where an over-eager policy shows itself |
+| `skewset_it_01` | italian | Italian via-ferrata atlas p.62 (a **new** book, not `it_geo_*`) | strong | **win case** — the Italian arm |
+| `skewset_de_01` | german | German via-ferrata guide pp.40-41 (same book as `de_*`) | mild | **declared no-headroom control** — only ~7 tokens of gain; a flat result here is expected, not a failure |
+| `skewset_orient_01` | italian | — | — | orientation fixture: OSD 180° accepted at conf 2.58. **Not usable as a multi-view pair** for a second reason: 134655 is a page-*turn* shot, so it photographs different content (0–1 word correspondences) |
 | `skewset_orient_02` | italian | — | — | orientation fixture: text-free panorama, OSD conf 0.24; also the "don't wreck a photo page" guard |
 
 **Anchor vs candidate is decided by measurement, not by capture order.** The anchor
@@ -148,10 +148,16 @@ was reported, not patched**, when these were added.
   headroom numbers in the manifest are a GT-free *dictionary proxy* — they rank
   sets, they do not score arms.
 - **No Bulgarian.** The Cyrillic arm of the multi-view claim is unvalidated.
-- **`skewset_de_01` is thin.** The German book is a figure-heavy guide, so its
-  anchor holds only ~13 valid tokens in the gutter band against 66–79 for the
-  others. A German result from it will be noisy; the fix is a German book with
-  continuous text, not more frames of this one.
+- **`skewset_de_01` has essentially no headroom** and is labelled a control, not a
+  win case. The German book is a figure-heavy guide, so on the target page the
+  candidate view gains only **7** valid gutter tokens (net −6), and its Gate B
+  gutter-correspondence count sits exactly on the floor of 12. A German result off
+  it will be noisy either way; the fix is a German book with continuous text, not
+  more frames of this one.
+- **Selection numbers were corrected once.** The sets were chosen on a band pooling
+  both inner margins of the spread; the GT band is per-page, and re-measuring moved
+  two of the four. See RESULTS 2026-08-18 "Correction 4" — trust
+  `headroom_perpage` in the manifest, not `headroom_gutter`.
 - Page crops are **hand-specified** (three automatic routes were measured and
   rejected on this batch), so reproducing the measurement means using the
   `page_crop` boxes in the manifest, not re-deriving them.

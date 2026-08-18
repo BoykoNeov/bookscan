@@ -2873,6 +2873,13 @@ failure that made the CLAHE spike's width-fraction window not cross-frame safe.
 | `de_ferr_c` | deu | mild | 134917 | 134914 | 9 | 22 | 48 | −13 | 23 | 60 |
 | `en_coin_c` | eng | strong | 135028 | 135030 | 56 | 90 | 103 | −34 | 101 | 248 |
 
+> **Read this table with Correction 4 below.** This band pools **both** inner margins of the
+> uncropped spread, which is not the band the GT is keyed in. Re-measured per-page on the hand
+> crops, two of the four selected sets move — `skewset_en_02` from +25 to −2 and
+> `skewset_de_01` from +9 to −6. The numbers here remain valid for what they measured (a
+> whole-spread ranking used to choose which sets to crop) and are kept for that reason, but
+> **the per-page table in Correction 4 is the one to trust.**
+
 **Net-positive on 5 of 8, and the ordering is not random**: the largest net gains are all
 **strong curl**, and the clearly negative ones are mild-curl or the set whose candidate is
 simply a worse photograph. The `gain` column is the quantity STEP 2's ceiling measures (text
@@ -2899,6 +2906,58 @@ manifest** — which is how the original three pages were prepared, and which ta
 multi-view page finding off the critical path and onto the pipeline-integration list, where
 Stages 00–03 already owe a multi-view capture mode.
 
+### Correction 4 (same day, on review) — the selection band was not the GT band
+
+The four sets above were selected on a gutter band spanning **both** inner margins of the
+uncropped spread (middle ±0.10 of the frame's text extent). The GT the next session is told to
+key is **per-page**, on a single hand-cropped page, in text-column coordinates: gutter = the
+inner .24 of *that page's* column width, far side = the mirror — `gt_far.json`'s definition.
+Those are different regions, and on a spread they can cancel: the candidate's advantage may sit
+on the left page's inner column while the anchor is the better reader of the right page's, and
+a pooled band nets the two against each other.
+
+Re-measured on the hand crops now recorded in `testset/skewset_manifest.json`
+(`temp/mv_batch18/perpage.py`) — no GT needed, so it costs only OCR:
+
+| fixture | page | anchor had | **gain** | loss | **net** | pooled net (superseded) | far net |
+|---|---|---|---|---|---|---|---|
+| `skewset_en_01` | p.12 left | 64 | **55** | 43 | **+12** | +42 | +19 |
+| `skewset_en_02` | p.191 right | 79 | **57** | 59 | **−2** | +25 | +24 |
+| `skewset_it_01` | p.62 left | 38 | **41** | 34 | **+7** | +9 | +16 |
+| `skewset_de_01` | p.40 left | 29 | **7** | 13 | **−6** | +9 | −4 |
+
+**Two of the four move, and the concern was justified.** `skewset_en_02`'s +25 was partly the
+other margin — per-page it is a nearly symmetric exchange (gain 57, loss 59). `skewset_de_01`
+collapses to **7 tokens of gain**: there is essentially nothing on that page for a merge to
+recover, which is a sharper version of the thinness already flagged for the German book.
+
+**What changes, and what deliberately does not.** No frames are swapped — all four remain
+legitimate multi-view sets, and re-selecting now on numbers computed after the fixture was
+built would be its own selection-on-test problem. What changes is the **declared role** of each:
+
+- `skewset_en_01` (gain 55 vs an anchor reading 64, an 86% relative ceiling) and
+  `skewset_it_01` (gain 41 vs 38, 108%) are the two **win cases**.
+- `skewset_en_02` is retained as the **guard case**: a large, nearly symmetric exchange is
+  exactly where a policy that swallows the oblique reading indiscriminately shows itself, which
+  is what pre-registered prediction **A2** exists to catch.
+- `skewset_de_01` is now the **declared no-headroom control** — the role curl3 plays in the
+  original trio, and precisely what prediction **A3** was written for. A flat result there is
+  the expected outcome, not a failure.
+
+**Resolving one ambiguity in the pre-registration, by a rule that does not look at outcomes.**
+A1 refers to "the headroom pages (triage proxy > 0)" without pinning whether the proxy means
+*gain* or *net*. It means **gain** — the RESULTS text above already states that gain "is the
+quantity STEP 2's ceiling measures", and A1 asks about pages where there is something to win,
+not pages where a naive whole-band swap would win. Recorded here, before any scoring run, so
+the reading cannot be chosen later to suit a result.
+
+**And the fixture's missing measurement is now taken.** Gate B's floor (≥ 40 correspondences,
+≥ 12 in the gutter) had only ever been computed under the superseded frame-0 anchor and the
+rejected automatic crop. Re-measured on the selected frames and hand crops, all four pass —
+326 / 260 / 94 / 120 pairs with 14 / 13 / 22 / 12 in the gutter — though `skewset_de_01` sits
+exactly on the 12 floor, one more reason its result will be noisy. Claim B has a valid entry
+measurement; the old `wordstream` block is kept for provenance only and marked superseded.
+
 ### The fixture
 
 Selected under the rule fixed in the pre-registration (**at least one Italian and one German
@@ -2907,15 +2966,17 @@ than a fourth page of the same paperback), then by gutter headroom:
 
 | fixture id | set | language | book | curl | why |
 |---|---|---|---|---|---|
-| `skewset_en_01` | `en_coin_e` | eng | Chopmarked Coins | strong | largest gutter headroom in the batch (+42) |
-| `skewset_en_02` | `en_coin_a` | eng | Chopmarked Coins | strong | second (+25), different pages of the same book |
-| `skewset_it_01` | `it_ferr_g` | ita | Italian ferrata atlas | strong | the required Italian; strong curl, +9 |
-| `skewset_de_01` | `de_ferr_a` | deu | German ferrata guide | mild | the required German; +9, and the cleanest far-side asymmetry |
+| `skewset_en_01` | `en_coin_e` | eng | Chopmarked Coins | strong | **win case** — per-page gain 55 against an anchor reading 64 (86% relative ceiling), net +12 |
+| `skewset_en_02` | `en_coin_a` | eng | Chopmarked Coins | strong | **guard case** — gain 57, loss 59, net −2: a large but symmetric exchange, where a policy that swallows the oblique indiscriminately shows itself (prediction A2) |
+| `skewset_it_01` | `it_ferr_g` | ita | Italian ferrata atlas | strong | **win case** — the required Italian; gain 41 against an anchor reading 38 (108%), net +7 |
+| `skewset_de_01` | `de_ferr_a` | deu | German ferrata guide | mild | **declared no-headroom control** — per-page gain is only 7 tokens (net −6); the role curl3 plays in the original trio, and what prediction A3 is written for |
 | `skewset_orient_01` | `it_ferr_b` | ita | — | — | orientation fixture: OSD 180° at conf 2.58 accepted |
 | `skewset_orient_02` | `it_ferr_e` | ita | — | — | orientation fixture: text-free panorama, OSD conf 0.24; also the "don't break a photo page" guard |
 
 Anchor + candidate frame only per set, not whole bursts: `testset/` tracks ~64 MB of images
-today and each frame is ~4 MB.
+today and each frame is ~4 MB; these add 48 MB. **No frames were swapped after Correction 4** —
+re-selecting on numbers computed once the fixture was already built would be its own
+selection-on-test problem. What changed is each set's declared role, above.
 
 ### What this row does NOT claim
 

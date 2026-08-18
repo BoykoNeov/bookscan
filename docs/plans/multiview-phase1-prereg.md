@@ -184,6 +184,18 @@ skew **+0.244**, curl3 **−0.025** (the declared no-headroom control), curl5
 | **A2** | the veto holds the far side | mean far-side **bag** recall Δ is **≥ −0.05**, and no single page loses more than **0.10** |
 | **A3** | the no-headroom control stays flat | on any page the triage proxy calls zero-headroom, gutter Δ is within **±0.05** |
 
+**Addendum, added the same day, before any scoring run** (RESULTS "Correction 4"): A1 says
+"the headroom pages (triage proxy > 0)" without pinning whether the proxy means *gain* or
+*net*. It means **gain** — gain is the quantity STEP 2's ceiling measures, and A1 asks about
+pages where there is something to win, not pages where a naive whole-band swap would win. The
+resulting bucket assignment, fixed now rather than after a result: **`skewset_en_01` and
+`skewset_it_01` are win cases, `skewset_en_02` is the guard case (a large but symmetric
+exchange, which is what A2 exists to catch), and `skewset_de_01` is the declared no-headroom
+control for A3** — its target page offers only 7 tokens of gain, the role curl3 plays in the
+original trio. Gate B's floor is also now verified on the selected frames and hand crops
+(326 / 260 / 94 / 120 correspondences, 14 / 13 / 22 / 12 in the gutter — all pass, with
+`skewset_de_01` exactly on the floor).
+
 **A1 or A2 failing is a real negative result and will be reported as one.** If v5
 does not replicate, Phase 1's word merge is not shippable and that is the
 finding; the fixture is worth exactly as much either way.

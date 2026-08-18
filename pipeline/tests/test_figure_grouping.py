@@ -230,9 +230,18 @@ def test_numbered_caption_abstains_when_the_page_prints_figure_numbers():
     assert "printed" in g.abstained["c25"]
 
 
-def test_geometry_still_runs_for_an_unnumbered_caption_on_a_numbered_page():
-    """The guard is scoped to captions that carry a printed number — an unnumbered
-    caption is still eligible for the geometry arm."""
+def test_unnumbered_caption_abstains_on_a_page_whose_captions_are_numbered():
+    """The caption-side numbering-regime guard, and a DELIBERATE REVERSAL of the
+    behaviour this test asserted before 2026-08-18 (it used to require that an
+    unnumbered caption still pair geometrically here).
+
+    Reversed because of what the reversal costs versus what it buys, measured on
+    real pages: en_coins' run-in "Description:" section labels are typed `caption`
+    by the detector and sit 11-40px BELOW a coin plate — nearer to it than the
+    real caption is — so on three subpages the old rule emitted "Description:" as
+    the plate's caption while the true caption abstained. Cost of the guard: a
+    genuinely unnumbered caption on a page that numbers its other captions is now
+    missed. Under the zero-wrong-pairs bar, a miss beats a wrong pair."""
     views = [
         _v("f26", "figure", 1611, 253, 498, 622, "26"),
         _v("c26", "caption", 1611, 940, 498, 90, "Figura 26 Fossili"),   # numbered
@@ -242,8 +251,113 @@ def test_geometry_still_runs_for_an_unnumbered_caption_on_a_numbered_page():
     g = FG.group_figures(views, page_h=PAGE_H)
     assert g.figure_numbers == {"f26": 26}          # the page IS in numbered regime
     assert g.pairs["c26"] == "f26" and g.pair_source["c26"] == "number"
-    assert g.pairs["c"] == "f"
-    assert g.pair_source["c"] == "geometry"
+    assert "c" not in g.pairs
+    assert "no printed caption number" in g.abstained["c"]
+
+
+def test_unnumbered_caption_still_pairs_when_no_caption_on_the_page_is_numbered():
+    """The caption-side guard is inert on a book that numbers nothing — which is
+    the ordinary book the geometry arm exists for."""
+    views = [
+        _v("f", "figure", 100, 1400, 600, 400),
+        _v("c", "caption", 110, 1840, 580, 90, "An unnumbered caption"),
+    ]
+    g = FG.group_figures(views, page_h=PAGE_H)
+    assert g.pairs == {"c": "f"} and g.pair_source["c"] == "geometry"
+
+
+# --------------------------------------------------------------------------
+# Side-set attachment (caption BESIDE its figure) — en_coins_01/02/03
+# --------------------------------------------------------------------------
+
+# Faithful miniature of en_coins_01-left: two coin plates stacked in one column
+# with zero horizontal overlap with their captions, each caption bottom-aligned
+# inside its own plate's vertical band, ~12-17px to the right of it.
+def _side_set_views() -> list[FG.BlockView]:
+    return [
+        _v("f96", "figure", 234, 277, 1114, 647),
+        _v("c96", "caption", 1360, 795, 573, 125,
+           "Fig. 96. 1786-NG Guatemala Portrait Eight Reales"),
+        _v("f97", "figure", 157, 1742, 1150, 658),
+        _v("c97", "caption", 1324, 2070, 603, 322,
+           "Fig. 97. 1805-NG Guatemala Portrait Eight Reales"),
+    ]
+
+
+def test_side_set_captions_pair_with_the_figure_they_sit_beside():
+    """Two figures share the column, so the wrong answer is available and must be
+    rejected: this is a DISCRIMINATING case, not a lone-figure association."""
+    g = FG.group_figures(_side_set_views(), page_h=PAGE_H, page_w=2000, lang="eng")
+    assert g.pairs == {"c96": "f96", "c97": "f97"}
+    assert set(g.pair_source.values()) == {"geometry"}
+
+
+def test_side_set_needs_the_caption_to_be_inside_the_figures_vertical_band():
+    """Slide c96 down past the bottom of its plate and the attachment evaporates —
+    it is the y-band, not mere nearness, that carries the claim."""
+    views = _side_set_views()
+    views[1] = _v("c96", "caption", 1360, 1000, 573, 125,
+                  "Fig. 96. 1786-NG Guatemala Portrait Eight Reales")
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2000, lang="eng")
+    assert "c96" not in g.pairs
+
+
+def test_side_set_declines_a_block_that_carries_no_printed_number():
+    """de_01's icon sidebar in miniature: the Gehzeiten pictogram panel is typed
+    `caption` by the detector and sits inside the page photo's vertical band, 28px
+    to its left — geometrically indistinguishable from a side-set caption. Sitting
+    BESIDE a figure is weaker evidence than sitting under it, so the side-set shape
+    demands the block declare itself a caption in print. This panel does not."""
+    views = [
+        _v("photo", "figure", 617, 2057, 1402, 796),
+        _v("panel", "caption", 351, 2603, 238, 227,
+           "Gehzeiten/Time Bergst.- Gamsstll.Sch.: 1 Std, Einstieg - Bivacco: 1 Std"),
+    ]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2023, lang="deu")
+    assert g.pairs == {}
+
+
+def test_side_set_does_not_reach_a_detached_gutter_caption_column():
+    """it_geo_05-right in miniature: the caption is a gutter-side column 1170px
+    from its figure. Numbered, y-overlapping — and still far outside the side-set
+    gap limit, which is what keeps this rule from claiming the whole page."""
+    views = [
+        _v("f3", "figure", 100, 800, 700, 900),
+        _v("c3", "caption", 1970, 900, 400, 700, "Figura 3 Il fossile"),
+    ]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2028)
+    assert g.pairs == {}
+
+
+# --------------------------------------------------------------------------
+# Figure-number plausibility
+# --------------------------------------------------------------------------
+
+
+def test_a_figure_number_far_outside_the_page_numbering_is_discarded():
+    """en_coins_03-right in miniature: `figure_label` reads 4 off a coin photograph
+    on a subpage whose captions read 104 and 105. Left standing, that one false
+    read would put the subpage into numbered-figure regime and suppress the
+    geometry arm for both real captions."""
+    views = [
+        _v("f104", "figure", 62, 592, 1196, 648, "4"),
+        _v("c104", "caption", 1269, 1163, 574, 86,
+           "Fig. 104. 1890 Honduras Peso (KM# 52)"),
+        _v("f105", "figure", 62, 1288, 1196, 627),
+        _v("c105", "caption", 1275, 1851, 575, 83,
+           "Fig. 105. 1892/0 Honduras Peso (KM# 52)"),
+    ]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2016, lang="eng")
+    assert g.figure_numbers == {}                       # the 4 is dropped, not recorded
+    assert g.pairs == {"c104": "f104", "c105": "f105"}  # geometry stays enabled
+
+
+def test_a_figure_number_inside_the_page_numbering_is_kept():
+    """The complement, and the reason the window is loose: 26 next to a caption
+    reading 25 is a neighbouring figure on the same page, not a misread — so the
+    numbered regime (and the C25 trap defence above) still stands."""
+    assert FG._plausible_figure_numbers({"f": 26}, {"c": 25}, 3) == {"f": 26}
+    assert FG._plausible_figure_numbers({"f": 4}, {"c": 104, "d": 105}, 3) == {}
 
 
 def test_corner_label_ocr_is_skipped_when_no_caption_carries_a_number():

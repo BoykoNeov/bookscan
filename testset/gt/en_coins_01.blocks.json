@@ -1,0 +1,106 @@
+{
+ "image_id": "en_coins_01",
+ "gt_type": "block_reading_order",
+ "schema_version": 1,
+ "book": "Chopmarked Coins by Nationality (Guatemala), pp.100-101. Same capture as the en_coins_01 text-WER fixture (gt/en_coins_01.txt) — the images are append-only, so this is a SECOND, distinct GT type over the same photo.",
+ "pages": "100-101",
+ "language": "english",
+ "validated_by": "PROPOSED by Claude from the source photo 2026-08-18. Block segmentation, type and per-subpage reading order are objectively determined by the printed page (one prose column; each coin plate followed by its side-set 'Fig. NN' caption). Figure bboxes were read off the dewarped subpage pixels with a 100px coordinate grid, NOT copied from the detector. NOT owner-confirmed — do not treat like the owner-validated it_geo_* fixtures.",
+ "grading": {
+  "unit": "per subpage",
+  "why": "Stage 02 gutter-splits the spread into left.png (p.100) + right.png (p.101); Stage 04 orders each half independently.",
+  "anchor_match": "Match each GT anchor to a detected block by token overlap ANYWHERE in the block. Anchors use interior distinctive tokens (names, KM# numbers, years) that survive this book's OCR; the caption keyword 'Fig. NN' is kept in the anchor because it is what the caption parser also reads.",
+  "primary_invariants": "This is a CAPTION<->FIGURE GROUPING fixture and the first non-Italian one. The load-bearing assertion is the four pairs in caption_figure_pairs: on BOTH subpages there are TWO coin plates sharing one column, each with its own caption, so a pass that grabs 'the nearest figure' can and must get it wrong — grouping here is genuinely DISCRIMINATED, not merely possible. Two properties make it complementary to it_geo_06: (a) the captions are SIDE-SET — each sits to the RIGHT of its plate, vertically inside that plate's band, with ZERO horizontal overlap — where the Italian book's captions sit in a detached gutter column; (b) the figures carry NO in-photo corner label, so the printed-number arm cannot fire and the GEOMETRY arm is the only one under test. Segmentation and type are secondary; linear order is tertiary.",
+  "caption_figure_pairs": [
+   {"caption": "C96", "figure": "F96", "subpage": "left",
+    "note": "Fig. 96 1786-NG Portrait Eight Reales plate (top of p.100) + its side-set caption. The wrong answer available to a proximity rule is F97 lower down the same column."},
+   {"caption": "C97", "figure": "F97", "subpage": "left",
+    "note": "Fig. 97 1805-NG plate (bottom of p.100) + its side-set caption. The wrong answer available is F96."},
+   {"caption": "C98", "figure": "F98", "subpage": "right",
+    "note": "Fig. 98 1819-NG plate (top of p.101) + its side-set caption. HARD for a pure vertical-gap rule: the 'Description:' label 11px below F98 is closer to F98 than this caption is, and the detector types that label 'caption'."},
+   {"caption": "C99", "figure": "F99", "subpage": "right",
+    "note": "Fig. 99 (1841) counterstamp plate (bottom of p.101) + its side-set caption."}
+  ],
+  "identical_anchor_note": "The run-in 'Description:' section labels are typed HEADING here and carry identical text, so anchor matching cannot tell the two on the left subpage apart. Their ids are ordered (D1 before D2) so the eval's deterministic tie-break assigns them in page order; either way both are the same type, so only Kendall-tau could be affected. They are graded, not scoped out, precisely because the detector types them 'caption' — a pass that pairs one to a coin plate is emitting a wrong pair, and the GT must be able to say so.",
+  "known_detector_gap": "On the current DocLayout-YOLO detector, measured 2026-08-18: (1) the run-in 'Description:' labels are typed 'caption' (2 of the 3 occurrences), not 'heading'; (2) the italic section headings ('(Spanish Monarchy) Charles IV Portrait Eight Reales') are typed 'paragraph', not 'heading' — the model's 'title' class does not fire on them; (3) the detector has no 'list' class, so the bulleted Year(s)/Catalog/Rarity blocks come back as 'paragraph' — they are typed 'paragraph' in this GT too, so that is not scored as an error; (4) the left subpage's footnote line is not detected at all (an honest segmentation miss); (5) the figure plates themselves are detected cleanly, one box per coin pair, so unlike it_geo_06 there is no figure-merge confound here.",
+  "metric": "tools/layout_order_eval.py: per-subpage segmentation recall, type accuracy over matched blocks, caption<->figure grouping (the headline), and Kendall-tau over TEXT blocks."
+ },
+ "subpages": {
+  "left": {
+   "page_number": 100,
+   "stripped": [
+    {"type": "header", "anchor": "Chopmarked Coins by Nationality - Guatemala"},
+    {"type": "page_number", "anchor": "100"}
+   ],
+   "reading_order": [
+    {"order": 0, "id": "F96", "type": "figure", "anchor": null,
+     "bbox": [230, 275, 1120, 650],
+     "desc": "1786-NG Portrait Eight Reales, obverse+reverse coin pair, top of the page. No in-photo number. Caption is C96."},
+    {"order": 1, "id": "C96", "type": "caption",
+     "anchor": "Fig. 96. 1786-NG Guatemala Portrait Eight Reales, Charles III NG Mintmark Murphy Collection",
+     "bbox": [1360, 795, 575, 130],
+     "desc": "Caption for F96, SIDE-SET: sits to the right of the plate, bottom-aligned inside the plate's vertical band, with no horizontal overlap."},
+    {"order": 2, "id": "D1", "type": "heading", "anchor": "Description",
+     "desc": "Run-in section label above the prose. NOT a caption — see identical_anchor_note."},
+    {"order": 3, "id": "P1", "type": "paragraph",
+     "anchor": "While Guatemala introduced the new Pillar design in 1772 following the pattern of the higher-volume mints"},
+    {"order": 4, "id": "P2", "type": "paragraph",
+     "anchor": "According to a study conducted by Spalding testing the relative fineness of coins in the possession of a Chinese bank"},
+    {"order": 5, "id": "H1", "type": "heading",
+     "anchor": "Spanish Monarchy Charles IV Portrait Eight Reales"},
+    {"order": 6, "id": "L1", "type": "paragraph",
+     "anchor": "Year(s) Issued: 1789-1807 Catalog Reference(s) KM# 45 Bust of Charles III Rarity Rating",
+     "desc": "Bulleted Year(s)/Catalog/Rarity block; typed paragraph because the detector has no list class."},
+    {"order": 7, "id": "F97", "type": "figure", "anchor": null,
+     "bbox": [155, 1740, 1155, 665],
+     "desc": "1805-NG Portrait Eight Reales coin pair, lower half of the page. Caption is C97."},
+    {"order": 8, "id": "C97", "type": "caption",
+     "anchor": "Fig. 97. 1805-NG Guatemala Portrait Eight Reales Charles IV Leverage Collection Spink Auction",
+     "bbox": [1324, 2070, 605, 325],
+     "desc": "Caption for F97, side-set to the right of the plate."},
+    {"order": 9, "id": "D2", "type": "heading", "anchor": "Description",
+     "desc": "Second run-in section label. The detector types THIS one 'caption'."},
+    {"order": 10, "id": "P3", "type": "paragraph",
+     "anchor": "The output of Nueva Guatemala mint under Charles IV almost perfectly mirrored that of the high-volume facilities"},
+    {"order": 11, "id": "FN1", "type": "footnote",
+     "anchor": "Spalding Eastern Exchange Currency and Finance",
+     "desc": "Single footnote line at the page foot. Not detected by the current detector — an honest segmentation miss, recorded in known_detector_gap."}
+   ]
+  },
+  "right": {
+   "page_number": 101,
+   "stripped": [
+    {"type": "header", "anchor": "Chopmarked Coins by Nationality - Guatemala"},
+    {"type": "page_number", "anchor": "101"}
+   ],
+   "reading_order": [
+    {"order": 0, "id": "H2", "type": "heading",
+     "anchor": "Spanish Monarchy Ferdinand VII Portrait Eight Reales"},
+    {"order": 1, "id": "L2", "type": "paragraph",
+     "anchor": "Year(s) Issued: 1808-21 Catalog Reference(s) KM# 64 Bust of Charles IV Rarity Rating"},
+    {"order": 2, "id": "F98", "type": "figure", "anchor": null,
+     "bbox": [140, 490, 1220, 640],
+     "desc": "1819-NG Portrait Eight Reales coin pair, upper half of p.101. Caption is C98."},
+    {"order": 3, "id": "C98", "type": "caption",
+     "anchor": "Fig. 98. 1819-NG Guatemala Portrait Eight Reales Ferdinand VII Murphy Collection",
+     "bbox": [1380, 1003, 605, 125],
+     "desc": "Caption for F98, side-set right of the plate."},
+    {"order": 4, "id": "D3", "type": "heading", "anchor": "Description",
+     "desc": "Run-in section label; the detector types it 'caption' and it sits only ~11px below F98 — the trap for a vertical-gap-only pairing rule."},
+    {"order": 5, "id": "P4", "type": "paragraph",
+     "anchor": "The imprisonment of Ferdinand VII by Napoleonic forces inspired revolutionary activity in the Captaincy General"},
+    {"order": 6, "id": "H3", "type": "heading",
+     "anchor": "Republic Counterstamped Coinage 1838-41"},
+    {"order": 7, "id": "L3", "type": "paragraph",
+     "anchor": "Year(s) Issued: 1838-41 Catalog Reference(s) KM# 77.1-77.17 Type 1 1838 Rarity Rating"},
+    {"order": 8, "id": "F99", "type": "figure", "anchor": null,
+     "bbox": [130, 2045, 1250, 680],
+     "desc": "(1841) Type IV Republic Counterstamp on a Peru 1828 MA Eight Reales host, lower half of p.101. Caption is C99."},
+    {"order": 9, "id": "C99", "type": "caption",
+     "anchor": "Fig. 99. 1841 Guatemala Type IV Republic Counterstamp Peru 1828 MA Eight Reales Host Murphy Collection",
+     "bbox": [1416, 2593, 585, 130],
+     "desc": "Caption for F99, side-set right of the plate."}
+   ]
+  }
+ }
+}

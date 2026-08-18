@@ -291,6 +291,7 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                 page_bgr = cv2.imread(str(src_img), cv2.IMREAD_COLOR)
                 g = FG.group_figures(
                     FG.views_from_blocks(rp.blocks), page_h=rp.height,
+                    page_w=rp.width,
                     lang=_ocr_language(pd), page_bgr=page_bgr, tess_bin=tess_bin,
                     params=(cfg.get("reconstruct", {}) or {}).get("grouping"))
                 grouped = FG.apply_to_blocks(list(rp.blocks), g, page_id)

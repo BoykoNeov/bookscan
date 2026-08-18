@@ -1,0 +1,56 @@
+{
+ "image_id": "en_coins_02",
+ "gt_type": "block_reading_order",
+ "schema_version": 1,
+ "book": "Chopmarked Coins by Nationality (Guatemala), pp.102-103. Same book and capture batch as en_coins_01/03.",
+ "pages": "102-103",
+ "language": "english",
+ "validated_by": "PROPOSED by Claude from the source photo 2026-08-18, same discipline as gt/en_coins_01.blocks.json (figure bboxes read off the dewarped pixels with a 100px coordinate grid, not copied from the detector). NOT owner-confirmed.",
+ "grading": {
+  "unit": "per subpage",
+  "why": "Stage 02 gutter-splits the spread; Stage 04 orders each half independently.",
+  "subpage_coverage": "ONLY the RIGHT subpage (p.103) is graded. The left subpage (p.102) carries exactly ONE figure, where the grouping metric itself reports association as POSSIBLE-but-not-discriminated — it cannot add evidence to the claim this fixture exists for, so it was not authored rather than authored and quietly discounted. A subpage absent from this file is skipped by the eval.",
+  "anchor_match": "Token overlap anywhere in the block.",
+  "primary_invariants": "Second ≥2-figure SIDE-SET grouping subpage (see gt/en_coins_01.blocks.json for the full statement): two coin plates stacked in one column, each with its own caption placed to the RIGHT of the plate, inside the plate's vertical band, with zero horizontal overlap. No in-photo figure numbers, so only the geometry arm is under test. The two pairs in caption_figure_pairs are the load-bearing assertion.",
+  "caption_figure_pairs": [
+   {"caption": "C101", "figure": "F101", "subpage": "right",
+    "note": "Fig. 101 1894 Guatemala Peso plate + its side-set caption. The wrong answer available to a proximity rule is F102, whose top edge is only ~51px below this caption."},
+   {"caption": "C102", "figure": "F102", "subpage": "right",
+    "note": "Fig. 102 1895 Guatemala Peso plate + its side-set caption."}
+  ],
+  "known_detector_gap": "Measured 2026-08-18: the run-in 'Description:' label is typed 'caption' by the detector (it is a heading); the italic section heading '(Republic) Peso' is typed 'paragraph'; the bulleted Year(s)/Catalog/Rarity block is typed 'paragraph' (no list class) and is typed paragraph here too. Both coin plates are detected cleanly, one box each, with their left edge clipped to the subpage border by the gutter split.",
+  "metric": "tools/layout_order_eval.py"
+ },
+ "subpages": {
+  "right": {
+   "page_number": 103,
+   "stripped": [
+    {"type": "header", "anchor": "Chopmarked Coins by Nationality - Guatemala"},
+    {"type": "page_number", "anchor": "103"}
+   ],
+   "reading_order": [
+    {"order": 0, "id": "H1", "type": "heading", "anchor": "Republic Peso"},
+    {"order": 1, "id": "L1", "type": "paragraph",
+     "anchor": "Year(s) Issued: 1894-97 Catalog Reference(s) KM# 210 Rarity Rating R-4"},
+    {"order": 2, "id": "F101", "type": "figure", "anchor": null,
+     "bbox": [0, 490, 1275, 615],
+     "desc": "1894 Guatemala Peso, obverse+reverse. Left edge clipped by the gutter split. No in-photo number."},
+    {"order": 3, "id": "C101", "type": "caption",
+     "anchor": "Fig. 101. 1894 Guatemala Peso KM# 210 Huntsinger Collection Ex-Colin Gullberg Chopmarks",
+     "bbox": [1285, 900, 600, 205],
+     "desc": "Caption for F101, side-set right of the plate."},
+    {"order": 4, "id": "F102", "type": "figure", "anchor": null,
+     "bbox": [0, 1155, 1275, 655],
+     "desc": "1895 Guatemala Peso, obverse+reverse."},
+    {"order": 5, "id": "C102", "type": "caption",
+     "anchor": "Fig. 102. 1895 Guatemala Peso KM# 210 Duplicate of Type in Fig. 101 Murphy Collection",
+     "bbox": [1310, 1720, 595, 90],
+     "desc": "Caption for F102, side-set right of the plate."},
+    {"order": 6, "id": "D1", "type": "heading", "anchor": "Description",
+     "desc": "Run-in section label; the detector types it 'caption' and it sits ~40px below F102."},
+    {"order": 7, "id": "P1", "type": "paragraph",
+     "anchor": "The new national coinage of Guatemala featured iconography that had used on prior coinage not known with chopmarks"}
+   ]
+  }
+ }
+}

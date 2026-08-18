@@ -3511,3 +3511,142 @@ do — a deliberate choice with a cost worth naming: these numbers are **auditab
 but not re-derivable**, since the PDFs and their gitignored job folders are gone
 once `temp/` is cleared. Re-deriving them means re-running the two arms, which
 `tools/pdf_searchability.py` and the recipe above make cheap.
+
+## Caption↔figure grouping DISCRIMINATED on a second book — side-set captions, and two false positives it exposed — 2026-08-18
+
+The owner's last open grouping item was *"figure/caption grouping discrimination
+→ needs a real page with two or more figures"*. It did not need a new capture.
+`en_coins_01/02/03` — three spreads of *Chopmarked Coins*, in the testset since
+2026-07-03 — carry **four subpages with two coin plates sharing one column, each
+with its own caption**, which is precisely the discriminating shape `it_geo_06`
+was built for, in a second book and a second language. Three block-order GT files
+were authored for them (`testset/gt/en_coins_0{1,2,3}.blocks.json`; figure boxes
+read off the dewarped pixels against a 100px coordinate grid, not copied from the
+detector; proposed-by-Claude, NOT owner-validated, same standing as `de_01`).
+
+### What the fixture found before any code changed
+
+**Grouping recovered NOTHING on this book: 0 of 8 pairs, on 4 discriminating
+subpages.** Every real caption abstained with *"no figure shares this caption's
+column within the gap limit"*, and the reason is a layout the geometry arm could
+not express:
+
+> **the captions are SIDE-SET.** Each sits to the RIGHT of its coin plate,
+> vertically inside that plate's band, with horizontal overlap of **exactly
+> 0.00** and a gap of 11–36px. The arm required x-overlap ≥ 0.50 ("a caption
+> belongs UNDER or OVER its figure"), so it rejected all ten captions in the book.
+
+Worse, the pass was not merely silent — it emitted the **wrong** pairs. This
+book's run-in `Description:` section labels are typed `caption` by
+DocLayout-YOLO and sit 11–40px below a plate, *nearer to it than the real
+caption is*, so on three subpages "Description:" was attached to a coin plate
+while that plate's actual caption stood alone.
+
+A third finding, on `en_coins_03`-right: **`figure_label` read the number 4 off a
+photograph of an 1890 Honduras Peso.** No such number is printed anywhere on the
+page — it is coin surface detail. That is a false positive against the
+recognizer's stated "zero wrong reads" invariant, on the first non-Italian page
+it has ever been run on. It mattered because a single recovered figure number put
+the whole subpage into "this book prints figure numbers" mode, which suppressed
+the geometry arm for both real captions.
+
+### Three changes, each forced by one of those findings
+
+1. **Side-set attachment shape** (`side_min_yov_frac` 0.50, `side_max_gap_frac`
+   0.05 of page width). A caption may attach to a figure it sits BESIDE when its
+   vertical span lies inside that figure's band and the horizontal gap is small.
+   Candidate distance became `max(h_gap, v_gap)` so stacked and side-set
+   candidates rank on one scale for the mutual-nearest and ambiguity tests.
+   Sitting beside a figure is **weaker** evidence than sitting under it — a block
+   beside a photo may belong to a neighbouring column — so the side-set shape
+   additionally requires the block to declare itself a caption **in print** (a
+   parsed `Fig. NN` header). Two independent signals for the weaker geometry.
+   *This guard is load-bearing, not decoration:* `de_01`'s icon-sidebar Gehzeiten
+   panel is typed `caption`, has y-overlap 1.00 with the page photo and sits 28px
+   from it — geometrically indistinguishable from a real side-set caption, and it
+   is not one. Without the print requirement the side-set rule pairs it.
+2. **Caption-side numbering-regime guard.** Where any caption on a subpage carries
+   a printed number, a block typed `caption` that carries none is not one of them
+   and does not pair. This is what removes the three "Description:" pairs. It is a
+   **deliberate reversal** of a documented behaviour (the old
+   `test_geometry_still_runs_for_an_unnumbered_caption_on_a_numbered_page`); the
+   cost is that a genuinely unnumbered caption on a page that numbers its others
+   is now missed, and under the zero-wrong bar a miss beats a wrong pair.
+3. **Figure-number plausibility** (`fig_number_window` = 3). A recovered corner
+   label outside the span of the caption numbers on the SAME subpage is a
+   misread, not a figure number — figures and captions on one printed page belong
+   to one short run. This drops the coin's "4" (captions 104/105) while keeping
+   the it_geo_06 trap defence intact: a label reading 26 beside a caption reading
+   25 is a neighbouring figure and is kept, so C25 still abstains rather than
+   grabbing the top-right F26 plate.
+
+### Measured — all eight block-order fixtures, production code path
+
+| fixture | pairs correct | **WRONG** | abstained | change |
+|---|---|---|---|---|
+| it_geo_04 | 1/2 | **0** | 1 | unchanged |
+| it_geo_05 | 0/2 | **0** | 1 | unchanged |
+| it_geo_06 | 5/6 | **0** | 1 | unchanged |
+| it_geo_07 | 0/1 | **0** | 2 | unchanged |
+| de_01 | 0/0 | **0** | 1 | unchanged |
+| **en_coins_01** | **4/4** | **0** | 2 | was 0/4, plus 2 pairs on `Description:` labels |
+| **en_coins_02** | **2/2** | **0** | 1 | was 0/2, plus 1 pair on a `Description:` label |
+| **en_coins_03** | **2/2** | **0** | 0 | was 0/2 |
+| **total** | **14/19** | **0** | **9** | was 6/19 |
+
+**Non-regression is byte-identical**, not merely "similar": the full eval reports
+for `it_geo_04`, `it_geo_05`, `it_geo_06`, `it_geo_07` and `de_01` diff clean
+against their pre-change baselines — every tau, every segmentation count, every
+abstain reason. All four English pairs on `en_coins_01`, both on `02`-right and
+both on `03`-right come from the **geometry** arm; no figure number is recovered
+anywhere in this book (correctly, now that the coin misread is filtered).
+
+**The metric was sharpened, in the direction that can only hurt.** A pair whose
+caption maps to a GT block the GT types as something OTHER than `caption` now
+counts as **WRONG**, not "ungraded". Without this, the three "Description:" pairs
+would have been scored as unadjudicated rather than as the defect they are.
+Checked before adopting: `it_geo_07`-right's existing ungraded pair is anchored on
+a block the GT does not list at all (`det3`), so it stays ungraded — the
+sharpening flips nothing on the Italian fixtures.
+
+### Verified on the production path, not just in the eval
+
+Ran the real chain on `en_coins_01`: `run_all` 00→06 → `stage07_assemble` →
+`stage08_render`. Assemble reports `captions=3 paired=2 (geometry) unpaired=1` on
+each subpage, and the rendered HTML contains **four `<figure>` elements, each
+carrying its own `Fig. 96/97/98/99` caption**, with the two `Description:` labels
+emitted as standalone `<p class="caption">` — exactly the shape the eval graded.
+
+### Honest limits
+
+* **Side-set pairing does nothing for a book that sets captions beside its
+  figures and prints no caption numbers.** That is the price of the print
+  requirement, and it is a real gap, not a rounding error — but the alternative
+  (a purely geometric side rule) demonstrably mispairs `de_01`'s icon sidebar.
+* The `de_01` Gehzeiten pair would have been reported **ungraded**, not wrong,
+  because that GT scopes the icon sidebar out — the metric could not have caught
+  the regression. The print requirement is doing that work, not the metric.
+* **Two GT-authoring compromises, both stated in the files.** `en_coins_02/03`
+  grade only their RIGHT subpage (the facing pages carry one figure each and
+  cannot discriminate). The identical `Description:` anchors on `en_coins_01`-left
+  are distinguishable only by the eval's deterministic tie-break.
+* **A new, unrelated defect this fixture surfaced and nobody has fixed:** on
+  `en_coins_03`-right the chapter heading "Honduras" is emitted **last** instead
+  of first (`tau +0.43`, `tau+figures +0.56`); every other block on that subpage
+  is in exact GT order. Recorded, not patched.
+* `en_coins_01`-left's single segmentation miss is its footnote line, which the
+  detector does not find at all.
+
+Suite **383 green** (was 376): +7 in `test_figure_grouping.py` covering the
+side-set shape, its print requirement, the de_01 sidebar rejection, the detached
+gutter-column rejection, both numbering-regime guards and the plausibility filter.
+
+### Also this session: the raw capture drop folder was emptied into the testset
+
+`1/` is the gitignored "raw capture drop folder (originals copied into testset/
+with canonical ids)". Seven originals had never been copied across, including
+**the entire 3-frame Bulgarian real-capture set** behind the 2026-07-18 Finding-2
+cross-gutter descramble. All seven are now in `testset/` with manifest rows under
+a new `frameset` category: `bg_taleb_01` (+ its two sibling frames) and the four
+sibling frames of the `de_01`/`de_02` sets. They carry no ground truth and are
+registered as real-capture samples, not graded fixtures.

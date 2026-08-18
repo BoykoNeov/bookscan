@@ -1,0 +1,58 @@
+{
+ "image_id": "en_coins_03",
+ "gt_type": "block_reading_order",
+ "schema_version": 1,
+ "book": "Chopmarked Coins by Nationality (Hawai'i / Honduras), pp.104-105. Same book and capture batch as en_coins_01/02. Note manifest.csv leaves this page without TEXT GT on purpose (raw Tesseract interleaves the two facing pages, so sequence WER would be noise) — block-order GT is a different measurement and is unaffected by that.",
+ "pages": "104-105",
+ "language": "english",
+ "validated_by": "PROPOSED by Claude from the source photo 2026-08-18, same discipline as gt/en_coins_01.blocks.json. NOT owner-confirmed.",
+ "grading": {
+  "unit": "per subpage",
+  "why": "Stage 02 gutter-splits the spread; Stage 04 orders each half independently.",
+  "subpage_coverage": "ONLY the RIGHT subpage (p.105, Honduras) is graded — the left subpage (p.104, Hawai'i) carries exactly ONE figure and so cannot discriminate. See gt/en_coins_02.blocks.json for the same statement.",
+  "anchor_match": "Token overlap anywhere in the block.",
+  "primary_invariants": "Third ≥2-figure SIDE-SET grouping subpage. It carries one property the other two do not: the corner-label recognizer READS A NUMBER OFF A COIN. Measured 2026-08-18, pipeline.figure_label returns 4 for the Fig. 104 plate — there is no such number printed anywhere on the page, it is coin surface detail. That is a false positive against figure_label's stated 'zero wrong reads' invariant, on the first non-Italian page it has ever been run on. It matters here because a recovered figure number used to switch the whole subpage into 'this book prints figure numbers' mode, which suppressed the geometry arm for every numbered caption on the page.",
+  "caption_figure_pairs": [
+   {"caption": "C104", "figure": "F104", "subpage": "right",
+    "note": "Fig. 104 1890 Honduras Peso plate + its side-set caption. The wrong answer available is F105, whose top edge is only ~39px below this caption."},
+   {"caption": "C105", "figure": "F105", "subpage": "right",
+    "note": "Fig. 105 1892/0 Honduras Peso plate + its side-set caption."}
+  ],
+  "known_detector_gap": "Measured 2026-08-18: the C104 caption is typed 'paragraph' by the detector (the caption parser promotes it from the printed 'Fig. 104'); 'Honduras' is typed 'heading' correctly but '(Republic) Peso' is typed 'paragraph'; the 'Description:' label is typed 'paragraph' on this subpage. Both plates are detected cleanly, one box each. The Fig. 105 plate has stray coin-surface glyphs routed into it as text.",
+  "metric": "tools/layout_order_eval.py"
+ },
+ "subpages": {
+  "right": {
+   "page_number": 105,
+   "stripped": [
+    {"type": "header", "anchor": "Chopmarked Coins by Nationality - Honduras"},
+    {"type": "page_number", "anchor": "105"}
+   ],
+   "reading_order": [
+    {"order": 0, "id": "H1", "type": "heading", "anchor": "Honduras"},
+    {"order": 1, "id": "H2", "type": "heading", "anchor": "Republic Peso"},
+    {"order": 2, "id": "L1", "type": "paragraph",
+     "anchor": "Year(s) Issued: 1883-1914 Catalog Reference(s) KM# 47 1881-83 KM# 52 1883-1914 Rarity Rating R-3"},
+    {"order": 3, "id": "F104", "type": "figure", "anchor": null,
+     "bbox": [60, 590, 1200, 650],
+     "desc": "1890 Honduras Peso, obverse+reverse. NO printed number anywhere on or beside the plate — the '4' figure_label reads off it is a false positive."},
+    {"order": 4, "id": "C104", "type": "caption",
+     "anchor": "Fig. 104. 1890 Honduras Peso KM# 52 Huntsinger Collection",
+     "bbox": [1270, 1160, 575, 90],
+     "desc": "Caption for F104, side-set right of the plate. Typed 'paragraph' by the detector; promoted by the caption parser."},
+    {"order": 5, "id": "F105", "type": "figure", "anchor": null,
+     "bbox": [60, 1290, 1200, 625],
+     "desc": "1892/0 Honduras Peso, obverse+reverse."},
+    {"order": 6, "id": "C105", "type": "caption",
+     "anchor": "Fig. 105. 1892/0 Honduras Peso KM# 52 Duplicate of Type in Fig. 104 Murphy Collection",
+     "bbox": [1275, 1850, 580, 85],
+     "desc": "Caption for F105, side-set right of the plate."},
+    {"order": 7, "id": "D1", "type": "heading", "anchor": "Description"},
+    {"order": 8, "id": "P1", "type": "paragraph",
+     "anchor": "Honduras was somewhat unusual among the Spanish colonies of the New World in that it produced both silver and gold"},
+    {"order": 9, "id": "P2", "type": "paragraph",
+     "anchor": "Despite their silver resources Honduras would not produce their own crown-sized silver type until the late 19th century"}
+   ]
+  }
+ }
+}

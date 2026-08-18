@@ -28,22 +28,54 @@ THE PAIRING POLICY (two arms, number first, geometry guarded):
 2. **Guarded geometry arm (the ordinary book).** Most books print no in-photo
    corner labels, so the number arm recovers nothing and grouping would vanish
    entirely. A caption with no number pair may still pair to a figure it is
-   plainly attached to — but ONLY when the attachment is unambiguous. Every one
-   of these must hold:
-     * horizontal overlap >= ``geom_min_overlap_frac`` of the narrower box
-       (a caption belongs UNDER/OVER its figure, not beside a different column);
-     * vertical gap <= ``geom_max_gap_frac`` of the page height;
+   plainly attached to — but ONLY when the attachment is unambiguous. There are
+   two attachment SHAPES, and they are not equally strong evidence:
+
+   * **stacked** (the caption sits UNDER or OVER its figure) — horizontal
+     overlap >= ``geom_min_overlap_frac`` of the narrower box, vertical gap
+     <= ``geom_max_gap_frac`` of the page height;
+   * **side-set** (the caption sits BESIDE its figure, inside that figure's
+     vertical band) — vertical overlap >= ``side_min_yov_frac`` of the shorter
+     box and horizontal gap <= ``side_max_gap_frac`` of the page WIDTH.
+     Measured on ``en_coins_01/02/03`` (2026-08-18): every caption in that
+     English book sits to the RIGHT of its coin plate with x-overlap **exactly
+     0.00** and a 11-36px horizontal gap, so the stacked rule rejected all nine
+     of them and grouping recovered nothing on the whole book.
+
+   Sitting beside a figure is WEAKER evidence than sitting under it: a block
+   merely beside a photo may belong to a neighbouring column that has nothing to
+   do with it. ``de_01``'s icon sidebar is exactly that — its Gehzeiten panel
+   has y-overlap 1.00 and a 28px gap to the page photo and is not its caption.
+   So the side-set shape additionally requires the block to **declare itself a
+   caption in print** (a parsed "Fig. NN" header). Two independent signals for
+   the weaker geometry. Honest limit: side-set pairing therefore does nothing
+   for a book that sets captions beside its figures and prints no numbers.
+
+   Whichever shape applies, all of these must also hold:
      * **mutual nearest** — the figure's own closest eligible caption is this
        caption (kills "two captions both grab the one figure");
      * **unambiguous** — the runner-up figure is at least
        ``geom_ambiguity_ratio`` x further away than the winner;
-     * **numbering-regime guard** — if ANY figure number was recovered on this
-       subpage, the book is printing figure numbers, so a caption that HAS a
-       printed number and found no numeric partner ABSTAINS instead of guessing
-       geometrically. Its figure's label simply did not OCR; geometry is not
-       entitled to overrule the printed numbering. (Without this guard,
-       it_geo_06's C25 would grab the top-right F26 — the exact mispairing the
-       fixture was built to trap.)
+     * **figure-numbering-regime guard** — if any PLAUSIBLE figure number was
+       recovered on this subpage, the book is printing figure numbers, so a
+       caption that HAS a printed number and found no numeric partner ABSTAINS
+       instead of guessing geometrically. Its figure's label simply did not OCR;
+       geometry is not entitled to overrule the printed numbering. (Without this
+       guard, it_geo_06's C25 would grab the top-right F26 — the exact mispairing
+       the fixture was built to trap.) "Plausible" means inside the span of the
+       caption numbers printed on the SAME subpage, widened by
+       ``fig_number_window`` — figures and captions on one page belong to one
+       short run of numbers. Measured need: on ``en_coins_03``-right
+       ``figure_label`` reads **4** off a Honduras Peso photograph that carries no
+       printed number at all, on a subpage whose captions read 104 and 105, and
+       that single false read used to suppress the geometry arm for both of them.
+     * **caption-numbering-regime guard** — if ANY caption on this subpage
+       carries a printed number, the book numbers its captions, so a block typed
+       ``caption`` that carries NO number is not one of them and does not pair.
+       Measured need: this book's run-in "Description:" section labels are typed
+       ``caption`` by the detector and sit 11-40px below a coin plate — closer to
+       it than the real caption is — so without this guard the pass emits
+       "Description:" as the plate's caption while the real caption abstains.
 
 **The success bar is ZERO WRONG PAIRS, not N pairs** — the same invariant
 ``figure_label`` already holds for its digit reads. A caption printed under the
@@ -84,6 +116,18 @@ DEFAULTS: dict[str, float] = {
     # subpage puts the Fig.21 panorama caption 577px (0.19 of page height) below
     # its panorama with no other figure present.
     "geom_solo_max_gap_frac": 0.25,
+    # SIDE-SET attachment (caption beside its figure, inside the figure's
+    # vertical band). Measured on en_coins_01/02/03 (2026-08-18): the nine real
+    # captions score y-overlap 0.77-1.00 and horizontal gaps of 11-36px on
+    # ~2000px-wide subpages (0.006-0.018), while the it_geo gutter-side caption
+    # columns this must NOT claim sit 1151-1170px away (0.55+). Both floors sit
+    # in the wide empty middle of that separation.
+    "side_min_yov_frac": 0.50,       # y-overlap / min(caption_h, figure_h)
+    "side_max_gap_frac": 0.05,       # horizontal caption<->figure gap, frac of page WIDTH
+    # How far outside the subpage's caption-number span a recovered FIGURE number
+    # may sit before it is read as a misread rather than a figure number. See
+    # _plausible_figure_numbers.
+    "fig_number_window": 3.0,
 }
 
 # Detector types eligible for promotion to CAPTION by the textual parser.
@@ -178,6 +222,26 @@ def _v_gap(cap: BBox, fig: BBox) -> float:
     return 0.0
 
 
+def _y_overlap_frac(a: BBox, b: BBox) -> float:
+    """Vertical overlap as a fraction of the SHORTER box — the side-set mirror of
+    ``_x_overlap_frac``. A caption set beside its figure lies wholly inside that
+    figure's vertical band (1.00 on the en_coins plates); a block beside a
+    DIFFERENT figure scores 0."""
+    ov = min(a.y2, b.y2) - max(a.y, b.y)
+    if ov <= 0:
+        return 0.0
+    return ov / max(1, min(a.h, b.h))
+
+
+def _h_gap(cap: BBox, fig: BBox) -> float:
+    """Horizontal clearance between caption and figure (0 if they overlap in x)."""
+    if cap.x >= fig.x2:
+        return float(cap.x - fig.x2)      # caption to the right of the figure
+    if fig.x >= cap.x2:
+        return float(fig.x - cap.x2)      # caption to the left of the figure
+    return 0.0
+
+
 # --------------------------------------------------------------------------
 # The pass
 # --------------------------------------------------------------------------
@@ -250,31 +314,71 @@ def read_figure_numbers(views: Sequence[BlockView], page_bgr: np.ndarray | None,
     return out
 
 
+def _plausible_figure_numbers(read: dict[str, int], caption_numbers: dict[str, int],
+                              window: int) -> dict[str, int]:
+    """Drop a recovered figure number that cannot belong to this page's numbering.
+
+    Figures and captions printed on one page belong to the same short run of
+    figure numbers, so a corner label far outside the span of the caption numbers
+    on that same subpage is a MISREAD, not a figure number. Measured need
+    (en_coins_03-right, 2026-08-18): ``figure_label`` returns **4** for a Honduras
+    Peso photograph that carries no printed number anywhere, on a subpage whose
+    captions read 104 and 105. Left standing, that one false read put the whole
+    subpage into "this book prints figure numbers" mode and suppressed the
+    geometry arm for both real captions.
+
+    The window is deliberately loose (a figure whose caption sits on the facing
+    page still clears it) — the job is to reject a read from a different order of
+    magnitude, not to police off-by-one."""
+    if not read or not caption_numbers:
+        return dict(read)
+    lo, hi = min(caption_numbers.values()), max(caption_numbers.values())
+    return {k: n for k, n in read.items() if lo - window <= n <= hi + window}
+
+
 def _geometric_pairs(caps: list[BlockView], figs: list[BlockView], page_h: int,
-                     p: dict[str, float]) -> tuple[dict[str, str], dict[str, str]]:
+                     p: dict[str, float], page_w: int,
+                     numbered: frozenset[str] = frozenset()
+                     ) -> tuple[dict[str, str], dict[str, str]]:
     """The guarded proximity arm over the captions/figures the number arm left.
 
-    Returns ``(pairs, abstain_reasons)``. Every guard is a reason to abstain —
-    see the module docstring for why a wrong pair costs more than a missing one.
+    ``numbered`` is the set of caption keys that carry a printed caption number;
+    only those are eligible for the weaker SIDE-SET attachment shape (see the
+    module docstring). Returns ``(pairs, abstain_reasons)``. Every guard is a
+    reason to abstain — see the module docstring for why a wrong pair costs more
+    than a missing one.
     """
     solo = len(caps) == 1 and len(figs) == 1
     gap_frac = p["geom_solo_max_gap_frac"] if solo else p["geom_max_gap_frac"]
     max_gap = gap_frac * max(1, page_h)
+    max_side_gap = p["side_max_gap_frac"] * max(1, page_w)
     floor = p["geom_gap_floor_frac"] * max(1, page_h)
     pairs: dict[str, str] = {}
     why: dict[str, str] = {}
 
     def candidates(cap: BlockView) -> list[tuple[float, BlockView]]:
+        """Eligible figures for ``cap``, nearest first.
+
+        Distance is the box-to-box edge clearance on the axis that separates the
+        two boxes: a stacked caption is separated vertically (h_gap 0), a
+        side-set one horizontally (v_gap 0), so ``max(h_gap, v_gap)`` is the one
+        number that ranks BOTH shapes on the same scale. That matters because the
+        mutual-nearest and ambiguity tests below compare candidates that may have
+        arrived by different shapes.
+        """
         out = []
         for f in figs:
             if _nest_frac(cap.bbox, f.bbox) > p["geom_max_nest_frac"]:
                 continue          # swallowed by this figure's box, not attached to it
-            if _x_overlap_frac(cap.bbox, f.bbox) < p["geom_min_overlap_frac"]:
+            vg, hg = _v_gap(cap.bbox, f.bbox), _h_gap(cap.bbox, f.bbox)
+            stacked = (_x_overlap_frac(cap.bbox, f.bbox) >= p["geom_min_overlap_frac"]
+                       and vg <= max_gap)
+            side = (cap.key in numbered
+                    and _y_overlap_frac(cap.bbox, f.bbox) >= p["side_min_yov_frac"]
+                    and hg <= max_side_gap)
+            if not (stacked or side):
                 continue
-            g = _v_gap(cap.bbox, f.bbox)
-            if g > max_gap:
-                continue
-            out.append((g, f))
+            out.append((max(vg, hg), f))
         return sorted(out, key=lambda t: t[0])
 
     cand_by_cap = {c.key: candidates(c) for c in caps}
@@ -306,7 +410,7 @@ def _geometric_pairs(caps: list[BlockView], figs: list[BlockView], page_h: int,
 
 def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
                   page_bgr: np.ndarray | None = None, tess_bin: str | None = None,
-                  params: dict | None = None) -> Grouping:
+                  params: dict | None = None, page_w: int | None = None) -> Grouping:
     """Type, number and pair one SUBPAGE's blocks.
 
     Subpage-shaped on purpose: the eval grades per subpage, Stage 07 loops over
@@ -315,10 +419,15 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
     drift apart again.)
 
     ``page_h`` is the subpage image height (the geometry knobs are fractions of
-    it). ``page_bgr``/``tess_bin`` are optional; without them the corner-label
-    arm is skipped and only routed text can supply a figure number.
+    it). ``page_w`` is its width, used only by the side-set gap limit; when the
+    caller does not know it, it is inferred from the blocks' own right edges,
+    which under-estimates it slightly (so the side limit only ever gets tighter,
+    never looser). ``page_bgr``/``tess_bin`` are optional; without them the
+    corner-label arm is skipped and only routed text can supply a figure number.
     """
     p = resolve_params(params)
+    if page_w is None:
+        page_w = max((v.bbox.x2 for v in views), default=page_h)
     g = Grouping()
 
     g.promoted = promote_captions(views, lang)
@@ -340,7 +449,9 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
     # skip it. Consequence, stated rather than hidden: on such a subpage
     # ``figure_number`` is not recorded as provenance either.
     if g.caption_numbers:
-        g.figure_numbers = read_figure_numbers(figs, page_bgr, tess_bin, page_h)
+        g.figure_numbers = _plausible_figure_numbers(
+            read_figure_numbers(figs, page_bgr, tess_bin, page_h),
+            g.caption_numbers, int(p["fig_number_window"]))
 
     # --- arm 1: printed number (authoritative) ---
     num_pairs = CP.pair_by_number(g.caption_numbers, dict(g.figure_numbers))
@@ -350,6 +461,9 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
 
     # --- arm 2: guarded geometry over what is left ---
     numbered_regime = bool(g.figure_numbers)
+    # The mirror on the caption side: where the book numbers its captions, a
+    # block typed `caption` that carries no number is not one of them.
+    captions_numbered = bool(g.caption_numbers)
     rest_caps, held = [], {}
     for c in caps:
         if c.key in g.pairs:
@@ -364,10 +478,16 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
                            f"figure number on a subpage that DOES print figure numbers — "
                            f"abstaining rather than overruling the printed numbering")
             continue
+        if captions_numbered and c.key not in g.caption_numbers:
+            held[c.key] = ("carries no printed caption number on a subpage whose captions "
+                           "ARE numbered — more likely a mistyped label than a caption")
+            continue
         rest_caps.append(c)
     rest_figs = [f for f in figs if f.key not in set(g.pairs.values())]
 
-    geo_pairs, geo_why = _geometric_pairs(rest_caps, rest_figs, page_h, p)
+    geo_pairs, geo_why = _geometric_pairs(
+        rest_caps, rest_figs, page_h, p, page_w,
+        numbered=frozenset(g.caption_numbers))
     for cid, fid in geo_pairs.items():
         g.pairs[cid] = fid
         g.pair_source[cid] = "geometry"

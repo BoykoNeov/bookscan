@@ -20,8 +20,10 @@ anchor.
   WER is deliberately NOT used for it (WER on figure-sidebar spreads conflates
   layout scramble with recognition). Graded **per subpage** (Stage 02 splits
   the spread first) by matching each anchor to a detected block via text
-  overlap. Block-order fixtures (all owner-validated 2026-07-03), each isolating
-  a distinct layout failure mode:
+  overlap. Block-order fixtures, each isolating a distinct layout failure mode.
+  The four `it_geo_*` are owner-validated (2026-07-03); `de_01` and the three
+  `en_coins_*` are proposed-from-photo by Claude and are NOT owner-confirmed —
+  each says so in its own `validated_by` field:
   - `it_geo_04` — **reading-order**: genuine multi-column (2 prose cols + gutter
     caption col) + cross-gutter panorama. The first multi-column proof.
   - `it_geo_05` — **embedded caption**: a full-page watercolor map whose caption
@@ -37,6 +39,19 @@ anchor.
     where each stage is a diagram + two-column text (Tn-mid then Tn-right), so
     Kendall-tau catches **row-major vs column-major** slippage. + chronology
     table + 3-column inset.
+  - `en_coins_01`, `en_coins_02`, `en_coins_03` — **grouping, second book and
+    second language** (added 2026-08-18, proposed-by-Claude, NOT owner-validated).
+    Four subpages carry **two coin plates sharing one column, each with its own
+    caption**, so grouping is genuinely discriminated here as on `it_geo_06`. Two
+    properties make them complementary to the Italian fixtures: the captions are
+    **side-set** (beside the plate, inside its vertical band, x-overlap exactly
+    0.00) rather than in a detached gutter column, and the plates carry **no
+    in-photo corner label**, so only the geometry arm is under test. They also
+    trap two false positives the Italian pages cannot: the run-in `Description:`
+    labels, which the detector types `caption` and places nearer a plate than the
+    real caption, and a corner-label misread off a coin's own surface. `01` grades
+    both subpages; `02`/`03` grade only their right subpage (the facing pages
+    carry one figure and cannot discriminate). See docs/RESULTS.md 2026-08-18.
 
   Graded by `tools/layout_order_eval.py` (the sequence-order + grouping metric).
 - **Orientation GT** (a third GT type) lives in `gt/orientation.json`: one entry
@@ -62,7 +77,7 @@ spread, before split/dewarp).
 
 | ID prefix     | Content                                            | Count     | GT           |
 |---------------|----------------------------------------------------|-----------|--------------|
-| `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01` |
+| `en_coins_*`  | English (*Chopmarked Coins*): body + coin figs/caps + footnotes | 3 spreads | `01` (text) + `01`,`02`,`03` (block-order) |
 | `bg_*`        | Bulgarian (Cyrillic) history: clean single-column  | 3 spreads | `01`, `02`   |
 | `it_geo_*`    | Italian (Dolomites/Veneto geology): main col + figure sidebars | 7 spreads | `04`, `05`, `06`, `07` (block-order) |
 | `de_*`        | German (via-ferrata guide): banners + icon sidebar + parallel DE/EN cols | 2 spreads | `01`, `02` (orientation) |
@@ -161,3 +176,21 @@ was reported, not patched**, when these were added.
 - Page crops are **hand-specified** (three automatic routes were measured and
   rejected on this batch), so reproducing the measurement means using the
   `page_crop` boxes in the manifest, not re-deriving them.
+
+## Real-capture frame sets (`frameset`) — added 2026-08-18
+
+The seven images in the `frameset` category are the **remaining originals from
+the gitignored `1/` drop folder**, copied in so every sample page this project
+has lives in one registered place. They are real phone captures (2026-07-18),
+three frames per spread, and they carry **no ground truth**: they are
+regression *samples*, not graded fixtures.
+
+| id | what it is |
+|---|---|
+| `bg_taleb_01` (+ `_093629`, `_093636`) | the Bulgarian real-capture spread behind the 2026-07-18 **Finding 2** cross-gutter descramble (curved shadowed gutter, valley/page_ref 0.85 → `single.png` → reading order crossed the spine). Never promoted until now. `bg_taleb_01` is the sharpest of the three frames. |
+| `de_01_091915`, `de_01_091921` | the two sibling frames of the `de_01` set (`de_01.jpg` is the sharpest of the three) |
+| `de_02_092054`, `de_02_092058` | the two sibling frames of the `de_02` set |
+
+They are **not** multi-view fixtures in the `skewset_*` sense: they were shot as
+a burst from one viewpoint for sharpness selection, not from different viewpoints,
+so they do not carry the complementary-view structure the multi-view work needs.

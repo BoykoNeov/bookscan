@@ -602,7 +602,8 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str,
             gr = FG.group_figures(
                 [FG.BlockView(key=str(d.idx), btype=d.btype, bbox=d.bbox, text=d.text)
                  for d in det],
-                page_h=img.shape[0], lang=lang, page_bgr=img, tess_bin=binary)
+                page_h=img.shape[0], page_w=img.shape[1],
+                lang=lang, page_bgr=img, tess_bin=binary)
 
             def eff_type(di: int) -> str:
                 return "caption" if (det[di].btype == "caption"
@@ -628,6 +629,14 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str,
                 c_gt, f_gt = det_to_gt.get(ci), det_to_gt.get(fi)
                 if c_gt is not None and c_gt in gt_pair_map:
                     verdict = "ok" if gt_pair_map[c_gt] == f_gt else "wrong"
+                elif c_gt is not None and by_id[c_gt]["type"] != "caption":
+                    # The pair is anchored on a block the GT says is NOT a caption
+                    # (en_coins' run-in "Description:" labels, which the detector
+                    # types 'caption'). Attaching one to a figure is a wrong pair by
+                    # construction — grading it "ungraded" because the GT anchors no
+                    # pair for a non-caption would hide exactly the failure the
+                    # zero-wrong bar exists to catch.
+                    verdict = "wrong"
                 else:
                     # The GT anchors no pair for this caption. NOT silently dropped:
                     # a pair the GT cannot adjudicate is still a pair the renderer

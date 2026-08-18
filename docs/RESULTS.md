@@ -2729,3 +2729,200 @@ face-on read only marginally — are underrepresented in it by construction. The
 skew and curl3 should be read as "no loss among words the face-on read confidently", not as
 "the guard passed". Keying a matched band of *marginal* far-side words is what would make the
 guard as sharp as its name suggests.
+
+## Multi-view fixture — the 2026-08-18 batch: three gates, four corrections, one fixture — 2026-08-18
+
+Phase 1 ended not-shippable with the blocker named as **data**: five merge policies had been
+compared on the same three pages that carry the GT, so "v5 is best" was an N=3 hypothesis.
+The owner delivered **97 multi-angle phone captures** the same day
+(`temp/zoomset_raw/batch_20260818/`, 344 MB, out of git). This row is what the data turned
+out to be, and what had to be corrected before a single ground-truth token was worth keying.
+
+**The pre-registration is committed first, on purpose** (`docs/plans/multiview-phase1-prereg.md`,
+commit `5fe9fab`). Curating a new fixture and then scoring all five policies on it again would
+reproduce the invalid thing at N=9. v5 is named as the one policy under test; the other four
+will not be run on these pages.
+
+### The batch
+
+20 sets, 97 frames, all 4000×3000, grouped in `temp/mv_batch18/sets.py`. Three books:
+
+| prefix | book | language | sets | frames |
+|---|---|---|---|---|
+| `it_ferr_*` | Italian via-ferrata atlas — a **new** book, not the `it_geo_*` geology one | ita | 8 | 24 |
+| `de_ferr_*` | the German via-ferrata guide behind `de_*` | deu | 3 | 9 |
+| `en_coin_*` | *Chopmarked Coins*, the book behind `en_coins_*` | eng | 9 | 64 |
+
+Four English sets are multi-**scale** as well as multi-angle (a full spread then progressively
+closer partial views). **No Bulgarian** — the original ask was Bulgarian / Italian / German, so
+the **Cyrillic arm stays unvalidated**, in particular v5's dictionary veto on Cyrillic. Stated
+as a limit on the claim, not as a gap to fill; the owner delivered this batch as sufficient.
+
+### Gate A — orientation: a defect in shipped code, found by the fixture work
+
+Two Italian sets have frames that disagree about which way is up:
+
+| set | frame | OSD call | OSD conf | applied | the other frames |
+|---|---|---|---|---|---|
+| `it_ferr_b` | 134655 | 180° | **2.58** | 180° | 134657/134658 → 0° at conf 16.6 / 10.4 |
+| `it_ferr_e` | 134731 | 180° | **3.09** | 180° | 134724/134729 → 180° at conf 0.24 / 1.59, below threshold, kept raw |
+
+Both are one defect: **`DEFAULT_MIN_OSD_CONF = 2.0` trusts an OSD call at conf 2.6–3.1**, which
+on a book spread is noise — and a **180° error is invisible to the cascade's layer-5 landscape
+prior**, because a spread rotated 180° is still landscape. The prior separates portrait from
+landscape and nothing else. `it_ferr_e` is the worst case by construction: a full-bleed
+panorama with almost no text, so OSD has nothing to work with.
+
+Two frames of one spread arriving 180° apart would have corrupted the word-stream alignment
+**silently**, surfacing only as a bad number after the GT was already paid for. **Reported, not
+patched** — `tools/normalize` is untouched this session; pinned fixture-side by per-set
+majority (`temp/mv_batch18/orient.py`), which is defensible because every frame of a set
+photographs one physical spread held one way up. That is an assumption about the *capture*, and
+it is recorded as one.
+
+### Gate B — ORB is the wrong instrument here, and that is finding 0b replicating
+
+Phase 0 gated viewpoint diversity on ORB median displacement (80–900 px). On this batch that
+gate would disqualify **exactly the sets the effort exists for**:
+
+| book / curl | sets | ORB inliers between the extreme frames |
+|---|---|---|
+| Italian + German, mild curl | 11 | **36 – 701** (registers fine) |
+| English *Chopmarked Coins*, strong curl | 9 | **3 – 13 on 7 of 9** (does not register at all) |
+
+A median displacement computed from 3 inliers is noise, not diversity — `en_coin_b` reports
+1246.9 px off 3 inliers, and the probe later crashed outright on a null homography mask, which
+is the same failure with the politeness removed. **This is Phase 0's finding 0b reproducing on
+new pages, outside its original set, for the first time**, and it separates cleanly by book and
+curl severity rather than randomly. It is also precisely why the Phase 1 route became a text
+merge. ORB is kept as a *screen* with inlier counts attached, never as an entry gate.
+
+Replaced by the mechanism the merge actually uses: correspondences from the aligned OCR token
+streams (`temp/mv_batch18/wordstream.py`), with a floor of ≥ 40 pairs and ≥ 12 of them in the
+gutter — mirroring what STEP 3 actually fitted and held out (43/16, 102/64, 79/24).
+
+### Gate C — specified, measured, withdrawn as a mis-specification
+
+The gate asked whether Stage 02 puts the gutter at the same **fraction of the frame** in every
+view. It cannot, and the data says so cleanly:
+
+| set | split-x as a fraction of frame, per view |
+|---|---|
+| `it_ferr_a` | 0.634 → 0.545 → 0.478 |
+| `it_ferr_d` | 0.626 → 0.545 → 0.460 |
+| `en_coin_a` | 0.593 → 0.432 → 0.358 |
+| `en_coin_e` | 0.633 → 0.543 → 0.459 |
+
+Monotone with viewpoint — that is perspective behaving exactly as perspective does, not a
+detector defect. A frame-relative bar is satisfiable only by frames that share a viewpoint,
+which is the opposite of what this fixture is for; repairing it in a common frame would need
+the transform, which needs the correspondences, which is downstream of what the gate was meant
+to protect. Numbers kept in `temp/mv_batch18/gate_c.json`; the `0.3` entries look like a
+search-range clamp rather than a detection and are not quoted as positions. What survives is a
+by-eye check while keying GT: **does a frame's crop cut off text another frame retains?**
+Stage 02 frame-stability across viewpoints is a **pipeline-integration** question, logged as
+one.
+
+### Correction 1 — capture order is not evidence about geometry
+
+Every probe in this session initially assumed frame 0 is the face-on anchor. Found false by
+eye and then confirmed: on `it_ferr_g`, frame 0 (134759, 177 valid tokens) is the **oblique**
+view whose inner column is a smear, and 134801 (368) / 134804 (355) are the face-on ones that
+read it. Since the merge is defined as *insert what the oblique recovered into the face-on
+page*, getting this backwards inverts the measurement. The anchor is now the frame reading the
+most dictionary-valid tokens (`temp/mv_batch18/anchors.py`) — a GT-free proxy, applied within
+a set. **Every number produced before this correction is superseded by it.**
+
+### Correction 2 — whole-page headroom collapses once the anchor is right
+
+With the anchor picked by measured legibility, the second view contributes **fewer** new valid
+tokens than it loses, on every set measured:
+
+| set | valid tokens per frame | anchor | gain | loss | gain/loss |
+|---|---|---|---|---|---|
+| `it_ferr_g` | 177 / 368 / 355 | 134801 | 69 | 82 | 0.84 |
+| `it_ferr_h` | 412 / 440 / 382 | 134815 | 86 | 114 | 0.75 |
+| `de_ferr_a` | 63 / 81 / 115 | 134828 | 19 | 53 | 0.36 |
+| `de_ferr_c` | 88 / 131 / 177 | 134917 | 16 | 62 | 0.26 |
+| `en_coin_a` | 219 / 373 / 337 | 135006 | 132 | 168 | 0.79 |
+| `en_coin_d` | 91 / 561 / 358 | 135049 | 145 | 348 | 0.42 |
+
+**This is not a refutation of the premise — it is the wrong question**, and saying so is the
+point of recording it. A whole-page count is dominated by the **far side**, where every Phase
+0/1 measurement already says the oblique view is the worse reader. STEP 2's ceiling
+(+0.422 / +0.259) was measured on the **gutter** band specifically. Had this number been taken
+as the headroom, the fixture would have been abandoned on a measurement that was never testing
+the claim.
+
+### Where the premise actually lives: gutter-restricted headroom
+
+Band defined to need **no page crop** — each frame's own OCR word boxes give a text extent
+(2nd/98th percentile of x, the trick `gt_far.json` already uses for column edges); on a spread
+the two inner margins meet in the middle, so the gutter is the middle ±0.10 of that extent.
+Self-normalising per frame, so it survives the camera filling the frame differently — the
+failure that made the CLAHE spike's width-fraction window not cross-frame safe.
+
+| set | lang | curl | anchor | candidate | gutter gain | loss | anchor had | **net** | far gain | far loss |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `en_coin_e` | eng | strong | 135113 | 135111 | 114 | 72 | 79 | **+42** | 162 | 234 |
+| `en_coin_a` | eng | strong | 135006 | 135009 | 89 | 64 | 72 | **+25** | 125 | 175 |
+| `it_ferr_g` | ita | strong | 134801 | 134804 | 40 | 31 | 66 | **+9** | 44 | 63 |
+| `de_ferr_a` | deu | mild | 134828 | 134824 | 18 | 9 | 13 | **+9** | 7 | 51 |
+| `en_coin_d` | eng | strong | 135049 | 135052 | 83 | 82 | 102 | +1 | 141 | 351 |
+| `it_ferr_h` | ita | mild | 134815 | 134813 | 35 | 41 | 77 | −6 | 78 | 102 |
+| `de_ferr_c` | deu | mild | 134917 | 134914 | 9 | 22 | 48 | −13 | 23 | 60 |
+| `en_coin_c` | eng | strong | 135028 | 135030 | 56 | 90 | 103 | −34 | 101 | 248 |
+
+**Net-positive on 5 of 8, and the ordering is not random**: the largest net gains are all
+**strong curl**, and the clearly negative ones are mild-curl or the set whose candidate is
+simply a worse photograph. The `gain` column is the quantity STEP 2's ceiling measures (text
+the other view recovers), so `it_ferr_g` offers 40 gutter tokens against an anchor that reads
+66 — a 61% relative ceiling on the band that matters. The far-side columns show the oblique
+losing heavily out there on every set, which is exactly what makes Claim A2's guard worth
+having.
+
+### Correction 3 — three automatic page-crop routes measured and rejected
+
+The originals were prepared as single pages, hand-cut at the spine valley. Reproducing that
+automatically on this batch failed three times, each for a different and instructive reason:
+
+| route | result |
+|---|---|
+| `auto_page_crop` (Otsu + largest contour), inherited from the Phase 1 probes | returns the **whole 4:3 frame** on all 97 images (crop aspect 1.16–1.39 against a raw 1.333) — the originals were shot on a plain background, this batch is on a textured sofa |
+| HSV paper segmentation (bright + desaturated), `temp/mv_batch18/pagefind.py` | isolates the book, but **not consistently across a set** — on a strongly curled spread the shadowed page stops being "bright paper", the component splits, and one frame yields the spread while the next yields a single page |
+| OCR-word-box spine finder, `temp/mv_batch18/prep.py` | the reduced-scale scout OCR reads wildly different word counts per frame (77 / 652 / 479 on one set), so the spine is found in one view and missed in the next |
+
+An inconsistent crop is worse than no crop: it silently makes the two views different physical
+regions, which the merge would then read as a difference in what the cameras could *see*.
+**Resolution: the selected sets' page crops are hand-specified and recorded in the fixture
+manifest** — which is how the original three pages were prepared, and which takes automatic
+multi-view page finding off the critical path and onto the pipeline-integration list, where
+Stages 00–03 already owe a multi-view capture mode.
+
+### The fixture
+
+Selected under the rule fixed in the pre-registration (**at least one Italian and one German
+set even if an English set ranks higher**, because replication across *books* is worth more
+than a fourth page of the same paperback), then by gutter headroom:
+
+| fixture id | set | language | book | curl | why |
+|---|---|---|---|---|---|
+| `skewset_en_01` | `en_coin_e` | eng | Chopmarked Coins | strong | largest gutter headroom in the batch (+42) |
+| `skewset_en_02` | `en_coin_a` | eng | Chopmarked Coins | strong | second (+25), different pages of the same book |
+| `skewset_it_01` | `it_ferr_g` | ita | Italian ferrata atlas | strong | the required Italian; strong curl, +9 |
+| `skewset_de_01` | `de_ferr_a` | deu | German ferrata guide | mild | the required German; +9, and the cleanest far-side asymmetry |
+| `skewset_orient_01` | `it_ferr_b` | ita | — | — | orientation fixture: OSD 180° at conf 2.58 accepted |
+| `skewset_orient_02` | `it_ferr_e` | ita | — | — | orientation fixture: text-free panorama, OSD conf 0.24; also the "don't break a photo page" guard |
+
+Anchor + candidate frame only per set, not whole bursts: `testset/` tracks ~64 MB of images
+today and each frame is ~4 MB.
+
+### What this row does NOT claim
+
+**No merge policy was run on these pages.** Claims A and B are pre-registered and unmeasured;
+the ground truth is not yet keyed. Everything above is GT-free triage plus four corrections,
+and the headroom numbers are a **dictionary proxy**, not the token recall the verdict metric
+uses — they rank sets, they do not score arms. The next session's job is: key the gutter and
+far-side bands on the four measurement fixtures in the band definition `gt_far.json` already
+uses (text-column coordinates), then **one** scoring run — v5 plus the GT-free Claim B sweep —
+reported against the pre-registered pass conditions, pass or fail.

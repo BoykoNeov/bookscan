@@ -102,3 +102,56 @@ testset/
 ## manifest.csv columns
 
 `image_id, file, language, gt_file (optional), category, notes`
+
+## Multi-view skew sets (`skewset_*`) — added 2026-08-18
+
+A **different shape of fixture** from everything above, and the reason it needs its
+own section: an entry is a **set of frames of ONE spread from different
+viewpoints**, not a single capture. It exists for the multi-view curvature effort
+(`docs/plans/multiview-curvature.md`), whose Phase 1 could not be validated because
+five merge policies had been compared on the same three pages that carried the
+ground truth.
+
+Read together with:
+- `docs/plans/multiview-phase1-prereg.md` — the **pre-registered** claims. Written
+  and committed *before* any ground truth was keyed on these images, so that
+  choosing a policy on them is not possible after the fact.
+- the `docs/RESULTS.md` row of 2026-08-18 — how the sets were chosen out of 97
+  captures, and the four corrections made on the way.
+- `testset/skewset_manifest.json` — per-set anchor/candidate, orientation pin,
+  hand-read page crop, and the GT-free headroom numbers that justified selection.
+
+| id | language | book | curl | role |
+|---|---|---|---|---|
+| `skewset_en_01` | english | *Chopmarked Coins* p.12 | strong | largest gutter headroom in the batch; a clean complementary-halves pair |
+| `skewset_en_02` | english | *Chopmarked Coins* p.191 | strong | second largest; facing page is mostly plates |
+| `skewset_it_01` | italian | Italian via-ferrata atlas p.62 (a **new** book, not `it_geo_*`) | strong | the Italian arm |
+| `skewset_de_01` | german | German via-ferrata guide pp.40-41 (same book as `de_*`) | mild | the German arm, and **the weakest fixture here** — see below |
+| `skewset_orient_01` | italian | — | — | orientation fixture: OSD 180° accepted at conf 2.58 |
+| `skewset_orient_02` | italian | — | — | orientation fixture: text-free panorama, OSD conf 0.24; also the "don't wreck a photo page" guard |
+
+**Anchor vs candidate is decided by measurement, not by capture order.** The anchor
+is the frame reading the most dictionary-valid tokens — the face-on view production
+would feed Stage 03, and the frame the band GT is keyed on. On `skewset_it_01` the
+first frame in time is the *oblique* one, which is exactly why this is recorded per
+set rather than inferred.
+
+**Orientation is pinned per set**, because the shipped resolver disagrees with
+itself across frames of one spread on the two `skewset_orient_*` sets: an OSD call
+at conf 2.6–3.1 is trusted (`DEFAULT_MIN_OSD_CONF = 2.0`) and a 180° error is
+invisible to the landscape prior, since a rotated spread is still landscape. Those
+two sets are in `gt/orientation.json` as fixtures for that defect. **The resolver
+was reported, not patched**, when these were added.
+
+**Stated limits, so nobody quotes these further than they go:**
+- **No ground truth is keyed yet.** No arm has been scored on these images. The
+  headroom numbers in the manifest are a GT-free *dictionary proxy* — they rank
+  sets, they do not score arms.
+- **No Bulgarian.** The Cyrillic arm of the multi-view claim is unvalidated.
+- **`skewset_de_01` is thin.** The German book is a figure-heavy guide, so its
+  anchor holds only ~13 valid tokens in the gutter band against 66–79 for the
+  others. A German result from it will be noisy; the fix is a German book with
+  continuous text, not more frames of this one.
+- Page crops are **hand-specified** (three automatic routes were measured and
+  rejected on this batch), so reproducing the measurement means using the
+  `page_crop` boxes in the manifest, not re-deriving them.

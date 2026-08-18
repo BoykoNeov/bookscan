@@ -1,0 +1,460 @@
+{
+ "_doc": [
+  "Fixture manifest for the multi-view skew sets (testset/skewset_*), added 2026-08-18.",
+  "These differ from every other testset entry: an entry is a SET of frames of ONE spread",
+  "from different viewpoints, not a single capture. Read with docs/plans/multiview-phase1-prereg.md",
+  "(the pre-registered claims) and the docs/RESULTS.md row of the same date (how the sets were",
+  "chosen, and the four corrections made on the way).",
+  "",
+  "anchor    = the FACE-ON frame, chosen by MEASURED legibility (most dictionary-valid tokens),",
+  "            NOT by capture order -- see RESULTS 'Correction 1'. This is the frame production",
+  "            would feed Stage 03, and the frame band GT is keyed on.",
+  "candidate = the oblique frame that recovers the most gutter text the anchor misses.",
+  "orientation_pin = degrees CW to apply to the RAW buffer. Pinned per set by majority because",
+  "            the shipped resolver disagrees with itself across frames of one spread on two",
+  "            sets (resolver_disagreed); see testset/gt/orientation.json.",
+  "page_crop = [x0,y0,x1,y1] as fractions of the UPRIGHT frame, HAND-READ off a 5% grid.",
+  "            Hand-specified because three automatic page-crop routes were measured and",
+  "            rejected on this batch; this is also how the original three Phase 1 pages were",
+  "            prepared. target_page says which half the crop takes, so which edge is the gutter.",
+  "headroom_gutter = GT-FREE dictionary proxy, per band half-width about the spine. It RANKS",
+  "            sets; it does not score arms. gain = valid tokens the candidate reads that the",
+  "            anchor misses (the quantity STEP 2's ceiling measures); loss = the reverse.",
+  "headroom_wholepage = the same proxy over the WHOLE page, kept only to show why it is the",
+  "            WRONG question (it is dominated by the far side; see RESULTS 'Correction 2').",
+  "orb = the Phase 0 diversity screen, kept with inlier counts attached. NOT an entry gate:",
+  "            it returns 3-13 inliers on the strong-curl sets, which is finding 0b replicating.",
+  "",
+  "OWED: the gutter and far-side band GT is NOT yet keyed, so no arm has been scored on these",
+  "pages. Key it in the band definition temp/mv_phase1/gt_far.json already uses (text-column",
+  "coordinates, not page fractions), then make ONE scoring run per the pre-registration."
+ ],
+ "skewset_en_01": {
+  "source_set": "en_coin_e",
+  "book": "en_coins",
+  "language": "eng",
+  "pages": "12-13",
+  "curl": "strong",
+  "multiscale": false,
+  "anchor": "135113",
+  "candidate": "135111",
+  "frames": [
+   "skewset_en_01_135113.jpg",
+   "skewset_en_01_135111.jpg"
+  ],
+  "orientation_pin": {
+   "skewset_en_01_135113.jpg": 0,
+   "skewset_en_01_135111.jpg": 0
+  },
+  "resolver_disagreed": null,
+  "headroom_wholepage": {
+   "gain": 172,
+   "loss": 221,
+   "valid_per_frame": {
+    "135111": 405,
+    "135113": 454,
+    "135116": 373
+   }
+  },
+  "headroom_gutter": {
+   "0.1": {
+    "frame": "135111",
+    "gut_gain": 114,
+    "gut_loss": 72,
+    "far_gain": 162,
+    "far_loss": 234,
+    "n_gut_anchor": 79,
+    "n_gut_other": 121
+   },
+   "0.16": {
+    "frame": "135111",
+    "gut_gain": 155,
+    "gut_loss": 102,
+    "far_gain": 142,
+    "far_loss": 230,
+    "n_gut_anchor": 129,
+    "n_gut_other": 182
+   },
+   "0.24": {
+    "frame": "135111",
+    "gut_gain": 163,
+    "gut_loss": 134,
+    "far_gain": 120,
+    "far_loss": 192,
+    "n_gut_anchor": 213,
+    "n_gut_other": 242
+   }
+  },
+  "wordstream": {
+   "corr": 148,
+   "gut": 67,
+   "disp_px": 885.8,
+   "note": "computed under the superseded frame-0 anchor assumption and the rejected auto page crop; indicative of alignability only"
+  },
+  "orb": {
+   "extreme_inliers": 54,
+   "extreme_disp": 205.6,
+   "note": "0b replication screen, NOT an entry gate"
+  },
+  "target_page": "left",
+  "page_label": "p.12 (What Are Chopmarks?)",
+  "page_crop": {
+   "skewset_en_01_135113.jpg": [
+    0.13,
+    0.06,
+    0.555,
+    1.0
+   ],
+   "skewset_en_01_135111.jpg": [
+    0.14,
+    0.05,
+    0.585,
+    1.0
+   ]
+  },
+  "notes": "Largest gutter headroom in the batch (+42). A clean complementary-halves pair by eye, the Phase 0 picture on a new book: 135113 reads the RIGHT page well and compresses the LEFT page's inner column; 135111 reads that inner column and foreshortens the right page. Dense continuous prose both sides, so the band will key thickly."
+ },
+ "skewset_en_02": {
+  "source_set": "en_coin_a",
+  "book": "en_coins",
+  "language": "eng",
+  "pages": "190-191",
+  "curl": "strong",
+  "multiscale": false,
+  "anchor": "135006",
+  "candidate": "135009",
+  "frames": [
+   "skewset_en_02_135006.jpg",
+   "skewset_en_02_135009.jpg"
+  ],
+  "orientation_pin": {
+   "skewset_en_02_135006.jpg": 0,
+   "skewset_en_02_135009.jpg": 0
+  },
+  "resolver_disagreed": null,
+  "headroom_wholepage": {
+   "gain": 132,
+   "loss": 168,
+   "valid_per_frame": {
+    "135004": 219,
+    "135006": 373,
+    "135009": 337
+   }
+  },
+  "headroom_gutter": {
+   "0.1": {
+    "frame": "135009",
+    "gut_gain": 89,
+    "gut_loss": 64,
+    "far_gain": 125,
+    "far_loss": 175,
+    "n_gut_anchor": 72,
+    "n_gut_other": 97
+   },
+   "0.16": {
+    "frame": "135009",
+    "gut_gain": 126,
+    "gut_loss": 104,
+    "far_gain": 130,
+    "far_loss": 187,
+    "n_gut_anchor": 123,
+    "n_gut_other": 145
+   },
+   "0.24": {
+    "frame": "135009",
+    "gut_gain": 134,
+    "gut_loss": 121,
+    "far_gain": 97,
+    "far_loss": 146,
+    "n_gut_anchor": 193,
+    "n_gut_other": 206
+   }
+  },
+  "wordstream": {
+   "corr": 68,
+   "gut": 13,
+   "disp_px": 748.4,
+   "note": "computed under the superseded frame-0 anchor assumption and the rejected auto page crop; indicative of alignability only"
+  },
+  "orb": {
+   "extreme_inliers": 5,
+   "extreme_disp": 302.0,
+   "note": "0b replication screen, NOT an entry gate"
+  },
+  "target_page": "right",
+  "page_label": "p.191 (Seated Dollar / China trade)",
+  "page_crop": {
+   "skewset_en_02_135006.jpg": [
+    0.555,
+    0.05,
+    0.94,
+    1.0
+   ],
+   "skewset_en_02_135009.jpg": [
+    0.47,
+    0.02,
+    0.905,
+    0.98
+   ]
+  },
+  "notes": "Second largest gutter headroom (+25), different pages of the same book. Facing page is coin figures + captions, so the far-side guard here is charged against a page that is mostly plates."
+ },
+ "skewset_it_01": {
+  "source_set": "it_ferr_g",
+  "book": "it_ferrate",
+  "language": "ita",
+  "pages": "Galleria Goiginger",
+  "curl": "strong",
+  "multiscale": false,
+  "anchor": "134801",
+  "candidate": "134804",
+  "frames": [
+   "skewset_it_01_134801.jpg",
+   "skewset_it_01_134804.jpg"
+  ],
+  "orientation_pin": {
+   "skewset_it_01_134801.jpg": 0,
+   "skewset_it_01_134804.jpg": 0
+  },
+  "resolver_disagreed": null,
+  "headroom_wholepage": {
+   "gain": 69,
+   "loss": 82,
+   "valid_per_frame": {
+    "134759": 177,
+    "134801": 368,
+    "134804": 355
+   }
+  },
+  "headroom_gutter": {
+   "0.1": {
+    "frame": "134804",
+    "gut_gain": 40,
+    "gut_loss": 31,
+    "far_gain": 44,
+    "far_loss": 63,
+    "n_gut_anchor": 66,
+    "n_gut_other": 75
+   },
+   "0.16": {
+    "frame": "134759",
+    "gut_gain": 58,
+    "gut_loss": 109,
+    "far_gain": 78,
+    "far_loss": 229,
+    "n_gut_anchor": 119,
+    "n_gut_other": 68
+   },
+   "0.24": {
+    "frame": "134759",
+    "gut_gain": 60,
+    "gut_loss": 159,
+    "far_gain": 77,
+    "far_loss": 183,
+    "n_gut_anchor": 190,
+    "n_gut_other": 91
+   }
+  },
+  "wordstream": {
+   "corr": 77,
+   "gut": 38,
+   "disp_px": 487.5,
+   "note": "computed under the superseded frame-0 anchor assumption and the rejected auto page crop; indicative of alignability only"
+  },
+  "orb": {
+   "extreme_inliers": 278,
+   "extreme_disp": 305.1,
+   "note": "0b replication screen, NOT an entry gate"
+  },
+  "target_page": "left",
+  "page_label": "p.62 (Galleria Goiginger)",
+  "page_crop": {
+   "skewset_it_01_134801.jpg": [
+    0.14,
+    0.01,
+    0.565,
+    1.0
+   ],
+   "skewset_it_01_134804.jpg": [
+    0.03,
+    0.01,
+    0.55,
+    1.0
+   ]
+  },
+  "notes": "The required Italian, and the batch's only strong-curl Italian. The set that exposed Correction 1: its frame 0 (134759) is the OBLIQUE view, not the anchor. 40 gutter tokens available against an anchor reading 66 = a 61% relative ceiling on the band that matters."
+ },
+ "skewset_de_01": {
+  "source_set": "de_ferr_a",
+  "book": "de_ferrate",
+  "language": "deu",
+  "pages": "Arzalpenturm",
+  "curl": "mild",
+  "multiscale": false,
+  "anchor": "134828",
+  "candidate": "134824",
+  "frames": [
+   "skewset_de_01_134828.jpg",
+   "skewset_de_01_134824.jpg"
+  ],
+  "orientation_pin": {
+   "skewset_de_01_134828.jpg": 0,
+   "skewset_de_01_134824.jpg": 0
+  },
+  "resolver_disagreed": null,
+  "headroom_wholepage": {
+   "gain": 19,
+   "loss": 53,
+   "valid_per_frame": {
+    "134822": 63,
+    "134824": 81,
+    "134828": 115
+   }
+  },
+  "headroom_gutter": {
+   "0.1": {
+    "frame": "134824",
+    "gut_gain": 18,
+    "gut_loss": 9,
+    "far_gain": 7,
+    "far_loss": 51,
+    "n_gut_anchor": 13,
+    "n_gut_other": 22
+   },
+   "0.16": {
+    "frame": "134822",
+    "gut_gain": 24,
+    "gut_loss": 31,
+    "far_gain": 11,
+    "far_loss": 63,
+    "n_gut_anchor": 37,
+    "n_gut_other": 30
+   },
+   "0.24": {
+    "frame": "134822",
+    "gut_gain": 28,
+    "gut_loss": 42,
+    "far_gain": 12,
+    "far_loss": 62,
+    "n_gut_anchor": 49,
+    "n_gut_other": 35
+   }
+  },
+  "wordstream": {
+   "corr": 62,
+   "gut": 32,
+   "disp_px": 729.4,
+   "note": "computed under the superseded frame-0 anchor assumption and the rejected auto page crop; indicative of alignability only"
+  },
+  "orb": {
+   "extreme_inliers": 74,
+   "extreme_disp": 342.7,
+   "note": "0b replication screen, NOT an entry gate"
+  },
+  "target_page": "left",
+  "page_label": "pp.40-41 (Arzalpenturm-Klettersteig)",
+  "page_crop": {
+   "skewset_de_01_134828.jpg": [
+    0.07,
+    0.02,
+    0.475,
+    0.98
+   ],
+   "skewset_de_01_134824.jpg": [
+    0.15,
+    0.03,
+    0.555,
+    0.98
+   ]
+  },
+  "notes": "The required German, and the WEAKEST fixture in the set -- stated up front. This book is a figure-heavy guide: the page is banners, photos and a route map with a single block of continuous prose, so the anchor holds only 13 valid tokens in the gutter band against 66-79 on the other three. Its +9 net and 18:9 gain/loss ratio are the cleanest asymmetry in the batch, but on a base that small the German arm of Claim A will be noisy, and a German result should not be quoted with the same confidence as the English or Italian one. The right fix is a German book with continuous text, not more frames of this one."
+ },
+ "skewset_orient_01": {
+  "source_set": "it_ferr_b",
+  "book": "it_ferrate",
+  "language": "ita",
+  "pages": "Che Guevara",
+  "curl": "mild",
+  "multiscale": false,
+  "anchor": "134657",
+  "candidate": "134658",
+  "frames": [
+   "skewset_orient_01_134655.jpg",
+   "skewset_orient_01_134657.jpg"
+  ],
+  "orientation_pin": {
+   "skewset_orient_01_134655.jpg": 0,
+   "skewset_orient_01_134657.jpg": 0
+  },
+  "resolver_disagreed": "orientation OVERRIDE to majority 0deg; resolver disagreed on ['134655'] (low-conf OSD, see orient.py)",
+  "headroom_wholepage": {
+   "gain": 12,
+   "loss": 67,
+   "valid_per_frame": {
+    "134655": 76,
+    "134657": 134,
+    "134658": 79
+   }
+  },
+  "headroom_gutter": null,
+  "wordstream": {
+   "corr": null,
+   "gut": null,
+   "disp_px": null,
+   "note": "computed under the superseded frame-0 anchor assumption and the rejected auto page crop; indicative of alignability only"
+  },
+  "orb": {
+   "extreme_inliers": 79,
+   "extreme_disp": 821.0,
+   "note": "0b replication screen, NOT an entry gate"
+  },
+  "target_page": null,
+  "page_label": "orientation fixture",
+  "page_crop": null,
+  "notes": "Orientation fixture, not a measurement set. 134655 is resolved 180deg on an OSD call of conf 2.58 while 134657/134658 resolve 0deg at conf 16.6/10.4 -- min_conf 2.0 accepted noise, and the layer-5 landscape prior cannot see a 180deg error because a rotated spread is still landscape. Also unfittable as a multi-view set: 134655 is a page-TURN shot, so it photographs different content (0-1 word correspondences)."
+ },
+ "skewset_orient_02": {
+  "source_set": "it_ferr_e",
+  "book": "it_ferrate",
+  "language": "ita",
+  "pages": "Croda Rossa pano",
+  "curl": "mild",
+  "multiscale": false,
+  "anchor": "134724",
+  "candidate": "134731",
+  "frames": [
+   "skewset_orient_02_134724.jpg",
+   "skewset_orient_02_134731.jpg"
+  ],
+  "orientation_pin": {
+   "skewset_orient_02_134724.jpg": 0,
+   "skewset_orient_02_134731.jpg": 0
+  },
+  "resolver_disagreed": "orientation OVERRIDE to majority 0deg; resolver disagreed on ['134731'] (low-conf OSD, see orient.py)",
+  "headroom_wholepage": {
+   "gain": 1,
+   "loss": 4,
+   "valid_per_frame": {
+    "134724": 4,
+    "134729": 0,
+    "134731": 1
+   }
+  },
+  "headroom_gutter": null,
+  "wordstream": {
+   "corr": null,
+   "gut": null,
+   "disp_px": null,
+   "note": "computed under the superseded frame-0 anchor assumption and the rejected auto page crop; indicative of alignability only"
+  },
+  "orb": {
+   "extreme_inliers": 117,
+   "extreme_disp": 1239.0,
+   "note": "0b replication screen, NOT an entry gate"
+  },
+  "target_page": null,
+  "page_label": "orientation fixture + photo-page regression guard",
+  "page_crop": null,
+  "notes": "The sharper orientation fixture: a full-bleed Croda Rossa panorama with almost no text, so OSD has nothing to work with (conf 0.24 / 1.59 / 3.09) and the set splits -- two frames below min_conf kept raw at 0deg, one accepted at 180deg. Doubles as the 'do not wreck a mostly-photo page' regression guard the multiview plan's invariants ask for (only 1-4 valid tokens per frame; never a validation set)."
+ }
+}

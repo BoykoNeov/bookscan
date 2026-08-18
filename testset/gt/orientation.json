@@ -1,5 +1,5 @@
 {
-  "_doc": "Orientation ground truth for the Stage 00 resolver (tools/normalize). Each spread's correct UPRIGHT orientation, independent of the (spurious) EXIF tag. upright_aspect = required output aspect; raw_is_upright = the stored pixel buffer is ALREADY upright and any EXIF rotation is spurious (resolver must apply net 0 rotation, ignoring EXIF); exif_orientation = the tag actually present. All of this owner's phone captures share this spurious EXIF-on-upright-landscape pattern, so this file also guards that the resolver keeps the existing (OSD-rescued today) testset images upright.",
+  "_doc": "Orientation ground truth for the Stage 00 resolver (tools/normalize). Each spread's correct UPRIGHT orientation, independent of the (spurious) EXIF tag. upright_aspect = required output aspect; raw_is_upright = the stored pixel buffer is ALREADY upright and any EXIF rotation is spurious (resolver must apply net 0 rotation, ignoring EXIF); exif_orientation = the tag actually present. All of this owner's phone captures share this spurious EXIF-on-upright-landscape pattern, so this file also guards that the resolver keeps the existing (OSD-rescued today) testset images upright. || 2026-08-18: entries carrying known_defect_applied_rotate document a rotation the resolver currently gets WRONG; the test asserts the defective value so that fixing the resolver trips a clear failure instead of passing silently.",
   "bg_01": {
     "upright_aspect": "landscape",
     "raw_is_upright": true,
@@ -136,5 +136,129 @@
       4000,
       3000
     ]
+  },
+  "skewset_orient_01_134655": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134655'] (low-conf OSD, see orient.py)",
+    "known_defect_applied_rotate": 180,
+    "known_defect_note": "THE RESOLVER GETS THIS WRONG TODAY, and that is why the frame is in the fixture. tools/normalize accepts an OSD 180-degree call at conf 2.58 / 3.09 because DEFAULT_MIN_OSD_CONF = 2.0, and layer 5's landscape prior cannot catch it: a spread rotated 180 degrees is still landscape. Correct upright is net-0 (raw_is_upright), so this entry asserts the DEFECTIVE value on purpose. When the resolver is fixed this assertion fails -- that failure is the signal to delete these two keys, not to loosen the test."
+  },
+  "skewset_orient_01_134657": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134655'] (low-conf OSD, see orient.py)"
+  },
+  "skewset_orient_02_134724": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134731'] (low-conf OSD, see orient.py)"
+  },
+  "skewset_orient_02_134731": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134731'] (low-conf OSD, see orient.py)",
+    "known_defect_applied_rotate": 180,
+    "known_defect_note": "THE RESOLVER GETS THIS WRONG TODAY, and that is why the frame is in the fixture. tools/normalize accepts an OSD 180-degree call at conf 2.58 / 3.09 because DEFAULT_MIN_OSD_CONF = 2.0, and layer 5's landscape prior cannot catch it: a spread rotated 180 degrees is still landscape. Correct upright is net-0 (raw_is_upright), so this entry asserts the DEFECTIVE value on purpose. When the resolver is fixed this assertion fails -- that failure is the signal to delete these two keys, not to loosen the test."
+  },
+  "skewset_it_01_134801": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+  },
+  "skewset_it_01_134804": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+  },
+  "skewset_en_01_135113": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+  },
+  "skewset_en_01_135111": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+  },
+  "skewset_en_02_135006": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 8,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+  },
+  "skewset_en_02_135009": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+  },
+  "skewset_de_01_134828": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+  },
+  "skewset_de_01_134824": {
+    "upright_aspect": "landscape",
+    "raw_is_upright": true,
+    "exif_orientation": 6,
+    "raw_size": [
+      4000,
+      3000
+    ],
+    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
   }
 }

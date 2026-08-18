@@ -230,7 +230,21 @@ def test_orientation_gt_fixtures_resolve_to_upright():
         # also catches a 180° (which passes the aspect check). On a confident-OSD
         # fixture osd_rotate==0 independently certifies "already upright"; the
         # low-conf de_* fall back to the (upright) raw buffer, also net-zero.
-        if spec.get("raw_is_upright"):
+        # A fixture may pin a rotation the resolver currently gets WRONG. Those
+        # frames are IN the fixture because of the defect (multi-view skew sets,
+        # 2026-08-18): an OSD 180° call at conf 2.6-3.1 is accepted, and layer 5's
+        # landscape prior cannot catch it because a spread rotated 180° is still
+        # landscape. Assert the defective value on purpose, so that FIXING the
+        # resolver trips a loud, self-explaining failure rather than passing in
+        # silence. The fix is to delete the known_defect_* keys, never to relax this.
+        defect = spec.get("known_defect_applied_rotate")
+        if defect is not None:
+            assert info.applied_rotate == defect, (
+                f"{iid}: fixture pins a KNOWN RESOLVER DEFECT (applied {defect}°) but "
+                f"the resolver now applies {info.applied_rotate}° (method={info.method}, "
+                f"osd_conf={info.osd_conf}). If the resolver was fixed, remove the "
+                f"known_defect_* keys from testset/gt/orientation.json for this id.")
+        elif spec.get("raw_is_upright"):
             assert info.applied_rotate == 0, (
                 f"{iid}: expected net-0 rotation (raw already upright), "
                 f"applied {info.applied_rotate} (method={info.method})")

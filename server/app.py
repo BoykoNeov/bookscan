@@ -26,6 +26,7 @@ from fastapi.responses import HTMLResponse
 
 from pipeline.stage04_layout import load_config
 from server import jobs as J
+from server import reconcile as R
 from server.routes_assemble import router as assemble_router
 from server.routes_editor import router as editor_router
 from server.routes_jobs import router as jobs_router
@@ -38,6 +39,12 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 @asynccontextmanager
 async def _lifespan(app: FastAPI):
     await app.state.worker.start()
+    # The work queue is in memory, so a stop (crash, reboot, Ctrl-C) loses
+    # everything queued or mid-run. Re-enqueue exactly that — never a page that
+    # already failed, which would re-run on every restart forever. See
+    # server/reconcile.py.
+    resumed = R.resume(app.state.jobs_root, app.state.worker)
+    app.state.resumed_pages = [str(p) for p in resumed]
     yield
     await app.state.worker.stop()
 
@@ -63,7 +70,8 @@ def create_app(config_path: Path | None = None) -> FastAPI:
 
     @app.get("/api/health")
     def health() -> dict:
-        return {"ok": True, "jobs_root": str(app.state.jobs_root)}
+        return {"ok": True, "jobs_root": str(app.state.jobs_root),
+                "resumed_pages": getattr(app.state, "resumed_pages", [])}
 
     @app.get("/", response_class=HTMLResponse)
     def landing() -> str:

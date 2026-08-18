@@ -3321,10 +3321,31 @@ unexplained; recorded as such rather than guessed at.
 
 Held-out median |Δy|: fit on non-gutter correspondences, scored on the
 spine-side ones, so the model must extrapolate. `score.py::_fit` is imported
-**unmodified** from the four-set run. The held-out band's x-range is now
-**asserted to be on the spine side before any fit runs** (Addendum 2 item 8) — a
-side error leaves the fit converging on the outer margin with a perfectly
-reasonable-looking number.
+**unmodified** from the four-set run.
+
+**On Addendum 2's promised spine-side assertion — the obvious version of it is
+worthless, and this row would rather say so than claim a protection it does not
+have.** "The held-out band is on the spine side" **cannot fail**: `held` is
+*defined* as the spine-side 24% of the span using the same `edge` variable the
+check would read, so both branches agree by construction. That tautology was
+written first, and the danger it was meant to cover is real and was measured
+rather than imagined: re-running `it_ferr_h` with its side deliberately flipped
+clears Gate B on 67 outer-quarter correspondences and reports **3.23 px against a
+15.0 px bar** — a result indistinguishable from a true one. (A flipped
+`de_ferr_b`, by contrast, happens to be caught by Gate B at 0 gutter
+correspondences. That is luck, not a guard.)
+
+What actually stands behind the sides here is therefore two things, neither of
+them that assertion. First, the **rendered-overlay pass** over every crop box,
+which is what caught the one genuine inversion (`en_coin_i`) and the two
+facing-page crops. Second, a check that uses information from **outside** the
+crop file: the screen measured which half of each spread carries more text, on
+the *uncropped* anchor, before any of this existed — so where it detected a
+gutter at all, its side is an independent witness, and `measure.py` now asserts
+the hand-read side matches it. **Six of the seven newly measured sets have such a
+witness and all six agree**; `en_coin_g` has none (the screen found no gutter on
+that close-up), so its side rests on the overlay pass alone. Swapping the
+tautology for the witness changed no number in the table below.
 
 | set | fit / held | bar (mwh/2) | selector | affine | Δ (affine−selector) | family chosen |
 |---|---|---|---|---|---|---|
@@ -3376,7 +3397,12 @@ transform, exactly as the earlier row concluded. `en_coin_h` is the extreme case
 and is recorded honestly in `crops.json`: under the pinned pair rule its anchor
 and candidate are close-ups of **different pages** (p.242 and the facing p.243),
 so their spine edges point opposite ways. It was cropped and measured anyway
-rather than substituted, and Gate B rejected it at 11 correspondences.
+rather than substituted, and Gate B rejected it at 11 correspondences — but the
+rejection should not be read as Gate B adjudicating a fair comparison. A set
+carries **one** spine edge, the anchor's, so for that candidate frame the crop
+and the gutter count were computed against the wrong side: the measurement was
+structurally meaningless before Gate B ever looked at it. Nothing downstream
+depends on it, and the pair rule stays pinned.
 
 ### What this does to the four-set row
 

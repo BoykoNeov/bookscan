@@ -14,7 +14,8 @@
   "screen = the automatic-crop word-stream screen re-run with corrected anchors. It",
   "is published because it turned out to be the finding, not the instrument: it",
   "disagrees with the hand crop at the gutter floor that decides eligibility.",
-  "carried_over = the four sets the scoring run measured; reproduced, not recomputed."
+  "carried_over = the four sets the scoring run measured; reproduced, not recomputed.",
+  "side_witness / side_agrees_with_screen: the independent check that replaced a tautological spine-side assertion (see the RESULTS row). None means the screen found no gutter on that set's anchor, so no witness exists and the side rests on the rendered-overlay pass."
  ],
  "verdict": {
   "population": 11,
@@ -954,7 +955,8 @@
     0.32,
     0.782
    ],
-   "held_is_spine_side": true,
+   "side_witness": "right",
+   "side_agrees_with_screen": true,
    "n_fit": 70,
    "n_held": 23,
    "selector": 6.5277648077569665,
@@ -999,7 +1001,8 @@
     0.059,
     0.741
    ],
-   "held_is_spine_side": true,
+   "side_witness": "right",
+   "side_agrees_with_screen": true,
    "n_fit": 129,
    "n_held": 31,
    "selector": 1.8277753550205489,
@@ -1044,7 +1047,8 @@
     0.105,
     0.689
    ],
-   "held_is_spine_side": true,
+   "side_witness": "right",
+   "side_agrees_with_screen": true,
    "n_fit": 228,
    "n_held": 80,
    "selector": 3.3304219188992192,
@@ -1089,7 +1093,8 @@
     0.323,
     0.873
    ],
-   "held_is_spine_side": true,
+   "side_witness": "left",
+   "side_agrees_with_screen": true,
    "n_fit": 323,
    "n_held": 101,
    "selector": 3.6661900159879224,
@@ -1134,7 +1139,8 @@
     0.199,
     0.484
    ],
-   "held_is_spine_side": true,
+   "side_witness": "left",
+   "side_agrees_with_screen": true,
    "n_fit": 84,
    "n_held": 23,
    "selector": 2.364124343931053,
@@ -1179,7 +1185,8 @@
     0.323,
     0.977
    ],
-   "held_is_spine_side": true,
+   "side_witness": "left",
+   "side_agrees_with_screen": true,
    "n_fit": 117,
    "n_held": 24,
    "selector": 2.5045336240838196,
@@ -1344,7 +1351,8 @@
     0.23,
     0.663
    ],
-   "held_is_spine_side": true,
+   "side_witness": null,
+   "side_agrees_with_screen": null,
    "n_fit": 28,
    "n_held": 12,
    "selector": 9.910496196019267,

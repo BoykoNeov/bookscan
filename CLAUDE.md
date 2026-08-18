@@ -143,6 +143,8 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
 bookscan/
   CLAUDE.md              <- this file
   docs/GATE1_SPEC.md     <- current work spec
+  docs/data/             <- machine-readable inputs+outputs behind a RESULTS row
+                            (committed so a result is auditable without temp/)
   pipeline/              <- stages + page_model.py + run_all.py
   server/                <- FastAPI (built at Gate 5, empty until then)
   app-android/           <- Kotlin app (built at Gate 5, empty until then)

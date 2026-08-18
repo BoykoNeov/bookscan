@@ -401,3 +401,14 @@ The widening did not change the verdict, it sharpened it — and the amendment
 above earned its cost in both directions: the screen would have dropped
 `en_coin_g` (30/4 on the screen, 40/15 on the hand crop) as well as two of the
 fixture's own published sets.
+
+**Correction to item 8 of Addendum 2, found on review after the run.** That item
+promised the held-out band would be "asserted to be spine-side before any fit
+runs". The obvious form of that assertion is a **tautology** — `held` is defined
+as the spine-side 24% by the same variable the assertion reads — and it was
+replaced, after the run and with no number changing, by a check against an
+independent witness: the screen's separately measured spread side, available for
+six of the seven newly measured sets, all six agreeing. The risk item 8 named is
+real and was demonstrated rather than assumed (a deliberately flipped `it_ferr_h`
+returns a clean-looking 3.23 px). The remaining defence for sides with no witness
+is the rendered-overlay pass, which caught the one real inversion.

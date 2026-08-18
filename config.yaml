@@ -132,6 +132,20 @@ reconstruct:
   # Any backend that is chosen but unavailable falls through to the next; render
   # ALWAYS still writes page.html, so the gate is never blocked.
   pdf_backend: chromium
+  # Blocks whose OCR cannot be trusted are re-typed FIGURE by Stage 07, so
+  # Stage 08 renders the PIXELS instead of the noise (pipeline/unreadable_panel.py).
+  # Built for de_01/de_02's icon sidebar: pictograms + scraps of text that OCR to
+  # garbage and land early in reading order, but carry high-value information
+  # (difficulty, walking times, GPS) that must not simply be dropped.
+  # The cutoff is ADAPTIVE — a fraction of THIS job's median text-block
+  # confidence, never a global number (CLAUDE.md). Measured over 15 testset
+  # spreads / 326 assembled blocks: at these values exactly 4 blocks convert and
+  # all 4 are unreadable junk. min_words 5 would convert 2 more (also junk);
+  # min_words 3 starts converting real text ("English Version" headings), which
+  # is why the floor sits where it does.
+  unreadable_panels:
+    conf_ratio: 0.75
+    min_words: 8
 
 # --- Paths ---
 paths:

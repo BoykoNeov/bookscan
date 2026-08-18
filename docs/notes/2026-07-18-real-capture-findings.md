@@ -117,7 +117,16 @@ Even with `realtest_de1_fixed` (correctly oriented, 22 blocks assembled):
   subpage tau +1.00 unchanged. Non-regression: `it_geo_04..07` taus
   byte-identical, `split_eval` 15/15, full suite 218 green (+ a new
   bridged-column `_reading_rows` regression test). See docs/RESULTS.md.
-- **Icon sidebar → junk words interleaved into the flow. DEFERRED (owner call).**
+- **Icon sidebar → junk words interleaved into the flow. RESOLVED 2026-08-18 —
+  the panel is rendered as PIXELS (`pipeline/unreadable_panel.py`).** What follows
+  is the symptom as recorded on 2026-07-18; two parts of it have since changed.
+  The panel is no longer "scattered noise blocks" (Stage 04 v0.2-v0.4 consolidated
+  it), and `de_02`'s detector already typed the same panel `figure`. Stage 07 now
+  re-types a block whose median word confidence falls below 0.75 of the job's own
+  median text-block confidence, so Stage 08 renders the crop instead of the OCR —
+  the information survives, the noise does not, and reading order is untouched.
+  Measured: 4 conversions across 15 spreads, all junk, both German sidebars among
+  them. See docs/RESULTS.md 2026-08-18. Original symptom:
   The star-rating / difficulty / duration / GPS pictogram panel OCRs into
   scattered noise blocks ("a ER", "Wa", "PM. 12).", "NN Juni – ARH Sept.") that
   land *early* in reading order. This is a content-*typing* issue, not an

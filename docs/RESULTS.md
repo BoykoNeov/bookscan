@@ -3650,3 +3650,99 @@ cross-gutter descramble. All seven are now in `testset/` with manifest rows unde
 a new `frameset` category: `bg_taleb_01` (+ its two sibling frames) and the four
 sibling frames of the `de_01`/`de_02` sets. They carry no ground truth and are
 registered as real-capture samples, not graded fixtures.
+
+## The icon sidebar becomes a picture, not noise — Finding 3 symptom 1, closed — 2026-08-18
+
+The other open item the owner handed over was *"icon-sidebar junk text ordering →
+your call"*. The 2026-07-18 note deferred it with the right reason attached: on a
+climbing-guide page that star-rating / difficulty / walking-time / GPS pictogram
+panel is **high-value structured information, not junk to drop** — so neither
+rendering its OCR nor stripping it is acceptable.
+
+**First correction to the premise.** The note describes "scattered noise blocks"
+landing early in reading order. Re-measured today on `de_01`, the panel is not
+what it was: on the eval's dewarp path it is **two** blocks (a 31-word `other`
+column and a 30-word `caption` times-panel), and on the production path it is one
+30-word block plus three slivers of 1, 3 and 5 words. Some of the original
+symptom has aged out with the Stage-04 v0.2–v0.4 work. The remaining defect is
+real, though: the panel's OCR is garbage
+(`"2842 m (5 )N 4638379 LE 1.526074 46.38138"`) and it opens the page.
+
+**Second correction, and the one that decided the design.** The facing fixture
+`de_02` carries the same panel, and **its detector already types it `figure`** —
+so on one page of this book the pipeline already does the right thing and renders
+the pixels. The change is therefore a *normalization*, not an invention.
+
+### The decision: an unreadable block is re-typed FIGURE
+
+New `pipeline/unreadable_panel.py`, called by Stage 07 assemble. A block whose
+text cannot be trusted is re-typed `FIGURE`, so Stage 08 renders the crop it
+already renders for any figure. This is the block-level analogue of the per-word
+`patch` mode CLAUDE.md mandates: where the recognizer fails, show the reader the
+original pixels. **Nothing about ordering changes** — the note is explicit that
+the panel's leftmost-first position is already correct, and this pass touches
+typing only. The words stay on the block, so a user who disagrees re-types it in
+the editor and gets the text back; `type_promoted` marks the change automatic so
+the editor never mistakes it for a human edit.
+
+**The test is adaptive, never a global cutoff** (CLAUDE.md's non-negotiable):
+a block converts when its median word confidence falls below `conf_ratio` (0.75)
+of **the job's own** median text-block confidence, and it carries at least
+`min_words` (8) words. A uniformly poor scan drags the reference down with it and
+nothing fires — only a block that is bad *relative to its own document* converts.
+
+### Measured on the production path — 15 spreads, 326 assembled blocks
+
+Ran the real chain (`run_all` 00→06 → `stage07_assemble`) on every testset
+spread. **Exactly 4 blocks convert, and all 4 are unreadable junk:**
+
+| spread | block | words | median conf | ratio to job reference | what it is |
+|---|---|---|---|---|---|
+| `de_02` | left #1 | 13 | 25.6 | 0.27 | garbled banner strip |
+| `it_geo_05` | left #2 | 14 | 27.7 | 0.29 | stray glyphs off the watercolour map |
+| **`de_02`** | left #3 | 37 | 59.0 | **0.63** | **the icon sidebar** |
+| **`de_01`** | left #7 | 30 | 62.6 | **0.68** | **the icon sidebar (Gehzeiten panel)** |
+
+Nothing fires on any Bulgarian, English or other Italian page. It fires on **both**
+German spreads, so the rule is not tuned to a single page. The `min_words` floor
+is where the sweep put it: at 5 it converts two more blocks, both still junk; at
+**3 it starts converting real text** — the "English Version" headings, which OCR
+at 32–41 because they are set in a coloured banner. The shipped floor keeps two
+junk blocks of margin between it and the first false positive.
+
+**Rendered output, `de_01`:** the Gehzeiten garbage is gone from the HTML text and
+the left page now carries 3 figures (banner, panel, photo) instead of 2.
+
+### Why the block-order eval cannot see this, and what that means
+
+The decision needs word confidences, which exist only from Stage 05 onward, so
+the pass lives in Stage 07 — while `tools/layout_order_eval` grades Stage 04.
+`de_01`'s graded numbers are therefore untouched **by construction**, not by luck,
+and the corpus sweep above is the measurement that stands in for them. Worth
+naming because it cuts both ways: had this been done in Stage 04 it would have
+broken `de_01`'s grading outright, since that GT carries no figure bboxes and
+falls back to rank-matching figures — two extra figure blocks would have
+re-labelled the page photo as the sidebar.
+
+### Honest limits
+
+* **Every converted block is a picture instead of searchable text.** That is a
+  real loss, taken deliberately because the alternative on these pages is noise.
+* **It does not clean up the whole sidebar.** On `de_01` the production detector
+  fragments the panel, and the 1-, 3- and 5-word slivers left over
+  (`"pas"`, `"Y 2842 m"`, `"1 [3 11.526074 N 46.38138"`) stay under `min_words`
+  and still render as text. Lowering the floor to 5 would take the GPS sliver;
+  it was not lowered, because that is one step from the first false positive.
+* **The panel is still not structured information.** Rendering it as a picture is
+  the honest fallback, not the feature the note imagines (parsing difficulty /
+  duration / GPS into fields). That remains an owner modelling decision.
+* A page-scoped id bug caught in testing is worth recording, because it was
+  invisible to the unit tests until a real two-page job ran: `Block.id` is
+  page-scoped, not document-unique, so keying the decision on the bare id turned
+  block 7 of BOTH `de_01` pages into pictures — the icon panel on the left and
+  the English translation column on the right. The decision is now keyed on
+  `(page, id)`, with a regression test.
+
+Suite **394 green** (was 383): +11 in `test_unreadable_panel.py`, most of them
+about the pass staying silent — on ordinary text, on a uniformly bad scan, on
+fragments, on headers/figures/tables, and on the page-scoped-id case.

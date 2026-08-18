@@ -74,6 +74,7 @@ from pipeline.page_model import (
     Block, BlockType, Document, DocPage, DocSettings, PairSource, StageMeta, Word,
 )
 from pipeline import figure_grouping as FG
+from pipeline import unreadable_panel as UP
 from pipeline import stage04_layout as S4
 from pipeline import stage06_uncertainty as S6
 from tools.gate1_harness import find_tesseract
@@ -320,6 +321,18 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                 if bgr is not None:
                     panels.append(_assemble_panel(bgr, dp))
 
+    # --- unreadable pictogram panels -> pictures (pipeline/unreadable_panel.py)
+    # Runs here, over the WHOLE job, because its confidence reference is
+    # "normal for this document" — a per-page reference would let a page that is
+    # all panel declare itself normal. It only ever re-TYPES; block order is
+    # untouched (de_01's panel is already correctly placed leftmost-first).
+    panel_scan = UP.scan([dp.blocks for dp in pages],
+                         params=(reco.get("unreadable_panels") or None))
+    if panel_scan.converted:
+        pages = [dp.model_copy(update={
+                     "blocks": UP.apply_to_blocks(list(dp.blocks), panel_scan, pi)})
+                 for pi, dp in enumerate(pages)]
+
     if len(modes_seen) > 1:
         warnings.append(
             f"pages were resolved under differing uncertainty modes {sorted(modes_seen)}; "
@@ -367,6 +380,12 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             "pairs_by_number": n_pairs_number,
             "pairs_by_geometry": n_pairs_geom,
             "captions_abstained": n_abstained,
+            # unreadable pictogram panels re-typed FIGURE so Stage 08 renders the
+            # PIXELS instead of OCR noise. Adaptive: the cutoff is a fraction of
+            # this job's own median text-block confidence, never a global number.
+            "panel_reference_conf": panel_scan.reference_conf,
+            "panels_considered": panel_scan.n_considered,
+            "panels_as_pictures": panel_scan.n_converted,
             "reads": ["page_*/06_uncertain/resolved.json",
                       "page_*/03_dewarp/<subpage>", "page_*/06_uncertain/patches/"],
             "force": force,

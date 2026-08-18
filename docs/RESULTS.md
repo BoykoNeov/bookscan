@@ -3066,9 +3066,18 @@ pre-committed the same day *before* any scoring and is the more specific text, s
 But A1's own body says "the headroom pages (**triage proxy > 0**)", and by that literal rule all
 four pages qualify — `de_01`'s gain is 7 tokens, which is greater than zero. **Under the literal
 reading the mean is −0.100 and A1 FAILS.** The verdict flips entirely on which sentence of the
-pre-registration is read. Both numbers are reported here rather than the flattering one; the
-honest summary of A1 is *"positive on the two win pages, one of them barely, and the headline
-depends on a bucketing decision worth more than the effect."*
+pre-registration is read, and both numbers are reported here rather than the flattering one.
+
+**And the margin is smaller than one hand-keyed word.** In tokens rather than ratios, the win
+cases are `en_01` 78 → 79 of 91 (**one token**) and `it_01` 64 → 71 of 77 (seven tokens). One token
+on `en_01` is worth 0.0055 of the win-case mean; A1 clears its bar by 0.0009, about a sixth of
+that. Had that single word gone the other way the mean would be 0.0455 **and** "strictly positive
+on a majority" would fail 1-of-2; had `it_01` scored six tokens instead of seven the mean would be
+0.0445. The GT file's own keying rule calls edge words "a judgement call", and this row's verdict
+turns on one of them. The same sentence written below for A3 applies here with more force: A1
+passes exactly as pre-registered, **on a margin a fraction of the width of a single keying
+decision**, and nothing finer than "the two win pages moved in the right direction" should be
+read out of it.
 
 **A2 — "the veto holds the far side": PASS, cleanly.** Mean far-side bag Δ is **+0.028** against
 a bar of ≥ −0.05, and **no page loses anything at all** (worst case 0.000, bar 0.10). The far
@@ -3081,6 +3090,10 @@ its gutter GT is **20 tokens** — one token is 0.05 of recall. A3's window is t
 one token wide here: the prediction cannot distinguish "flat" from "one word either way". It
 passes as written and should not be quoted as evidence of anything finer.
 
+A3 is also **vacuous under the literal reading that breaks A1**: it applies "on any page the
+triage proxy calls zero-headroom", and under the literal gain > 0 rule no page is zero-headroom,
+`de_01` included. The same ambiguity that flips A1 empties A3 of anything to apply to.
+
 ### The guard case fired, in a place no prediction charges
 
 `en_02` is the set the pre-registration named in advance as "the set most likely to expose a
@@ -3089,10 +3102,16 @@ policy that swallows the oblique reading indiscriminately". It did:
 * gutter **sequence** recall 0.865 → **0.365**, a loss of half the band;
 * gutter **bag** recall 0.904 → 0.865, a loss of four points.
 
-The two together say what happened. v5 did **not** throw the words away — 86.5% of the band's
-GT tokens are still somewhere in its output. It destroyed their **order**. That is the split the
-bag metric was printed for, and here it is doing exactly the work it was added for -- the verdict
-metric alone would have reported a collapse without saying which kind.
+The two together bound what happened. v5 did **not** throw the words away — 86.5% of the band's
+GT tokens are still somewhere in its output, but only 36.5% survive as an ordered subsequence.
+What the pair licenses is precisely that: **the words are present and not recoverable in order**
+— either genuinely mis-ordered, or interleaved with enough inserted tokens (80 insertions and 110
+substitutions on this page) to derail the aligner, which `merge.py::matched_bag` flags as a real
+alternative because the sequence scorer is difflib's recursive longest-match, not an optimal LCS.
+Those two readings imply different repairs — geometry versus insertion policy — and **this run does
+not distinguish them**. What it does establish is that the loss is not missing content. That is
+the split the bag metric was printed for, doing the work it was added for: the verdict metric
+alone would have reported a collapse without saying which kind.
 
 **No pre-registered prediction charges this.** A1 excludes `en_02` by the addendum's bucketing;
 A2 looks only at the far side, and only at bag recall. A policy can therefore wreck the reading
@@ -3124,6 +3143,16 @@ of three of these four, so the *side* is a parameter (`temp/mv_phase1b/score.py:
 | `en_02` | 385 / 107 | 7.92 px | quadratic | **4.18 px** | 14.0 px |
 | `it_01` | 175 / 48 | 9.31 px | quadratic | 14.04 px | 16.0 px |
 | `de_01` | 88 / 24 | 6.28 px | affine | 6.28 px | 14.5 px |
+
+**Deviation from the pre-registration, declared.** The prereg says Claim B "runs on **every** set
+that passes gates A–C, not only the GT-keyed ones", because it needs no ground truth. It was run
+on **four** — the GT-keyed sets only. Reason: Claim B is measured on the UVDoc-dewarped single
+page, and no set outside these four has a valid page crop; all three automatic page-crop routes
+were measured and rejected on this batch, and hand-reading crops for the remaining sets would
+have competed with the GT budget this session was for. The consequence is stated rather than
+buried: **B2's FAIL is a comparison of two four-set means**, and B1's "≥ 80% of sets" collapses to
+a 4-of-4 bar. Widening Claim B's population is the cheapest outstanding item on this fixture,
+since it costs hand crops and no keying.
 
 **B1 — "fixed affine is under bar": PASS, 4/4.** Every set is under half a median word height.
 With N=4, "≥ 80% of sets" is a 4-of-4 bar, and it is met.

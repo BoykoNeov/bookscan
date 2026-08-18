@@ -25,7 +25,7 @@
   "orb = the Phase 0 diversity screen, kept with inlier counts attached. NOT an entry gate:",
   "            it returns 3-13 inliers on the strong-curl sets, which is finding 0b replicating.",
   "",
-  "OWED: the gutter and far-side band GT is NOT yet keyed, so no arm has been scored on these",
+  "DONE (was OWED): the gutter and far-side band GT is keyed for all four measurement sets and committed at testset/gt/skewset_bands.json, in the per-page text-column band definition temp/mv_phase1/gt_far.json uses -- keyed BEFORE, and committed in its own commit before, the one scoring run. That run is done; see the docs/RESULTS.md row 'Multi-view Phase 1 -- the pre-registered run: v5 does not replicate'. Headline: v5 is NOT shippable -- A1 passes by a margin smaller than one keyed word and only under one of two readings of its own text, A2 passes, A3 is unresolvable at 20 tokens, and the guard set skewset_en_02 loses half its gutter sequence recall while losing almost no content. B2 fails, so the blind transform selector stays.",
   "pages. Key it in the band definition temp/mv_phase1/gt_far.json already uses (text-column",
   "coordinates, not page fractions), then make ONE scoring run per the pre-registration.",
   "2026-08-18 (same day, after review): headroom_perpage was added and is the number to trust. The original selection used a band spanning BOTH inner margins; the GT band is per-page, and re-measuring on the hand crops moved two of the four sets. No frames were changed -- all four remain legitimate multi-view sets -- but skewset_de_01 is now labelled the declared NO-HEADROOM CONTROL rather than a win case."
@@ -139,7 +139,7 @@
    "passes": true,
    "_doc": "Measured on the SELECTED frames and the hand crops, so this -- not the `wordstream` block below -- is the valid Claim B entry measurement. Floor is >=40 correspondences with >=12 in the gutter."
   },
-  "role": "MEASUREMENT \u2014 clearest per-page headroom (gain 55 against an anchor reading 64 = 86% relative ceiling), net +12.",
+  "role": "MEASUREMENT — clearest per-page headroom (gain 55 against an anchor reading 64 = 86% relative ceiling), net +12.",
   "headroom_gutter_note": "POOLED both inner margins of the uncropped spread. Kept for provenance; superseded by headroom_perpage. Pooled net read +42 / +25 / +9 / +9; per-page reads +12 / -2 / +7 / -6, and the two that move are the ones where the second view's advantage sits on the OTHER page of the spread."
  },
  "skewset_en_02": {
@@ -251,7 +251,7 @@
    "passes": true,
    "_doc": "Measured on the SELECTED frames and the hand crops, so this -- not the `wordstream` block below -- is the valid Claim B entry measurement. Floor is >=40 correspondences with >=12 in the gutter."
   },
-  "role": "MEASUREMENT \u2014 large but nearly SYMMETRIC exchange (gain 57, loss 59, net -2). Valuable precisely for Claim A2: this is the set most likely to expose a policy that swallows the oblique reading indiscriminately.",
+  "role": "MEASUREMENT — large but nearly SYMMETRIC exchange (gain 57, loss 59, net -2). Valuable precisely for Claim A2: this is the set most likely to expose a policy that swallows the oblique reading indiscriminately.",
   "headroom_gutter_note": "POOLED both inner margins of the uncropped spread. Kept for provenance; superseded by headroom_perpage. Pooled net read +42 / +25 / +9 / +9; per-page reads +12 / -2 / +7 / -6, and the two that move are the ones where the second view's advantage sits on the OTHER page of the spread."
  },
  "skewset_it_01": {
@@ -363,7 +363,7 @@
    "passes": true,
    "_doc": "Measured on the SELECTED frames and the hand crops, so this -- not the `wordstream` block below -- is the valid Claim B entry measurement. Floor is >=40 correspondences with >=12 in the gutter."
   },
-  "role": "MEASUREMENT \u2014 gain 41 against an anchor reading 38, a 108% relative ceiling; net +7. The Italian arm.",
+  "role": "MEASUREMENT — gain 41 against an anchor reading 38, a 108% relative ceiling; net +7. The Italian arm.",
   "headroom_gutter_note": "POOLED both inner margins of the uncropped spread. Kept for provenance; superseded by headroom_perpage. Pooled net read +42 / +25 / +9 / +9; per-page reads +12 / -2 / +7 / -6, and the two that move are the ones where the second view's advantage sits on the OTHER page of the spread."
  },
  "skewset_de_01": {

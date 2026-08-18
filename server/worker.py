@@ -49,6 +49,10 @@ Either way only the PID this module spawned is ever named — nothing is matched
 by process name, which would have a blast radius we did not choose. If the tree
 kill is unavailable or fails, we fall back to signalling the single PID, which
 is strictly no worse than the old behaviour.
+
+**Limit, stated:** only the Windows branch has ever run. The POSIX branch is
+written and its test is not platform-gated, so a run on POSIX would exercise it
+— but no such run has happened, so treat it as untested rather than proven.
 """
 
 from __future__ import annotations
@@ -67,7 +71,11 @@ TERMINATE_GRACE_S = 5.0     # give a killed child this long to exit before SIGKI
 
 
 def _kill_process_tree(pid: int, hard: bool = False) -> bool:
-    """Signal ``pid`` *and its descendants*. True if the platform mechanism ran.
+    """Signal ``pid`` *and its descendants*. True only if the kill SUCCEEDED.
+
+    "It ran" is the wrong meaning to return: the caller uses this answer to
+    decide whether the single-PID fallback is still needed, so a taskkill that
+    ran and was denied must read as False or both fallback rungs get skipped.
 
     A seam on purpose: tests that stand in a fake process object must be able to
     replace this, because a fabricated PID handed to ``taskkill`` would name a
@@ -77,10 +85,10 @@ def _kill_process_tree(pid: int, hard: bool = False) -> bool:
         # /T walks the live process tree from this PID; /F because a console
         # child ignores the polite request. Never a name match.
         try:
-            subprocess.run(["taskkill", "/F", "/T", "/PID", str(pid)],
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                           timeout=TERMINATE_GRACE_S, check=False)
-            return True
+            done = subprocess.run(["taskkill", "/F", "/T", "/PID", str(pid)],
+                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                  timeout=TERMINATE_GRACE_S, check=False)
+            return done.returncode == 0
         except (OSError, subprocess.SubprocessError):
             return False
     try:
@@ -135,10 +143,12 @@ class Worker:
             except (asyncio.TimeoutError, asyncio.CancelledError):
                 # Escalate synchronously: if we got here by cancellation, an
                 # awaited thread would just raise CancelledError again and the
-                # survivor would live on.
-                if not _kill_process_tree(proc.pid, hard=True):
-                    with contextlib.suppress(ProcessLookupError, OSError):
-                        proc.kill()
+                # survivor would live on. The single-PID kill fires either way
+                # on this rung — it is harmless against an already-dead process,
+                # and this is the last chance to take the one PID we do hold.
+                _kill_process_tree(proc.pid, hard=True)
+                with contextlib.suppress(ProcessLookupError, OSError):
+                    proc.kill()
         J.write_worker_state(page_dir, "interrupted",
                              error="server shut down while this page was running")
 

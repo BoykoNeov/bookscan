@@ -3506,4 +3506,8 @@ HTML, at the cost of real bold). Bundled font left as is.
 
 Inputs and outputs: `docs/data/patch_mode_pdf_20260818.json` (both arms' full
 counts) and `docs/data/pdf_searchability_20260818.json` (per-extractor scores).
-The two 7 MB PDFs stay out of git, under `temp/`, as the raw frames do.
+The two 7 MB PDFs stay out of git, under `temp/`, as the multi-view raw frames
+do — a deliberate choice with a cost worth naming: these numbers are **auditable
+but not re-derivable**, since the PDFs and their gitignored job folders are gone
+once `temp/` is cleared. Re-deriving them means re-running the two arms, which
+`tools/pdf_searchability.py` and the recipe above make cheap.

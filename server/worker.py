@@ -17,18 +17,36 @@ Path-only shape instead of widening it for one field.
 
 A failed page (non-zero subprocess exit, or a crash before ``run_all.py`` even
 gets to write its own ``run_all.json``) must never kill the drain loop — one
-bad page just leaves its failure on disk (``run_all.json`` if ``run_all.py``
-got that far, plus this module's own ``worker.log`` with the raw stdout/stderr
-either way) and the worker moves on to the next queued page.
+bad page just leaves its failure on disk and the worker moves on to the next
+queued page.
+
+**Every page's state is recorded in ``<page_dir>/worker.json``**
+(``server.jobs.write_worker_state``), because the pipeline's own artifacts
+cannot express it: ``run_all.json`` only appears when ``run_all.py`` finishes,
+so a page whose subprocess died first, or that a restart stranded before it was
+picked up, was previously indistinguishable through the API from a page nobody
+had started. ``worker.log`` still holds the raw stdout/stderr; ``worker.json``
+is the small structured fact the API and the startup reconciliation both read.
+
+**Shutdown kills the page's subprocess.** ``stop()`` cancels the drain task
+*and* terminates the live child, then marks its page ``interrupted`` so the
+next startup re-enqueues it. Narrow but real limit, stated rather than implied:
+on Windows ``terminate()`` is ``TerminateProcess``, which does **not** take the
+child's own children — a ``run_all`` killed mid-stage can still leave e.g. a
+Tesseract process behind. Only the PID this module spawned is ever signalled;
+nothing is matched by name.
 """
 
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import sys
 from pathlib import Path
 
 from server import jobs as J
+
+TERMINATE_GRACE_S = 5.0     # give a killed child this long to exit before SIGKILL
 
 
 class Worker:
@@ -36,8 +54,12 @@ class Worker:
         self.repo_root = repo_root
         self.queue: asyncio.Queue[Path] = asyncio.Queue()
         self._task: asyncio.Task | None = None
+        # The page currently in flight and the process running it, so shutdown
+        # can kill exactly the PID this worker spawned (never a name match).
+        self._current: tuple[Path, asyncio.subprocess.Process] | None = None
 
     def enqueue(self, page_dir: Path) -> None:
+        J.write_worker_state(page_dir, "queued", enqueued_at=J.now_iso())
         self.queue.put_nowait(page_dir)
 
     async def start(self) -> None:
@@ -45,21 +67,60 @@ class Worker:
             self._task = asyncio.create_task(self._drain())
 
     async def stop(self) -> None:
+        """Cancel the drain loop, kill the live child, and leave every page the
+        server was still working on marked ``interrupted`` so startup can
+        resume it."""
         if self._task is not None:
             self._task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._task
-            except asyncio.CancelledError:
-                pass
             self._task = None
+        await self._kill_current()
+        self._drain_queue_as_interrupted()
+
+    async def _kill_current(self) -> None:
+        if self._current is None:
+            return
+        page_dir, proc = self._current
+        self._current = None
+        if proc.returncode is None:
+            with contextlib.suppress(ProcessLookupError, OSError):
+                proc.terminate()
+            try:
+                await asyncio.wait_for(proc.wait(), timeout=TERMINATE_GRACE_S)
+            except (asyncio.TimeoutError, asyncio.CancelledError):
+                with contextlib.suppress(ProcessLookupError, OSError):
+                    proc.kill()
+        J.write_worker_state(page_dir, "interrupted",
+                             error="server shut down while this page was running")
+
+    def _drain_queue_as_interrupted(self) -> None:
+        """Pages still waiting in the in-memory queue are lost on shutdown —
+        mark them so the next startup re-enqueues them instead of leaving them
+        looking untouched forever."""
+        while True:
+            try:
+                page_dir = self.queue.get_nowait()
+            except asyncio.QueueEmpty:
+                return
+            J.write_worker_state(page_dir, "interrupted",
+                                 error="server shut down before this page was picked up")
+            self.queue.task_done()
 
     async def _drain(self) -> None:
         while True:
             page_dir = await self.queue.get()
             try:
                 await self._run_one(page_dir)
-            except Exception:
-                pass  # this page's failure is on disk; the worker must survive it
+            except asyncio.CancelledError:
+                raise
+            except Exception as exc:
+                # The page's failure is on disk; the worker must survive it.
+                # This is the spawn-failure path — no subprocess ever ran, so
+                # there is no worker.log and no run_all.json to read either.
+                with contextlib.suppress(Exception):
+                    J.write_worker_state(page_dir, "failed",
+                                         error=f"{type(exc).__name__}: {exc}")
             finally:
                 self.queue.task_done()
 
@@ -71,7 +132,19 @@ class Worker:
             cwd=self.repo_root,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
         )
-        stdout, stderr = await proc.communicate()
+        self._current = (page_dir, proc)
+        J.write_worker_state(page_dir, "running", pid=proc.pid, mode=mode,
+                             started_at=J.now_iso(), exit_code=None, error=None)
+        try:
+            stdout, stderr = await proc.communicate()
+        except asyncio.CancelledError:
+            # Deliberately do NOT clear the handle: stop() cancels this task and
+            # then needs the PID to kill the child it spawned.
+            raise
+        except BaseException:
+            self._current = None
+            raise
+        self._current = None
         log = (page_dir / "worker.log")
         log.write_text(
             f"exit code: {proc.returncode}\n\n"
@@ -79,3 +152,5 @@ class Worker:
             f"--- stderr ---\n{stderr.decode(errors='replace')}\n",
             encoding="utf-8",
         )
+        J.write_worker_state(page_dir, "done" if proc.returncode == 0 else "failed",
+                             exit_code=proc.returncode, finished_at=J.now_iso())

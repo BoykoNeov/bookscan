@@ -72,6 +72,58 @@ def job_mode(job_dir: Path) -> str:
     return mode if mode in MODES else "flag"
 
 
+# What the worker has done with a page, recorded by the worker itself in
+# ``<page_dir>/worker.json``. This exists because the pipeline's own artifacts
+# cannot answer the question: ``run_all.json`` is written by ``run_all.py`` at
+# the END of a run, so a page whose subprocess died before that — or was never
+# picked up at all — is indistinguishable from a page nobody has started, and
+# ``GET /api/jobs/{id}`` reported both as "no stages yet".
+#
+#   queued      enqueued, not yet picked up by the drain loop
+#   running     a subprocess is (or was) live for this page
+#   done        the subprocess exited 0
+#   failed      the subprocess exited non-zero, or never started (spawn error)
+#   interrupted the server shut down while the page was queued or running
+#
+# ``interrupted`` is deliberately distinct from ``failed``: the page is
+# re-enqueued at the next startup (``reconcile.py``), whereas a ``failed`` page
+# is not — a page that crashes the pipeline must not re-run on every restart
+# forever.
+WORKER_STATES = ("queued", "running", "done", "failed", "interrupted")
+RESUMABLE_STATES = ("queued", "running", "interrupted")
+WORKER_FILE = "worker.json"
+
+
+def write_worker_state(page_dir: Path, state: str, **fields) -> dict:
+    """Record (and return) this page's worker state, merging over what is
+    already there so a transition keeps the earlier timestamps."""
+    if state not in WORKER_STATES:
+        raise ValueError(f"invalid worker state: {state!r} (choices: {WORKER_STATES})")
+    rec = read_worker_state(page_dir) or {}
+    rec.update(state=state, updated_at=now_iso(), **fields)
+    page_dir.mkdir(parents=True, exist_ok=True)
+    (page_dir / WORKER_FILE).write_text(json.dumps(rec, indent=1), encoding="utf-8")
+    return rec
+
+
+def read_worker_state(page_dir: Path) -> dict | None:
+    """None means no worker has ever touched this page — which is itself the
+    answer for a page uploaded before this file existed, or stranded by a
+    restart before it was picked up."""
+    path = page_dir / WORKER_FILE
+    if not path.exists():
+        return None
+    try:
+        rec = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {"state": "failed", "error": "unreadable worker.json"}
+    return rec if isinstance(rec, dict) else {"state": "failed", "error": "malformed worker.json"}
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
 def resolve_job_dir(root: Path, job_id: str) -> Path | None:
     """job_id -> its folder, or None if it doesn't exist or isn't a bare id
     (job_id becomes a path component directly, so this also guards traversal
@@ -118,6 +170,10 @@ def page_status(page_dir: Path) -> dict:
         "name": page_dir.name,
         "stages": {name: _stage_status(page_dir, name) for name in STAGE_ORDER},
         "run_all": run_all,
+        # None until a worker touches the page. Distinguishes "queued, nothing
+        # has happened yet" from "the subprocess died before run_all.py could
+        # write its own summary" — which used to look identical from here.
+        "worker": read_worker_state(page_dir),
     }
 
 

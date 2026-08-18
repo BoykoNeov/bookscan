@@ -28,25 +28,66 @@ picked up, was previously indistinguishable through the API from a page nobody
 had started. ``worker.log`` still holds the raw stdout/stderr; ``worker.json``
 is the small structured fact the API and the startup reconciliation both read.
 
-**Shutdown kills the page's subprocess.** ``stop()`` cancels the drain task
-*and* terminates the live child, then marks its page ``interrupted`` so the
-next startup re-enqueues it. Narrow but real limit, stated rather than implied:
-on Windows ``terminate()`` is ``TerminateProcess``, which does **not** take the
-child's own children — a ``run_all`` killed mid-stage can still leave e.g. a
-Tesseract process behind. Only the PID this module spawned is ever signalled;
-nothing is matched by name.
+**Shutdown kills the page's subprocess AND the processes it spawned.**
+``stop()`` cancels the drain task, kills the live child's whole tree, then marks
+its page ``interrupted`` so the next startup re-enqueues it. The tree part is
+load-bearing and not free: ``run_all`` spawns Tesseract, so killing only the PID
+we hold leaves a grandchild running with no parent to reap it.
+
+Killing a tree is where the two platforms genuinely differ:
+
+* **Windows** — ``proc.terminate()`` is ``TerminateProcess``, which takes the
+  child alone; worse, once the parent is gone the tree ``taskkill`` would walk
+  is gone with it. So the tree kill must be the **first** rung, not the
+  escalation: ``taskkill /F /T /PID <pid>``.
+* **POSIX** — the child is spawned with ``start_new_session=True`` so it leads
+  its own process group, and the group is signalled (``SIGTERM``, then
+  ``SIGKILL``). Without that session flag the group would be *our* group and the
+  server would sign its own death warrant.
+
+Either way only the PID this module spawned is ever named — nothing is matched
+by process name, which would have a blast radius we did not choose. If the tree
+kill is unavailable or fails, we fall back to signalling the single PID, which
+is strictly no worse than the old behaviour.
 """
 
 from __future__ import annotations
 
 import asyncio
 import contextlib
+import os
+import signal
+import subprocess
 import sys
 from pathlib import Path
 
 from server import jobs as J
 
 TERMINATE_GRACE_S = 5.0     # give a killed child this long to exit before SIGKILL
+
+
+def _kill_process_tree(pid: int, hard: bool = False) -> bool:
+    """Signal ``pid`` *and its descendants*. True if the platform mechanism ran.
+
+    A seam on purpose: tests that stand in a fake process object must be able to
+    replace this, because a fabricated PID handed to ``taskkill`` would name a
+    real, unrelated process on the machine.
+    """
+    if os.name == "nt":
+        # /T walks the live process tree from this PID; /F because a console
+        # child ignores the polite request. Never a name match.
+        try:
+            subprocess.run(["taskkill", "/F", "/T", "/PID", str(pid)],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                           timeout=TERMINATE_GRACE_S, check=False)
+            return True
+        except (OSError, subprocess.SubprocessError):
+            return False
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGKILL if hard else signal.SIGTERM)
+        return True
+    except (ProcessLookupError, PermissionError, OSError):
+        return False
 
 
 class Worker:
@@ -84,13 +125,20 @@ class Worker:
         page_dir, proc = self._current
         self._current = None
         if proc.returncode is None:
-            with contextlib.suppress(ProcessLookupError, OSError):
-                proc.terminate()
+            # Tree first (see the module docstring): on Windows a parent-only
+            # terminate would orphan the grandchildren beyond any later reach.
+            if not await asyncio.to_thread(_kill_process_tree, proc.pid):
+                with contextlib.suppress(ProcessLookupError, OSError):
+                    proc.terminate()
             try:
                 await asyncio.wait_for(proc.wait(), timeout=TERMINATE_GRACE_S)
             except (asyncio.TimeoutError, asyncio.CancelledError):
-                with contextlib.suppress(ProcessLookupError, OSError):
-                    proc.kill()
+                # Escalate synchronously: if we got here by cancellation, an
+                # awaited thread would just raise CancelledError again and the
+                # survivor would live on.
+                if not _kill_process_tree(proc.pid, hard=True):
+                    with contextlib.suppress(ProcessLookupError, OSError):
+                        proc.kill()
         J.write_worker_state(page_dir, "interrupted",
                              error="server shut down while this page was running")
 
@@ -131,6 +179,10 @@ class Worker:
             "--mode", mode,
             cwd=self.repo_root,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+            # POSIX only: give the child its own session so shutdown can signal
+            # its process group without the signal reaching this server too.
+            # Windows has no equivalent here — the tree walk is taskkill's job.
+            **({} if os.name == "nt" else {"start_new_session": True}),
         )
         self._current = (page_dir, proc)
         J.write_worker_state(page_dir, "running", pid=proc.pid, mode=mode,

@@ -282,6 +282,14 @@ async def test_stop_kills_the_live_child_and_marks_the_page_interrupted(tmp_path
         return p
 
     monkeypatch.setattr(asyncio, "create_subprocess_exec", fake_exec)
+    # The tree kill is stubbed here on purpose: this test's process is a fake,
+    # and handing its fabricated PID to taskkill would name a real, unrelated
+    # process on the machine. What the stub asserts is the thing that matters —
+    # the PID signalled is the one this worker spawned, never a name match.
+    signalled: list[int] = []
+    monkeypatch.setattr("server.worker._kill_process_tree",
+                        lambda pid, hard=False: signalled.append(pid) or True)
+
     page_dir = tmp_path / "page_001"
     page_dir.mkdir()
     worker = Worker(tmp_path)
@@ -291,7 +299,7 @@ async def test_stop_kills_the_live_child_and_marks_the_page_interrupted(tmp_path
 
     await worker.stop()
 
-    assert procs[0].terminated                       # the PID we spawned, not a name match
+    assert signalled == [procs[0].pid]
     rec = J.read_worker_state(page_dir)
     assert rec["state"] == "interrupted"
 
@@ -322,3 +330,89 @@ async def test_stop_marks_still_queued_pages_interrupted(tmp_path, monkeypatch):
 
     assert J.read_worker_state(p1)["state"] == "interrupted"   # was running
     assert J.read_worker_state(p2)["state"] == "interrupted"   # never picked up
+
+
+# --------------------------------------------------------------------------
+# Shutdown kills the grandchild, proven on real processes
+# --------------------------------------------------------------------------
+# run_all spawns Tesseract, so "we killed the PID we hold" is not the same claim
+# as "nothing survives the shutdown". These two scripts build the smallest real
+# version of that shape: a child that outlives its own spawn, and a grandchild
+# that keeps writing. Asserting the grandchild's PID is gone would be weak —
+# PIDs get reused — so the assertion is that its heartbeat file STOPS GROWING.
+_GRANDCHILD_SRC = (
+    "import sys, time\n"
+    "while True:\n"
+    "    with open(sys.argv[1], 'a') as fh:\n"
+    "        fh.write('.')\n"
+    "    time.sleep(0.05)\n"
+)
+
+_CHILD_SRC = (
+    "import subprocess, sys, time\n"
+    "heartbeat, pidfile, grandchild_src = sys.argv[1], sys.argv[2], sys.argv[3]\n"
+    "p = subprocess.Popen([sys.executable, '-c', grandchild_src, heartbeat])\n"
+    "open(pidfile, 'w').write(str(p.pid))\n"
+    "time.sleep(300)\n"      # outlive the test; shutdown is what ends this
+)
+
+
+async def _grow_stops(path: Path, settle_s: float = 0.6, watch_s: float = 0.6) -> tuple[int, int]:
+    await asyncio.sleep(settle_s)      # anything already in flight lands
+    before = path.stat().st_size
+    await asyncio.sleep(watch_s)
+    return before, path.stat().st_size
+
+
+@pytest.mark.asyncio
+async def test_stop_kills_the_childs_own_child_not_just_the_child(tmp_path, monkeypatch):
+    import sys as _sys
+
+    from server import worker as W
+
+    heartbeat = tmp_path / "heartbeat.txt"
+    pidfile = tmp_path / "grandchild.pid"
+    real_exec = asyncio.create_subprocess_exec
+
+    async def fake_exec(*args, **kwargs):
+        # Same spawn kwargs the worker uses; only the command is swapped.
+        return await real_exec(
+            _sys.executable, "-c", _CHILD_SRC,
+            str(heartbeat), str(pidfile), _GRANDCHILD_SRC,
+            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+            **{k: v for k, v in kwargs.items() if k in ("cwd", "start_new_session")},
+        )
+
+    monkeypatch.setattr(asyncio, "create_subprocess_exec", fake_exec)
+
+    page_dir = tmp_path / "page_001"
+    page_dir.mkdir()
+    worker = Worker(tmp_path)
+    grandchild_pid = None
+    try:
+        worker.enqueue(page_dir)
+        await worker.start()
+
+        for _ in range(200):           # up to ~10s for the tree to come up
+            if pidfile.exists() and heartbeat.exists() and heartbeat.stat().st_size > 0:
+                break
+            await asyncio.sleep(0.05)
+        assert pidfile.exists(), "the child never spawned its own child"
+        grandchild_pid = int(pidfile.read_text())
+
+        alive_before, alive_after = await _grow_stops(heartbeat, settle_s=0.0, watch_s=0.3)
+        assert alive_after > alive_before, "the grandchild was not writing before shutdown"
+
+        await worker.stop()
+
+        settled, later = await _grow_stops(heartbeat)
+        assert settled == later, (
+            f"the grandchild outlived the shutdown: heartbeat grew {later - settled} bytes "
+            f"after stop() (pid {grandchild_pid})"
+        )
+        assert J.read_worker_state(page_dir)["state"] == "interrupted"
+    finally:
+        # Never leak a real process out of a failing test. Only the PID this
+        # test's own tree reported is touched.
+        if grandchild_pid is not None:
+            W._kill_process_tree(grandchild_pid, hard=True)

@@ -389,3 +389,15 @@ its single-page fallback, which is a constant, not a reading. For those sets the
 spine side is **hand-read off the same grid sheet as the crop box and recorded
 per set**; the spine-side assertion on the held-out band still runs for every set,
 and any set whose hand-read side contradicts a screen-detected side is reported.
+
+**Outcome (same day).** Done and reported: `docs/RESULTS.md` → "Multi-view
+Phase 1 — Claim B on the widened population". 20 sets → 18 pass Gate A → 14 new
+hand crops → **11 clear Gate B on their hand crop**. **B1 passes 11/11** (a real
+bar for the first time; it was 4-of-4 before). **B2 fails on both clauses** —
+mean 6.32 px for affine against 5.44 for the selector, and affine loses by more
+than 2 px on three sets where at most one is allowed, where at N=4 that second
+clause had held. **The selector stays; STEP 3's debt stays settled-negative.**
+The widening did not change the verdict, it sharpened it — and the amendment
+above earned its cost in both directions: the screen would have dropped
+`en_coin_g` (30/4 on the screen, 40/15 on the hand crop) as well as two of the
+fixture's own published sets.

@@ -3210,3 +3210,201 @@ sensitivity, which is why it is quotable.
 * **Exploratory, and labelled as such:** the gutter *bag* column and the far-side *sequence*
   numbers are diagnostics, not pre-registered verdicts. The `gutter_assisted` list (one token)
   was never folded into any score.
+
+## Multi-view Phase 1 — Claim B on the widened population: the shortfall closed, B2 fails harder — 2026-08-18
+
+The pre-registered run measured **Claim B on four sets** where
+`docs/plans/multiview-phase1-prereg.md` promised "**every** set that passes gates
+A–C, not only the GT-keyed ones". That row declared the deviation and named
+widening as the cheapest outstanding item on the fixture, because it costs hand
+page crops and **no ground truth**. This is that widening. Population: **11 sets**,
+against 4. Verdict: **unchanged, and arrived at more decisively** — B1 passes
+11/11, **B2 fails on both of its clauses** (at N=4 only one failed), so the blind
+inner-band transform selector stays and STEP 3's debt stays settled-negative.
+
+### The protocol was fixed in writing first, and then had to be amended
+
+B2's failure at N=4 was already known, so every remaining choice here was
+outcome-informed. **Addendum 2** of the pre-registration (committed before the
+first widened fit) pinned the eligibility instrument, the frame-pair rule,
+whether multi-scale sets enter B1/B2, that the widened population is
+authoritative for the verdict — including replacing the selector if it now
+passed — and that widening is not assumed to favour affine (B2's second clause
+gets *harder* as N grows; B1's "≥ 80% of sets" becomes a real bar for the first
+time, where at N=4 it was 4-of-4).
+
+**Then the instrument it named disqualified itself.** Addendum 2 made the cheap
+automatic-crop word-stream screen the eligibility rule, on the precedent that
+Gate B was defined and reported on it. Re-run on all 20 sets with the corrected
+anchors (`temp/mv_phase1c/screen.py`), it **fails two of the four sets the
+scoring run itself measured and published** — `en_coin_a` and `de_ferr_a`, both
+one short of the binding gutter floor of 12 — while over-counting 74 against 14
+on `en_coin_e`. A rule that throws out the fixture's own published sets is not a
+population rule. The **Amendment** replaced it with the version that removes
+discretion rather than tuning it: **every Gate-A set is hand-cropped, and Gate B
+is judged only on the hand crop.** A margin around the floor was rejected
+explicitly — choosing its width after seeing which sets sit just under it is the
+one thing the addendum exists to prevent.
+
+That amendment was worth its cost. It moved sets in **both** directions:
+`en_coin_g` fails the screen at 30/4 and passes the hand crop at 40/15, so the
+screen-based rule would have silently dropped a measurable set as well as two
+published ones.
+
+### Population: 20 sets → 18 → 11
+
+Gate A (orientation, unchanged from `gates.json`) rejects 2. The remaining 18
+were hand-cropped — 4 already were, 14 read this session off a labelled 5% grid,
+the same instrument and convention as `testset/skewset_manifest.json`'s
+`page_crop`. Gate B (**≥ 40 correspondences, ≥ 12 of them in the spine-side
+quarter**) then decides, on the hand crop only.
+
+| set | lang | screen c/gut | hand c/gut | outcome |
+|---|---|---|---|---|
+| `it_ferr_a` | ita | 58 / 12 | 44 / **10** | out — gate B on the hand crop |
+| `it_ferr_b` | ita | 156 / 52 | — | out — **gate A** (orientation) |
+| `it_ferr_c` | ita | 100 / 44 | 93 / 27 | **in** |
+| `it_ferr_d` | ita | 102 / 26 | 160 / 28 | **in** |
+| `it_ferr_e` | ita | 0 / 0 | — | out — **gate A** (orientation) |
+| `it_ferr_f` | ita | 285 / 83 | 308 / 49 | **in** |
+| `it_ferr_g` | ita | 146 / 52 | 94 / 22 | **in** — carried over (`it_01`) |
+| `it_ferr_h` | ita | 359 / 82 | 424 / 54 | **in** |
+| `de_ferr_a` | deu | 85 / **11** | 120 / 12 | **in** — carried over (`de_01`) |
+| `de_ferr_b` | deu | 105 / 85 | 107 / 35 | **in** |
+| `de_ferr_c` | deu | 123 / 24 | 141 / 13 | **in** |
+| `en_coin_a` | eng | 283 / **11** | 260 / 13 | **in** — carried over (`en_02`) |
+| `en_coin_b` | eng | 174 / 27 | 272 / **2** | out — gate B on the hand crop |
+| `en_coin_c` | eng | 198 / 1 | 172 / **3** | out — gate B on the hand crop |
+| `en_coin_d` | eng | 245 / 37 | 259 / **1** | out — gate B on the hand crop |
+| `en_coin_e` | eng | 287 / 74 | 326 / 14 | **in** — carried over (`en_01`) |
+| `en_coin_f` | eng | 33 / 1 | 89 / **0** | out — gate B on the hand crop (multi-scale) |
+| `en_coin_g` | eng | **30 / 4** | 40 / 15 | **in** (multi-scale) |
+| `en_coin_h` | eng | 15 / 1 | 11 / **0** | out — gate B on the hand crop (multi-scale) |
+| `en_coin_i` | eng | 18 / 3 | 24 / **3** | out — gate B on the hand crop (multi-scale) |
+
+**The two columns barely agree.** Total correspondences track loosely; the
+gutter count — the column that actually decides — does not. `de_ferr_b` goes
+85 → 35, `en_coin_d` 37 → 1, `en_coin_g` 4 → 15. This is a result about the
+instrument the gates were reported on, not a footnote: **a frame-relative
+automatic crop cannot be trusted to say how many correspondences sit near the
+spine.**
+
+**Three crop boxes were wrong on the first read and were caught by a rendered
+overlay before they became numbers**, which is why that check exists: on
+`en_coin_f` and `en_coin_g` the candidate crop had taken the **facing** page (its
+large left-hand text is the neighbour page, repeating the sliver the anchor shows
+at its own edge), and on `en_coin_i` the spine had been read on the wrong side of
+the target page entirely. All three would have fitted and produced plausible
+numbers.
+
+### Why the English single-scale exclusions are not a cropping error
+
+`en_coin_b/c/d` fail with 172–272 total correspondences and **1–3** in the
+spine-side quarter, which looks exactly like a crop that cut the gutter off. It
+is not. Counting **words** (not correspondences) in that quarter of each dewarped
+crop (`temp/mv_phase1c/diag_gutter.py`):
+
+| set | anchor: words in the inner quarter | oblique: words there | oblique median conf |
+|---|---|---|---|
+| `en_coin_b` | 229 | 160 | **59.5** (anchor 93.5) |
+| `en_coin_c` | 149 | 91 | 92.7 (anchor 90.8) |
+| `en_coin_d` | 190 | 159 | **63.3** (anchor 89.8) |
+
+Both frames read plenty of text there; almost none of it **aligns**. On two of the
+three the oblique frame's spine-side confidence collapses to ~60 against ~90 on
+the anchor — the smear producing boxes with wrong text, which is the phenomenon
+the merge exists to attack, showing up here as a fittability failure instead. On
+`en_coin_c` the confidence is high on both sides and the non-alignment is
+unexplained; recorded as such rather than guessed at.
+
+### B1, B2, B3 — as pre-registered
+
+Held-out median |Δy|: fit on non-gutter correspondences, scored on the
+spine-side ones, so the model must extrapolate. `score.py::_fit` is imported
+**unmodified** from the four-set run. The held-out band's x-range is now
+**asserted to be on the spine side before any fit runs** (Addendum 2 item 8) — a
+side error leaves the fit converging on the outer margin with a perfectly
+reasonable-looking number.
+
+| set | fit / held | bar (mwh/2) | selector | affine | Δ (affine−selector) | family chosen |
+|---|---|---|---|---|---|---|
+| `de_ferr_a` (`de_01`) | 88 / 24 | 14.5 | 6.28 | 6.28 | +0.00 | affine |
+| `en_coin_a` (`en_02`) | 385 / 107 | 14.0 | 7.92 | **4.18** | −3.75 | quadratic |
+| `en_coin_e` (`en_01`) | 383 / 85 | 14.0 | 6.17 | 7.63 | +1.46 | quadratic |
+| `it_ferr_g` (`it_01`) | 175 / 48 | 16.0 | 9.31 | 14.04 | **+4.72** | quadratic |
+| `de_ferr_b` | 84 / 23 | 13.5 | 2.36 | 2.36 | +0.00 | affine |
+| `de_ferr_c` | 117 / 24 | 15.0 | 2.50 | 2.50 | +0.00 | affine |
+| `en_coin_g` (multi-scale) | 28 / 12 | 29.0 | 9.91 | 9.91 | +0.00 | affine |
+| `it_ferr_c` | 70 / 23 | 18.0 | 6.53 | 9.58 | **+3.06** | quadratic |
+| `it_ferr_d` | 129 / 31 | 17.5 | 1.83 | 3.20 | +1.38 | similarity |
+| `it_ferr_f` | 228 / 80 | 15.5 | 3.33 | 6.22 | **+2.89** | quadratic |
+| `it_ferr_h` | 323 / 101 | 15.0 | 3.67 | 3.56 | −0.11 | quadratic |
+
+**B1 — "fixed affine is under bar": PASS, 11/11 (100%, needs ≥ 80%).** At N=4 this
+was a 4-of-4 bar and said little. At N=11 it is a real bar and affine clears it
+everywhere, including on the multi-scale set. **Affine is never disastrous** —
+that is the honest reading of B1, and it did not weaken with more data.
+
+**B2 — "fixed affine is no worse than the selector": FAIL, on both clauses.**
+Mean held-out |Δy| is **6.32 px for affine against 5.44 px for the selector**, so
+the mean condition fails. Affine loses by more than 2 px on **three** sets
+(`it_ferr_g` +4.72, `it_ferr_c` +3.06, `it_ferr_f` +2.89) where at most one is
+allowed, so the second condition fails too. At N=4 that second clause *held*
+(exactly one set); widening broke it. **Per the pre-registration and Addendum 2
+item 6: the selector stays, and STEP 3's debt remains settled-negative.**
+
+**The mechanism, and it is not noise.** Four of the eleven sets are ties *by
+construction* — the selector examined its inner band and chose affine itself, so
+there is nothing to compare. The comparison lives on the other seven, and it
+separates by **book**, not randomly: on all four Italian sets where the selector
+picked a non-affine family it beat affine (three of them by more than 2 px), and
+its single large defeat is `en_coin_a`, where it picked quadratic on the
+non-gutter subset and that choice extrapolated badly into the gutter (7.92
+against affine's 4.18). Curl earns the extra term; one flat English page punishes
+it. The selector's advantage is still an average over disagreeing pages — but
+with 11 sets it is an average over pages that disagree **by book**, which is a
+better-understood average than the N=4 row could claim.
+
+**B3 — "scale change is where it breaks, if it breaks": confirmed at the
+hand-crop level.** Only **1 of the 4** multi-scale sets clears Gate B on its hand
+crop, against **10 of 14** single-scale Gate-A sets. The earlier row measured
+this with the automatic crop (2 of 4 against 4 of 5) and the hand crop reproduces
+it. The single multi-scale set that entered (`en_coin_g`) is a **tie**: the
+selector chose affine, so B3 contributes no evidence for or against the family —
+the multi-scale finding remains an *alignment* finding, one step upstream of the
+transform, exactly as the earlier row concluded. `en_coin_h` is the extreme case
+and is recorded honestly in `crops.json`: under the pinned pair rule its anchor
+and candidate are close-ups of **different pages** (p.242 and the facing p.243),
+so their spine edges point opposite ways. It was cropped and measured anyway
+rather than substituted, and Gate B rejected it at 11 correspondences.
+
+### What this does to the four-set row
+
+Nothing is retracted. The four-set numbers are reproduced exactly (they are
+carried over, not recomputed) and are now a **subset** of an 11-set population
+that reaches the same verdict by a wider margin. The one thing that changes is
+how much the row is allowed to claim: B1 was a 4-of-4 formality and is now a
+100%-of-11 result; B2's second clause passed at N=4 and fails at N=11. **The
+widened population is the authoritative Claim B verdict**, per Addendum 2 item 6.
+
+### Limits, stated
+
+* **Still no Bulgarian, and no GT anywhere in this row.** Claim B needs none by
+  construction; this says nothing about Claim A, about v5, or about Cyrillic.
+* **The crops are one reader's judgement by eye**, at ~1–2% of frame width, with
+  three first-pass errors caught by the overlay check and corrected. A crop that
+  is 2% out moves the correspondence set slightly; it does not move a 6-vs-9 px
+  comparison, but the gutter *counts* near the floor of 12 are exactly that
+  sensitive — `it_ferr_a` (10) and `de_ferr_a` (12) are one reader's decision
+  either way.
+* **The population is what Gate B admits, and Gate B is measured after the
+  dewarp**, so a set excluded here is excluded for fittability, never for having
+  a bad transform. Seven of the eleven excluded/failing sets are English
+  strong-curl coin pages; the surviving population is Italian-heavy (6 of 11),
+  which is also where the selector's quadratic choice wins.
+* **`en_coin_g` sits on the floor** (40 correspondences, 15 gutter, 28/12 split)
+  and is the only multi-scale set in the population. Its numbers are a tie, so it
+  cannot move B2 either way, but it does count toward B1's 11.
+* Inputs, per-set outputs and the verdict computation are committed at
+  `docs/data/multiview_claimB_widened.json`; the raw frames stay in
+  `temp/zoomset_raw/batch_20260818/`, out of git, as the pre-registration fixed.

@@ -1,0 +1,1530 @@
+{
+ "_doc": [
+  "Claim B on the WIDENED population -- inputs and outputs of the 2026-08-18 run",
+  "reported in docs/RESULTS.md, 'Multi-view Phase 1 -- Claim B on the widened",
+  "population'. Protocol: docs/plans/multiview-phase1-prereg.md, Addendum 2 and its",
+  "Amendment, both committed before the first widened fit.",
+  "",
+  "page_crop boxes are [x0,y0,x1,y1] as fractions of the UPRIGHT frame (orientation",
+  "pinned per set by temp/mv_batch18/orient.py), hand-read off a labelled 5% grid --",
+  "the same convention as testset/skewset_manifest.json's page_crop. The frames",
+  "themselves stay in temp/zoomset_raw/batch_20260818/, out of git, as the",
+  "pre-registration fixed; this file is what makes the row auditable without them.",
+  "",
+  "screen = the automatic-crop word-stream screen re-run with corrected anchors. It",
+  "is published because it turned out to be the finding, not the instrument: it",
+  "disagrees with the hand crop at the gutter floor that decides eligibility.",
+  "carried_over = the four sets the scoring run measured; reproduced, not recomputed."
+ ],
+ "verdict": {
+  "population": 11,
+  "B1": "PASS",
+  "B1_under_bar": 11,
+  "B2": "FAIL",
+  "B2_mean_selector": 5.438,
+  "B2_mean_affine": 6.315,
+  "B2_lost_by_over_2px": [
+   "it_ferr_g",
+   "it_ferr_c",
+   "it_ferr_f"
+  ],
+  "consequence": "the blind inner-band selector STAYS; STEP 3's debt remains settled-negative",
+  "rows": [
+   {
+    "name": "de_ferr_a",
+    "tag": "de_01",
+    "carried": true,
+    "multiscale": false,
+    "selector": 6.282963803967959,
+    "affine": 6.282963803967959,
+    "bar": 14.5,
+    "selector_family": "affine",
+    "n_fit": 88,
+    "n_held": 24
+   },
+   {
+    "name": "en_coin_a",
+    "tag": "en_02",
+    "carried": true,
+    "multiscale": false,
+    "selector": 7.923248205354753,
+    "affine": 4.176408365691941,
+    "bar": 14.0,
+    "selector_family": "quadratic",
+    "n_fit": 385,
+    "n_held": 107
+   },
+   {
+    "name": "en_coin_e",
+    "tag": "en_01",
+    "carried": true,
+    "multiscale": false,
+    "selector": 6.168599624772924,
+    "affine": 7.625112212195745,
+    "bar": 14.0,
+    "selector_family": "quadratic",
+    "n_fit": 383,
+    "n_held": 85
+   },
+   {
+    "name": "it_ferr_g",
+    "tag": "it_01",
+    "carried": true,
+    "multiscale": false,
+    "selector": 9.314296623066639,
+    "affine": 14.035346187421965,
+    "bar": 16.0,
+    "selector_family": "quadratic",
+    "n_fit": 175,
+    "n_held": 48
+   },
+   {
+    "name": "de_ferr_b",
+    "tag": "de_ferr_b",
+    "carried": false,
+    "multiscale": false,
+    "selector": 2.364124343931053,
+    "affine": 2.364124343931053,
+    "bar": 13.5,
+    "selector_family": "affine",
+    "n_fit": 84,
+    "n_held": 23
+   },
+   {
+    "name": "de_ferr_c",
+    "tag": "de_ferr_c",
+    "carried": false,
+    "multiscale": false,
+    "selector": 2.5045336240838196,
+    "affine": 2.5045336240838196,
+    "bar": 15.0,
+    "selector_family": "affine",
+    "n_fit": 117,
+    "n_held": 24
+   },
+   {
+    "name": "en_coin_g",
+    "tag": "en_coin_g",
+    "carried": false,
+    "multiscale": true,
+    "selector": 9.910496196019267,
+    "affine": 9.910496196019267,
+    "bar": 29.0,
+    "selector_family": "affine",
+    "n_fit": 28,
+    "n_held": 12
+   },
+   {
+    "name": "it_ferr_c",
+    "tag": "it_ferr_c",
+    "carried": false,
+    "multiscale": false,
+    "selector": 6.5277648077569665,
+    "affine": 9.583118045105493,
+    "bar": 18.0,
+    "selector_family": "quadratic",
+    "n_fit": 70,
+    "n_held": 23
+   },
+   {
+    "name": "it_ferr_d",
+    "tag": "it_ferr_d",
+    "carried": false,
+    "multiscale": false,
+    "selector": 1.8277753550205489,
+    "affine": 3.2049674927898195,
+    "bar": 17.5,
+    "selector_family": "similarity",
+    "n_fit": 129,
+    "n_held": 31
+   },
+   {
+    "name": "it_ferr_f",
+    "tag": "it_ferr_f",
+    "carried": false,
+    "multiscale": false,
+    "selector": 3.3304219188992192,
+    "affine": 6.222268267969355,
+    "bar": 15.5,
+    "selector_family": "quadratic",
+    "n_fit": 228,
+    "n_held": 80
+   },
+   {
+    "name": "it_ferr_h",
+    "tag": "it_ferr_h",
+    "carried": false,
+    "multiscale": false,
+    "selector": 3.6661900159879224,
+    "affine": 3.5598540899300133,
+    "bar": 15.0,
+    "selector_family": "quadratic",
+    "n_fit": 323,
+    "n_held": 101
+   }
+  ]
+ },
+ "screen": {
+  "it_ferr_a": {
+   "lang": "ita",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134640",
+   "candidate": "134641",
+   "side": "left",
+   "side_counts": {
+    "left": 99,
+    "right": 0
+   },
+   "gutter_edge": "right",
+   "n_anchor_words": 99,
+   "mwh": 27.0,
+   "corr": 58,
+   "gut": 12,
+   "disp": 386.9,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "it_ferr_b": {
+   "lang": "ita",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134657",
+   "candidate": "134658",
+   "side": "left",
+   "side_counts": {
+    "left": 298,
+    "right": 3
+   },
+   "gutter_edge": "right",
+   "n_anchor_words": 298,
+   "mwh": 32.0,
+   "corr": 156,
+   "gut": 52,
+   "disp": 239.0,
+   "orient_ok": false,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "it_ferr_c": {
+   "lang": "ita",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134705",
+   "candidate": "134708",
+   "side": "left",
+   "side_counts": {
+    "left": 256,
+    "right": 198
+   },
+   "gutter_edge": "right",
+   "n_anchor_words": 256,
+   "mwh": 31.0,
+   "corr": 100,
+   "gut": 44,
+   "disp": 163.6,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "it_ferr_d": {
+   "lang": "ita",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134717",
+   "candidate": "134720",
+   "side": "left",
+   "side_counts": {
+    "left": 200,
+    "right": 138
+   },
+   "gutter_edge": "right",
+   "n_anchor_words": 200,
+   "mwh": 30.0,
+   "corr": 102,
+   "gut": 26,
+   "disp": 341.5,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "it_ferr_e": {
+   "lang": "ita",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134724",
+   "candidate": "134731",
+   "side": "right",
+   "side_counts": null,
+   "gutter_edge": "left",
+   "n_anchor_words": 26,
+   "mwh": 25.0,
+   "corr": 0,
+   "gut": 0,
+   "disp": 0,
+   "orient_ok": false,
+   "passes_screen": false,
+   "already_measured": null
+  },
+  "it_ferr_f": {
+   "lang": "ita",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134738",
+   "candidate": "134743",
+   "side": "left",
+   "side_counts": {
+    "left": 574,
+    "right": 426
+   },
+   "gutter_edge": "right",
+   "n_anchor_words": 574,
+   "mwh": 29.0,
+   "corr": 285,
+   "gut": 83,
+   "disp": 47.5,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "it_ferr_g": {
+   "lang": "ita",
+   "curl": "strong",
+   "multiscale": false,
+   "anchor": "134801",
+   "candidate": "134804",
+   "side": "left",
+   "side_counts": {
+    "left": 486,
+    "right": 413
+   },
+   "gutter_edge": "right",
+   "n_anchor_words": 486,
+   "mwh": 31.0,
+   "corr": 146,
+   "gut": 52,
+   "disp": 243.9,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": "it_01"
+  },
+  "it_ferr_h": {
+   "lang": "ita",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134815",
+   "candidate": "134813",
+   "side": "right",
+   "side_counts": {
+    "left": 291,
+    "right": 859
+   },
+   "gutter_edge": "left",
+   "n_anchor_words": 859,
+   "mwh": 26.0,
+   "corr": 359,
+   "gut": 82,
+   "disp": 163.1,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "de_ferr_a": {
+   "lang": "deu",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134828",
+   "candidate": "134824",
+   "side": "left",
+   "side_counts": {
+    "left": 188,
+    "right": 61
+   },
+   "gutter_edge": "right",
+   "n_anchor_words": 188,
+   "mwh": 26.0,
+   "corr": 85,
+   "gut": 11,
+   "disp": 415.3,
+   "orient_ok": true,
+   "passes_screen": false,
+   "already_measured": "de_01"
+  },
+  "de_ferr_b": {
+   "lang": "deu",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134854",
+   "candidate": "134852",
+   "side": "right",
+   "side_counts": {
+    "left": 224,
+    "right": 328
+   },
+   "gutter_edge": "left",
+   "n_anchor_words": 328,
+   "mwh": 21.0,
+   "corr": 105,
+   "gut": 85,
+   "disp": 181.6,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "de_ferr_c": {
+   "lang": "deu",
+   "curl": "mild",
+   "multiscale": false,
+   "anchor": "134917",
+   "candidate": "134914",
+   "side": "right",
+   "side_counts": {
+    "left": 194,
+    "right": 313
+   },
+   "gutter_edge": "left",
+   "n_anchor_words": 313,
+   "mwh": 27.0,
+   "corr": 123,
+   "gut": 24,
+   "disp": 96.9,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "en_coin_a": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": false,
+   "anchor": "135006",
+   "candidate": "135009",
+   "side": "right",
+   "side_counts": {
+    "left": 61,
+    "right": 961
+   },
+   "gutter_edge": "left",
+   "n_anchor_words": 961,
+   "mwh": 27.0,
+   "corr": 283,
+   "gut": 11,
+   "disp": 415.2,
+   "orient_ok": true,
+   "passes_screen": false,
+   "already_measured": "en_02"
+  },
+  "en_coin_b": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": false,
+   "anchor": "135019",
+   "candidate": "135021",
+   "side": "right",
+   "side_counts": {
+    "left": 396,
+    "right": 806
+   },
+   "gutter_edge": "left",
+   "n_anchor_words": 806,
+   "mwh": 29.0,
+   "corr": 174,
+   "gut": 27,
+   "disp": 308.6,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "en_coin_c": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": false,
+   "anchor": "135028",
+   "candidate": "135030",
+   "side": "right",
+   "side_counts": null,
+   "gutter_edge": "left",
+   "n_anchor_words": 1269,
+   "mwh": 25.0,
+   "corr": 198,
+   "gut": 1,
+   "disp": 2125.5,
+   "orient_ok": true,
+   "passes_screen": false,
+   "already_measured": null
+  },
+  "en_coin_d": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": false,
+   "anchor": "135049",
+   "candidate": "135052",
+   "side": "right",
+   "side_counts": {
+    "left": 669,
+    "right": 926
+   },
+   "gutter_edge": "left",
+   "n_anchor_words": 926,
+   "mwh": 28.0,
+   "corr": 245,
+   "gut": 37,
+   "disp": 901.5,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": null
+  },
+  "en_coin_e": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": false,
+   "anchor": "135113",
+   "candidate": "135111",
+   "side": "left",
+   "side_counts": {
+    "left": 947,
+    "right": 459
+   },
+   "gutter_edge": "right",
+   "n_anchor_words": 947,
+   "mwh": 26.0,
+   "corr": 287,
+   "gut": 74,
+   "disp": 231.2,
+   "orient_ok": true,
+   "passes_screen": true,
+   "already_measured": "en_01"
+  },
+  "en_coin_f": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": true,
+   "anchor": "135140",
+   "candidate": "135137",
+   "side": "right",
+   "side_counts": null,
+   "gutter_edge": "left",
+   "n_anchor_words": 798,
+   "mwh": 38.0,
+   "corr": 33,
+   "gut": 1,
+   "disp": 875.6,
+   "orient_ok": true,
+   "passes_screen": false,
+   "already_measured": null
+  },
+  "en_coin_g": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": true,
+   "anchor": "135219",
+   "candidate": "135225",
+   "side": "right",
+   "side_counts": null,
+   "gutter_edge": "left",
+   "n_anchor_words": 507,
+   "mwh": 46.0,
+   "corr": 30,
+   "gut": 4,
+   "disp": 2112.9,
+   "orient_ok": true,
+   "passes_screen": false,
+   "already_measured": null
+  },
+  "en_coin_h": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": true,
+   "anchor": "135236",
+   "candidate": "135247",
+   "side": "right",
+   "side_counts": null,
+   "gutter_edge": "left",
+   "n_anchor_words": 362,
+   "mwh": 52.0,
+   "corr": 15,
+   "gut": 1,
+   "disp": 1763.1,
+   "orient_ok": true,
+   "passes_screen": false,
+   "already_measured": null
+  },
+  "en_coin_i": {
+   "lang": "eng",
+   "curl": "strong",
+   "multiscale": true,
+   "anchor": "135312",
+   "candidate": "135316",
+   "side": "right",
+   "side_counts": null,
+   "gutter_edge": "left",
+   "n_anchor_words": 577,
+   "mwh": 53.0,
+   "corr": 18,
+   "gut": 3,
+   "disp": 1176.7,
+   "orient_ok": true,
+   "passes_screen": false,
+   "already_measured": null
+  }
+ },
+ "hand_crops": {
+  "_doc": [
+   "Hand-read page crops for the 14 Gate-A sets the scoring run never cropped.",
+   "Same instrument and same convention as testset/skewset_manifest.json's page_crop:",
+   "[x0,y0,x1,y1] as fractions of the UPRIGHT frame (orientation pinned per set by",
+   "temp/mv_batch18/orient.py), read off a labelled 5% grid, taking ONE page of the",
+   "spread -- from its outer edge to the spine -- never cutting inward past gutter text.",
+   "side = which page of the spread is the target; gutter_edge = which edge of the CROP",
+   "the spine is on. side_source records whether the screen measured it (it detected a",
+   "gutter on the anchor) or whether it was hand-read, per the Amendment to Addendum 2.",
+   "The four sets the scoring run already cropped are NOT here; they stay in",
+   "testset/skewset_manifest.json, unchanged.",
+   "Second pass after the overlay check moved six sets' boxes; three were substantive (en_coin_f and en_coin_g had cropped the FACING page, en_coin_i had the spine on the wrong side) and are recorded in those sets' notes."
+  ],
+  "it_ferr_a": {
+   "side": "left",
+   "gutter_edge": "right",
+   "side_source": "screen",
+   "anchor": "134640",
+   "candidate": "134641",
+   "box": {
+    "134640": [
+     0.05,
+     0.01,
+     0.51,
+     0.98
+    ],
+    "134641": [
+     0.05,
+     0.01,
+     0.52,
+     0.98
+    ]
+   },
+   "note": "facing page is a full-bleed panorama photo with no text"
+  },
+  "it_ferr_c": {
+   "side": "left",
+   "gutter_edge": "right",
+   "side_source": "screen",
+   "anchor": "134705",
+   "candidate": "134708",
+   "box": {
+    "134705": [
+     0.03,
+     0.01,
+     0.455,
+     0.98
+    ],
+    "134708": [
+     0.04,
+     0.01,
+     0.435,
+     0.98
+    ]
+   }
+  },
+  "it_ferr_d": {
+   "side": "left",
+   "gutter_edge": "right",
+   "side_source": "screen",
+   "anchor": "134717",
+   "candidate": "134720",
+   "box": {
+    "134717": [
+     0.02,
+     0.02,
+     0.53,
+     0.98
+    ],
+    "134720": [
+     0.02,
+     0.02,
+     0.55,
+     0.98
+    ]
+   }
+  },
+  "it_ferr_f": {
+   "side": "left",
+   "gutter_edge": "right",
+   "side_source": "screen",
+   "anchor": "134738",
+   "candidate": "134743",
+   "box": {
+    "134738": [
+     0.02,
+     0.02,
+     0.545,
+     0.98
+    ],
+    "134743": [
+     0.06,
+     0.02,
+     0.575,
+     0.98
+    ]
+   }
+  },
+  "it_ferr_h": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "anchor": "134815",
+   "candidate": "134813",
+   "box": {
+    "134815": [
+     0.51,
+     0.01,
+     0.97,
+     0.98
+    ],
+    "134813": [
+     0.555,
+     0.01,
+     0.96,
+     0.98
+    ]
+   }
+  },
+  "de_ferr_b": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "anchor": "134854",
+   "candidate": "134852",
+   "box": {
+    "134854": [
+     0.4,
+     0.03,
+     0.86,
+     0.98
+    ],
+    "134852": [
+     0.43,
+     0.03,
+     0.92,
+     0.98
+    ]
+   }
+  },
+  "de_ferr_c": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "anchor": "134917",
+   "candidate": "134914",
+   "box": {
+    "134917": [
+     0.355,
+     0.02,
+     0.92,
+     0.98
+    ],
+    "134914": [
+     0.43,
+     0.02,
+     0.97,
+     0.98
+    ]
+   }
+  },
+  "en_coin_b": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "anchor": "135019",
+   "candidate": "135021",
+   "box": {
+    "135019": [
+     0.52,
+     0.02,
+     0.93,
+     0.98
+    ],
+    "135021": [
+     0.535,
+     0.02,
+     0.99,
+     0.98
+    ]
+   }
+  },
+  "en_coin_c": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "hand",
+   "anchor": "135028",
+   "candidate": "135030",
+   "box": {
+    "135028": [
+     0.53,
+     0.02,
+     0.91,
+     0.98
+    ],
+    "135030": [
+     0.58,
+     0.02,
+     0.98,
+     0.98
+    ]
+   },
+   "note": "screen detected no gutter on the anchor, so its side was the fallback constant; read by eye as the denser text half (p.195)"
+  },
+  "en_coin_d": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "anchor": "135049",
+   "candidate": "135052",
+   "box": {
+    "135049": [
+     0.52,
+     0.02,
+     0.9,
+     0.98
+    ],
+    "135052": [
+     0.57,
+     0.02,
+     0.99,
+     0.98
+    ]
+   }
+  },
+  "en_coin_f": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "hand",
+   "multiscale": true,
+   "anchor": "135140",
+   "candidate": "135137",
+   "box": {
+    "135140": [
+     0.06,
+     0.0,
+     0.76,
+     1.0
+    ],
+    "135137": [
+     0.64,
+     0.0,
+     1.0,
+     1.0
+    ]
+   },
+   "note": "both frames are partial close-ups of p.97. FIRST READ WAS WRONG and was caught by the overlay check: the candidate's large left-hand text is the FACING page (p.96, the same text the anchor shows as a sliver at x<0.06), and p.97 is the strip right of the fold. Crop corrected to that strip; the anchor sees p.97 from the spine outward, the candidate only its spine-side part."
+  },
+  "en_coin_g": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "hand",
+   "multiscale": true,
+   "anchor": "135219",
+   "candidate": "135225",
+   "box": {
+    "135219": [
+     0.09,
+     0.0,
+     0.9,
+     1.0
+    ],
+    "135225": [
+     0.265,
+     0.0,
+     1.0,
+     1.0
+    ]
+   },
+   "note": "close-ups of p.241 covering different bands. Same facing-page error as en_coin_f, same fix: the candidate's left third is p.240 (it repeats the anchor's left sliver verbatim), so the crop starts right of the fold at 0.29."
+  },
+  "en_coin_h": {
+   "side": "left",
+   "gutter_edge": "right",
+   "side_source": "hand",
+   "multiscale": true,
+   "anchor": "135236",
+   "candidate": "135247",
+   "box": {
+    "135236": [
+     0.02,
+     0.0,
+     0.94,
+     1.0
+    ],
+    "135247": [
+     0.1,
+     0.0,
+     1.0,
+     1.0
+    ]
+   },
+   "note": "READ BY EYE AS A DIFFERENT-PAGE PAIR: the anchor is p.242 (spine on its RIGHT), the candidate's main page is the facing p.243 (spine on its LEFT) -- so the two crops are not even the same page, and their spine edges point opposite ways. Cropped and measured anyway rather than substituted, because the pair rule is pinned by Addendum 2; expect Gate B to reject it, and that rejection is the honest outcome for this pair."
+  },
+  "en_coin_i": {
+   "side": "right",
+   "gutter_edge": "left",
+   "side_source": "hand",
+   "multiscale": true,
+   "anchor": "135312",
+   "candidate": "135316",
+   "box": {
+    "135312": [
+     0.075,
+     0.0,
+     0.94,
+     1.0
+    ],
+    "135316": [
+     0.515,
+     0.0,
+     0.96,
+     1.0
+    ]
+   },
+   "note": "SIDE WAS INVERTED IN THE FIRST READ, caught by the overlay check: the anchor's target page is p.247 with the spine on its LEFT (the sliver at x<0.07 is p.246), not a left page with the spine on the right. The candidate holds p.246 large on the left and p.247 right of the fold; the crop takes p.247."
+  }
+ },
+ "hand_crop_measurements": {
+  "it_ferr_a": {
+   "set": "it_ferr_a",
+   "lang": "ita",
+   "multiscale": false,
+   "anchor": "134640",
+   "candidate": "134641",
+   "gutter_edge": "right",
+   "side_source": "screen",
+   "note": "facing page is a full-bleed panorama photo with no text",
+   "dewarp": {
+    "anchor": [
+     1840,
+     2910
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1880,
+     2910
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 31.0,
+   "n_anchor_words": 79,
+   "n_cand_words": 92,
+   "corr": 44,
+   "gut": 10,
+   "gate_b": false,
+   "reason": "gate B on the hand crop: corr=44 gut=10"
+  },
+  "it_ferr_c": {
+   "set": "it_ferr_c",
+   "lang": "ita",
+   "multiscale": false,
+   "anchor": "134705",
+   "candidate": "134708",
+   "gutter_edge": "right",
+   "side_source": "screen",
+   "note": null,
+   "dewarp": {
+    "anchor": [
+     1700,
+     2910
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1580,
+     2910
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 36.0,
+   "n_anchor_words": 193,
+   "n_cand_words": 249,
+   "corr": 93,
+   "gut": 27,
+   "gate_b": true,
+   "held_x_pagefrac": [
+    0.801,
+    0.952
+   ],
+   "fit_x_pagefrac": [
+    0.32,
+    0.782
+   ],
+   "held_is_spine_side": true,
+   "n_fit": 70,
+   "n_held": 23,
+   "selector": 6.5277648077569665,
+   "selector_family": "quadratic",
+   "affine": 9.583118045105493,
+   "affine_family": "affine",
+   "bar": 18.0
+  },
+  "it_ferr_d": {
+   "set": "it_ferr_d",
+   "lang": "ita",
+   "multiscale": false,
+   "anchor": "134717",
+   "candidate": "134720",
+   "gutter_edge": "right",
+   "side_source": "screen",
+   "note": null,
+   "dewarp": {
+    "anchor": [
+     2040,
+     2880
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     2120,
+     2880
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 35.0,
+   "n_anchor_words": 267,
+   "n_cand_words": 270,
+   "corr": 160,
+   "gut": 28,
+   "gate_b": true,
+   "held_x_pagefrac": [
+    0.746,
+    0.934
+   ],
+   "fit_x_pagefrac": [
+    0.059,
+    0.741
+   ],
+   "held_is_spine_side": true,
+   "n_fit": 129,
+   "n_held": 31,
+   "selector": 1.8277753550205489,
+   "selector_family": "similarity",
+   "affine": 3.2049674927898195,
+   "affine_family": "affine",
+   "bar": 17.5
+  },
+  "it_ferr_f": {
+   "set": "it_ferr_f",
+   "lang": "ita",
+   "multiscale": false,
+   "anchor": "134738",
+   "candidate": "134743",
+   "gutter_edge": "right",
+   "side_source": "screen",
+   "note": null,
+   "dewarp": {
+    "anchor": [
+     2100,
+     2880
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     2060,
+     2880
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 31.0,
+   "n_anchor_words": 568,
+   "n_cand_words": 565,
+   "corr": 308,
+   "gut": 49,
+   "gate_b": true,
+   "held_x_pagefrac": [
+    0.691,
+    0.886
+   ],
+   "fit_x_pagefrac": [
+    0.105,
+    0.689
+   ],
+   "held_is_spine_side": true,
+   "n_fit": 228,
+   "n_held": 80,
+   "selector": 3.3304219188992192,
+   "selector_family": "quadratic",
+   "affine": 6.222268267969355,
+   "affine_family": "affine",
+   "bar": 15.5
+  },
+  "it_ferr_h": {
+   "set": "it_ferr_h",
+   "lang": "ita",
+   "multiscale": false,
+   "anchor": "134815",
+   "candidate": "134813",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "note": null,
+   "dewarp": {
+    "anchor": [
+     1840,
+     2910
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1620,
+     2910
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 30.0,
+   "n_anchor_words": 870,
+   "n_cand_words": 885,
+   "corr": 424,
+   "gut": 54,
+   "gate_b": true,
+   "held_x_pagefrac": [
+    0.101,
+    0.32
+   ],
+   "fit_x_pagefrac": [
+    0.323,
+    0.873
+   ],
+   "held_is_spine_side": true,
+   "n_fit": 323,
+   "n_held": 101,
+   "selector": 3.6661900159879224,
+   "selector_family": "quadratic",
+   "affine": 3.5598540899300133,
+   "affine_family": "affine",
+   "bar": 15.0
+  },
+  "de_ferr_b": {
+   "set": "de_ferr_b",
+   "lang": "deu",
+   "multiscale": false,
+   "anchor": "134854",
+   "candidate": "134852",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "note": null,
+   "dewarp": {
+    "anchor": [
+     1840,
+     2850
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1960,
+     2850
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 27.0,
+   "n_anchor_words": 328,
+   "n_cand_words": 214,
+   "corr": 107,
+   "gut": 35,
+   "gate_b": true,
+   "held_x_pagefrac": [
+    0.094,
+    0.19
+   ],
+   "fit_x_pagefrac": [
+    0.199,
+    0.484
+   ],
+   "held_is_spine_side": true,
+   "n_fit": 84,
+   "n_held": 23,
+   "selector": 2.364124343931053,
+   "selector_family": "affine",
+   "affine": 2.364124343931053,
+   "affine_family": "affine",
+   "bar": 13.5
+  },
+  "de_ferr_c": {
+   "set": "de_ferr_c",
+   "lang": "deu",
+   "multiscale": false,
+   "anchor": "134917",
+   "candidate": "134914",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "note": null,
+   "dewarp": {
+    "anchor": [
+     2260,
+     2880
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     2160,
+     2880
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 30.0,
+   "n_anchor_words": 271,
+   "n_cand_words": 296,
+   "corr": 141,
+   "gut": 13,
+   "gate_b": true,
+   "held_x_pagefrac": [
+    0.11,
+    0.319
+   ],
+   "fit_x_pagefrac": [
+    0.323,
+    0.977
+   ],
+   "held_is_spine_side": true,
+   "n_fit": 117,
+   "n_held": 24,
+   "selector": 2.5045336240838196,
+   "selector_family": "affine",
+   "affine": 2.5045336240838196,
+   "affine_family": "affine",
+   "bar": 15.0
+  },
+  "en_coin_b": {
+   "set": "en_coin_b",
+   "lang": "eng",
+   "multiscale": false,
+   "anchor": "135019",
+   "candidate": "135021",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "note": null,
+   "dewarp": {
+    "anchor": [
+     1640,
+     2880
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1820,
+     2880
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 28.0,
+   "n_anchor_words": 908,
+   "n_cand_words": 602,
+   "corr": 272,
+   "gut": 2,
+   "gate_b": false,
+   "reason": "gate B on the hand crop: corr=272 gut=2"
+  },
+  "en_coin_c": {
+   "set": "en_coin_c",
+   "lang": "eng",
+   "multiscale": false,
+   "anchor": "135028",
+   "candidate": "135030",
+   "gutter_edge": "left",
+   "side_source": "hand",
+   "note": "screen detected no gutter on the anchor, so its side was the fallback constant; read by eye as the denser text half (p.195)",
+   "dewarp": {
+    "anchor": [
+     1520,
+     2880
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1600,
+     2880
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 29.0,
+   "n_anchor_words": 612,
+   "n_cand_words": 351,
+   "corr": 172,
+   "gut": 3,
+   "gate_b": false,
+   "reason": "gate B on the hand crop: corr=172 gut=3"
+  },
+  "en_coin_d": {
+   "set": "en_coin_d",
+   "lang": "eng",
+   "multiscale": false,
+   "anchor": "135049",
+   "candidate": "135052",
+   "gutter_edge": "left",
+   "side_source": "screen",
+   "note": null,
+   "dewarp": {
+    "anchor": [
+     1520,
+     2880
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1680,
+     2880
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 29.0,
+   "n_anchor_words": 983,
+   "n_cand_words": 559,
+   "corr": 259,
+   "gut": 1,
+   "gate_b": false,
+   "reason": "gate B on the hand crop: corr=259 gut=1"
+  },
+  "en_coin_f": {
+   "set": "en_coin_f",
+   "lang": "eng",
+   "multiscale": true,
+   "anchor": "135140",
+   "candidate": "135137",
+   "gutter_edge": "left",
+   "side_source": "hand",
+   "note": "both frames are partial close-ups of p.97. FIRST READ WAS WRONG and was caught by the overlay check: the candidate's large left-hand text is the FACING page (p.96, the same text the anchor shows as a sliver at x<0.06), and p.97 is the strip right of the fold. Crop corrected to that strip; the anchor sees p.97 from the spine outward, the candidate only its spine-side part.",
+   "dewarp": {
+    "anchor": [
+     2800,
+     3000
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1440,
+     3000
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 45.0,
+   "n_anchor_words": 612,
+   "n_cand_words": 295,
+   "corr": 89,
+   "gut": 0,
+   "gate_b": false,
+   "reason": "gate B on the hand crop: corr=89 gut=0"
+  },
+  "en_coin_g": {
+   "set": "en_coin_g",
+   "lang": "eng",
+   "multiscale": true,
+   "anchor": "135219",
+   "candidate": "135225",
+   "gutter_edge": "left",
+   "side_source": "hand",
+   "note": "close-ups of p.241 covering different bands. Same facing-page error as en_coin_f, same fix: the candidate's left third is p.240 (it repeats the anchor's left sliver verbatim), so the crop starts right of the fold at 0.29.",
+   "dewarp": {
+    "anchor": [
+     3240,
+     3000
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     2940,
+     3000
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 58.0,
+   "n_anchor_words": 346,
+   "n_cand_words": 492,
+   "corr": 40,
+   "gut": 15,
+   "gate_b": true,
+   "held_x_pagefrac": [
+    0.061,
+    0.212
+   ],
+   "fit_x_pagefrac": [
+    0.23,
+    0.663
+   ],
+   "held_is_spine_side": true,
+   "n_fit": 28,
+   "n_held": 12,
+   "selector": 9.910496196019267,
+   "selector_family": "affine",
+   "affine": 9.910496196019267,
+   "affine_family": "affine",
+   "bar": 29.0
+  },
+  "en_coin_h": {
+   "set": "en_coin_h",
+   "lang": "eng",
+   "multiscale": true,
+   "anchor": "135236",
+   "candidate": "135247",
+   "gutter_edge": "right",
+   "side_source": "hand",
+   "note": "READ BY EYE AS A DIFFERENT-PAGE PAIR: the anchor is p.242 (spine on its RIGHT), the candidate's main page is the facing p.243 (spine on its LEFT) -- so the two crops are not even the same page, and their spine edges point opposite ways. Cropped and measured anyway rather than substituted, because the pair rule is pinned by Addendum 2; expect Gate B to reject it, and that rejection is the honest outcome for this pair.",
+   "dewarp": {
+    "anchor": [
+     3680,
+     3000
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     3600,
+     3000
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 55.0,
+   "n_anchor_words": 338,
+   "n_cand_words": 347,
+   "corr": 11,
+   "gut": 0,
+   "gate_b": false,
+   "reason": "gate B on the hand crop: corr=11 gut=0"
+  },
+  "en_coin_i": {
+   "set": "en_coin_i",
+   "lang": "eng",
+   "multiscale": true,
+   "anchor": "135312",
+   "candidate": "135316",
+   "gutter_edge": "left",
+   "side_source": "hand",
+   "note": "SIDE WAS INVERTED IN THE FIRST READ, caught by the overlay check: the anchor's target page is p.247 with the spine on its LEFT (the sliver at x<0.07 is p.246), not a left page with the spine on the right. The candidate holds p.246 large on the left and p.247 right of the fold; the crop takes p.247.",
+   "dewarp": {
+    "anchor": [
+     3460,
+     3000
+    ],
+    "anchor_method": "uvdoc",
+    "cand": [
+     1780,
+     3000
+    ],
+    "cand_method": "uvdoc",
+    "warnings": []
+   },
+   "mwh": 55.0,
+   "n_anchor_words": 463,
+   "n_cand_words": 241,
+   "corr": 24,
+   "gut": 3,
+   "gate_b": false,
+   "reason": "gate B on the hand crop: corr=24 gut=3"
+  }
+ },
+ "carried_over_four_set_run": [
+  {
+   "tag": "en_01",
+   "n_fit": 383,
+   "n_held": 85,
+   "mwh": 28.0,
+   "multiscale": false,
+   "selector": 6.168599624772924,
+   "selector_family": "quadratic",
+   "affine": 7.625112212195745,
+   "affine_family": "affine"
+  },
+  {
+   "tag": "en_02",
+   "n_fit": 385,
+   "n_held": 107,
+   "mwh": 28.0,
+   "multiscale": false,
+   "selector": 7.923248205354753,
+   "selector_family": "quadratic",
+   "affine": 4.176408365691941,
+   "affine_family": "affine"
+  },
+  {
+   "tag": "it_01",
+   "n_fit": 175,
+   "n_held": 48,
+   "mwh": 32.0,
+   "multiscale": false,
+   "selector": 9.314296623066639,
+   "selector_family": "quadratic",
+   "affine": 14.035346187421965,
+   "affine_family": "affine"
+  },
+  {
+   "tag": "de_01",
+   "n_fit": 88,
+   "n_held": 24,
+   "mwh": 29.0,
+   "multiscale": false,
+   "selector": 6.282963803967959,
+   "selector_family": "affine",
+   "affine": 6.282963803967959,
+   "affine_family": "affine"
+  }
+ ],
+ "gutter_word_diagnostic": {
+  "en_coin_b": {
+   "gutter_edge": "left",
+   "faceon": {
+    "n_words": 908,
+    "n_inner": 229,
+    "median_inner_conf": 93.530556
+   },
+   "oblique": {
+    "n_words": 602,
+    "n_inner": 160,
+    "median_inner_conf": 59.529083
+   }
+  },
+  "en_coin_c": {
+   "gutter_edge": "left",
+   "faceon": {
+    "n_words": 612,
+    "n_inner": 149,
+    "median_inner_conf": 90.846237
+   },
+   "oblique": {
+    "n_words": 351,
+    "n_inner": 91,
+    "median_inner_conf": 92.703995
+   }
+  },
+  "en_coin_d": {
+   "gutter_edge": "left",
+   "faceon": {
+    "n_words": 983,
+    "n_inner": 190,
+    "median_inner_conf": 89.796005
+   },
+   "oblique": {
+    "n_words": 559,
+    "n_inner": 159,
+    "median_inner_conf": 63.260986
+   }
+  },
+  "it_ferr_a": {
+   "gutter_edge": "right",
+   "faceon": {
+    "n_words": 79,
+    "n_inner": 17,
+    "median_inner_conf": 94.697372
+   },
+   "oblique": {
+    "n_words": 92,
+    "n_inner": 14,
+    "median_inner_conf": 93.949699
+   }
+  },
+  "en_coin_f": {
+   "gutter_edge": "left",
+   "faceon": {
+    "n_words": 612,
+    "n_inner": 92,
+    "median_inner_conf": 73.246964
+   },
+   "oblique": {
+    "n_words": 295,
+    "n_inner": 87,
+    "median_inner_conf": 85.378571
+   }
+  }
+ }
+}

@@ -2414,3 +2414,120 @@ against GT C2, no word-conservation violation on any subpage.**
   paragraph must not eject a body paragraph), word conservation, the
   header-covering bbox, XY-Cut placement, the floors keeping the re-OCR off sparse
   lettering, and the masking rules including never masking a nested figure.
+
+---
+
+## Multi-view Phase 1 — STEP 1 gate + STEP 2 headroom — 2026-08-18
+
+Phase 1 was greenlit on a **picture** (Phase 0's complementary-halves crops), never on a
+number. Advisor-ordered, this session deliberately runs the two cheapest questions **before
+writing any registration code**, because either can kill the build outright:
+
+1. **Does UVDoc survive a steeply oblique frame at all?** The whole "dewarp each view, then
+   register the rectified pages" route rests on it — UVDoc is trained on roughly frontal
+   document photos, and the oblique frame is the one carrying the gutter text we want.
+2. **How much is there to win?** OCR the dewarped **oblique** and the dewarped **face-on**
+   and count GT tokens the oblique recovers that the face-on misses. A per-region
+   "pick the best view" composite can never beat "best frame per region", so that count is
+   the **ceiling** any fusion can harvest. Near zero → registration is unwarranted, and
+   Phase 1 ends as a negative result the way the CLAHE spike did.
+
+Same 3 pages, same de-contamination (facing-page sliver cut at the spine valley *before*
+dewarp), same hand-keyed GT (`temp/gutter_clahe/gt_bands.json`) and the same
+recall-is-the-verdict discipline as the CLAHE spike. Probe: `temp/mv_phase1/headroom.py`.
+
+### STEP 1 — UVDoc on an oblique frame: PASSES (the route stays alive)
+
+All 6 frames (3 pages × {face-on, oblique}) dewarped with `method=uvdoc`, **no** fallback to
+classical, **zero** warnings. By eye the oblique rectifies to an upright, readable page —
+`temp/mv_phase1/skew_oblique_thumb.png` shows the left line-starts (*"Lines in the sand
+around us"*, *"The sea had made it!"*) crisp in exactly the region the face-on frame smears.
+The route is not dead; the registration question is now worth asking.
+
+### An incidental finding that had to be fixed first: the skew page now loads SIDEWAYS
+
+The first run scored **recall 0.022 on BOTH arms** of the skew page. Cause is not the dewarp:
+Tesseract **OSD errors out** on those two 4000×3000 frames (`method=osd_unavailable`), and
+since the 2026-07-18 orientation cascade this phone's EXIF 6/8 is *deliberately distrusted*,
+so the resolver keeps the raw landscape buffer and the page comes out rotated 90°. The CLAHE
+spike ran 2026-07-17 — **before** that change — which is why its cached `skew_dw.png` is
+upright. Pinned here through the cascade's own layer-1 escape hatch (`hint_rotate=90`).
+
+**This is a real risk for the multi-view capture mode, not a fixture quirk.** The 2026-07-18
+resolver was built around *landscape two-page spreads* (its fallback prior is literally "a
+book spread should be landscape"); a single-page multi-angle capture is **portrait**, and
+when OSD fails there is nothing left to catch it. Logged here rather than fixed, because the
+multi-view ingest path is unbuilt and will need its own orientation contract anyway.
+
+**Reproduction check (the reason to trust everything below):** with the hint, all three
+face-on arms reproduce the CLAHE spike's baseline outer-band recall **exactly** — skew 0.533,
+curl3 0.975, curl5 0.500 — and Phase 0's per-band confs to the decimal (curl3 80.9 / 91.2,
+curl5 34.3 / 71.0).
+
+### A scoring correction this measurement forced: the [0–.35] window is NOT cross-frame safe
+
+The CLAHE spike scored recall inside a generous width-**fraction** window, and that was
+correct there: CLAHE moves zero pixels, so both arms shared one geometry. Across two
+*different photographs* it silently changes what is being measured — a tilted camera spends
+more pixels on the near (gutter) side, so the same width fraction is a **different physical
+slice** in each frame. The size of the artefact:
+
+| page | oblique recall, window [0–.35] | oblique recall, **full page** |
+|---|---|---|
+| skew  | 0.044 | **0.933** |
+| curl3 | 0.200 | **0.925** |
+| curl5 | 0.704 | 0.630 |
+
+The window said the skew oblique had recovered 2 of 45 GT words while the crop plainly shows
+them; it was measuring geometry, not text. **Full-page recall is the headline** — it asks the
+GT README's own question ("did OCR recover these real words") with zero geometry dependence.
+The window numbers are kept only as continuity with the CLAHE row.
+
+### STEP 2 — the headroom (full-page recall of the hand-keyed gutter GT)
+
+| page | nGT | face-on | oblique | oblique-only | face-on-only | **union = ceiling** | **headroom** |
+|---|---|---|---|---|---|---|---|
+| skew  | 45 | 0.533 | 0.933 | **19** | 1  | **0.956** | **+0.422** |
+| curl3 | 40 | 0.975 | 0.925 | 0  | 2  | 0.975 | +0.000 |
+| curl5 | 54 | 0.574 | 0.630 | **14** | 11 | **0.833** | **+0.259** |
+
+**curl3's +0.000 is a construction zero, not evidence against fusion:** it is the declared
+no-headroom control (face-on already at 0.975), kept to hold N=3 honest. The two pages with
+actual headroom to measure both show a large one. Do not read this as "1 of 3".
+
+The oblique-only tokens are the distinctive gutter words, not filler — skew recovers
+`incalculable`, `retreating`, `rushing,`, `spellbinding`, `Holding`; curl5 recovers
+`discovered`, `safely;`, `mountain`, `years ago`.
+
+**Two controls, because a token-alignment recall can be gamed by luck:**
+
+- **Decoy recall** — each arm's OCR scored against the *other pages'* GT. It is the metric's
+  noise floor, and it is **near-identical between the arms** (skew 0.170 face-on vs 0.160
+  oblique; curl5 0.106 vs 0.082), so the *difference* between arms cannot be alignment luck.
+  Note the floor is not negligible at full page (0.05–0.17) — a headroom smaller than ~0.15
+  would not have been quotable.
+- **Sequence length** — the oblique's OCR is not simply longer (skew 353 vs 277 tokens, curl5
+  460 vs 490). On curl5 the winning arm has *fewer* tokens, so it is not winning by having
+  more chances to align.
+
+### Verdict: headroom is real → the registration work is warranted
+
+Fusion can win up to **+0.42 / +0.26** gutter-token recall on the two pages that have room to
+show it. That is the number Phase 0 could not produce, and it is far above the metric's noise
+floor. Proceed to the registration measurement (gutter-local, per 0b — a page-wide inlier
+count would pass on the flat middle and mean nothing).
+
+### Honest limits
+
+- **This cannot yet distinguish "fuse the views" from "just pick the oblique view".** The GT
+  covers gutter words only, so an arm is never charged for what it loses on the far side. The
+  oblique's far-side loss is visible only as conf ([.5–1] band: skew 51.6 vs face-on 77.2;
+  curl5 65.5 vs 87.8; curl3 80.1 vs 94.8) — and this project treats conf as screen, never
+  verdict. **A far-side GT band is now owed**, and it is what makes fusion's claim
+  falsifiable rather than assumed.
+- **N=2 effective** (curl3 is the control). Same single-page-oblique geometry throughout, all
+  English. The `testset/skewset_*` fixture is still owed and deliberately not curated yet —
+  nothing here is a shippable claim.
+- The gutter GT was keyed from the *face-on* dewarp. That is what makes it a fair test of the
+  oblique (the words were chosen without reference to it), but it also means GT coverage is
+  bounded by which lines were legible enough to key at all.

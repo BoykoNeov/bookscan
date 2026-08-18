@@ -38,6 +38,25 @@ artefact* (smear-tail fragments landing past x=.12), not shadow. Both gutter ban
 foreshortening; only severity differs. So the remaining pre-build deliverable is the
 `testset/skewset_*` fixture alone.
 
+**UPDATE 2026-08-18 — Phase 1 STARTED; its two pre-build questions are answered**
+(docs/RESULTS.md "Multi-view Phase 1 — STEP 1 gate + STEP 2 headroom"). Run before any
+registration code, because either could have killed the build:
+- **UVDoc survives a steeply oblique frame** (6/6 frames `method=uvdoc`, no fallback, no
+  warnings, upright by eye) → *dewarp-each-view-then-register* stays alive as the route.
+- **The headroom Phase 0 could only show as a picture is now a number:** full-page recall of
+  the hand-keyed gutter GT, oblique-vs-face-on, union ceiling **+0.422** (skew) and **+0.259**
+  (curl5); curl3's +0.000 is the declared no-headroom control, not a counter-example. Decoy
+  and sequence-length controls rule out alignment luck.
+- **Scoring correction:** the CLAHE spike's `[0-.35]` width-fraction window is **not
+  cross-frame safe** (a tilted view spends more pixels on the near side, so the same fraction
+  is a different physical slice). Full-page recall is the headline from here on.
+- **Newly owed GT:** a **far-side** band. Gutter-only GT cannot distinguish *fuse the views*
+  from *just pick the oblique view*, because no arm is ever charged for what it loses on the
+  far side. This is the measurement that makes fusion's claim falsifiable.
+- **Incidental risk logged:** the 2026-07-18 orientation cascade mis-orients these frames
+  (OSD errors, EXIF distrusted, landscape-spread prior) — a single-page multi-angle capture
+  is portrait, so the multi-view ingest path needs its own orientation contract.
+
 ## What multi-view actually buys (do not oversell)
 
 Multi-view's honest value is **recovering gutter text that any single view

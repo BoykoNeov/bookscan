@@ -3059,8 +3059,8 @@ Decoy floors (each arm scored against the other pages' GT) run 0.004–0.134 aga
 0.365–0.985, so the metric is separating signal from noise everywhere except where noted below.
 
 **A1 — "v5 raises gutter recall on pages that have headroom": PASS, by 0.001, under one reading
-of two.** Mean gutter sequence Δ over the win cases `{en_01, it_01}` is **+0.051** against a bar
-of > +0.05, and is strictly positive on 2 of 2. That is the addendum's bucketing, which was
+of two.** Mean gutter sequence Δ over the win cases `{en_01, it_01}` is **+0.0509** against a bar
+of > +0.05 -- a margin of **+0.0009** -- and is strictly positive on 2 of 2. That is the addendum's bucketing, which was
 pre-committed the same day *before* any scoring and is the more specific text, so it governs.
 
 But A1's own body says "the headroom pages (**triage proxy > 0**)", and by that literal rule all
@@ -3070,7 +3070,7 @@ pre-registration is read. Both numbers are reported here rather than the flatter
 honest summary of A1 is *"positive on the two win pages, one of them barely, and the headline
 depends on a bucketing decision worth more than the effect."*
 
-**A2 — "the veto holds the far side": PASS, cleanly.** Mean far-side bag Δ is **+0.0285** against
+**A2 — "the veto holds the far side": PASS, cleanly.** Mean far-side bag Δ is **+0.028** against
 a bar of ≥ −0.05, and **no page loses anything at all** (worst case 0.000, bar 0.10). The far
 side also improves on the *sequence* metric on all four pages (+0.060 / +0.092 / +0.066 /
 +0.037), which A2 did not ask for. The dictionary veto is doing its job.
@@ -3091,8 +3091,8 @@ policy that swallows the oblique reading indiscriminately". It did:
 
 The two together say what happened. v5 did **not** throw the words away — 86.5% of the band's
 GT tokens are still somewhere in its output. It destroyed their **order**. That is the split the
-bag metric was printed for, and it is the first time it has separated the two failure modes on
-real data.
+bag metric was printed for, and here it is doing exactly the work it was added for -- the verdict
+metric alone would have reported a collapse without saying which kind.
 
 **No pre-registered prediction charges this.** A1 excludes `en_02` by the addendum's bucketing;
 A2 looks only at the far side, and only at bag recall. A policy can therefore wreck the reading

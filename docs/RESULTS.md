@@ -2987,3 +2987,197 @@ uses — they rank sets, they do not score arms. The next session's job is: key 
 far-side bands on the four measurement fixtures in the band definition `gt_far.json` already
 uses (text-column coordinates), then **one** scoring run — v5 plus the GT-free Claim B sweep —
 reported against the pre-registered pass conditions, pass or fail.
+
+## Multi-view Phase 1 — the pre-registered run: v5 does not replicate — 2026-08-18
+
+**One scoring run, as pre-registered, and it is mostly a negative result.** The band ground
+truth for all four page-pairs was hand-keyed and committed on its own (`acab013`,
+`testset/gt/skewset_bands.json`) *before* the scorer was pointed at it; then v5 was scored
+once, plus the GT-free Claim B sweep. Nothing else was run on these pages: **v1–v4 were never
+computed**, which is the option `docs/plans/multiview-phase1-prereg.md` spent in advance.
+
+Read this row with that file open. The short version: **A1 passes by one thousandth, and only
+under one of the two readings of its own text; A2 passes cleanly; A3 passes on a page too small
+to resolve it; B1 passes, B2 fails, and B3's answer turns out to sit one step upstream of where
+the prediction looked.** And the fixture's guard case fired hard, in a place no pre-registered
+prediction charges.
+
+### Preparation and what it cost
+
+Per set, anchor and candidate: orientation pinned → the hand-read page crop from
+`testset/skewset_manifest.json` → UVDoc dewarp (`temp/mv_phase1b/prep.py`). **UVDoc held on all
+eight frames, obliques included** — `method=uvdoc`, zero warnings — which is STEP 1's blocking
+gate replicating on a new book and new viewpoints without being asked to.
+
+Bands are `gt_far.json`'s definition reused verbatim, not re-derived: text-column coordinates
+(edges = 2nd/98th percentile of the anchor's word boxes), `[.12–.24]` of the column width inward
+from an edge, gutter on the spine side and far on the outer one. Geometry in
+`temp/mv_phase1b/band_geometry.json`; the drawn thumbnails were checked by eye before keying,
+because three of the four sets are the mirror of the original three and a side error would have
+keyed the far band as the gutter.
+
+GT size, which every delta below has to be read against:
+
+| page | lang | gutter tokens | far tokens |
+|---|---|---|---|
+| `en_01` | eng | 91 | 115 |
+| `en_02` | eng | 104 | 130 |
+| `it_01` | ita | 77 | 60 |
+| `de_01` | deu | **20** | 27 |
+
+**Two keying decisions, both fixed in the GT file before a token was typed.**
+
+*The anchor-primary rule.* The gutter GT is keyed on the frame that reads that band **worst** —
+that is what makes the band interesting — so a word the anchor's photo renders illegible never
+enters GT, and those are exactly the words a merge exists to recover. The rule adopted: key
+anchor-primary (like-for-like with the original three), and anything only the candidate could
+resolve goes in a separate `gutter_assisted` list the verdict never touches. Across four pages
+that list holds **one token** — the place name *Pocòl*, which the anchor renders *Podòl*. So the
+deflation this rule exists to expose is, on these pages, negligible.
+
+*The band sits outside the smear, and was not moved.* The `[.12–.24]` ring is one band-width IN
+from the column edge; the badly compressed text is in the innermost `[0–.12]` strip, which this
+definition excludes — as it excluded it on the original three. On these pages the anchor is
+therefore largely legible inside the ring. **The band was not widened to chase the smear**;
+that would have destroyed the like-for-like replication the fixture exists for. It is recorded
+as a stated limit on what A1 could ever show here, not repaired by moving the target.
+
+### Claim A — v5, against the two single views
+
+Gutter = the win (sequence recall, the pre-registered verdict metric). Far side = the guard
+(bag recall, per A2). Order-free bag recall is printed beside the gutter as the diagnostic it
+was built to be.
+
+| page | role | n gut / far | GUTTER face-on | GUTTER v5 | **Δ seq** | Δ bag | FAR face-on | FAR v5 | **Δ bag** |
+|---|---|---|---|---|---|---|---|---|---|
+| `en_01` | win | 91 / 115 | 0.857 | 0.868 | **+0.011** | −0.011 | 0.887 | 0.939 | **+0.052** |
+| `en_02` | guard | 104 / 130 | 0.865 | 0.365 | **−0.500** | −0.039 | 0.923 | 0.985 | **+0.062** |
+| `it_01` | win | 77 / 60 | 0.831 | 0.922 | **+0.091** | +0.078 | 0.950 | 0.950 | **0.000** |
+| `de_01` | control | 20 / 27 | 0.800 | 0.800 | **0.000** | 0.000 | 0.926 | 0.926 | **0.000** |
+
+Decoy floors (each arm scored against the other pages' GT) run 0.004–0.134 against recalls of
+0.365–0.985, so the metric is separating signal from noise everywhere except where noted below.
+
+**A1 — "v5 raises gutter recall on pages that have headroom": PASS, by 0.001, under one reading
+of two.** Mean gutter sequence Δ over the win cases `{en_01, it_01}` is **+0.051** against a bar
+of > +0.05, and is strictly positive on 2 of 2. That is the addendum's bucketing, which was
+pre-committed the same day *before* any scoring and is the more specific text, so it governs.
+
+But A1's own body says "the headroom pages (**triage proxy > 0**)", and by that literal rule all
+four pages qualify — `de_01`'s gain is 7 tokens, which is greater than zero. **Under the literal
+reading the mean is −0.100 and A1 FAILS.** The verdict flips entirely on which sentence of the
+pre-registration is read. Both numbers are reported here rather than the flattering one; the
+honest summary of A1 is *"positive on the two win pages, one of them barely, and the headline
+depends on a bucketing decision worth more than the effect."*
+
+**A2 — "the veto holds the far side": PASS, cleanly.** Mean far-side bag Δ is **+0.0285** against
+a bar of ≥ −0.05, and **no page loses anything at all** (worst case 0.000, bar 0.10). The far
+side also improves on the *sequence* metric on all four pages (+0.060 / +0.092 / +0.066 /
++0.037), which A2 did not ask for. The dictionary veto is doing its job.
+
+**A3 — "the no-headroom control stays flat": PASS, but unresolvable at this size.** `de_01`'s
+gutter Δ is exactly 0.000, inside ±0.05. That page is figure-heavy with a single prose block, so
+its gutter GT is **20 tokens** — one token is 0.05 of recall. A3's window is therefore exactly
+one token wide here: the prediction cannot distinguish "flat" from "one word either way". It
+passes as written and should not be quoted as evidence of anything finer.
+
+### The guard case fired, in a place no prediction charges
+
+`en_02` is the set the pre-registration named in advance as "the set most likely to expose a
+policy that swallows the oblique reading indiscriminately". It did:
+
+* gutter **sequence** recall 0.865 → **0.365**, a loss of half the band;
+* gutter **bag** recall 0.904 → 0.865, a loss of four points.
+
+The two together say what happened. v5 did **not** throw the words away — 86.5% of the band's
+GT tokens are still somewhere in its output. It destroyed their **order**. That is the split the
+bag metric was printed for, and it is the first time it has separated the two failure modes on
+real data.
+
+**No pre-registered prediction charges this.** A1 excludes `en_02` by the addendum's bucketing;
+A2 looks only at the far side, and only at bag recall. A policy can therefore wreck the reading
+order of the very band the effort is about and still pass all three predictions. That is a hole
+in the pre-registration, found by the fixture doing its job, and it is recorded as a defect of
+the *predictions*, not explained away. Any future version of A1/A2 needs a term that charges
+gutter order.
+
+For the record the veto is not inert on that page: the oblique alone scores 0.308 sequence /
+0.635 bag in that band, so v5's 0.365 / 0.865 is a large improvement **on the oblique** — and
+still a rout compared with simply keeping the face-on frame.
+
+**Verdict on shipping: v5 is not shippable on this evidence.** The pre-registration said "A1 or
+A2 failing is a real negative result and will be reported as one". Neither failed outright, and
+the outcome is arguably worse than a clean failure: a policy that wins about 0.05 on the pages
+built to favour it, wins nothing on the control, and loses half the gutter's reading order on
+the one page built to trap it. The word merge stays out of the pipeline.
+
+### Claim B — the transform family (no GT involved)
+
+Held-out |Δy|: fit on non-gutter correspondences, scored on gutter ones, so the model must
+extrapolate into the band that matters. `merge.py`'s selector logic is reused verbatim with one
+change — its inner band is hard-coded to `x < 0.40·W`, true of the original three pages and false
+of three of these four, so the *side* is a parameter (`temp/mv_phase1b/score.py::_fit`).
+
+| page | fit / held | selector | family it picked | fixed affine | bar (mwh/2) |
+|---|---|---|---|---|---|
+| `en_01` | 383 / 85 | 6.17 px | quadratic | 7.63 px | 14.0 px |
+| `en_02` | 385 / 107 | 7.92 px | quadratic | **4.18 px** | 14.0 px |
+| `it_01` | 175 / 48 | 9.31 px | quadratic | 14.04 px | 16.0 px |
+| `de_01` | 88 / 24 | 6.28 px | affine | 6.28 px | 14.5 px |
+
+**B1 — "fixed affine is under bar": PASS, 4/4.** Every set is under half a median word height.
+With N=4, "≥ 80% of sets" is a 4-of-4 bar, and it is met.
+
+**B2 — "fixed affine is no worse than the selector": FAIL.** Mean held-out |Δy| is **8.03 px for
+affine against 7.42 px for the selector**, so the mean condition fails. The second half of B2
+holds — affine loses by more than 2 px on exactly one set (`it_01`, +4.73) — but B2 required
+both. **Per the pre-registration: the selector stays, and STEP 3's debt is recorded as
+settled-negative.** The weak link named in STEP 3 is not closed; it is measured and kept.
+
+Worth one sentence because it is the mechanism: affine is not uniformly worse. It is much
+*better* on `en_02` (4.18 vs 7.92), where the selector chose quadratic on the non-gutter subset
+and that choice extrapolated badly; it is much worse on `it_01` (14.04 vs 9.31), the page with
+real curl. The selector's advantage is an average over disagreeing pages, not a consistent win.
+
+**B3 — "scale change is where it breaks, if it breaks": measured, and the break is one step
+earlier than the prediction assumed.** None of the four GT-keyed sets is multi-scale, so B3
+cannot come out of the sweep above. It can still be measured, because a transform family can
+only be compared where enough word correspondences exist to fit and hold one out — and that
+needs no page crop and no GT. Gate B's own instrument, re-run on all four multi-scale sets with
+the **corrected** anchors (`temp/mv_phase1b/b3.py`; the existing `wordstream.json` numbers could
+not be quoted because they assume frame 0):
+
+| | multi-scale (`en_coin_f/g/h/i`) | single-scale (`en_coin_a`–`e`) |
+|---|---|---|
+| sets with ANY frame pair clearing Gate B | **2 / 4** | 4 / 5 |
+| best pair's correspondences | 60–180 | 174–287 |
+| gutter correspondences on that best pair | 3, 20, 24, 3 | 1–74 |
+
+So **the multi-scale failure is an alignment failure, not a transform-family failure**: on the
+same book, the same curl and the same instrument, changing scale halves the fraction of sets
+that can be fitted at all, and starves the gutter of correspondences in particular. B3 predicted
+a scale finding rather than a family finding and got one — just upstream of the transform, at
+the step that feeds it.
+
+One caveat that keeps that table honest: it uses `wordstream.py`'s **automatic** page crop, the
+route this fixture rejected for measurement, because Gate B was measured with it and the
+comparison has to be like-for-like. On that route `en_coin_a` shows 11 gutter correspondences —
+one under the floor — where the hand crop it actually entered the fixture with shows 13. The
+floor is marginal and instrument-sensitive; the multi-scale gap above is much larger than that
+sensitivity, which is why it is quotable.
+
+### Limits, stated
+
+* **The band excludes the worst of the smear** (see above). A1 was measured where the anchor is
+  already largely legible, which caps how much any merge could have won. Not repaired, because
+  repairing it would have voided the replication.
+* **N=4, and one of the four is a 20-token control.** A1's headline rests on two pages, one of
+  which moves by 0.011.
+* **No Cyrillic.** The batch delivered English, Italian and German; v5's dictionary veto is
+  untested on Cyrillic and no claim here extends to it.
+* **The keying is one reader's judgement, by eye,** with band-membership calls at the edges.
+  Recall is scored full-page, so a word keyed slightly off-band is still a real printed word the
+  metric can fairly ask about — but the token counts, not the third decimal, are the resolution.
+* **Exploratory, and labelled as such:** the gutter *bag* column and the far-side *sequence*
+  numbers are diagnostics, not pre-registered verdicts. The `gutter_assisted` list (one token)
+  was never folded into any score.

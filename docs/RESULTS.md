@@ -3636,6 +3636,15 @@ emitted as standalone `<p class="caption">` — exactly the shape the eval grade
   is in exact GT order. Recorded, not patched.
 * `en_coins_01`-left's single segmentation miss is its footnote line, which the
   detector does not find at all.
+* **The caption-side numbering guard has an unmeasured cost.** It reverses an
+  existing test: on a subpage where any caption is numbered, an *unnumbered*
+  caption block no longer pairs at all. So a page mixing numbered figure captions
+  with one genuinely unnumbered caption loses that one pair — a case that does
+  not occur anywhere in this corpus (which is what the five byte-identical
+  fixture reports prove), so the cost is **unmeasured, not absent**. It is priced
+  deliberately: the guard is what stops a mistyped `Description:` label from
+  claiming a plate, and a missed pair is an abstention while a wrong pair prints
+  the wrong words under a photograph.
 
 Suite **383 green** (was 376): +7 in `test_figure_grouping.py` covering the
 side-set shape, its print requirement, the de_01 sidebar rejection, the detached
@@ -3742,7 +3751,17 @@ re-labelled the page photo as the sidebar.
   block 7 of BOTH `de_01` pages into pictures — the icon panel on the left and
   the English translation column on the right. The decision is now keyed on
   `(page, id)`, with a regression test.
+* **The seam with caption↔figure grouping is latent, not exercised.** Stage 07
+  pairs captions first and runs this pass second, so a block can be paired as a
+  caption and *then* converted to a picture. Nothing in the 326-block corpus is
+  both — a convertible caption would need a printed `Fig. NN` *and* confidence
+  under 0.75× reference *and* ≥ 8 words. Checked and pinned rather than assumed:
+  the association is recorded **only on the caption** (`Block.figure_ref` →
+  figure; the figure's `figure_number` is a number read off the photo, not a
+  caption id), so clearing the caption side leaves nothing dangling, and Stage
+  08's pair resolver drops the converted block on both counts — its figure
+  renders uncaptioned instead of bound to a picture.
 
-Suite **394 green** (was 383): +11 in `test_unreadable_panel.py`, most of them
+Suite **397 green** (was 383): +14 in `test_unreadable_panel.py`, most of them
 about the pass staying silent — on ordinary text, on a uniformly bad scan, on
 fragments, on headers/figures/tables, and on the page-scoped-id case.

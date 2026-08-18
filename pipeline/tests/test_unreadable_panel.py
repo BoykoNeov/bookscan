@@ -12,7 +12,9 @@ and 57.5 against a document median of 92.3).
 from __future__ import annotations
 
 from pipeline import unreadable_panel as UP
-from pipeline.page_model import BBox, Block, BlockType, Word
+from pipeline.page_model import (BBox, Block, BlockRef, BlockType, DocPage,
+                                 PairSource, Word)
+from pipeline.stage08_render import _caption_bindings
 
 
 def _blk(bid: int, btype: BlockType, conf: float, n: int = 20,
@@ -130,3 +132,69 @@ def test_median_not_mean_so_one_clean_word_cannot_rescue_a_panel():
 def test_resolve_params_ignores_unknown_keys():
     p = UP.resolve_params({"conf_ratio": "0.5", "nonsense": 1})
     assert p["conf_ratio"] == 0.5 and set(p) == set(UP.DEFAULTS)
+
+
+# --------------------------------------------------------------------------
+# The seam with caption<->figure grouping (pipeline/figure_grouping.py)
+# --------------------------------------------------------------------------
+# Stage 07 pairs captions to figures FIRST and runs this pass AFTER, so a block
+# can be paired as a caption and then converted to a picture. Nothing in the
+# 326-block corpus is both (a convertible caption needs a printed "Fig. NN" AND
+# median confidence under 0.75x reference AND >= 8 words), so this is a latent
+# seam rather than a live defect — which is exactly why it wants a test.
+
+
+def test_a_live_pairing_dangles_nowhere_because_figure_ref_is_one_directional():
+    """THE POINT: the association is recorded ONLY on the caption
+    (``Block.figure_ref`` -> figure). The figure carries no back-pointer — its
+    ``figure_number`` is a number read off the photo, not a caption id — so
+    clearing the caption side leaves nothing stale behind. Recorded here so the
+    next person does not have to re-derive it from the schema."""
+    fig = Block(id=3, type=BlockType.FIGURE,
+                bbox=BBox(x=0, y=0, w=200, h=200), reading_order=0)
+    cap = _blk(9, BlockType.CAPTION, 41.5, n=30).model_copy(update={
+        "caption_number": 96,
+        "figure_ref": BlockRef(page_id="pg", block_id=3),
+        "pair_source": PairSource.GEOMETRY,
+    })
+    sc = UP.scan([_clean_page() + [fig, cap]])
+    out = UP.apply_to_blocks([fig, cap], sc, 0)
+
+    assert out[0] == fig                          # the figure side is untouched
+    assert out[1].figure_ref is None and out[1].pair_source is None
+    assert out[0].model_dump().get("caption_ref", "absent") == "absent"
+
+
+def test_a_converted_caption_stops_claiming_its_figure_in_the_renderer():
+    """The end-to-end consequence: Stage 08 resolves pairs by scanning for
+    CAPTION blocks that carry a figure_ref, so the converted block drops out on
+    both counts and its figure renders uncaptioned rather than bound to a
+    picture."""
+    fig = Block(id=3, type=BlockType.FIGURE,
+                bbox=BBox(x=0, y=0, w=200, h=200), reading_order=0)
+    cap = _blk(9, BlockType.CAPTION, 41.5, n=30).model_copy(update={
+        "figure_ref": BlockRef(page_id="pg", block_id=3),
+        "pair_source": PairSource.GEOMETRY,
+    })
+    page = DocPage(page_id="pg", source_spread="page_001", subpage="single",
+                   width=200, height=200, image_asset="document_assets/pg.png",
+                   blocks=[fig, cap])
+
+    before, bound = _caption_bindings(page, [fig, cap])
+    assert before == {3: cap} and bound == {9}    # paired before the pass
+
+    sc = UP.scan([_clean_page() + [fig, cap]])
+    conv = UP.apply_to_blocks([fig, cap], sc, 0)
+    after, bound_after = _caption_bindings(page, conv)
+    assert after == {} and bound_after == set()   # and claims nothing after it
+
+
+def test_reading_order_survives_the_conversion():
+    """A converted panel keeps its slot — the 2026-07-18 note is explicit that
+    the sidebar's leftmost-first position is already CORRECT, so this pass must
+    change typing and nothing else."""
+    page = _clean_page() + [_blk(9, BlockType.OTHER, 41.5, n=30)]
+    sc = UP.scan([page])
+    out = UP.apply_to_blocks(page, sc, 0)
+    assert [b.reading_order for b in out] == [b.reading_order for b in page]
+    assert out[-1].reading_order == 9 and out[-1].bbox == page[-1].bbox

@@ -337,3 +337,55 @@ first time. Recorded here so the row cannot be read as widening-until-it-passes.
 remain off-limits on every page of this fixture, including the sets added here.
 No GT is keyed, read, or needed. Nothing about the merge policy is re-measured:
 this is the transform family alone.
+
+### Amendment to Addendum 2 — the cheap screen cannot define the population (same day, still before any widened fit)
+
+Addendum 2 item 1 named the automatic-crop word-stream screen as the instrument
+that decides eligibility, on the precedent that the gates were reported on it.
+That screen was then re-run on all 20 sets with the corrected anchors and the
+`anchors.json` pair rule (`temp/mv_phase1c/screen.py`, `screen.json`) — and it
+**disagreed with the hand crop, at the binding floor, on half the sets where both
+instruments exist**:
+
+| set | screen (corr / gutter) | hand crop (corr / gutter) | screen verdict |
+|---|---|---|---|
+| `en_coin_e` (`en_01`) | 287 / 74 | 326 / 14 | pass |
+| `en_coin_a` (`en_02`) | 283 / **11** | 260 / 13 | **FAIL** |
+| `it_ferr_g` (`it_01`) | 146 / 52 | 94 / 22 | pass |
+| `de_ferr_a` (`de_01`) | 85 / **11** | 120 / 12 | **FAIL** |
+
+Two of the four sets the scoring run actually measured on hand crops — and
+published — do not clear the screen. The gutter count is the binding constraint
+(≥ 12) and the screen misses it by one on both. It also over-counts wildly in the
+other direction (74 against 14 on `en_coin_e`). The `docs/RESULTS.md` row already
+recorded a one-set instance of this ("the floor is marginal and
+instrument-sensitive"); at four sets it is not marginal, it is the instrument.
+
+A rule that excludes two of the fixture's own published sets is not a population
+rule. **Item 1 of Addendum 2 is replaced:**
+
+> **Every set that passes Gate A is hand-cropped, and Gate B is evaluated ONLY on
+> the hand crop.** Gate A (orientation, `gates.json`) is unaffected by the anchor
+> correction and stands as committed: 18 of the 20 sets pass; `it_ferr_b` and
+> `it_ferr_e` do not, and are out. Four of the 18 already have hand crops from the
+> scoring run and are carried over unchanged. The remaining **14 are cropped now**.
+
+Why this direction and not a margin: widening the screen's floor by "the largest
+observed disagreement" would mean picking a number after seeing which sets sit
+just under it, which is the one thing Addendum 2 exists to prevent. Hand-cropping
+every Gate-A set removes the choice instead of tuning it — it costs 28 more crop
+readings and no ground truth, and it cannot be steered toward a result because no
+transform has been fitted yet on any of them.
+
+**The screen's numbers are kept and published anyway**, as what they now are: a
+measurement of how badly a frame-relative automatic crop misreports gutter
+correspondences. That is a finding about the instrument the gates were reported
+on, and it belongs in the row.
+
+**One consequence for item 8's "the side is never guessed":** the screen's `side`
+is a real measurement only where it detected a gutter on the anchor. On six sets
+it did not (`it_ferr_e`, `en_coin_c`, and the four multi-scale sets) and returned
+its single-page fallback, which is a constant, not a reading. For those sets the
+spine side is **hand-read off the same grid sheet as the crop box and recorded
+per set**; the spine-side assertion on the held-out band still runs for every set,
+and any set whose hand-read side contradicts a screen-detected side is reported.

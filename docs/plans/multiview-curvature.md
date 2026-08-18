@@ -57,6 +57,31 @@ registration code, because either could have killed the build:
   (OSD errors, EXIF distrusted, landscape-spread prior) — a single-page multi-angle capture
   is portrait, so the multi-view ingest path needs its own orientation contract.
 
+**UPDATE 2026-08-18 (later the same day) — Phase 1 has a WORKING TEXT MERGE, measured.**
+The route changed from a pixel composite to a **word merge**: matched words pin the geometry
+to line accuracy (held-out median 5.2 / 5.4 / 21.3px against a half-word-height bar), so a
+word only the oblique view read can be mapped into the anchor page and inserted. Policy: the
+higher-confidence reading wins each contested slot, but a valid dictionary word is never
+traded for a non-word (`second_opinion`'s gate, inverted into a veto). Gutter recall
+**+0.244 / −0.025 / +0.074**; far side flat on two pages, −0.047 on the third. Roughly 58% /
+29% of the measured ceiling harvested. Full detail + limits in docs/RESULTS.md STEP 3/4.
+
+**Phase 1 is NOT shippable and the blocker is data, not code.** Three separate open items all
+resolve to the same missing input:
+1. five merge policies were compared on the same 3 pages that hold the GT, so "this policy is
+   best" is an N=3 hypothesis — **pre-register it on unseen pages**;
+2. the far-side guard was keyed where the face-on reads *best*, so its zero-loss result is
+   softer than it looks;
+3. the transform-family selector is the weak link (it took a 97%-of-bar model on curl5).
+→ **The `testset/skewset_*` fixture is now the critical path.** Owner ask: 3–5 strong-curl
+books, a curl-severity range, and the non-Latin scripts (Bulgarian, Italian, German), shot as
+multi-angle sets. Nothing was curated from the scratch curl set on purpose — banking it would
+look like a third of a deliverable.
+
+**Nothing is wired into the pipeline.** Stages 00–03 have no multi-view capture mode, the
+schema has no source-frame field (Stage 06 patch mode needs one to know which dewarp to crop
+from), and the orientation resolver mis-orients this capture geometry today.
+
 ## What multi-view actually buys (do not oversell)
 
 Multi-view's honest value is **recovering gutter text that any single view

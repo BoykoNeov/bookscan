@@ -2699,3 +2699,33 @@ curl5's. Most of the remainder on curl5 is what the veto deliberately declines.
   have no multi-view capture mode, the schema has no source-frame field, and Stage 06's patch
   mode would need one to know which dewarp to crop from. The orientation resolver would also
   have to be fixed first (see the STEP 1 note) — it mis-orients these captures.
+
+#### Follow-ups on the two soft spots above
+
+**The ordering drop is NOT the line-clustering constant — hypothesis tested and rejected.**
+The obvious suspect: `to_lines` clusters at 0.6 × median word height = 43px on skew, and the
+selected transform's p90 line-placement error is 36px, so tolerance and error are the same
+size and could plausibly be merging or splitting lines. Swept as a diagnosis (never to pick a
+value — choosing a constant off these three pages is the selection-on-test trap):
+
+| tolerance | skew gutter | skew far |
+|---|---|---|
+| 0.30 × wh (21px) | 0.800 | 0.417 |
+| 0.45 × wh (32px) | 0.800 | 0.417 |
+| **0.60 × wh (43px, current)** | 0.778 | **0.528** |
+| 0.80 × wh (57px) | 0.689 | 0.528 |
+
+Far-side ordering does not recover at any setting — it gets **worse** when tightened, and the
+current value already sits at the top of the range. So skew's ordering loss has some other
+cause (the selected transform there is a *similarity* with median |Δx| 63px, which is the next
+thing to look at). Recorded as a rejected hypothesis so a later session does not "fix" the
+constant. A GT-free tolerance derived from line pitch was tried in the same run and is **not
+usable as written** — the pitch estimator returns 26px on a page with 71px words, which is not
+a line spacing; it needs a real implementation before it can be proposed.
+
+**The far-side guard is weaker than its zero reads.** That band was keyed where the face-on
+frame is at its *best*, so the words most at risk from imported oblique junk — the ones the
+face-on read only marginally — are underrepresented in it by construction. The flat 0.000 on
+skew and curl3 should be read as "no loss among words the face-on read confidently", not as
+"the guard passed". Keying a matched band of *marginal* far-side words is what would make the
+guard as sharp as its name suggests.

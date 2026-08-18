@@ -250,3 +250,90 @@ recorded as settled-negative.
 
 Anything measured on these pages that is *not* in this document is exploratory
 and must be labelled as such in RESULTS.
+
+---
+
+## Addendum 2 — widening Claim B's population (2026-08-18, written AFTER the scoring run, BEFORE any widened number exists)
+
+The scoring run measured Claim B on **four** sets. This document says Claim B
+"runs on **every** set that passes gates A–C, not only the GT-keyed ones", and
+the `docs/RESULTS.md` row declares the shortfall in those terms: the four
+GT-keyed sets were used because only they had a valid page crop, and hand-reading
+crops for the rest would have competed with the GT budget. B2's FAIL is therefore
+a comparison of two four-set means, and B1's "≥ 80% of sets" collapsed to a
+4-of-4 bar.
+
+This addendum closes that deviation. **It is post-hoc in timing and
+pre-registered in specification:** the population was always "every set that
+passes gates A–C", and the B1/B2/B3 bars above are untouched. But B2's failure at
+N=4 is already known, so every remaining degree of freedom is outcome-informed
+and is fixed here, in writing, before the widened numbers exist. Committed before
+the first widened fit is run.
+
+**1. The instrument that defines eligibility: the automatic-crop word-stream
+screen** (`temp/mv_batch18/wordstream.py`), re-run with the **corrected anchors**
+of `anchors.py` rather than the superseded frame-0 assumption. This is the
+instrument Gate B was defined, measured and reported on for all 20 sets, so it is
+the one that decides who is eligible. Every set it excludes is published with its
+numbers, so the reader can see what was dropped rather than infer it.
+
+**2. The pair rule: the anchor and candidate of `anchors.json`** — anchor = the
+frame reading the most dictionary-valid tokens, candidate = the frame
+contributing the most valid tokens the anchor misses. That is the pair the four
+measured sets used. It is **not** `b3.py`'s "any frame pair clearing Gate B",
+which is a different rule answering a different question (B3's "can this set be
+fitted at all"), and which must not be silently borrowed here.
+
+**3. Eligibility is CONFIRMED on the hand crop, and attrition is published.** A
+set that clears the screen but misses Gate B's floor (**≥ 40 correspondences,
+≥ 12 of them in the gutter band**) on its own hand crop is **excluded**, and
+reported with both numbers. This is expected, and the direction is known in
+advance: on the four measured sets the hand crop raised total correspondences
+1.4–3.8× and **lowered** gutter correspondences in three of four (67→14, 38→22,
+32→12). The screen therefore **over-counts the binding constraint**. Attrition at
+the gutter floor shrinks the population and makes B1's "≥ 80% of sets" easier to
+satisfy; that is a bias of this procedure and is stated in the row, not hidden.
+The reverse error is live too — a set the screen rejects on *total* count could
+clear 40 on a hand crop — and is accepted as the price of using the screen the
+gates were reported on.
+
+**4. A set that passes Gate B on its hand crop but cannot be split into a fit and
+a held-out half** (`score.py`'s existing floor: ≥ 12 fit, ≥ 5 held-out
+correspondences under the inner-24%-of-span rule) is reported as
+**eligible-but-not-fittable**, with its counts, and contributes to no mean. The
+split rule is reused verbatim; it is not re-tuned to admit a set.
+
+**5. The multi-scale sets ENTER B1 and B2's population** if they clear the screen
+and the hand-crop confirmation, **and are additionally broken out for B3**. This
+is the literal reading of the bars above — B1/B2 say "over all sets", B3 says the
+multi-scale four are "reported separately" — and it is fixed now because it is
+the choice most available for shopping after the fact.
+
+**6. The widened population is the authoritative Claim B verdict.** The four-set
+result stands as a published subset, not as a competing answer. The consequence
+above applies unchanged: **if B1 and B2 both hold on the widened population, the
+blind inner-band selector IS replaced by a fixed affine transform** in the merge's
+transform choice, and STEP 3's debt is closed. If B2 fails again, the selector
+stays and the debt remains settled-negative. No third option is reserved.
+
+**7. Widening is not assumed to favour affine.** B2's second clause ("affine
+loses by more than 2 px on **no more than one** set") was nearly vacuous at N=4
+and gets *harder* as N grows; B1's "≥ 80% of sets" becomes a real bar for the
+first time. Recorded here so the row cannot be read as widening-until-it-passes.
+
+**8. Mechanics that protect the number rather than the story.**
+   * The gutter **side** of every new set is derived from the screen's own `side`
+     (`target_page: left` → the gutter is the **right** edge), never guessed. The
+     held-out band's x-range is printed as a fraction of page width and
+     **asserted to be spine-side before any fit runs** — a side error silently
+     turns the held-out set into the *outer* margin, and the fit still converges.
+   * The widened run writes to a **new** directory (`temp/mv_phase1c`).
+     `temp/mv_phase1b` is frozen by its own docstring: GT was keyed on those exact
+     files, and re-running its `prep.py` would overwrite them.
+   * `score.py`'s `_fit` — the incumbent selector and the fixed-affine
+     challenger — is reused **by import, unmodified**.
+
+**9. What this addendum does NOT re-open.** Claim A is closed. The v1–v4 policies
+remain off-limits on every page of this fixture, including the sets added here.
+No GT is keyed, read, or needed. Nothing about the merge policy is re-measured:
+this is the transform family alone.

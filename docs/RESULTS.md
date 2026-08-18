@@ -2600,3 +2600,102 @@ Phase 2 (developable-surface unwrap) stays on the books.
 reading is unfalsifiable while no arm is charged for what it loses on the far side — and the
 conf screen says the oblique is worse there on all three pages. Keying that band is the next
 step; it does not block building the merge, it blocks quoting a number as a win.
+
+### STEP 4 — the word merge, measured on BOTH bands — 2026-08-18
+
+The merge builds only from mechanisms this repo already ships: the difflib alignment
+`second_opinion.find_disagreements` uses, the transform from STEP 3 (family chosen by the
+blind inner-band procedure, so no GT is consulted and it is a runtime-legal choice), and the
+`second_opinion` dictionary gate. Every kept word carries its **source frame**; the anchor is
+always the face-on view. Probe: `temp/mv_phase1/merge.py`.
+
+**Two metrics, and the reason for the second.** The verdict metric stays token recall scored
+by difflib, for continuity with the CLAHE row. But the merge *inserts* tokens into the stream,
+and difflib's matcher is a recursive longest-match, not an optimal LCS — junk between two GT
+words can cost a match the document did not actually lose. So an order-free **bag** recall
+(multiset intersection) is printed beside it. The pair is informative precisely where they
+disagree: **sequence-only loss = the words are all still there but out of order; bag loss =
+words genuinely replaced by something else.** The bag metric is a diagnostic, never the
+verdict — it also rewards a junk-heavy arm for stumbling onto a GT token anywhere, which is
+why its own decoy floor (0.21–0.35, much higher than the sequence metric's 0.05–0.17) is
+printed with it.
+
+#### Five policies, because the first one harvested almost nothing
+
+| policy | how a contested slot is decided |
+|---|---|
+| v1 dict-gate | `second_opinion`'s rule verbatim: substitute only on a 1↔1 replace where the anchor read a non-word and the oblique nominated a valid one |
+| v2 region/height | per-band winner by native median word height |
+| v3 region/conf | per-band winner by mean OCR conf |
+| v4 per-slot conf | the higher-confidence reading wins each slot outright |
+| v5 slot + dict veto | v4, but a valid dictionary word is never traded for a non-word |
+
+**v1 harvested a tenth of the ceiling, and the counter says why: `substituted=0`, blocked
+173 / 92 / 312.** The 1↔1 restriction that is load-bearing for *flagging* is fatal for
+*merging* — a smeared gutter line and a clean one do not tokenise into equal counts, so every
+real substitution arrives as an n↔m block and is refused. Insert-only cannot reach the win
+either: the face-on frame does emit words in the gutter (46 at conf 33 on skew), so the slot
+is already occupied by garbage.
+
+**Two geometric criteria were tried before conf, and both failed in instructive ways.** The
+plan says "pick the least-foreshortened view", and a measurable fact should beat a model
+output where one exists:
+- **native word height is the wrong axis.** A curl at a vertical gutter compresses text
+  *horizontally*; line height barely moves. It therefore called the face-on the better reader
+  in skew's band [.12–.25] — the very band the gutter GT was keyed in, where the face-on
+  scores 0.533 and the oblique 0.933.
+- **per-character aspect (advance width / line height) is the right axis but is contaminated
+  by the failure it should detect.** A smear is read as one or two garbage characters inside a
+  *wide* box, so the ruined gutter scores a *higher* aspect than clean text (skew face 1.212
+  vs oblique 0.476). It ranks backwards.
+
+Mean conf orders all three pages correctly. Using it here is narrower than it looks — it
+compares two reads of the *same* region rather than thresholding anything, the same use the
+shipped disagreement trigger makes of a second reader — and its known hazard (conf rising on
+garbage) is exactly what the far-side band exists to catch.
+
+#### Results — v5, the policy proposed for the next fixture
+
+| | GUTTER (the win) | | | FAR SIDE (the guard) | | |
+|---|---|---|---|---|---|---|
+| page | face-on | v5 | Δ | face-on | v5 | Δ |
+| skew  | 0.533 | **0.778** | **+0.244** | 0.639 | 0.528 | −0.111 |
+| curl3 | 0.975 | 0.950 | −0.025 | 0.800 | 0.778 | −0.022 |
+| curl5 | 0.574 | **0.648** | **+0.074** | 0.688 | 0.672 | −0.017 |
+| | *bag* | | | *bag* | | |
+| skew  | 0.733 | **0.933** | **+0.200** | 0.694 | 0.694 | **0.000** |
+| curl3 | 0.975 | 0.975 | 0.000 | 0.956 | 0.956 | **0.000** |
+| curl5 | 0.722 | **0.815** | **+0.093** | 0.953 | 0.906 | −0.047 |
+
+**What the two metrics together say.** The gutter win is real and survives both scorers. The
+far-side story splits: on **skew and curl3 the bag metric is flat at zero**, so nothing was
+lost — those sequence-metric drops are the merged words landing in the wrong reading order,
+not missing. On **curl5 the bag drops 0.047**, which is genuine: three far-side words were
+replaced by something else. Reading order is not a scoring detail in this project (the
+deliverable is a re-typeset document), so the skew ordering drop is a real defect too — just a
+different defect from word loss, and one that points at insertion placement rather than at
+the selection rule.
+
+**The veto earns its place.** Without it (v4) the gutter win is bigger — bag +0.223 skew,
++0.167 curl5 — but curl5's far side loses **0.141** of real words. The veto trades about a
+third of curl5's gutter gain for two-thirds of its far-side damage. Given this project's
+standing bar on the caption-pairing work (zero wrong beats one more right), the vetoed policy
+is the right default.
+
+**Harvest against the measured ceiling:** v5 takes 58% of skew's available headroom and 29% of
+curl5's. Most of the remainder on curl5 is what the veto deliberately declines.
+
+#### Limits — three, and the first is the one that matters
+
+- **Five policies were compared on the same three pages that carry the GT.** "v5 is best" is
+  therefore a hypothesis generated on N=3, not a validated choice — the same trap the STEP 3
+  model selection was designed to avoid, and here it is unavoidable without another fixture.
+  **Pre-register v5 and re-measure on a fixture that has not been looked at** before this is a
+  result rather than a lead. The same applies to the 8-band grid and the ≥3-word minimum.
+- **No precision metric on the gutter.** Recall counts real text recovered; junk the merge
+  imports shows up only in the word counts and the decoy floor. The CLAHE row carried the same
+  limitation, but the merge can *import* garbage in a way a contrast operator cannot.
+- **Nothing here is wired into the pipeline.** This is a probe over cached dewarps. Stages 00–03
+  have no multi-view capture mode, the schema has no source-frame field, and Stage 06's patch
+  mode would need one to know which dewarp to crop from. The orientation resolver would also
+  have to be fixed first (see the STEP 1 note) — it mis-orients these captures.

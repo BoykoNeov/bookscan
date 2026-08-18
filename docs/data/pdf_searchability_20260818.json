@@ -1,0 +1,129 @@
+[
+  {
+    "job": "20260818-144545-7c21f083",
+    "pdf": "M:\\claud_projects\\temp\\fontcheck\\patch.pdf",
+    "mode": "patch",
+    "pdf_bytes": 7706899,
+    "words_rendered_as_text": 671,
+    "words_replaced_by_patch_image": 59,
+    "words_in_stripped_blocks": 13,
+    "by_extractor": {
+      "pypdf": {
+        "extracted_chars": 4471,
+        "verbatim": 584,
+        "verbatim_pct": 87.0,
+        "found_only_with_spaces_ignored": 84,
+        "loose_pct": 99.6,
+        "not_found_at_all": 3,
+        "examples_space_broken": [
+          "(1789-90);",
+          "(March",
+          "(November",
+          "(October",
+          "America",
+          "Among",
+          "Counterstamp,",
+          "Freeman"
+        ],
+        "examples_missing": [
+          "configuration",
+          "fineness",
+          "identified"
+        ]
+      },
+      "mupdf": {
+        "extracted_chars": 4340,
+        "verbatim": 670,
+        "verbatim_pct": 99.9,
+        "found_only_with_spaces_ignored": 1,
+        "loose_pct": 100.0,
+        "not_found_at_all": 0,
+        "examples_space_broken": [
+          "(1789-90);"
+        ],
+        "examples_missing": []
+      }
+    }
+  },
+  {
+    "job": "20260818-144649-0d501ac9",
+    "pdf": "M:\\claud_projects\\temp\\fontcheck\\best_guess.pdf",
+    "mode": "best_guess",
+    "pdf_bytes": 7252222,
+    "words_rendered_as_text": 730,
+    "words_replaced_by_patch_image": 0,
+    "words_in_stripped_blocks": 13,
+    "by_extractor": {
+      "pypdf": {
+        "extracted_chars": 4722,
+        "verbatim": 631,
+        "verbatim_pct": 86.4,
+        "found_only_with_spaces_ignored": 96,
+        "loose_pct": 99.6,
+        "not_found_at_all": 3,
+        "examples_space_broken": [
+          "(March",
+          "(November",
+          "(October",
+          "America",
+          "America,",
+          "Among",
+          "Chapmarked",
+          "Chopmark"
+        ],
+        "examples_missing": [
+          "configuration",
+          "fineness",
+          "identified"
+        ]
+      },
+      "mupdf": {
+        "extracted_chars": 4614,
+        "verbatim": 730,
+        "verbatim_pct": 100.0,
+        "found_only_with_spaces_ignored": 0,
+        "loose_pct": 100.0,
+        "not_found_at_all": 0,
+        "examples_space_broken": [],
+        "examples_missing": []
+      }
+    }
+  },
+  {
+    "job": "bg_01",
+    "pdf": "jobs\\bg_01\\render\\page.pdf",
+    "mode": "flag",
+    "pdf_bytes": 73173,
+    "words_rendered_as_text": 742,
+    "words_replaced_by_patch_image": 0,
+    "words_in_stripped_blocks": 21,
+    "by_extractor": {
+      "pypdf": {
+        "extracted_chars": 4462,
+        "verbatim": 739,
+        "verbatim_pct": 99.6,
+        "found_only_with_spaces_ignored": 3,
+        "loose_pct": 100.0,
+        "not_found_at_all": 0,
+        "examples_space_broken": [
+          "Шапчи-хане",
+          "Шехир)",
+          "по-голяма."
+        ],
+        "examples_missing": []
+      },
+      "mupdf": {
+        "extracted_chars": 4469,
+        "verbatim": 741,
+        "verbatim_pct": 99.9,
+        "found_only_with_spaces_ignored": 1,
+        "loose_pct": 100.0,
+        "not_found_at_all": 0,
+        "examples_space_broken": [
+          "по-голяма."
+        ],
+        "examples_missing": []
+      }
+    }
+  }
+]

@@ -3434,3 +3434,76 @@ widened population is the authoritative Claim B verdict**, per Addendum 2 item 6
 * Inputs, per-set outputs and the verdict computation are committed at
   `docs/data/multiview_claimB_widened.json`; the raw frames stay in
   `temp/zoomset_raw/batch_20260818/`, out of git, as the pre-registration fixed.
+
+## Patch-mode PDF in one run, and what "searchable" actually survives — 2026-08-18
+
+Two tracked gaps, closed together because one run answers both.
+
+**Gap 1 — patch mode's PDF was never watched end to end.** Gate 5's own notes
+recorded the boundary honestly: one run had produced real per-word crops in
+`patch` mode, a *different* run had produced a downloadable PDF in the default
+`flag` mode, and a patch-mode document's PDF was only ever *inferred* from the
+two halves working separately. Since all three uncertainty modes are a
+CLAUDE.md non-negotiable, the inference was not good enough.
+
+**The run.** Two jobs, one live `uvicorn` (its PID recorded at launch and the
+only PID killed afterwards), the same real image `testset/en_coins_01.jpg`
+through the whole HTTP route each time — `POST /api/jobs?mode=…` → upload →
+worker → `/assemble` → `/render` → `GET /render/pdf`. The **only** difference
+between the arms is the mode the API was asked for, which is what makes the
+image count below attributable rather than decorative.
+
+| arm | words | words w/ patch crop | `<img class="patch">` | PDF bytes | embedded images |
+|---|---|---|---|---|---|
+| `patch` | 743 | 60 | 59 | 7,706,899 | **63** |
+| `best_guess` | 743 | 0 | 0 | 7,252,222 | **4** |
+
+The patch arm carries exactly **59 more embedded images**, matching its 59
+rendered patch tags one for one; the 4 that both arms share are the figures.
+A valid `%PDF` alone would have proved nothing — a patch-mode PDF with zero
+patch images would look identical at that resolution.
+
+**The 60-vs-59 is explained, not waved away.** All 60 crop files exist on disk.
+The 60th word sits in a **running-header** block, and `strip_running_headers`
+(on by default, a CLAUDE.md non-negotiable) drops that block from the render —
+so its patch correctly never reaches the page. Accounting closes: 59 patch
+images + 4 figures = 63.
+
+**Gap 2 — "the PDF is inherently searchable" had never been measured.** The
+same PDFs, plus Bulgarian `bg_01`, were scored by `tools/pdf_searchability.py`
+(new): of the words Stage 08 was *asked to emit as text* (excluding stripped
+header/page-number blocks, and excluding patch-replaced words, which SHOULD be
+absent), how many does a reader's search find?
+
+| document | words as text | pypdf verbatim | MuPDF verbatim |
+|---|---|---|---|
+| `en_coins_01` patch | 671 | 87.0% | **99.9%** |
+| `en_coins_01` best_guess | 730 | 86.4% | **100.0%** |
+| `bg_01` (Bulgarian, flag) | 742 | 99.6% | **99.9%** |
+
+The two extractors disagree by 13 points on English, and the disagreement — not
+either number — is the finding. Chromium's PDF output writes **one glyph per
+`Tj` with an explicit `Td` displacement** (no run-level advances at all), so
+every extractor must re-derive word boundaries from glyph geometry. pypdf's
+threshold inserts a spurious space inside wide-glyph words (`Chapm arked`,
+`M urphy`, `W hile`); MuPDF's does not. **The text layer is correct; one
+extractor's word reconstruction is not.** This is written down mainly so a
+future session that greps a rendered PDF with pypdf does not "discover" a
+phantom OCR defect that no reader sees.
+
+**Font embedding — the spec's owed follow-up is closed, with evidence.** The
+old note said Chromium fell back to Times New Roman. It no longer does: the
+only font in every PDF above is `AAAAAA+NotoSerif` (subset of the bundled
+`pipeline/assets/fonts/NotoSerif.ttf`), whose cmap covers the Cyrillic block
+**256/256**, and `bg_01` extracts 3,238 Cyrillic characters with 739/742 words
+verbatim. Two caveats stated rather than implied: Chromium embeds Noto as a
+**Type3** font (glyph procedures, no `/FontFile2` TrueType program), and an
+A/B that re-rendered `bg_01` against a **static** `wght=400` instance of the
+same family produced a byte-identical 73,173-byte PDF — same Type3 encoding,
+same extraction. So the variable font is not what causes Type3, and swapping to
+a static instance buys nothing in the PDF (it would only halve the standalone
+HTML, at the cost of real bold). Bundled font left as is.
+
+Inputs and outputs: `docs/data/patch_mode_pdf_20260818.json` (both arms' full
+counts) and `docs/data/pdf_searchability_20260818.json` (per-extractor scores).
+The two 7 MB PDFs stay out of git, under `temp/`, as the raw frames do.

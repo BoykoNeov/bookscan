@@ -1,0 +1,63 @@
+{
+  "what": "One-run proof that a patch-mode job exported through the HTTP API produces a PDF whose word-image patches are really in it. Both arms are the same real image (testset/en_coins_01.jpg) through the same running server; the ONLY difference is the mode the API was asked for, so the image-count difference is attributable.",
+  "date": "2026-08-18",
+  "image": "testset/en_coins_01.jpg",
+  "route": [
+    "POST /api/jobs?mode=<mode>",
+    "POST /api/jobs/{id}/pages",
+    "worker -> pipeline.run_all --mode",
+    "POST /api/jobs/{id}/assemble",
+    "POST /api/jobs/{id}/render",
+    "GET /api/jobs/{id}/render/pdf"
+  ],
+  "arms": {
+    "patch": {
+      "job_id": "20260818-144545-7c21f083",
+      "requested_mode": "patch",
+      "document_settings_mode": "patch",
+      "words_total": 743,
+      "words_with_patch_asset": 60,
+      "patch_words_inside_stripped_blocks": 1,
+      "patch_crop_files_present": 60,
+      "html_patch_img_tags": 59,
+      "pdf_path_uncommitted": "M:/claud_projects/temp/fontcheck/patch.pdf",
+      "pdf_bytes": 7706899,
+      "pdf_is_pdf": "%PDF-",
+      "pdf_image_xobjects": 63,
+      "pdf_font_names": [
+        "AAAAAA+NotoSerif",
+        "BAAAAA+NotoSerif"
+      ],
+      "pdf_font_subtypes": [
+        "Type3"
+      ]
+    },
+    "best_guess": {
+      "job_id": "20260818-144649-0d501ac9",
+      "requested_mode": "best_guess",
+      "document_settings_mode": "best_guess",
+      "words_total": 743,
+      "words_with_patch_asset": 0,
+      "patch_words_inside_stripped_blocks": 0,
+      "patch_crop_files_present": 0,
+      "html_patch_img_tags": 0,
+      "pdf_path_uncommitted": "M:/claud_projects/temp/fontcheck/best_guess.pdf",
+      "pdf_bytes": 7252222,
+      "pdf_is_pdf": "%PDF-",
+      "pdf_image_xobjects": 4,
+      "pdf_font_names": [
+        "AAAAAA+NotoSerif",
+        "BAAAAA+NotoSerif"
+      ],
+      "pdf_font_subtypes": [
+        "Type3"
+      ]
+    }
+  },
+  "delta": {
+    "pdf_image_xobjects": 59,
+    "html_patch_img_tags": 59,
+    "reading": "the patch arm carries exactly 59 more embedded images than the best_guess arm, matching its 59 rendered patch <img> tags one for one; the remaining 4 images are the figures both arms share.",
+    "patch_word_accounting": "60 words carry a patch crop; 1 of them sit in a running-header block that strip_running_headers drops, so 59 render as <img class=\"patch\">."
+  }
+}

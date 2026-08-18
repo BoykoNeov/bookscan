@@ -142,12 +142,18 @@ Consequences that fall out for free:
   **Sync-API caveat (Gate 5):** `sync_playwright()` raises inside a running
   asyncio loop; the future FastAPI server must export PDFs off the request loop
   (async API or subprocess), not call `try_render_pdf` directly.
-- **Font embedding is an owed follow-up.** Chromium *does* embed + subset the
-  fonts it uses (the PDFs above are portable and searchable), but with only a
-  named `"Noto Serif"` stack and no Noto installed on the host it fell back to
-  **Times New Roman**. CLAUDE.md's non-negotiable is Noto embedded for Latin +
-  Cyrillic — that needs `@font-face` with bundled Noto TTFs in `_css`, tracked
-  separately from wiring the engine.
+- **Font embedding — DONE, and verified in the PDF (2026-08-18).** This bullet
+  used to record a fallback to **Times New Roman** (a named `"Noto Serif"` stack
+  with no Noto installed on the host). `_font_face_css` now embeds the bundled
+  `pipeline/assets/fonts/NotoSerif.ttf` as an `@font-face` data URI, and the
+  PDFs prove it rather than assume it: the only font in a rendered PDF is
+  `AAAAAA+NotoSerif`, that file's cmap covers the Cyrillic block **256/256**,
+  and Bulgarian `bg_01` extracts 3,238 Cyrillic characters (739/742 words
+  verbatim). Two measured caveats: Chromium embeds it as a **Type3** font (glyph
+  procedures, no `/FontFile2`), and re-rendering against a **static** `wght=400`
+  instance produced a byte-identical PDF — so the variable font is not the cause
+  and swapping it buys nothing. See RESULTS 2026-08-18 and
+  `docs/data/pdf_searchability_20260818.json`.
 - Render honors doc-wide settings carried in `document.json` (uncertainty mode
   already resolved at Stage 06, header/page-number stripping, fonts, target
   language) so editing a setting and re-rendering just works.

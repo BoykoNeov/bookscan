@@ -99,6 +99,13 @@ fun CaptureScreen(
     var streak by remember { mutableStateOf(0) }
     var logging by remember { mutableStateOf(false) }
     var logStatus by remember { mutableStateOf<String?>(null) }
+    // Arming is a MODE, not a moment. Stopping a log used to re-arm instantly,
+    // and a passing streak is only 8 frames (~0.27 s at 30 fps) — so the burst
+    // fired and the review screen took over before the "saved N frames" line
+    // could be read, and a second log could never be started. Calibration needs
+    // several recordings back to back, so disarming has to persist until the
+    // user re-arms it deliberately.
+    var autoArmed by remember { mutableStateOf(true) }
     val frameLog = remember { FrameLog() }
     // Writing the CSV touches the disk; the analyzer runs on main. One
     // background thread does the write, mirroring CloseupScreen's executor.
@@ -132,6 +139,20 @@ fun CaptureScreen(
         }
     }
 
+    /**
+     * Throws away an in-flight burst without handing anything to [onCaptured].
+     * Clearing [capturing] is load-bearing: it gates Cancel and the manual
+     * shutter, and only [finalizeBurst] used to clear it — so a burst abandoned
+     * any other way would leave both dead for the rest of the screen's life.
+     */
+    fun abortBurst() {
+        burstCandidates.forEach { it.first.delete() }
+        burstCandidates.clear()
+        hoverGate.reset()
+        capturing = false
+        autoStatus = "hold steady over the page…"
+    }
+
     fun captureAutoFrame(currentSharpness: Double) {
         val capture = imageCapture ?: return
         capturing = true
@@ -141,6 +162,14 @@ fun CaptureScreen(
             getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    // takePicture is async: a shot started just before the burst
+                    // was abandoned can land after. Adding it now would leave a
+                    // stale candidate for the NEXT finalize to hand off as the
+                    // current spread — a photo from minutes ago, silently.
+                    if (logging || !autoArmed) {
+                        file.delete()
+                        return
+                    }
                     burstCandidates.add(file to currentSharpness)
                     autoStatus = "captured ${burstCandidates.size}/$MAX_BURST_SIZE — keep holding…"
                 }
@@ -244,13 +273,13 @@ fun CaptureScreen(
                         }
                         // Logging is an OBSERVATION mode: the gate still runs and
                         // the CSV records what it would have done, but nothing
-                        // fires. Otherwise calibration is impossible — a burst
+                        // fires (and neither does anything while disarmed). Otherwise calibration is impossible — a burst
                         // finalizes in ~1.5s and hands off to the review screen,
                         // so "hold steady for 15s" would only ever yield 1.5s of
                         // data, and would yield a full 15s only when the
                         // thresholds are so tight they never fire (the one case
                         // that teaches nothing about where they should sit).
-                        if (!logging) {
+                        if (!logging && autoArmed) {
                             when (command) {
                                 HoverCommand.CaptureNow -> captureAutoFrame(score.sharpness)
                                 HoverCommand.FinalizeBurst -> finalizeBurst()
@@ -295,31 +324,58 @@ fun CaptureScreen(
             ) {
                 Text(calibrationReadout(lastScore, streak), color = Color.White)
                 logStatus?.let { Text(it, color = Color.White) }
-                Text(autoStatus, color = Color.White)
+                Text(
+                    when {
+                        logging -> "recording — nothing will be captured"
+                        !autoArmed -> "auto-capture OFF — arm it below when done calibrating"
+                        else -> autoStatus
+                    },
+                    color = Color.White,
+                )
                 error?.let { Text(it, color = Color(0xFFFF6B6B)) }
             }
-            // Own row: three buttons side by side clip on a narrow phone.
+            // Own rows: these labels are long, and side by side they clip on a
+            // narrow phone.
             Button(
-                enabled = !capturing,
+                // NOT gated on `capturing`: a burst in flight is exactly when a
+                // user reaches for this button, and abortBurst throws it away.
                 onClick = {
                     if (logging) {
                         logging = false
                         hoverGate.reset()
                         flushLog()
+                        // Deliberately stays disarmed — see `autoArmed`.
                     } else {
                         frameLog.clear()
                         logStatus = null
-                        hoverGate.reset()
+                        abortBurst()
+                        autoArmed = false
                         logging = true
                     }
                 },
             ) {
-                Text(if (logging) "Stop log (auto-capture paused)" else "Log frames (calibration)")
+                Text(if (logging) "Stop log" else "Log frames (calibration)")
+            }
+            Button(
+                enabled = !logging,
+                onClick = {
+                    if (autoArmed) {
+                        abortBurst()
+                        autoArmed = false
+                    } else {
+                        hoverGate.reset()
+                        autoArmed = true
+                    }
+                },
+            ) {
+                Text(if (autoArmed) "Auto-capture: ON — tap to pause" else "Auto-capture: OFF — tap to arm")
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Button(onClick = onCancel, enabled = !capturing) { Text("Cancel") }
                 Button(
-                    enabled = imageCapture != null && !capturing,
+                    // `!logging` too: the button above promises nothing will be
+                    // captured, and this one sits right under the user's thumb.
+                    enabled = imageCapture != null && !capturing && !logging,
                     onClick = {
                         val capture = imageCapture ?: return@Button
                         capturing = true

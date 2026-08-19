@@ -63,15 +63,23 @@ sharp 62.4 ✓ (≥40)  still 3.1 ✓ (≤6)  streak 5/8
 and a **"Log frames (calibration)"** button that records every scored frame to
 a CSV.
 
-**While the log is running, auto-capture is suspended** — the gate still runs
-and the CSV records what it *would* have done, but no photo is taken and the
-screen does not navigate away. That is deliberate: with auto-capture live, a
-burst finalizes about a second and a half in and hands off to the review
-screen, so "hold steady for 15 s" would only ever yield a second and a half of
-data — and would yield the full 15 s only when the thresholds are so tight they
-never fire, the one case that teaches nothing. The button reads "Stop log
-(auto-capture paused)" while recording; stopping it writes the CSV and puts
-auto-capture back.
+**While the log is running nothing is captured at all** — the gate still runs
+and the CSV records what it *would* have done, but no photo is taken, the
+manual shutter is disabled, and the screen cannot navigate away. That is
+deliberate: with auto-capture live a burst finalizes about a second and a half
+in and hands off to the review screen, so "hold steady for 15 s" would only
+ever yield a second and a half of data — and would yield the full 15 s only
+when the thresholds are so tight they never fire, the one case that teaches
+nothing.
+
+Arming is a **mode, not a moment**. A second button reads "Auto-capture: ON —
+tap to pause" / "OFF — tap to arm", and starting a log switches it OFF and
+*leaves it off* after you stop. Re-arming on stop was the first version and it
+did not survive contact with the phone: a passing streak is only 8 frames
+(about a quarter of a second), so the gate fired and the review screen took
+over before the "saved N frames" line could be read — and a second log could
+never be started at all. Record all three logs with auto-capture off, then arm
+it deliberately when you want to test firing.
 
 Record **three separate logs** — start, do the thing, stop — so each file is
 cleanly labelled by what you were doing:
@@ -102,6 +110,14 @@ Put the chosen pair into `CaptureScreen.kt`, rebuild, reinstall, and re-run
 log 3 to confirm it fires when you expect. `python -m tools.calibrate_hover
 --self-test` exercises the whole path on synthetic frames if you want to see
 the output shape first.
+
+**Scale, measured on an S23 (2026-08-19, 673 frames over 22 s).** Sharpness
+came in at 231–1567 (median 1482) against a placeholder threshold of 40, so the
+sharpness half of the gate is currently a no-op — every frame clears it.
+Stability came in at 0.5–24.4 (median 2.0) against a threshold of 6, which cuts
+straight through the data: 81 % of frames passed, and the gate wanted to fire
+16 bursts / 46 stills in 22 seconds. Whatever the fit says, expect the
+sharpness threshold to move by two orders of magnitude.
 
 **If the two distributions overlap**, the tool says so and exits non-zero
 instead of suggesting a value: the metric, not the threshold, is the problem,

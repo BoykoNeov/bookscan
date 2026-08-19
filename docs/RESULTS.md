@@ -4238,3 +4238,121 @@ Reproducibility: the four `zoomset_*` GT rows read from committed `testset/` JPE
 (verified pixel-identical to the Stage 01 anchors), but the older `de_01`/`de_02`
 rows still resolve through `ANCHOR_OVERRIDE` into gitignored `jobs/orient_fix_de*`,
 so those two rows are not reproducible off this machine. Suite 437.
+
+## Anchor choice: the window was not the problem — 2026-08-19
+
+Two stage docstrings carried the same open item. `partition_frames` picks the
+anchor as the sharpest full-spread frame, sharpness is variance-of-Laplacian over
+the **whole** frame, and on a lap capture that is 40–55 % room — so the score
+rewards a cluttered background over legible text. Both notes said the fix needed
+the book-boundary crop, and the crop shipped this morning. This is that question,
+asked before the change was written rather than after: **rank the candidates
+inside the book box instead.** The answer is no, and the reason is structural.
+
+`tools/anchor_choice_census.py` runs it over every committed fixture holding more
+than one frame of the same spread — 13 sets, 34 frames, three families (the four
+multi-zoom sets, the six multi-view pairs, and the three re-shoot triples in
+`manifest.csv`). Ten of the thirteen contain an actual anchor race. Each set is
+partitioned by `stage01_fuse.partition_frames` itself, imported unmodified, under
+three scores, and each frame is OCR'd standalone (Tesseract psm 3, conf ≥ 80 word
+count **and** mean confidence) so the picks can be graded against something other
+than the metric being tested.
+
+**The instrument had to be fixed before it said anything.** Loading these JPEGs
+EXIF-transposed feeds Tesseract sideways pixels — their pure-rotation tags are
+spurious, which Stage 00's docstring has said all along, and they differ *within*
+a set (`skewset_en_02` is 8 and 6). On the EXIF load `zoomset_en_02_f01` reads 30
+words against the 160 on record. The census loads through
+`tools.normalize.load_upright_bgr`, the pipeline's own resolver, and then all
+sixteen zoomset frames reproduce `stitch_and_orientation_20260819.json` **exactly**
+(435/221/173, 183/270/249, 167/120/0/2, 134/160/96/3/121/7) — two independently
+written harnesses agreeing frame-for-frame.
+
+**Scoreboard, on the ten sets where a choice exists** (does the selector pick the
+candidate that OCRs best?):
+
+| ranking score | picks the OCR-best candidate |
+|---|---|
+| whole frame (shipped) | 7 / 10 |
+| inside `find_book`'s emit box | 8 / 10 |
+| inside the emit box, ungated | 6 / 10 |
+
+The middle row is the tempting one and it is an artefact. Variance of Laplacian
+rises when smooth pixels are removed, so a candidate whose crop applied is scored
+on page-only pixels while a candidate that abstained is still carrying its room.
+Every set the box could touch is a set that mixes the two. Score every candidate
+on its own box regardless of the abstain gate — the comparison that is actually
+fair, since the gate answers "should we CUT here", not "which photograph is
+better" — and the single win reverses (`de_02`: the shipped pick goes from 669.9
+to 859.6 and beats the challenger's 793.2) while `bg_taleb_01` breaks.
+
+**The argument that does not depend on n=10.** On **6 of the 10** sets — all six
+multi-view pairs — the crop abstains on *every* candidate. There the emit box IS
+the frame, so the two scores are numerically identical and no windowing variant
+can change the pick **by construction**, including on `skewset_de_01` and
+`skewset_it_01`, two of the three sets where the shipped selector picks the worse
+photograph. On a seventh, `zoomset_en_02`, the crop applies to both candidates, so
+the comparison there is fair — and the pick does not move. That leaves the three
+sets that mix a cropped candidate with an abstaining one as the *only* place any
+windowing variant can act, and those are exactly the sets where its numbers are
+not comparable across candidates. The window is not where the problem lives.
+
+**What the corpus does say about the criterion.** The shipped selector picks a
+measurably worse photograph on three sets:
+
+| set | selector's pick (words @ conf ≥ 80 / mean conf) | best candidate | margin |
+|---|---|---|---|
+| `de_02` | `de_02` — 282 / 74.3 | `de_02_092054` — 356 / 85.5 | +74 words, +11.2 conf |
+| `skewset_it_01` | `..._134804` — 569 / 70.6 | `..._134801` — 628 / 84.2 | +59 words, +13.6 conf |
+| `skewset_de_01` | `..._134824` — 147 / 70.8 | `..._134828` — 205 / 73.0 | +58 words, +2.2 conf |
+
+The word counts alone would not carry this: **±60 words in both directions is the
+churn this same instrument was measured to show under nothing but reframing**
+(RESULTS 2026-08-19, book-boundary row), and two of the three margins sit inside
+that band. Mean confidence is what separates them, and it is not a redundant
+statistic — on `bg_taleb_01` and `de_01` the two disagree about which frame is
+best, which is exactly why agreement means something on the other two. So: two
+sets where the selector is wrong and both statistics say so by a wide margin, one
+that is a coin flip. Sharpness is a focus measure, not a legibility measure, and
+that is the honest open question — the **criterion**, not the window.
+
+**Two traps recorded for whoever picks that up.**
+
+*The area gate is load-bearing, and sharpness will argue against it.*
+`zoomset_de_01_f01` scores 1329 against its own anchor's 564 — 2.4× sharper by
+the selector's own metric — while covering 0.39 of the spread and reading 221
+words against the anchor's 435. `fullspread_area_frac` is the only thing keeping
+a third of a spread from being elected the whole page. Relaxing it needs a
+**coverage** test, not a sharper score.
+
+*The book box's abstain guards are load-bearing too.* On `bg_taleb_01` the paper
+mask sees 0.1 % of the frame and `find_book` correctly refuses; the ungated arm
+built from the same mask returns a box covering 0.2 % of the image and scores it
+478 points lower than the frame it came from (146.6 vs 469.3). The box is only
+meaningful where `find_book` was willing to act on it, which is precisely why the
+fair version of this experiment cannot simply be shipped as the fair version.
+`find_book` also costs 258–1375 ms on a 12 Mpx frame, so a per-candidate ranking
+would pay that per frame.
+
+**Two written claims are corrected by this run**, both in place with the
+superseded text left visible. `stage01_fuse.py` said the zoomset close-ups are
+"whole-spread re-zooms, so it is a fair comparison" and concluded a close-up is
+sometimes "a better photograph of the whole page" that `partition_frames` cannot
+elect; `zoomset_manifest.json` carried the same bullet. Looking at the pixels
+settles it: `zoomset_de_02_f01` frames the right page plus a clipped strip of the
+left, and `f02` is essentially the right page alone (0.337 of the anchor's
+footprint on its own correct registration). They are **per-page zooms**, 270/249
+vs 183 is not like-for-like, and electing one would delete the other page from the
+job. The honest reading is stronger than the wrong one: a frame covering a third
+of the spread out-reads the anchor covering all of it because the anchor is a
+distant oblique shot and the close-up has roughly twice the pixels per text line.
+The anchor is bad; the close-up is not eligible to replace it. What that argues
+for is **per-page frame selection**, which has to know where the gutter is and
+therefore cannot live in Stage 01 — it crosses the stage contract, so it is a
+design decision rather than a tweak.
+
+**Limits.** Ten sets and one photographer, and "OCR'd best" is a proxy for "is the better anchor" that ignores everything
+downstream of Stage 01. No pipeline code changed: `partition_frames` is exactly
+as it was, deliberately. Evidence:
+`docs/data/anchor_choice_census_20260819.json`; re-run with
+`python -m tools.anchor_choice_census --json <path>`.

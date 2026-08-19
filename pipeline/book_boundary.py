@@ -14,9 +14,20 @@ spine inside it instead of inside the room. It is deliberately NOT a stage — t
 stage numbering is a published contract (CLAUDE.md) and inserting 02.5 would
 renumber everything downstream. It is a plain module called at the head of
 Stage 02, which keeps it importable by the Stage 01 anchor-choice work that
-wants the same crop (``partition_frames`` ranks anchors by sharpness over the
-whole frame, so on these captures it rewards cluttered backgrounds — a separate,
-still-open item).
+wants the same crop.
+
+That anchor-choice item — ``partition_frames`` ranks anchors by sharpness over
+the whole frame, so on these captures it rewards cluttered backgrounds — was
+then measured with this module in hand and **the box does not fix it**: on 7 of
+the 10 committed fixtures that contain an anchor choice the crop abstains on
+every candidate, so the box is the frame and the ranking cannot move; the one
+set it does flip is flipped by a scoring artefact (a cropped candidate is scored
+on page-only pixels while an abstaining one keeps its room, and variance of
+Laplacian rewards that). See ``tools/anchor_choice_census.py`` and
+``docs/RESULTS.md`` 2026-08-19 "Anchor choice: the window was not the problem".
+Also note ``find_book`` is not free to call per frame: 258-1375 ms on a 12 Mpx
+capture (measured on three of the fixtures; the spread is GrabCut converging or
+not), so a ranking that called it on every candidate would pay that per frame.
 
 **Two boxes, not one, and that is the whole design.** The obvious approach —
 one book box, used both to aim the search and to cut the pages — was built and

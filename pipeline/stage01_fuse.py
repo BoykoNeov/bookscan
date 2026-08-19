@@ -56,18 +56,58 @@ that leaves 0 of 11 blended — but by a stated measurement rather than by accid
 and Stage 01's output is now byte-identical to the anchor instead of worse than it.
 
 **Where the close-ups' value actually is, measured.** OCR each frame on its own
-(these close-ups are whole-spread re-zooms, so it is a fair comparison) and the
-anchor wins 3 of 4 sets — but on ``zoomset_de_02`` the close-ups read 270 and 249
-high-confidence words against the anchor's 183. Stage 01 rejected the better one
-and blended the other DOWNWARD into the worse image. So on real captures a
-close-up is sometimes not a patch at all, it is a better photograph of the whole
-page, and ``partition_frames`` cannot express that: it ranks anchors by
-variance-of-Laplacian over the WHOLE frame, and these frames are 40-55% room, so
-the score rewards cluttered backgrounds (chair edges, cables) over legible text.
-Fixing it needs the book-boundary crop that Stage 02 also wants. NOT done here —
-it changes which pixels represent the page, which is a bigger decision than a
-stitch gate. Related: ``partition_frames`` still discards extra full-spread frames
-outright (``zoomset_en_02_f00``), so they cannot compete either.
+and the anchor wins 3 of 4 sets — but on ``zoomset_de_02`` the close-ups read 270
+and 249 high-confidence words against the anchor's 183.
+
+  *CORRECTION 2026-08-19 (later).* This paragraph used to say those close-ups are
+  "whole-spread re-zooms, so it is a fair comparison", and concluded that a
+  close-up is sometimes "a better photograph of the whole page" which
+  ``partition_frames`` cannot elect. **The premise is false**, which was found by
+  the elementary step of looking at the images: ``zoomset_de_02_f01`` frames the
+  right page plus a clipped strip of the left, and ``f02`` is essentially the
+  right page alone (0.337 of the anchor's footprint, on its own correct
+  registration). They are PER-PAGE zooms. So 270/249-vs-183 is not like-for-like,
+  and no anchor rule may elect either — making ``f02`` the anchor would delete the
+  left page from the job.
+
+  The honest reading is stronger than the wrong one. A frame covering a third of
+  the spread out-reads the anchor covering all of it, because the anchor is a
+  distant obliquely-shot photograph and the close-up has roughly double the pixels
+  per text line. **The anchor is bad; the close-up is not eligible to replace it.**
+  What that argues for is per-page frame selection, which needs to know where the
+  gutter is and therefore cannot live in Stage 01 at all. See ``docs/RESULTS.md``
+  2026-08-19 "Anchor choice: the window was not the problem".
+
+``fullspread_area_frac`` is the guard that makes this safe, and it is load-bearing:
+``zoomset_de_01_f01`` scores 1329 against its anchor's 564 (2.4x sharper by the
+selector's own metric) while covering 0.39 of the spread and reading 221 words
+against the anchor's 435. **Any future relaxation of that gate needs a COVERAGE
+test, not a sharpness test.** Related: ``partition_frames`` still discards extra
+full-spread frames outright (``zoomset_en_02_f00``), so they cannot compete either.
+
+**And the anchor RANKING was re-measured 2026-08-19; the obvious fix is refuted.**
+The open item here and in ``book_boundary``'s docstring was that sharpness is
+variance-of-Laplacian over the WHOLE frame, which on a lap capture that is 40-55 %
+room rewards cluttered backgrounds over legible text — so rank inside the book box
+once the crop exists. ``tools/anchor_choice_census.py`` asks that of all 13
+committed multi-frame fixtures (10 have more than one anchor candidate) and the
+answer is no:
+
+  * On **6 of the 10** the crop abstains on *every* candidate, so the book box IS
+    the frame and any windowing variant is a no-op **by construction** — including
+    on two of the three sets where the selector picks the worse photograph. On a
+    seventh both candidates crop, the comparison is fair, and the pick does not
+    move. Only the three sets that MIX a cropped candidate with an abstaining one
+    are left, and those are the sets where the score is not comparable.
+  * Scoring inside ``find_book``'s emit box flips exactly one set (``de_02``) and
+    flips it the right way, but only through an artefact: variance of Laplacian
+    rises when smooth pixels are removed, so a candidate whose crop applied is
+    scored on page-only pixels while one that abstained still carries its room.
+    Score every candidate on its own box regardless of the abstain gate — the fair
+    comparison — and ``de_02`` reverts, while ``bg_taleb_01`` breaks.
+
+So the window is not where the problem is; the criterion is. ``partition_frames``
+is unchanged, deliberately.
 
 **Left unsolved, with the mechanism now identified.** The 6 close-ups that no
 setting registers (``en_01`` f01-f03, ``en_02`` f02-f04) are all oblique views of

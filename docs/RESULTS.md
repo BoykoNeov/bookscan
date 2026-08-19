@@ -3909,8 +3909,9 @@ missing thing is a page/book-boundary crop between fuse and split.
 ### Finding 2 (HIGH): Stage 01 stitched 0 of 11 close-ups — starved of features, not blocked by clutter
 
 Every close-up on every page was rejected by the `min_inliers = 25` gate.
-Inlier counts ran 3, 4, 5, 5, 7, 9, 12, 13, 21, 21, and three sets never even
-reached 25 *good matches* to run RANSAC on (23, 19, 16, 21).
+Four never reached 25 *good matches* at all, so RANSAC never ran on them (16,
+19, 21, 23 good). The other seven ran it and came back with 3, 4, 5, 9, 13, 21
+and 21 inliers. Eleven close-ups, eleven rejections.
 
 Two candidate causes were separated by measurement rather than argued:
 
@@ -3929,14 +3930,24 @@ is a measurement on committed fixtures, and the gate constant wants re-deriving
 alongside it (`min_inliers` currently gates two different quantities, the
 good-match count *and* the RANSAC inlier count, with one number).
 
-### Finding 3 (OPEN): the seven that still fail have their inliers in one patch
+### Finding 3 (OPEN): more features is not the whole story either
 
-Of the seven close-ups still rejected at 20000 features, the surviving inliers
-cluster in a small region of the frame — x-spread 0.2–0.4 of the width, against
-0.31–0.8 for the four that pass. A single planar homography cannot describe a
-match whose agreement is local. Page curvature is the obvious suspect, and it
-would mean the ordering is wrong — Stage 01 stitches before Stage 03 flattens —
-but that is a hypothesis, not a result. Nothing here decides it.
+Seven close-ups still fail at 20000 features, and one of them, `en_02_f02`, got
+*worse* — 5 inliers at 4000 features, 3 at 20000. Five times the descriptors
+bought it nothing but noise, which is not what "starved of features" predicts.
+
+Where the surviving inliers sit was checked as a possible tell and **does not
+separate the two groups**: three of the seven failures have their inliers
+spread as widely across the frame as the four that pass (`de_01_f01` 0.72 of
+the width and only 15 inliers, `en_01_f02` 0.80 and 17, `en_02_f03` 0.79 and
+21). So "the agreement is local" is not what distinguishes a failed close-up
+here, and the statistic is recorded only so nobody re-derives it.
+
+What remains is the shape of the problem rather than a measurement of it: a
+homography assumes the thing being matched is flat, and Stage 01 stitches
+*before* Stage 03 flattens. Page curvature is the obvious suspect. It is a
+hypothesis with a plausible mechanism and no evidence yet, and nothing in this
+batch decides it.
 
 ### Finding 4: the OSD 180° blind spot, confirmed in the field
 

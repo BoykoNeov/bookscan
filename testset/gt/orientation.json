@@ -1,264 +1,270 @@
 {
-  "_doc": "Orientation ground truth for the Stage 00 resolver (tools/normalize). Each spread's correct UPRIGHT orientation, independent of the (spurious) EXIF tag. upright_aspect = required output aspect; raw_is_upright = the stored pixel buffer is ALREADY upright and any EXIF rotation is spurious (resolver must apply net 0 rotation, ignoring EXIF); exif_orientation = the tag actually present. All of this owner's phone captures share this spurious EXIF-on-upright-landscape pattern, so this file also guards that the resolver keeps the existing (OSD-rescued today) testset images upright. || 2026-08-18: entries carrying known_defect_applied_rotate document a rotation the resolver currently gets WRONG; the test asserts the defective value so that fixing the resolver trips a clear failure instead of passing silently.",
-  "bg_01": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "bg_02": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "bg_03": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "de_01": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "German via-ferrata guide (Latemartuerme), sharpest of 3-frame set 1/2/1; spurious EXIF 6, figure-heavy so OSD conf ~0.04-1.46 fails today -> ingests sideways. THE orientation-break fixture."
-  },
-  "de_02": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "German via-ferrata guide (Rotwand), sharpest of 3-frame set 1/2/2; spurious EXIF 8; same failure mode as de_01."
-  },
-  "en_coins_01": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "en_coins_02": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "en_coins_03": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "it_geo_01": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "it_geo_02": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "it_geo_03": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "it_geo_04": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "it_geo_05": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "it_geo_06": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "it_geo_07": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ]
-  },
-  "skewset_orient_01_134655": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134655'] (low-conf OSD, see orient.py)",
-    "known_defect_applied_rotate": 180,
-    "known_defect_note": "THE RESOLVER GETS THIS WRONG TODAY, and that is why the frame is in the fixture. tools/normalize accepts an OSD 180-degree call at conf 2.58 / 3.09 because DEFAULT_MIN_OSD_CONF = 2.0, and layer 5's landscape prior cannot catch it: a spread rotated 180 degrees is still landscape. Correct upright is net-0 (raw_is_upright), so this entry asserts the DEFECTIVE value on purpose. When the resolver is fixed this assertion fails -- that failure is the signal to delete these two keys, not to loosen the test."
-  },
-  "skewset_orient_01_134657": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134655'] (low-conf OSD, see orient.py)"
-  },
-  "skewset_orient_02_134724": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134731'] (low-conf OSD, see orient.py)"
-  },
-  "skewset_orient_02_134731": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134731'] (low-conf OSD, see orient.py)",
-    "known_defect_applied_rotate": 180,
-    "known_defect_note": "THE RESOLVER GETS THIS WRONG TODAY, and that is why the frame is in the fixture. tools/normalize accepts an OSD 180-degree call at conf 2.58 / 3.09 because DEFAULT_MIN_OSD_CONF = 2.0, and layer 5's landscape prior cannot catch it: a spread rotated 180 degrees is still landscape. Correct upright is net-0 (raw_is_upright), so this entry asserts the DEFECTIVE value on purpose. When the resolver is fixed this assertion fails -- that failure is the signal to delete these two keys, not to loosen the test."
-  },
-  "skewset_it_01_134801": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
-  },
-  "skewset_it_01_134804": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
-  },
-  "skewset_en_01_135113": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
-  },
-  "skewset_en_01_135111": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
-  },
-  "skewset_en_02_135006": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 8,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
-  },
-  "skewset_en_02_135009": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
-  },
-  "skewset_de_01_134828": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
-  },
-  "skewset_de_01_134824": {
-    "upright_aspect": "landscape",
-    "raw_is_upright": true,
-    "exif_orientation": 6,
-    "raw_size": [
-      4000,
-      3000
-    ],
-    "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
-  }
+ "_doc": "Orientation ground truth for the Stage 00 resolver (tools/normalize). Each spread's correct UPRIGHT orientation, independent of the (spurious) EXIF tag. upright_aspect = required output aspect; raw_is_upright = the stored pixel buffer is ALREADY upright and any EXIF rotation is spurious (resolver must apply net 0 rotation, ignoring EXIF); exif_orientation = the tag actually present. All of this owner's phone captures share this spurious EXIF-on-upright-landscape pattern, so this file also guards that the resolver keeps the existing (OSD-rescued today) testset images upright. || 2026-08-18: entries carrying known_defect_applied_rotate document a rotation the resolver currently gets WRONG; the test asserts the defective value so that fixing the resolver trips a clear failure instead of passing silently. || 2026-08-19: the two known_defect entries (skewset_orient_01_134655, skewset_orient_02_134731) were RETIRED — the resolver was fixed with a stricter 180-only OSD floor, the assertion tripped as designed, and the keys were deleted rather than the test loosened. The mechanism is still guarded, by the same two frames now asserting net-0. zoomset_en_01_f00 joins them: same defect, found in the wild on the Android app's first real uploads, delivered upside down.",
+ "bg_01": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "bg_02": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "bg_03": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "de_01": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "German via-ferrata guide (Latemartuerme), sharpest of 3-frame set 1/2/1; spurious EXIF 6, figure-heavy so OSD conf ~0.04-1.46 fails today -> ingests sideways. THE orientation-break fixture."
+ },
+ "de_02": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "German via-ferrata guide (Rotwand), sharpest of 3-frame set 1/2/2; spurious EXIF 8; same failure mode as de_01."
+ },
+ "en_coins_01": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "en_coins_02": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "en_coins_03": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_01": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_02": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_03": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_04": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_05": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_06": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_07": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ]
+ },
+ "skewset_orient_01_134655": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). This frame was pinned 2026-08-18 as a KNOWN RESOLVER DEFECT: OSD called a 180 flip at confidence 2.58/3.09 and the shared 2.0 floor accepted it, while layer 5's landscape prior cannot see a 180. FIXED 2026-08-19 — a 180 call now needs its own measured floor (5.0), so this frame resolves net-0 and is graded like every other fixture."
+ },
+ "skewset_orient_01_134657": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134655'] (low-conf OSD, see orient.py)"
+ },
+ "skewset_orient_02_134724": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). RESOLVER DISAGREED on this set: orientation OVERRIDE to majority 0deg; resolver disagreed on ['134731'] (low-conf OSD, see orient.py)"
+ },
+ "skewset_orient_02_134731": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). This frame was pinned 2026-08-18 as a KNOWN RESOLVER DEFECT: OSD called a 180 flip at confidence 2.58/3.09 and the shared 2.0 floor accepted it, while layer 5's landscape prior cannot see a 180. FIXED 2026-08-19 — a 180 call now needs its own measured floor (5.0), so this frame resolves net-0 and is graded like every other fixture."
+ },
+ "skewset_it_01_134801": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+ },
+ "skewset_it_01_134804": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+ },
+ "skewset_en_01_135113": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+ },
+ "skewset_en_01_135111": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+ },
+ "skewset_en_02_135006": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 8,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+ },
+ "skewset_en_02_135009": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+ },
+ "skewset_de_01_134828": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+ },
+ "skewset_de_01_134824": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4000,
+   3000
+  ],
+  "note": "multi-view frame; upright is the PINNED per-set majority (0 deg CW). resolver agreed across the set"
+ },
+ "zoomset_en_01_f00": {
+  "upright_aspect": "landscape",
+  "raw_is_upright": true,
+  "exif_orientation": 6,
+  "raw_size": [
+   4080,
+   3060
+  ],
+  "note": "Anchor frame of the Android app's first real multi-zoom upload (job 20260819-064025-6b4cc4ac page_003). THE WILD INSTANCE of the OSD-180 defect: OSD called a 180 flip at confidence 2.49, the old shared 2.0 floor accepted it, and the whole spread was delivered upside down (782 words at mean confidence 33.4). With the 180-only floor at 5.0 the call is refused and the raw upright buffer is kept."
+ }
 }

@@ -62,6 +62,11 @@ DEFAULTS = {
     # Below this OSD orientation confidence, keep the exif_transpose result
     # rather than trust a shaky 90-degree call (see tools/normalize.py).
     "min_osd_conf": N.DEFAULT_MIN_OSD_CONF,
+    # Stricter floor for a 180-degree call specifically: it is the only rotation
+    # the rest of the cascade cannot contradict (a 180-flipped spread is still
+    # landscape, so the landscape prior is blind to it). Derived from measured
+    # wrong-vs-correct 180 populations — see tools/normalize.DEFAULT_MIN_OSD_CONF_180.
+    "min_osd_conf_180": N.DEFAULT_MIN_OSD_CONF_180,
 }
 
 
@@ -179,6 +184,7 @@ def run(page_dir: Path, cfg: dict, src: Path | None = None,
     params = resolve_params(cfg)
     binary, tessdata = resolve_tesseract(cfg)
     min_conf = float(params["min_osd_conf"])
+    min_conf_180 = float(params["min_osd_conf_180"])
     warnings: list[str] = []
     if binary is None:
         warnings.append(
@@ -214,11 +220,13 @@ def run(page_dir: Path, cfg: dict, src: Path | None = None,
                 rgb = raw.postprocess()
             bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
             t_o = time.perf_counter()
-            bgr, info = N.orient_upright(bgr, binary, tessdata, min_conf=min_conf)
+            bgr, info = N.orient_upright(bgr, binary, tessdata, min_conf=min_conf,
+                                         min_conf_180=min_conf_180)
             orient_ms += (time.perf_counter() - t_o) * 1000.0
         else:
             t_o = time.perf_counter()
-            bgr, info = N.load_upright_bgr(sp, binary, tessdata, min_conf=min_conf)
+            bgr, info = N.load_upright_bgr(sp, binary, tessdata, min_conf=min_conf,
+                                           min_conf_180=min_conf_180)
             orient_ms += (time.perf_counter() - t_o) * 1000.0
 
         name = f"frame_{i:02d}.png"
@@ -255,13 +263,15 @@ def run(page_dir: Path, cfg: dict, src: Path | None = None,
     total_ms = (time.perf_counter() - t0) * 1000.0
     meta = StageMeta(
         stage=STAGE, version=VERSION,
-        params={"min_osd_conf": min_conf},
+        params={"min_osd_conf": min_conf, "min_osd_conf_180": min_conf_180},
         timings_ms={"orient": round(orient_ms, 1), "total": round(total_ms, 1)},
         warnings=warnings + [
             "orientation via shared tools.normalize (priority cascade: capture-hint"
             " / text-baseline [both stubs] -> OSD -> EXIF mirror-only, pure-rotation"
             " tag distrusted -> landscape prior); RAW decode deferred (rawpy absent);"
-            " 180 branch still OSD-only; de_* fixtures guard the figure-heavy case.",
+            " 180 branch is OSD-only but now on a stricter measured floor (5.0 vs 2.0)"
+            " because nothing else in the cascade can contradict a 180; de_* fixtures"
+            " guard the figure-heavy case.",
         ],
     )
     (out_dir / "meta.json").write_text(

@@ -22,7 +22,10 @@ honoured. Priority, highest first:
 
   1. explicit capture hint (Android app / manifest) — pluggable slot, empty today
   2. text-baseline geometric detector — pluggable slot, stub today
-  3. Tesseract OSD (``--psm 0``) — the working source of truth for rotation
+  3. Tesseract OSD (``--psm 0``) — the working source of truth for rotation,
+     on TWO floors: a 180° call must clear ``DEFAULT_MIN_OSD_CONF_180`` (5.0)
+     because nothing else can contradict it, a 90/270° call only
+     ``DEFAULT_MIN_OSD_CONF`` (2.0) because layer 5 sees its aspect change
   4. EXIF: **mirror** baked at load (orientations 2/4/5/7); pure-rotation tags
      (1/3/6/8) are NOT applied — we keep the raw pixel orientation instead
   5. landscape prior — a book spread must be landscape; used to FLAG (not force)
@@ -44,6 +47,16 @@ slots the cascade skips until their inputs exist — the Android orientation sta
 (Gate 5) and a geometric detector measured on the ``de_*`` fixtures. The 180°
 branch still relies on OSD (a distrusted pure-rotation EXIF tag cannot supply it,
 and the landscape prior cannot see it). Documented, not hidden.
+
+2026-08-19 — the 180° branch no longer trusts noise. It used to share the 2.0
+floor with 90/270, so an OSD 180° call at confidence 2.5-3.1 was applied and the
+page was delivered upside down (real: ``zoomset_en_01``, 782 words at mean
+confidence 33.4; pinned: ``skewset_orient_01/02``). It now needs 5.0 — measured,
+see ``DEFAULT_MIN_OSD_CONF_180``. This is a *refusal*, not a detector: it stops
+the resolver flipping a page it has no evidence to flip, and a genuinely
+upside-down page with weak OSD is still missed. Only layer 1, the capture hint,
+actually knows which way up the phone was, and it is unwired end to end —
+``hint_rotate`` has no caller in Stage 00, the server, or the Android app.
 """
 
 from __future__ import annotations
@@ -61,6 +74,34 @@ import numpy as np
 # floor rejects only genuinely garbage OSD (near-textless / figure-heavy pages,
 # e.g. the de_* fixtures at ~0.04-1.46) while accepting every real detection.
 DEFAULT_MIN_OSD_CONF = 2.0
+
+# A 180° call gets a STRICTER floor than a 90/270 one, because it is the only
+# rotation no other layer of the cascade can check. A 90/270 error changes the
+# aspect ratio, so layer 5's landscape prior sees it; a spread rotated 180° is
+# still landscape, so an uncorroborated 180° is accepted on OSD's word alone.
+# Requiring more evidence for the unfalsifiable call is the same shape as Stage
+# 02's ink-valley/spine-pinch corroboration.
+#
+# Derived from measurement, not guessed (2026-08-19, both populations real):
+#   * WRONG 180° calls — OSD said 180 on a buffer the orientation GT records as
+#     already upright. n=7 across skewset_* and zoomset_*: 0.24, 0.92, 1.35,
+#     1.77, 2.49, 2.58, 3.09. **Maximum 3.09.**
+#   * CORRECT 180° calls — every testset frame rotated 180° on purpose, so the
+#     180° answer is known-right. n=25: **minimum 8.40**, median ~16, max 32.70.
+# The populations do not overlap; 5.0 is the geometric midpoint (5.09) of the
+# 3.09 / 8.40 gap, i.e. the same safety ratio (~1.6x) on each side.
+#
+# Rejected alternative, also measured: re-running OSD on the flipped buffer and
+# comparing ("flip-and-compare"). It has NO discriminating power — on 6 of the 7
+# wrong calls OSD repeats the same wrong answer on the flipped buffer, and on 3
+# of those it does so at HIGHER confidence (2.49->6.82, 0.24->4.68, 0.92->2.03).
+# OSD is self-consistent when it is wrong, so asking it twice buys nothing.
+#
+# Honest limit: a page that is GENUINELY upside down but figure-heavy scores
+# 0.95-2.23 (the de_* family, measured the same way) and is now missed — kept raw
+# instead of flipped. The costs are symmetric and the real fix is cascade layer 1
+# (the capture hint), which is unwired end to end. See the module docstring.
+DEFAULT_MIN_OSD_CONF_180 = 5.0
 
 # EXIF orientations whose transform includes a horizontal mirror. These are rare
 # (scanner / front-camera), NOT the flat-book spurious-rotation-tag case, so we
@@ -85,7 +126,7 @@ class OrientInfo:
     osd_rotate: int | None = None         # deg CW OSD recommends on the loaded buffer
     osd_conf: float | None = None
     applied_rotate: int = 0               # deg CW actually applied (0/90/180/270)
-    method: str = "osd"                   # capture_hint | text_baseline | osd | osd_low_conf | osd_unavailable
+    method: str = "osd"                   # capture_hint | text_baseline | osd | osd_low_conf | osd_low_conf_180 | osd_unavailable
     warnings: list[str] = field(default_factory=list)
 
 
@@ -175,6 +216,7 @@ def orient_upright(
     min_conf: float = DEFAULT_MIN_OSD_CONF,
     exif_orientation: int | None = None,
     hint_rotate: int | None = None,
+    min_conf_180: float = DEFAULT_MIN_OSD_CONF_180,
 ) -> tuple[np.ndarray, OrientInfo]:
     """Resolve ``bgr`` to upright via the priority cascade (mirror already baked).
 
@@ -202,6 +244,10 @@ def orient_upright(
     # Layer 3 — Tesseract OSD (the working rotation source of truth).
     rotate, conf = osd_rotation(bgr, binary, tessdata_dir)
     info.osd_rotate, info.osd_conf = rotate, conf
+    # A 180 flip is the one call nothing else in the cascade can contradict (the
+    # landscape prior is blind to it), so it must clear a stricter floor. See
+    # DEFAULT_MIN_OSD_CONF_180 for the two measured populations behind the number.
+    floor = min_conf_180 if (rotate is not None and rotate % 360 == 180) else min_conf
     if rotate is None:
         info.method = "osd_unavailable"
         info.warnings.append(
@@ -210,12 +256,23 @@ def orient_upright(
             "and NOT applied — see tools/normalize)."
         )
         out = bgr
-    elif conf is not None and conf < min_conf:
-        info.method = "osd_low_conf"
-        info.warnings.append(
-            f"OSD confidence {conf:.2f} < {min_conf}; did not trust the {rotate}deg "
-            f"call and kept the raw pixel orientation (EXIF rotation distrusted)."
-        )
+    elif conf is not None and conf < floor:
+        is_180 = rotate % 360 == 180
+        info.method = "osd_low_conf_180" if is_180 else "osd_low_conf"
+        if is_180:
+            info.warnings.append(
+                f"OSD proposed a 180deg flip at confidence {conf:.2f}, below the "
+                f"stricter 180 floor of {min_conf_180} (a 180 error is invisible to "
+                f"the landscape prior, so it needs strong evidence; measured wrong "
+                f"180 calls top out at 3.09, correct ones start at 8.40). Kept the "
+                f"raw pixel orientation. If this page really is upside down it will "
+                f"stay that way — a capture-side orientation hint would settle it."
+            )
+        else:
+            info.warnings.append(
+                f"OSD confidence {conf:.2f} < {min_conf}; did not trust the {rotate}deg "
+                f"call and kept the raw pixel orientation (EXIF rotation distrusted)."
+            )
         out = bgr
     else:
         info.method = "osd"
@@ -241,6 +298,7 @@ def load_upright_bgr(
     tessdata_dir: str | None,
     min_conf: float = DEFAULT_MIN_OSD_CONF,
     hint_rotate: int | None = None,
+    min_conf_180: float = DEFAULT_MIN_OSD_CONF_180,
 ) -> tuple[np.ndarray, OrientInfo]:
     """Load an image file → upright BGR array + orientation provenance.
 
@@ -262,7 +320,7 @@ def load_upright_bgr(
     out, info = orient_upright(
         bgr, binary, tessdata_dir, min_conf=min_conf,
         exif_orientation=(orientation if exif_tag else None),
-        hint_rotate=hint_rotate,
+        hint_rotate=hint_rotate, min_conf_180=min_conf_180,
     )
     info.exif_mirror_baked = mirror
     return out, info

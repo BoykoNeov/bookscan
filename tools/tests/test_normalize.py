@@ -74,6 +74,56 @@ def test_low_conf_fallback_leaves_image_untouched(monkeypatch=None):
     assert np.array_equal(out, a), "low-conf OSD must NOT rotate"
 
 
+def test_180_call_needs_the_stricter_floor():
+    """A 180 flip is the one rotation nothing else in the cascade can contradict
+    (the landscape prior is blind to it), so it carries its own higher floor.
+    Confidence 3.0 clears the 2.0 general floor but not the 5.0 180-floor — the
+    exact band every wrong 180 in the corpus lives in (max observed 3.09)."""
+    a = np.arange(2 * 4 * 3, dtype=np.uint8).reshape(2, 4, 3)
+    orig = N.osd_rotation
+    N.osd_rotation = lambda bgr, b, t: (180, 3.0)
+    try:
+        out, info = N.orient_upright(a, "x", "y", min_conf=2.0, min_conf_180=5.0)
+    finally:
+        N.osd_rotation = orig
+    assert info.method == "osd_low_conf_180", info.method
+    assert info.applied_rotate == 0
+    assert np.array_equal(out, a), "a 180 below the 180-floor must NOT be applied"
+    assert any("180" in w for w in info.warnings), "the refusal must be visible"
+
+
+def test_90_call_is_not_held_to_the_180_floor():
+    """The stricter floor is 180-ONLY. A 90/270 call at the same confidence is
+    still accepted, because a wrong 90 changes the aspect and layer 5 catches it.
+    This is what stops the fix from stranding the multi-zoom close-ups, which need
+    real 90/270 rotations (measured 2.0-17.6 confidence)."""
+    a = np.arange(2 * 4 * 3, dtype=np.uint8).reshape(2, 4, 3)
+    orig = N.osd_rotation
+    N.osd_rotation = lambda bgr, b, t: (270, 3.0)
+    try:
+        out, info = N.orient_upright(a, "x", "y", min_conf=2.0, min_conf_180=5.0)
+    finally:
+        N.osd_rotation = orig
+    assert info.method == "osd", info.method
+    assert info.applied_rotate == 270
+    assert out.shape == (4, 2, 3)
+
+
+def test_confident_180_is_still_applied():
+    """The floor is a bar, not a ban: a genuinely upside-down page whose OSD is
+    confident (measured: correct 180 calls run 8.40-32.70) must still be flipped."""
+    a = np.arange(2 * 4 * 3, dtype=np.uint8).reshape(2, 4, 3)
+    orig = N.osd_rotation
+    N.osd_rotation = lambda bgr, b, t: (180, 8.4)
+    try:
+        out, info = N.orient_upright(a, "x", "y", min_conf=2.0, min_conf_180=5.0)
+    finally:
+        N.osd_rotation = orig
+    assert info.method == "osd"
+    assert info.applied_rotate == 180
+    assert np.array_equal(out, N._rotate_cw(a, 180))
+
+
 def test_osd_unavailable_leaves_image_untouched():
     a = np.zeros((3, 5, 3), np.uint8)
     orig = N.osd_rotation

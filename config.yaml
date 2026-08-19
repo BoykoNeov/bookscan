@@ -57,6 +57,24 @@ uncertainty:
   # Selectable output mode: flag | best_guess | patch
   default_mode: flag
 
+# --- Stage 00 ingest (orientation) ---
+# tools/normalize resolves orientation as a confidence-gated priority cascade.
+# TWO OSD floors, not one, because the four rotations are not equally checkable:
+#   * min_osd_conf     — a 90/270 call. A wrong one changes the page's aspect
+#     ratio, so the cascade's landscape prior sees it. A low bar is safe, and it
+#     is what lets the multi-zoom close-ups (real 90/270 rotations at confidence
+#     2.0-17.6) be corrected at all.
+#   * min_osd_conf_180 — a 180 call. NOTHING else can contradict it: a spread
+#     rotated 180 is still landscape. Derived from two measured populations
+#     (2026-08-19): WRONG 180 calls on known-upright buffers top out at 3.09
+#     (n=7, real captures); CORRECT 180 calls on deliberately flipped testset
+#     spreads start at 8.40 (n=25). 5.0 is the geometric midpoint of that gap.
+#     Raising it refuses more flips; lowering it back to 2.0 reinstates the bug
+#     that shipped a whole spread upside down.
+ingest:
+  min_osd_conf: 2.0
+  min_osd_conf_180: 5.0
+
 # --- Second-opinion engines (never the sole text/confidence source) ---
 engines:
   easyocr:

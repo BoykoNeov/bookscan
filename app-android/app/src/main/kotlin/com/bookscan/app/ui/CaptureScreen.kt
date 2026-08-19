@@ -27,6 +27,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -84,6 +85,8 @@ private val ANALYSIS_RESOLUTION = Size(320, 240)
 fun CaptureScreen(
     outputDir: File,
     logDir: File,
+    autoArmed: Boolean,
+    onAutoArmedChange: (Boolean) -> Unit,
     onCaptured: (File) -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -99,13 +102,12 @@ fun CaptureScreen(
     var streak by remember { mutableStateOf(0) }
     var logging by remember { mutableStateOf(false) }
     var logStatus by remember { mutableStateOf<String?>(null) }
-    // Arming is a MODE, not a moment. Stopping a log used to re-arm instantly,
-    // and a passing streak is only 8 frames (~0.27 s at 30 fps) — so the burst
-    // fired and the review screen took over before the "saved N frames" line
-    // could be read, and a second log could never be started. Calibration needs
-    // several recordings back to back, so disarming has to persist until the
-    // user re-arms it deliberately.
-    var autoArmed by remember { mutableStateOf(true) }
+    // Arming is a MODE, not a moment, and it is owned by the caller so it
+    // survives leaving and re-entering this screen. Read through
+    // rememberUpdatedState everywhere below: the analyzer lambda and the
+    // takePicture callbacks are created once, so they would capture the
+    // PARAMETER's value at creation time and go stale the moment it changes.
+    val armedNow by rememberUpdatedState(autoArmed)
     val frameLog = remember { FrameLog() }
     // Writing the CSV touches the disk; the analyzer runs on main. One
     // background thread does the write, mirroring CloseupScreen's executor.
@@ -145,6 +147,8 @@ fun CaptureScreen(
      * shutter, and only [finalizeBurst] used to clear it — so a burst abandoned
      * any other way would leave both dead for the rest of the screen's life.
      */
+    // Reads armedNow, never the `autoArmed` parameter: the analyzer holds the
+    // copy of this function captured when its effect ran.
     fun abortBurst() {
         burstCandidates.forEach { it.first.delete() }
         burstCandidates.clear()
@@ -166,7 +170,7 @@ fun CaptureScreen(
                     // was abandoned can land after. Adding it now would leave a
                     // stale candidate for the NEXT finalize to hand off as the
                     // current spread — a photo from minutes ago, silently.
-                    if (logging || !autoArmed) {
+                    if (logging || !armedNow) {
                         file.delete()
                         return
                     }
@@ -279,7 +283,7 @@ fun CaptureScreen(
                         // data, and would yield a full 15s only when the
                         // thresholds are so tight they never fire (the one case
                         // that teaches nothing about where they should sit).
-                        if (!logging && autoArmed) {
+                        if (!logging && armedNow) {
                             when (command) {
                                 HoverCommand.CaptureNow -> captureAutoFrame(score.sharpness)
                                 HoverCommand.FinalizeBurst -> finalizeBurst()
@@ -327,7 +331,7 @@ fun CaptureScreen(
                 Text(
                     when {
                         logging -> "recording — nothing will be captured"
-                        !autoArmed -> "auto-capture OFF — arm it below when done calibrating"
+                        !armedNow -> "auto-capture OFF — arm it below when done calibrating"
                         else -> autoStatus
                     },
                     color = Color.White,
@@ -349,7 +353,7 @@ fun CaptureScreen(
                         frameLog.clear()
                         logStatus = null
                         abortBurst()
-                        autoArmed = false
+                        onAutoArmedChange(false)
                         logging = true
                     }
                 },
@@ -357,18 +361,23 @@ fun CaptureScreen(
                 Text(if (logging) "Stop log" else "Log frames (calibration)")
             }
             Button(
+                // Not gated on `capturing` either: armed state persists across
+                // screens, so re-entering after a Discard fires a burst within
+                // ~0.3 s — and if this button were dead during that burst, the
+                // only way back to calibration would be a tap inside that
+                // window, which is exactly the defect being fixed.
                 enabled = !logging,
                 onClick = {
-                    if (autoArmed) {
+                    if (armedNow) {
                         abortBurst()
-                        autoArmed = false
+                        onAutoArmedChange(false)
                     } else {
                         hoverGate.reset()
-                        autoArmed = true
+                        onAutoArmedChange(true)
                     }
                 },
             ) {
-                Text(if (autoArmed) "Auto-capture: ON — tap to pause" else "Auto-capture: OFF — tap to arm")
+                Text(if (armedNow) "Auto-capture: ON — tap to pause" else "Auto-capture: OFF — tap to arm")
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Button(onClick = onCancel, enabled = !capturing) { Text("Cancel") }

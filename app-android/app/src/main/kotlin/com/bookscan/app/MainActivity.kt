@@ -43,6 +43,17 @@ class MainActivity : ComponentActivity() {
             val viewModel: BookscanViewModel = viewModel()
             val state by viewModel.state.collectAsState()
             var flow by remember { mutableStateOf<CaptureFlow>(CaptureFlow.Hidden) }
+            // Auto-capture starts DISARMED, and the choice is session-wide so it
+            // survives Discard → re-enter. Armed-on-entry made the capture
+            // screen unusable for calibration: a passing streak is 8 frames
+            // (~0.3 s at 30 fps), so it fired and handed off to the review
+            // screen before the calibration button could be tapped at all.
+            // FLIP THIS BACK TO true ONLY AFTER BOTH THRESHOLDS ARE FITTED —
+            // it is not a UX preference. Today SHARPNESS_THRESHOLD (40) sits
+            // two orders of magnitude below the measured range (231–1567), so
+            // the only gate doing any work is a stability threshold sitting at
+            // the median of the data. Auto-firing on that is firing at random.
+            var autoArmed by remember { mutableStateOf(false) }
 
             val requestCameraPermission = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission(),
@@ -76,6 +87,8 @@ class MainActivity : ComponentActivity() {
                                 // (`adb pull /sdcard/Android/data/<pkg>/files/`),
                                 // which internal storage would need `run-as` for.
                                 logDir = getExternalFilesDir(null) ?: cacheDir,
+                                autoArmed = autoArmed,
+                                onAutoArmedChange = { autoArmed = it },
                                 onCaptured = { file -> flow = CaptureFlow.ReviewingSpread(file, emptyList()) },
                                 onCancel = { flow = CaptureFlow.Hidden },
                             )

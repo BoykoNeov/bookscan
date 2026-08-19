@@ -48,15 +48,31 @@ import java.util.Locale
 import java.util.concurrent.Executors
 
 /**
- * M3 auto-capture thresholds. UNCALIBRATED — placeholder values, not derived
- * from the pipeline (variance-of-Laplacian on a downsampled on-device luma
- * buffer is not on the pipeline's absolute scale; see
- * [com.bookscan.capture.varianceOfLaplacian]'s doc comment). Must be tuned
- * against real on-device frames (see docs/plans/android-guided-capture.md M3)
- * before this UX is trusted; expect to revisit after first real device use.
+ * M3 auto-capture thresholds, fitted 2026-08-19 on a Galaxy S23 from three
+ * labelled recordings (1787 frames, ~60 s: a steady hold, deliberate motion,
+ * and realistic use) — see docs/data/hover_calibration_20260819.json and the
+ * RESULTS row. On this metric (variance-of-Laplacian over a 320×240 luma
+ * buffer) sharpness ran 492–1147 while holding and 12–2166 while moving, which
+ * is why the old placeholders (40 / 6) never rejected anything on sharpness.
+ *
+ * **Stability does all the separation.** Pinned at 3.1, the sharpness
+ * threshold changes the outcome nowhere between 0 and 930: the two metrics are
+ * correlated, because a moving frame is also a blurry one. So the fitted
+ * optimum of 930.1 was deliberately NOT taken. It buys nothing measurable
+ * here, and it is fitted to one book under one light: on a dimmer page whose
+ * whole sharpness range sits lower, it would stop the gate firing at all —
+ * silent and undiagnosable. 400 sits below the steady recording's observed
+ * minimum (491.6), so every frame from a genuine hold still qualifies, while
+ * a still-but-out-of-focus frame (the case sharpness actually exists to catch,
+ * and the one case none of the three recordings contains) fails visibly on the
+ * review screen where it can be discarded.
+ *
+ * Measured at this pair: fires on 89% of steady frames, and **zero bursts** on
+ * the whole 21 s moving recording. Every looser stability value fired at least
+ * one false burst.
  */
-private const val SHARPNESS_THRESHOLD = 40.0
-private const val STABILITY_THRESHOLD = 6.0
+private const val SHARPNESS_THRESHOLD = 400.0
+private const val STABILITY_THRESHOLD = 3.1
 private const val REQUIRED_CONSECUTIVE_FRAMES = 8
 private const val MIN_CAPTURE_INTERVAL_MS = 400L
 private const val MAX_BURST_SIZE = 4

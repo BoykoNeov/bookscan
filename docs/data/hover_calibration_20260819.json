@@ -1,0 +1,94 @@
+{
+ "steady": {
+  "path": "M:\\claud_projects\\temp\\framelogs\\framelog_1787119754755.csv",
+  "frames": 696,
+  "duration_s": 23.167,
+  "sharpness": {
+   "n": 696,
+   "min": 491.61289101932033,
+   "max": 1146.91823345886,
+   "p5": 990.8228469919509,
+   "p10": 1052.67902129187,
+   "p25": 1099.0178225547543,
+   "p50": 1116.3341981075687,
+   "p75": 1125.4400263749249,
+   "p90": 1130.9556772169285,
+   "p95": 1134.9000562346428
+  },
+  "stability": {
+   "n": 696,
+   "min": 0.3824739583333333,
+   "max": 13.236354166666667,
+   "p5": 0.5072981770833334,
+   "p10": 0.5927083333333334,
+   "p25": 0.761328125,
+   "p50": 1.0597395833333334,
+   "p75": 1.6848404947916666,
+   "p90": 3.2632096354166666,
+   "p95": 4.887360026041667
+  }
+ },
+ "moving": {
+  "path": "M:\\claud_projects\\temp\\framelogs\\framelog_1787119779946.csv",
+  "frames": 633,
+  "duration_s": 21.067,
+  "sharpness": {
+   "n": 633,
+   "min": 11.635588911221866,
+   "max": 2166.4157156506985,
+   "p5": 33.556073210910654,
+   "p10": 58.889700780388246,
+   "p25": 163.05929573104552,
+   "p50": 358.17065258505556,
+   "p75": 622.945100145301,
+   "p90": 940.8260056346652,
+   "p95": 1090.1465955759445
+  },
+  "stability": {
+   "n": 633,
+   "min": 2.1633072916666665,
+   "max": 67.78131510416667,
+   "p5": 4.4876249999999995,
+   "p10": 7.0834375,
+   "p25": 10.438619791666667,
+   "p50": 14.058346354166666,
+   "p75": 20.969453125,
+   "p90": 28.631815104166673,
+   "p95": 33.37825520833332
+  }
+ },
+ "max_false_fire": 0.01,
+ "current": {
+  "sharpness_threshold": 40.0,
+  "stability_threshold": 6.0
+ },
+ "fit": {
+  "sharpness_threshold": 930.0898552701608,
+  "stability_threshold": 3.055672526041666,
+  "steady_pass_rate": 0.889367816091954,
+  "moving_pass_rate": 0.009478672985781991,
+  "separates": true,
+  "note": ""
+ },
+ "mixed_replay": {
+  "frames": 458,
+  "duration_s": 15.4,
+  "captures": 1,
+  "bursts": 1,
+  "fired_at_ms": [
+   598253151
+  ]
+ },
+ "applied": {
+  "note": "Post-hoc annotation. The fitter's suggestion is recorded above unchanged; these are the values actually put into CaptureScreen.kt.",
+  "sharpness_threshold": 400.0,
+  "stability_threshold": 3.1,
+  "sharpness_override_reason": "With stability at 3.1 the sharpness threshold changes no outcome anywhere between 0 and 930 on these recordings, so the fitted 930.1 is unvalidated precision. It is also scene-dependent: on a dimmer book whose whole sharpness range sits lower it would stop the gate firing entirely, which fails silently. 400 sits below the steady recording's observed minimum (491.6), so it rejects nothing a genuine hold produces.",
+  "device": "Samsung Galaxy S23 (SM-S911B)",
+  "source_logs": {
+   "hover_calibration_20260819_1_steady.csv": "framelog_1787119754755.csv",
+   "hover_calibration_20260819_2_moving.csv": "framelog_1787119779946.csv",
+   "hover_calibration_20260819_3_mixed.csv": "framelog_1787119801157.csv"
+  }
+ }
+}

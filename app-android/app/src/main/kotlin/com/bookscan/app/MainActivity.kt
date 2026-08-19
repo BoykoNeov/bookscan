@@ -48,11 +48,13 @@ class MainActivity : ComponentActivity() {
             // screen unusable for calibration: a passing streak is 8 frames
             // (~0.3 s at 30 fps), so it fired and handed off to the review
             // screen before the calibration button could be tapped at all.
-            // FLIP THIS BACK TO true ONLY AFTER BOTH THRESHOLDS ARE FITTED —
-            // it is not a UX preference. Today SHARPNESS_THRESHOLD (40) sits
-            // two orders of magnitude below the measured range (231–1567), so
-            // the only gate doing any work is a stability threshold sitting at
-            // the median of the data. Auto-firing on that is firing at random.
+            // The thresholds are now fitted (2026-08-19), but this default
+            // stays false until the fit has been CONFIRMED ON THE DEVICE with
+            // auto-capture armed by hand. Flipping it on the strength of the
+            // replay alone would re-break the thing it was added to fix: the
+            // simulation says a steady hold fires 0.23 s in, so the screen
+            // would hand off to review before the calibration button could be
+            // reached, and the confirmation run could never be recorded.
             var autoArmed by remember { mutableStateOf(false) }
 
             val requestCameraPermission = rememberLauncherForActivityResult(

@@ -3765,3 +3765,65 @@ re-labelled the page photo as the sidebar.
 Suite **397 green** (was 383): +14 in `test_unreadable_panel.py`, most of them
 about the pass staying silent — on ordinary text, on a uniformly bad scan, on
 fragments, on headers/figures/tables, and on the page-scoped-id case.
+
+## The hover gate gets real numbers, and the calibration screen gets a mode — 2026-08-19
+
+First on-device session with a phone (Galaxy S23, SM-S911B) over a real book.
+`SHARPNESS_THRESHOLD` / `STABILITY_THRESHOLD` had been placeholders since M3 —
+40 and 6, guessed, because the on-device metric (variance-of-Laplacian over a
+320×240 luma buffer) is not on `stage00_ingest.py`'s absolute scale and could
+not be copied from the pipeline. They are now fitted from 1787 labelled frames.
+
+**The instrumentation had to be fixed twice before it could produce data**, and
+both failures were the same shape: the screen captured a photo and navigated to
+review before the calibration button could be used.
+
+* Round 1 suspended auto-capture *while* logging. Stopping a log re-armed it
+  instantly — and a passing streak is 8 frames, about three tenths of a second
+  — so the burst fired before the "saved N frames" line could be read, and a
+  second recording could never be started. The manual shutter also stayed live
+  during a recording, one thumb-width below a button promising nothing would be
+  captured.
+* Round 2 made arming a mode that persists, but it still started ON, so the
+  screen was gone 0.23 s after it appeared. The mode now lives in
+  `MainActivity`, starts **off**, and survives Discard → re-enter.
+* Hoisting it introduced a staleness trap worth recording: the analyzer lambda
+  and the `takePicture` callbacks are created once, so they capture the
+  parameter's value at creation time. A shot started while armed would add
+  itself to the burst after disarming, and the *next* finalize would hand off a
+  photo taken minutes earlier as the current spread. Everything outside
+  composition reads through `rememberUpdatedState`.
+
+### The numbers
+
+| recording | frames | sharpness (min / p50 / max) | stability (min / p50 / max) |
+|---|---|---|---|
+| 1 steady hold | 696 (23.2 s) | 492 / 1116 / 1147 | 0.4 / 1.1 / 13.2 |
+| 2 deliberate motion | 633 (21.1 s) | 12 / 358 / 2166 | 2.2 / 14.1 / 67.8 |
+| 3 realistic use | 458 (15.4 s) | 112 / 933 / 1232 | 1.1 / 7.2 / 34.1 |
+
+Applied: **sharpness ≥ 400, stability ≤ 3.1**. Fires on 89% of steady frames
+and produces **zero bursts** across the entire 21 s moving recording; every
+looser stability value fired at least one false burst. The old placeholders
+would have passed 97% of steady frames *and* 7.9% of moving ones.
+
+**The fitted sharpness optimum (930.1) was deliberately overridden to 400.**
+With stability pinned at 3.1, the sharpness threshold changes no outcome
+anywhere between 0 and 930 — the metrics are correlated, since a moving frame
+is also a blurry one, and stability is doing all the separation. That makes
+930.1 unvalidated precision fitted to one book under one light: on a dimmer
+page whose whole sharpness range sits lower it would stop the gate firing at
+all, silently and undiagnosably. 400 sits below the steady recording's observed
+minimum (491.6), so it rejects nothing a genuine hold produces, while the case
+sharpness actually exists to catch — still but out of focus — fails visibly on
+the review screen. That case appears in none of the three recordings and
+remains unmeasured.
+
+Raw logs committed as `docs/data/hover_calibration_20260819_{1_steady,2_moving,3_mixed}.csv`;
+distributions and the fitter's own suggestion in
+`docs/data/hover_calibration_20260819.json`, annotated with what was applied.
+
+**Not yet closed.** Auto-capture still starts disarmed. The replay says one
+burst per 15 s of realistic use, and whether that feels right or sluggish is
+the one thing a replay cannot answer — it needs a confirmation run on the
+device with the gate armed by hand. The default flips only after that.

@@ -22,7 +22,9 @@ from tools import normalize as N
 
 def _stub_orient():
     """Replace the tesseract-dependent loader with a pure cv2 read."""
-    def _load(path, binary, tessdata, min_conf=2.0):
+    # **kw so the stub keeps working when the cascade gains a knob. It grew
+    # min_conf_180 on 2026-08-19 and this stub was the only thing that noticed.
+    def _load(path, binary, tessdata, min_conf=2.0, **kw):
         bgr = cv2.imread(str(path), cv2.IMREAD_COLOR)
         return bgr, N.OrientInfo(applied_rotate=0, method="osd", osd_conf=42.0,
                                  exif_orientation=1)

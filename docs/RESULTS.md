@@ -4004,3 +4004,141 @@ Caveat on the method: cropping in software changes framing only, not
 perspective or resolution. That is the right proxy for a gutter finder, which
 sees framing, and the wrong one for anything about sharpness, curvature or
 dewarp.
+
+### The one rotation nothing can contradict - 2026-08-19
+
+Stage 00's orientation cascade trusted Tesseract OSD equally on all four
+rotations. It should not: a wrong 90/270 changes the page's aspect ratio, so the
+cascade's landscape prior catches it, but **a spread turned 180 degrees is still
+landscape**, so the layer that exists to catch mis-orientation is blind to the
+most likely error. OSD was unsupervised on exactly that branch, and OSD at
+confidence 2.5 is noise - which is why the Android app's first real upload
+(`zoomset_en_01`) came back upside down, 782 words at mean confidence 33.4.
+
+Both populations were measured before choosing a number. Data:
+`docs/data/stitch_and_orientation_20260819.json`.
+
+| population | n | how it was obtained | confidence range |
+|---|---|---|---|
+| **wrong** 180 calls | 7 | OSD said 180 on a buffer the orientation GT records as already upright | 0.24 - **3.09** |
+| **correct** 180 calls | 25 | every testset frame rotated 180 on purpose, so 180 is known-right | **8.40** - 32.70 |
+
+The populations do not overlap. `DEFAULT_MIN_OSD_CONF_180 = 5.0` is the
+geometric midpoint (5.09) of the 3.09/8.40 gap - the same ~1.6x safety ratio on
+each side. 90/270 keeps the old 2.0 floor, which is what still lets the
+multi-zoom close-ups (real 270-degree rotations at confidence 2.0-17.6) be
+corrected.
+
+**Rejected, and measured rather than argued:** flip-and-compare - re-run OSD on
+the flipped buffer and accept the 180 only if it then reads 0 degrees more
+confidently. It looked like the threshold-free answer and it has *no*
+discriminating power. On 6 of the 7 wrong calls OSD repeats the same wrong
+answer on the flipped buffer, and on three of those at **higher** confidence
+(2.49 -> 6.82, 0.92 -> 2.03, 0.24 -> 4.68). OSD is self-consistent when it is
+wrong; asking it twice buys nothing.
+
+Non-regression is by construction: all 15 flat testset spreads read
+`osd_rotate = 0`, and a floor cannot change what happens to a zero. The two
+frames pinned in 2026-08 as known resolver defects (`skewset_orient_01_134655`,
+`skewset_orient_02_134731`) now resolve net-0, so their `known_defect_*` keys
+were **deleted** - which is what the fixture's own note instructed - rather than
+the assertion loosened. `zoomset_en_01_f00`, the wild instance, was added.
+**28 orientation fixtures, all net-0.** Suite 425.
+
+**Honest limit.** This is a refusal, not a detector. A page that genuinely *is*
+upside down but figure-heavy scores 0.95-2.23 (the `de_*` family, measured the
+same way) and will now be missed - the same wrong output as before, from the
+opposite cause. Only cascade layer 1, the capture hint, knows which way up the
+phone was, and it remains unwired end to end: `hint_rotate` has no caller in
+Stage 00, the server, or the app.
+
+### The gate was the bug, not the feature budget - 2026-08-19
+
+The 2026-08-19 arrival note recorded that Stage 01 stitched **0 of 11** real
+close-ups because ORB was starved (4000 features over a 12 Mpx frame), and that
+raising the budget to 20000 took it to 4 of 11. Both halves are wrong, and the
+reason nobody could tell is that **the inlier count is produced by the matcher,
+so it cannot referee a change to the matcher** - a bigger budget inflates it
+whether or not the fit improved. Re-measured with a correctness signal that does
+not come from the matcher: warp the close-up and take the normalized
+cross-correlation of its pixels with the anchor's over the footprint. Verified
+by eye on full-resolution checkerboard overlays - NCC >= 0.45 lines up across
+every tile seam, NCC <= 0.28 does not. Data:
+`docs/data/stitch_and_orientation_20260819.json`.
+
+| claim in the arrival note | what re-measurement says |
+|---|---|
+| 0/11 register; ORB is starved | **5 of 11 were located CORRECTLY by the shipped settings** - 9, 12, 13, 21, 21 inliers - and thrown away, because `min_inliers` was 25. Every correct registration in the corpus scores *below* the gate meant to admit it. |
+| 20000 features -> 4/11 | It finds the same five and adds a **false positive**: `en_01_f03` reaches 27 inliers on a warp that puts grass and sky where the anchor has text. Shipping the budget change alone would have blended wrong pixels into pages. **Not shipped**; `orb_features` stays 4000. |
+
+One overloaded constant became five gates asking five different questions:
+enough matches to fit at all (a *precondition* - the good-match count overlaps
+completely between right and wrong registrations, 21-58 vs 16-36, so it must
+never be a quality gate), RANSAC consensus (**25 -> 8**, sitting in the measured
+3-7 / 9-21 gap), that consensus as a fraction of the evidence, photometric
+agreement, and finally whether blending actually helps.
+
+**And then the registrations turned out not to be worth having.** Blending the
+five correct ones made OCR *worse* on every spread that had any:
+
+| set | words | mean conf | words at conf >= 80 |
+|---|---|---|---|
+| `de_01` (2 blended) | 530 -> 450 | 84.3 -> 67.6 | **435 -> 257** |
+| `de_02` (1 blended) | 322 -> 210 | 69.9 -> 67.6 | 183 -> 120 |
+| `en_02` (2 blended) | 288 -> 197 | 73.0 -> 71.3 | 160 -> 102 |
+
+Not a matcher problem. A close-up is nearer the page but handheld at longer
+focal length, and it must be warped *down* into the anchor's coordinate frame to
+be blended. Measured linear scale is 0.71-0.94, so there was almost no extra
+resolution to bank, and resampling spends more than that: over the identical
+footprint pixels **all five are softer than what they replace** (sharpness ratio
+0.49-0.83). Hence a fifth gate, `min_sharpness_ratio` - a close-up must prove it
+*improves* the region, not merely that it belongs there.
+
+**Net on the zoomset: 0 of 11 blended, the same count as before - but by a
+stated measurement instead of by accident, and Stage 01's output is now
+byte-identical to the anchor rather than worse than it.**
+
+Also fixed: close-ups were matched against a base that earlier stitches had
+already repainted, so the outcome depended on the order the phone shot in
+(`en_02_f05` fell from 21 inliers to 5 for that reason alone). Matching is now
+against the pristine anchor, blending into a separate accumulator. The debug
+overlay finally draws the footprints its docstring always promised - green
+accepted, red refused - because a wrong registration is obvious in a picture and
+invisible in a number.
+
+**Where the close-ups' value actually is, and it is not as patches.** These
+close-ups are whole-spread re-zooms, so each frame can be OCR'd on its own and
+compared directly (words at confidence >= 80):
+
+| set | anchor | close-ups |
+|---|---|---|
+| `de_01` | **435** | 221, 173 |
+| `de_02` | 183 | **270**, **249** |
+| `en_01` | **167** | 120, 0, 2 |
+| `en_02` | **160** | 96, 3, 121, 7 |
+
+On `de_02` the close-ups read **47 % more high-confidence text than the chosen
+anchor**, and Stage 01 rejected the better one and blended the other *downward*
+into the worse image. So a close-up is sometimes not a patch at all but a better
+photograph of the whole page - and `partition_frames` cannot express that. It
+ranks anchors by variance-of-Laplacian over the **whole frame**, and these
+frames are 40-55 % room, so the score rewards cluttered backgrounds (chair
+edges, cables) over legible text. **Reported, not fixed:** it changes which
+pixels represent the page, and it needs the same book-boundary crop the gutter
+split wants (see the framing addendum above).
+
+**Left unsolved, mechanism now identified rather than suspected.** The six
+close-ups that no setting registers (`en_01` f01-f03, `en_02` f02-f04) are all
+oblique views of a strongly curved page - a cylinder seen near edge-on. A
+homography assumes a plane and Stage 01 runs *before* Stage 03 flattens, so
+those frames are outside the model rather than badly matched. That is capture
+guidance or register-after-dewarp, not matcher tuning. SIFT was measured in the
+same sweep: it registers one of the six (6/11 vs 5/11) at ~1.6x the time, and is
+wired behind `feature_engine` rather than swapped in, because CLAUDE.md
+documents ORB as this stage's tool.
+
+**Caveat that applies to every number above:** the `zoomset_*` fixtures have no
+ground truth. Word counts and confidences are *indicative*, not accuracy; they
+are reported alongside the visual registration proof, not instead of it.
+Suite 425.

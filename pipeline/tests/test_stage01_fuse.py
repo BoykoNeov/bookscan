@@ -173,6 +173,30 @@ def test_do_no_harm_gate_admits_a_genuinely_sharper_closeup():
     assert blended.shape == base.shape
 
 
+def test_sharpness_check_declines_to_judge_a_tiny_footprint():
+    """"Cannot judge" must not be reported as "softer".
+
+    A fixed 25x25 erosion ate a small patch entirely - an 80x80 footprint fell to
+    3136 px, the function returned 0.0, and the gate refused the close-up citing a
+    sharpness ratio that had never been measured. The erosion is scaled to the
+    footprint now, and anything genuinely too small returns None. The zoomset
+    cannot reach this case (all whole-spread re-zooms); a close-up of PART of a
+    page, which is what the stage is for, can."""
+    img = _textured(seed=13)
+    big = np.zeros(img.shape[:2], np.uint8)
+    big[200:500, 200:600] = 255
+    assert S.footprint_sharpness_ratio(img, img, big) is not None, (
+        "a normal footprint must still be judged")
+    tiny = np.zeros(img.shape[:2], np.uint8)
+    tiny[200:240, 200:240] = 255          # 1600 px, under the judgeable floor
+    assert S.footprint_sharpness_ratio(img, img, tiny) is None
+    # ...and the scaled kernel keeps a mid-size patch judgeable, where the old
+    # fixed 25x25 kernel would have eroded it below the floor.
+    mid = np.zeros(img.shape[:2], np.uint8)
+    mid[200:290, 200:290] = 255           # 8100 px
+    assert S.footprint_sharpness_ratio(img, img, mid) is not None
+
+
 def test_gates_are_separate_knobs():
     """min_inliers used to gate BOTH the good-match count and the RANSAC inlier
     count. They answer different questions and are now separate; this pins that

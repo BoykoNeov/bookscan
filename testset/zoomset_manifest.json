@@ -24,7 +24,30 @@
   "  - Stage 02 found the true spine on 1 of 4 spreads (zoomset_de_02).",
   "",
   "NO GT of any kind yet. These are diagnostic fixtures, not graded ones.",
-  "Append-only, like every other testset entry."
+  "Append-only, like every other testset entry.",
+  "",
+  "SUPERSEDED 2026-08-19 (same day, later) -- the two MEASURED ON ARRIVAL bullets",
+  "about Stage 01 are WRONG and are kept above only so the correction is legible.",
+  "Re-measured with a correctness signal that does not come from the matcher",
+  "(photometric agreement after warping, eyeballed on full-res checkerboards):",
+  "  - Stage 01 did not fail to LOCATE these close-ups. FIVE of the eleven were",
+  "    located correctly by the shipped params, at 9-21 inliers, and thrown away",
+  "    because min_inliers was 25 -- above every correct value in the corpus.",
+  "  - The '4 of 11 at 20000 features' figure includes a FALSE POSITIVE:",
+  "    en_01_f03 reaches 27 inliers on a warp that lands grass and sky where the",
+  "    anchor has text. The budget change was not shipped.",
+  "  - Blending the five correct registrations makes OCR WORSE (de_01 loses 178",
+  "    high-confidence words). All five are SOFTER than the pixels they replace",
+  "    (sharpness ratio 0.49-0.83), because a close-up must be warped down into",
+  "    the anchor's frame and carries almost no extra resolution (scale 0.71-0.94).",
+  "  - The six that never register are oblique views of a strongly CURVED page,",
+  "    which confirms the curvature mechanism the arrival note listed as a",
+  "    suspect with no evidence. The 'where the inliers sit' dead end still holds.",
+  "  - Standalone OCR says the real finding is anchor CHOICE, not stitching: on",
+  "    zoomset_de_02 the close-ups read 270 and 249 high-confidence words against",
+  "    the anchor's 183, and Stage 01 picked the anchor.",
+  "Full writeup: docs/RESULTS.md 2026-08-19 'The gate was the bug, not the feature",
+  "budget'. Evidence: docs/data/stitch_and_orientation_20260819.json."
  ],
  "sets": {
   "zoomset_de_01": {
@@ -37,7 +60,8 @@
      "role": "anchor (full spread)",
      "ingest_sharpness": 564.34,
      "stage01_shipped_params": null,
-     "inliers_at_20k_features": null
+     "inliers_at_20k_features": null,
+     "standalone_ocr_words_conf_ge_80": 435
     },
     {
      "image_id": "zoomset_de_01_f01",
@@ -45,7 +69,16 @@
      "role": "close-up",
      "ingest_sharpness": 1329.05,
      "stage01_shipped_params": "46 good / 9 inliers",
-     "inliers_at_20k_features": 15
+     "inliers_at_20k_features": 15,
+     "standalone_ocr_words_conf_ge_80": 221,
+     "stage01_v0_2": {
+      "registered": true,
+      "inliers": 9,
+      "ncc": 0.599,
+      "sharpness_ratio": 0.71,
+      "blended": false,
+      "why_not_blended": "softer than the anchor over the same pixels"
+     }
     },
     {
      "image_id": "zoomset_de_01_f02",
@@ -53,7 +86,16 @@
      "role": "close-up",
      "ingest_sharpness": 774.27,
      "stage01_shipped_params": "38 good / 21 inliers",
-     "inliers_at_20k_features": 43
+     "inliers_at_20k_features": 43,
+     "standalone_ocr_words_conf_ge_80": 173,
+     "stage01_v0_2": {
+      "registered": true,
+      "inliers": 21,
+      "ncc": 0.66,
+      "sharpness_ratio": 0.49,
+      "blended": false,
+      "why_not_blended": "softer than the anchor over the same pixels"
+     }
     }
    ],
    "anchor": "zoomset_de_01_f00",
@@ -69,7 +111,8 @@
      "role": "anchor (full spread)",
      "ingest_sharpness": 786.81,
      "stage01_shipped_params": null,
-     "inliers_at_20k_features": null
+     "inliers_at_20k_features": null,
+     "standalone_ocr_words_conf_ge_80": 183
     },
     {
      "image_id": "zoomset_de_02_f01",
@@ -77,7 +120,16 @@
      "role": "close-up",
      "ingest_sharpness": 626.62,
      "stage01_shipped_params": "36 good / 3 inliers",
-     "inliers_at_20k_features": 6
+     "inliers_at_20k_features": 6,
+     "standalone_ocr_words_conf_ge_80": 270,
+     "stage01_v0_2": {
+      "registered": false,
+      "inliers": 3,
+      "ncc": null,
+      "sharpness_ratio": null,
+      "blended": false,
+      "why_not_blended": "only 3 RANSAC inliers (gate 8)"
+     }
     },
     {
      "image_id": "zoomset_de_02_f02",
@@ -85,7 +137,16 @@
      "role": "close-up",
      "ingest_sharpness": 359.33,
      "stage01_shipped_params": "58 good / 13 inliers",
-     "inliers_at_20k_features": 31
+     "inliers_at_20k_features": 31,
+     "standalone_ocr_words_conf_ge_80": 249,
+     "stage01_v0_2": {
+      "registered": true,
+      "inliers": 13,
+      "ncc": 0.571,
+      "sharpness_ratio": 0.5,
+      "blended": false,
+      "why_not_blended": "softer than the anchor over the same pixels"
+     }
     }
    ],
    "anchor": "zoomset_de_02_f00",
@@ -101,7 +162,8 @@
      "role": "anchor (full spread)",
      "ingest_sharpness": 581.36,
      "stage01_shipped_params": null,
-     "inliers_at_20k_features": null
+     "inliers_at_20k_features": null,
+     "standalone_ocr_words_conf_ge_80": 167
     },
     {
      "image_id": "zoomset_en_01_f01",
@@ -109,7 +171,16 @@
      "role": "close-up",
      "ingest_sharpness": 380.81,
      "stage01_shipped_params": "23 good (below the 25 gate)",
-     "inliers_at_20k_features": 5
+     "inliers_at_20k_features": 5,
+     "standalone_ocr_words_conf_ge_80": 120,
+     "stage01_v0_2": {
+      "registered": false,
+      "inliers": 4,
+      "ncc": null,
+      "sharpness_ratio": null,
+      "blended": false,
+      "why_not_blended": "only 4 RANSAC inliers (gate 8)"
+     }
     },
     {
      "image_id": "zoomset_en_01_f02",
@@ -117,7 +188,16 @@
      "role": "close-up",
      "ingest_sharpness": 409.72,
      "stage01_shipped_params": "19 good (below the 25 gate)",
-     "inliers_at_20k_features": 17
+     "inliers_at_20k_features": 17,
+     "standalone_ocr_words_conf_ge_80": 0,
+     "stage01_v0_2": {
+      "registered": false,
+      "inliers": 7,
+      "ncc": null,
+      "sharpness_ratio": null,
+      "blended": false,
+      "why_not_blended": "only 7 RANSAC inliers (gate 8)"
+     }
     },
     {
      "image_id": "zoomset_en_01_f03",
@@ -125,7 +205,17 @@
      "role": "close-up",
      "ingest_sharpness": 204.92,
      "stage01_shipped_params": "16 good (below the 25 gate)",
-     "inliers_at_20k_features": 27
+     "inliers_at_20k_features": 27,
+     "standalone_ocr_words_conf_ge_80": 2,
+     "stage01_v0_2": {
+      "registered": false,
+      "inliers": 5,
+      "ncc": null,
+      "sharpness_ratio": null,
+      "note": "the 20k-feature false positive: 27 inliers, ncc 0.171, grass over text",
+      "blended": false,
+      "why_not_blended": "only 5 RANSAC inliers (gate 8)"
+     }
     }
    ],
    "anchor": "zoomset_en_01_f00",
@@ -141,7 +231,8 @@
      "role": "full spread, NOT chosen as anchor",
      "ingest_sharpness": 410.11,
      "stage01_shipped_params": null,
-     "inliers_at_20k_features": null
+     "inliers_at_20k_features": null,
+     "standalone_ocr_words_conf_ge_80": 134
     },
     {
      "image_id": "zoomset_en_02_f01",
@@ -149,7 +240,8 @@
      "role": "anchor (full spread)",
      "ingest_sharpness": 450.53,
      "stage01_shipped_params": null,
-     "inliers_at_20k_features": null
+     "inliers_at_20k_features": null,
+     "standalone_ocr_words_conf_ge_80": 160
     },
     {
      "image_id": "zoomset_en_02_f02",
@@ -157,7 +249,16 @@
      "role": "close-up",
      "ingest_sharpness": 408.12,
      "stage01_shipped_params": "27 good / 5 inliers",
-     "inliers_at_20k_features": 3
+     "inliers_at_20k_features": 3,
+     "standalone_ocr_words_conf_ge_80": 96,
+     "stage01_v0_2": {
+      "registered": false,
+      "inliers": 5,
+      "ncc": null,
+      "sharpness_ratio": null,
+      "blended": false,
+      "why_not_blended": "only 5 RANSAC inliers (gate 8)"
+     }
     },
     {
      "image_id": "zoomset_en_02_f03",
@@ -165,7 +266,16 @@
      "role": "close-up",
      "ingest_sharpness": 477.74,
      "stage01_shipped_params": "21 good (below the 25 gate)",
-     "inliers_at_20k_features": 21
+     "inliers_at_20k_features": 21,
+     "standalone_ocr_words_conf_ge_80": 3,
+     "stage01_v0_2": {
+      "registered": true,
+      "inliers": 12,
+      "ncc": 0.63,
+      "sharpness_ratio": 0.71,
+      "blended": false,
+      "why_not_blended": "softer than the anchor over the same pixels"
+     }
     },
     {
      "image_id": "zoomset_en_02_f04",
@@ -173,7 +283,16 @@
      "role": "close-up",
      "ingest_sharpness": 327.86,
      "stage01_shipped_params": "28 good / 4 inliers",
-     "inliers_at_20k_features": 6
+     "inliers_at_20k_features": 6,
+     "standalone_ocr_words_conf_ge_80": 121,
+     "stage01_v0_2": {
+      "registered": false,
+      "inliers": 4,
+      "ncc": null,
+      "sharpness_ratio": null,
+      "blended": false,
+      "why_not_blended": "only 4 RANSAC inliers (gate 8)"
+     }
     },
     {
      "image_id": "zoomset_en_02_f05",
@@ -181,7 +300,16 @@
      "role": "close-up",
      "ingest_sharpness": 567.05,
      "stage01_shipped_params": "40 good / 21 inliers",
-     "inliers_at_20k_features": 46
+     "inliers_at_20k_features": 46,
+     "standalone_ocr_words_conf_ge_80": 7,
+     "stage01_v0_2": {
+      "registered": true,
+      "inliers": 21,
+      "ncc": 0.505,
+      "sharpness_ratio": 0.83,
+      "blended": false,
+      "why_not_blended": "softer than the anchor over the same pixels"
+     }
     }
    ],
    "anchor": "zoomset_en_02_f01",

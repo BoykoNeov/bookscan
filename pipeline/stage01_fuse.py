@@ -237,6 +237,12 @@ def partition_frames(frames: list[dict], area_frac: float
 # --------------------------------------------------------------------------
 
 
+# Below this many footprint pixels neither the photometric check nor the
+# sharpness comparison means anything, so both decline to answer rather than
+# return a number that looks like a verdict. ~0.04% of a 12 Mpx frame.
+_MIN_JUDGEABLE_PX = 5000
+
+
 def _detector(p: dict):
     """(detector, BFMatcher norm) for the configured engine."""
     kind = str(p.get("feature_engine", "orb")).lower()
@@ -269,7 +275,7 @@ def registration_ncc(base: np.ndarray, warped: np.ndarray,
     Returns 0.0 when the footprint is too small to mean anything.
     """
     m = mask > 0
-    if int(m.sum()) < 5000:
+    if int(m.sum()) < _MIN_JUDGEABLE_PX:
         return 0.0
     a = cv2.cvtColor(base, cv2.COLOR_BGR2GRAY).astype(np.float32)[m]
     b = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY).astype(np.float32)[m]
@@ -280,26 +286,54 @@ def registration_ncc(base: np.ndarray, warped: np.ndarray,
 
 
 def footprint_sharpness_ratio(base: np.ndarray, warped: np.ndarray,
-                              mask: np.ndarray) -> float:
+                              mask: np.ndarray) -> float | None:
     """How much sharper the warped close-up is than the anchor, same pixels.
 
     Variance of the Laplacian on each, over an eroded footprint mask — eroded
-    because the warp's border is a hard black edge that reads as enormous detail
-    and would flatter every candidate. >1 means blending improves the region;
-    <1 means it degrades it. Returns 0.0 when the footprint is too small.
+    because the warp's border is a hard black edge that reads as enormous detail,
+    and it is in the WARPED image only, so leaving it in would flatter every
+    candidate. >1 means blending improves the region; <1 means it degrades it.
+
+    Returns ``None`` for "cannot judge" — a distinct answer from a low ratio, and
+    the caller must not report it as one. The erosion is sized to the footprint
+    rather than fixed, because a fixed 25x25 kernel eats a small patch entirely:
+    an 80x80 footprint dropped from 6400 to 3136 px and the function used to
+    return 0.0, which the gate then read as "softer than the anchor" and refused
+    for a reason that was not sharpness. The zoomset cannot reach that case (every
+    frame there is a whole-spread re-zoom), but a close-up of PART of a page is
+    what this stage is for, so it is handled rather than assumed away.
 
     Separate from ``registration_ncc`` on purpose: NCC asks whether the close-up
     is in the RIGHT PLACE, this asks whether putting it there HELPS. On the
     zoomset spreads every close-up passes the first and fails the second.
     """
-    m = cv2.erode((mask > 0).astype(np.uint8), np.ones((25, 25), np.uint8)) > 0
-    if int(m.sum()) < 5000:
-        return 0.0
+    raw = (mask > 0).astype(np.uint8)
+    area = int(raw.sum())
+    if area < _MIN_JUDGEABLE_PX:
+        return None
+    k = int(np.clip((area ** 0.5) // 8, 3, 25)) | 1      # odd, scaled, capped
+    m = cv2.erode(raw, np.ones((k, k), np.uint8)) > 0
+    if int(m.sum()) < _MIN_JUDGEABLE_PX // 2:
+        return None
     def sharp(img: np.ndarray) -> float:
         lap = cv2.Laplacian(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), cv2.CV_64F)
         return float(lap[m].var())
     a = sharp(base)
-    return float(sharp(warped) / a) if a > 0 else 0.0
+    return (sharp(warped) / a) if a > 0 else None
+
+
+def blend(base: np.ndarray, warped: np.ndarray, wmask: np.ndarray, p: dict,
+          dest: np.ndarray | None) -> np.ndarray:
+    """Feather the warped close-up into ``dest`` so it has no hard seam."""
+    dist = cv2.distanceTransform((wmask > 0).astype(np.uint8), cv2.DIST_L2, 5)
+    alpha = np.clip(dist / max(1.0, p["feather_px"]), 0.0, 1.0)[..., None]
+    into = base if dest is None else dest
+    return (into * (1.0 - alpha) + warped * alpha).astype(np.uint8)
+
+
+def _accept(r: StitchResult) -> StitchResult:
+    r.matched = True
+    return r
 
 
 def stitch_closeup(base: np.ndarray, closeup: np.ndarray, p: dict,
@@ -386,20 +420,20 @@ def stitch_closeup(base: np.ndarray, closeup: np.ndarray, p: dict,
     # Gate 5 — correctly placed, but does it help? Last because it is the only
     # gate a correctly-registered close-up can still fail, and on real data it is
     # the one that fires.
-    r.sharpness_ratio = round(footprint_sharpness_ratio(base, warped, wmask), 3)
+    ratio = footprint_sharpness_ratio(base, warped, wmask)
+    if ratio is None:
+        # Cannot judge, and saying "softer" would be a lie. Too small to judge is
+        # also too small to do damage, so it goes in — visibly, not silently.
+        return blend(base, warped, wmask, p, dest), _accept(r), (
+            "ok (footprint too small to judge sharpness; blended anyway)")
+    r.sharpness_ratio = round(ratio, 3)
     if r.sharpness_ratio < float(p["min_sharpness_ratio"]):
         return None, r, (f"correctly located (ncc {r.ncc}) but SOFTER than the "
                          f"anchor there (sharpness ratio {r.sharpness_ratio} < "
                          f"{p['min_sharpness_ratio']}) - blending it would make "
                          f"the page worse, so it is left out")
 
-    # Feather the border so the higher-res patch blends without a hard seam.
-    dist = cv2.distanceTransform((wmask > 0).astype(np.uint8), cv2.DIST_L2, 5)
-    alpha = np.clip(dist / max(1.0, p["feather_px"]), 0.0, 1.0)[..., None]
-    into = base if dest is None else dest
-    blended = (into * (1.0 - alpha) + warped * alpha).astype(np.uint8)
-    r.matched = True
-    return blended, r, "ok"
+    return blend(base, warped, wmask, p, dest), _accept(r), "ok"
 
 
 # --------------------------------------------------------------------------

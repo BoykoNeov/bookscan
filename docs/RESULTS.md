@@ -4164,7 +4164,10 @@ the GT file's `_doc`).
 | `zoomset_en_01` | 2807 | **1616** | 1615 | clutter left of the book | 1 px |
 | `zoomset_en_02` | 2705 | **1623** | 1660 | book's right outer edge | 37 px |
 
-**16/19 → 19/19**, and the fifteen pre-existing spreads are untouched — not
+**16/19 → 19/19** — read that as the *previous* detector graded against the
+*now-complete* GT set, since the four `zoomset_*` rows were labelled in this same
+commit; the harness itself only had 15 rows before today, and scored 15/15 on
+them. The fifteen pre-existing spreads are untouched — not
 "still passing", *untouched*: the crop refuses to fire on every one of them, so
 they run the byte-identical path they ran before this module existed.
 

@@ -48,6 +48,7 @@ from tools.gate1_harness import (
     LANG_CODES, REPO_ROOT, find_tesseract, load_config, median_word_height,
     resolve_tessdata_dir, run_tesseract, tesseract_version, to_gray, upscale,
 )
+from pipeline import book_boundary as BB
 from pipeline import stage02_split as S2
 from pipeline import stage03_dewarp as S3
 
@@ -86,12 +87,27 @@ def ocr_text(binary: str, cfg: dict, bgr: np.ndarray, lang: str) -> str:
 
 
 def split_halves(bgr: np.ndarray, cfg: dict) -> tuple[list[tuple[str, np.ndarray]], int | None]:
-    """Stage 02 split, in-memory. Returns ([(name, img), ...], gutter_x)."""
+    """Stage 02 split, in-memory. Returns ([(name, img), ...], gutter_x).
+
+    Mirrors ``stage02_split.run`` including the book-boundary crop: search inside
+    the detected book, cut from the emitted crop, report the column in ORIGINAL
+    spread coordinates. Grading a dewarp A/B on a split the pipeline no longer
+    performs would compare the wrong pages — on the flat testset the crop
+    abstains and nothing moves, which is exactly why the mismatch would go
+    unnoticed until this harness met a handheld capture.
+    """
     p = S2.resolve_params(cfg)
-    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
-    gutter_x, _ = S2.detect_gutter(gray, p)
-    margin = int(bgr.shape[1] * p["margin_frac"])
-    pieces = S2.cut_pages(bgr, gutter_x, margin)   # [(name, img, box)], reading order
+    book = BB.find_book(bgr, BB.resolve_params(cfg))
+    ex0, ey0, ex1, ey1 = book.emit
+    sx0, sy0, sx1, sy1 = book.search
+    gray = cv2.cvtColor(bgr[sy0:sy1, sx0:sx1], cv2.COLOR_BGR2GRAY)
+    gutter_local, _ = S2.detect_gutter(gray, p)
+    gutter_x = None if gutter_local is None else gutter_local + sx0
+
+    emit = bgr[ey0:ey1, ex0:ex1]
+    margin = int(emit.shape[1] * p["margin_frac"])
+    pieces = S2.cut_pages(emit, None if gutter_x is None else gutter_x - ex0,
+                          margin)   # [(name, img, box)], reading order
     return [(name, img) for name, img, _ in pieces], gutter_x
 
 

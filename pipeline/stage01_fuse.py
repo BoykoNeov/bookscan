@@ -17,12 +17,67 @@ Three-artifact contract (CLAUDE.md): ``01_fuse/anchor.png`` + ``fuse.json``
 
 Input: reads ONLY ``00_ingest/ingest.json`` + ``00_ingest/frame_NN.png``.
 
-Reality check on validation: the current testset is one full-spread frame per
-capture, so the ONLY path exercised on real photos is the degenerate
-single-frame one (anchor = that frame). The multi-zoom stitch is exercised by
-synthetic unit tests (``pipeline/tests/test_stage01_fuse.py``) — there are no
-real zoomset_* captures yet (a Gate-1-spec item never shot). Marked v0.1; real
-multi-zoom validation is deferred to when the Android app produces close-ups.
+**v0.2 (2026-08-19) — the gate was the bug, not the feature budget.**
+
+v0.1 stitched 0 of the 11 real close-ups in ``testset/zoomset_*``. The recorded
+diagnosis was that ORB was starved (4000 features over a 12 Mpx frame) and that
+raising the budget to 20000 took it to 4 of 11. Re-measuring with a correctness
+check that does not come from the matcher overturned both halves of that:
+
+  * **5 of the 11 were located CORRECTLY by v0.1's own settings** — 9 to 21
+    RANSAC inliers, confirmed by eye on full-resolution checkerboard overlays —
+    and then thrown away, because ``min_inliers`` was 25. Every correct
+    registration in the corpus scores below the gate that was supposed to admit
+    it. Lowering the gate to 8 recovers all five at v0.1's cost.
+  * **The 20000-feature variant registers the same five and adds a false
+    positive.** ``zoomset_en_01_f03`` reaches 27 inliers with the bigger budget —
+    over the old gate — on a warp that puts grass and sky where the anchor has
+    text. Shipping the budget change alone would have started blending wrong
+    pixels into pages. It is NOT shipped; ``orb_features`` stays at 4000.
+
+The lesson is in ``registration_ncc``: inlier count is produced by the matcher,
+so it cannot referee a change to the matcher. Acceptance is now photometric —
+warp the close-up and ask whether its ink agrees with the anchor's (correct
+0.495-0.765, wrong -0.228 to 0.280 on this corpus, no overlap). The old single
+``min_inliers`` constant, which gated two different quantities at once, is split
+into a precondition, a consensus gate, a ratio floor and that photometric test.
+
+**And then the registrations turned out not to be worth having.** Blending those
+five correctly-located close-ups in made OCR WORSE on all three spreads that had
+any: de_01 lost 178 high-confidence words (435 -> 257), de_02 lost 63, en_02 lost
+58. The cause is not the matcher. A close-up is closer to the page but shot
+handheld at longer focal length, and it must be warped DOWN into the anchor's
+coordinate frame to be blended; the measured linear scale is 0.71-0.94, so there
+was almost no extra resolution to bank, and resampling spends more than that. Over
+the identical footprint pixels all five are softer than what they replace
+(sharpness ratio 0.49-0.83). Hence ``min_sharpness_ratio``: a close-up now has to
+prove it IMPROVES the region, not merely that it belongs there. On this corpus
+that leaves 0 of 11 blended — but by a stated measurement rather than by accident,
+and Stage 01's output is now byte-identical to the anchor instead of worse than it.
+
+**Where the close-ups' value actually is, measured.** OCR each frame on its own
+(these close-ups are whole-spread re-zooms, so it is a fair comparison) and the
+anchor wins 3 of 4 sets — but on ``zoomset_de_02`` the close-ups read 270 and 249
+high-confidence words against the anchor's 183. Stage 01 rejected the better one
+and blended the other DOWNWARD into the worse image. So on real captures a
+close-up is sometimes not a patch at all, it is a better photograph of the whole
+page, and ``partition_frames`` cannot express that: it ranks anchors by
+variance-of-Laplacian over the WHOLE frame, and these frames are 40-55% room, so
+the score rewards cluttered backgrounds (chair edges, cables) over legible text.
+Fixing it needs the book-boundary crop that Stage 02 also wants. NOT done here —
+it changes which pixels represent the page, which is a bigger decision than a
+stitch gate. Related: ``partition_frames`` still discards extra full-spread frames
+outright (``zoomset_en_02_f00``), so they cannot compete either.
+
+**Left unsolved, with the mechanism now identified.** The 6 close-ups that no
+setting registers (``en_01`` f01-f03, ``en_02`` f02-f04) are all oblique views of
+a strongly curved page — a cylinder seen near edge-on. A homography assumes a
+plane, and Stage 01 runs BEFORE Stage 03 flattens, so those frames are outside
+the model rather than badly matched. Fixing that means capture guidance (shoot
+close-ups square-on) or registering after dewarp, not matcher tuning. SIFT is
+wired behind ``feature_engine`` because it registers one of the six (6/11 vs
+5/11) at ~1.6x the time; ORB stays the default because CLAUDE.md documents it as
+this stage's tool and swapping it is the owner's call, not a silent change.
 
 Usage:
     python -m pipeline.stage01_fuse jobs/<job>/<page>/ [--debug]
@@ -43,7 +98,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import StageMeta
 
 STAGE = "stage01_fuse"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -52,20 +107,79 @@ DEFAULTS = {
     # anchor) if its area >= this fraction of the largest frame's area. Smaller
     # frames are treated as close-ups to stitch.
     "fullspread_area_frac": 0.70,
-    # ORB stitch quality gates. A close-up is only blended in if the homography
-    # has at least this many RANSAC inliers and a sane (non-degenerate) scale.
+
+    # --- feature matching ---
+    # Engine. ORB is the documented tool for this stage (CLAUDE.md) and the
+    # default. SIFT is wired as a swap because it measurably registers one more
+    # close-up (6/11 vs 5/11 on the zoomset spreads) — that is an owner call, not
+    # a silent change, so it stays behind this knob. See the module docstring.
+    "feature_engine": "orb",        # orb | sift
     "orb_features": 4000,
+    # Detect on a downscaled copy and rescale the homography back. 1.0 = the
+    # shipped behaviour and what ORB wants. SIFT wants 0.5: same registrations,
+    # 3261 ms -> 433 ms per close-up, because SIFT's keypoint count is not capped.
+    "detect_scale": 1.0,
     "ratio_test": 0.75,
-    "min_inliers": 25,
+    "ransac_reproj_px": 5.0,
+
+    # --- acceptance gates (three different questions, three different knobs) ---
+    # 1. Is there enough to fit at all? A PRECONDITION, not a quality judgement:
+    #    findHomography needs 4 points mathematically. Measured on the zoomset,
+    #    the good-match count does NOT separate right from wrong registrations
+    #    (correct pairs ran 21-58 good matches, wrong ones 16-36 — fully
+    #    overlapping), which is exactly why it must not be used as a quality gate.
+    "min_good_matches": 10,
+    # 2. Did RANSAC find a consensus? At the shipped ORB settings this DOES
+    #    separate: correct registrations scored 9, 12, 13, 21, 21 inliers and
+    #    wrong ones 3, 4, 4, 5, 5, 7. The gate sits in that gap. It used to be 25
+    #    — above every correct value — which is why Stage 01 stitched 0 of 11.
+    "min_inliers": 8,
+    # 3. Is that consensus a real fraction of the evidence? Scale-free guard
+    #    against "40 inliers out of 4000 good matches". Honest note: this floor
+    #    discriminates NOTHING on the zoomset corpus (correct 0.196-0.571 vs wrong
+    #    0.083-0.368 overlap) — it is insurance against a failure mode these 11
+    #    pairs do not contain, set low enough to reject no measured true positive.
+    "min_inlier_ratio": 0.10,
+    # 4. THE acceptance gate, and the only one that asks the actual question:
+    #    once warped, does the close-up's ink AGREE with the anchor's? Normalized
+    #    cross-correlation over the warped footprint. This is independent of the
+    #    matcher, so it cannot be fooled by a feature budget that manufactures
+    #    inliers. Measured separation is wide: correct 0.495-0.765, wrong -0.228
+    #    to 0.280, and it was confirmed by eye on full-resolution checkerboard
+    #    overlays. 0.35 sits in the middle of that gap.
+    "min_ncc": 0.35,
+    # 5. DO NO HARM. A close-up is only worth blending if it is SHARPER than what
+    #    it would replace, measured over the identical footprint pixels
+    #    (variance of Laplacian, mask eroded so the warp's hard border does not
+    #    count as detail). This is the gate the zoomset actually needed: all five
+    #    correctly-registered close-ups there are BLURRIER than the anchor
+    #    (ratios 0.49-0.83), and blending them in cost de_01 178 high-confidence
+    #    OCR words. A close-up is closer but handheld-longer-lens, and warping it
+    #    down into the anchor's coordinate frame resamples away what little extra
+    #    resolution it had (measured linear scale 0.71-0.94 — almost none).
+    #    Set below 1.0 to allow a marginally softer patch; 1.0 means "must not
+    #    make the page worse", which is the only defensible default.
+    "min_sharpness_ratio": 1.0,
+
     "feather_px": 40.0,     # blend feather width at the warped close-up border
 }
 
 
 class StitchResult(BaseModel):
+    """One close-up's stitch attempt. Every gate's input is recorded, not just
+    the verdict, so a rejection can be diagnosed from the artifact alone."""
+
     name: str
     matched: bool
     inliers: int = 0
     note: str = ""
+    kp_base: int = 0
+    kp_closeup: int = 0
+    good_matches: int = 0
+    inlier_ratio: float = 0.0
+    ncc: float = 0.0            # photometric agreement after warping; proves it is in the RIGHT PLACE
+    sharpness_ratio: float = 0.0  # warped close-up vs anchor over the same pixels; proves it HELPS
+    corners: list[list[float]] | None = None   # warped footprint on the anchor
 
 
 class FuseResult(BaseModel):
@@ -119,54 +233,173 @@ def partition_frames(frames: list[dict], area_frac: float
 
 
 # --------------------------------------------------------------------------
-# Stitch (ORB + RANSAC homography + feathered blend)
+# Stitch (features + RANSAC homography + photometric check + feathered blend)
 # --------------------------------------------------------------------------
 
 
-def stitch_closeup(base: np.ndarray, closeup: np.ndarray, p: dict
-                   ) -> tuple[np.ndarray | None, int, str]:
+def _detector(p: dict):
+    """(detector, BFMatcher norm) for the configured engine."""
+    kind = str(p.get("feature_engine", "orb")).lower()
+    if kind == "orb":
+        return cv2.ORB_create(nfeatures=int(p["orb_features"])), cv2.NORM_HAMMING
+    if kind == "sift":
+        if not hasattr(cv2, "SIFT_create"):
+            raise RuntimeError(
+                "feature_engine: sift, but this OpenCV build has no SIFT_create. "
+                "Install opencv-contrib-python (or opencv-python >= 4.4)."
+            )
+        return cv2.SIFT_create(), cv2.NORM_L2
+    raise ValueError(f"unknown feature_engine: {kind!r} (expected orb | sift)")
+
+
+def registration_ncc(base: np.ndarray, warped: np.ndarray,
+                     mask: np.ndarray) -> float:
+    """Normalized cross-correlation of ``base`` and ``warped`` over ``mask``.
+
+    THE acceptance test, and the reason it exists: every other statistic Stage 01
+    can compute (good matches, inliers, inlier ratio) is produced BY the matcher,
+    so using one to judge a change to the matcher is circular — raising the
+    feature budget inflates the inlier count whether or not the fit got better.
+    This asks the independent question instead: after warping, does the
+    close-up's ink actually sit on top of the anchor's?
+
+    Grayscale, mean-subtracted, so exposure and white-balance differences between
+    a zoomed frame and the anchor do not count against a correct registration
+    (they differ by a lot in practice — the close-ups are visibly warmer).
+    Returns 0.0 when the footprint is too small to mean anything.
+    """
+    m = mask > 0
+    if int(m.sum()) < 5000:
+        return 0.0
+    a = cv2.cvtColor(base, cv2.COLOR_BGR2GRAY).astype(np.float32)[m]
+    b = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY).astype(np.float32)[m]
+    a -= a.mean()
+    b -= b.mean()
+    denom = float(np.sqrt(float((a * a).sum()) * float((b * b).sum())))
+    return float((a * b).sum() / denom) if denom > 0 else 0.0
+
+
+def footprint_sharpness_ratio(base: np.ndarray, warped: np.ndarray,
+                              mask: np.ndarray) -> float:
+    """How much sharper the warped close-up is than the anchor, same pixels.
+
+    Variance of the Laplacian on each, over an eroded footprint mask — eroded
+    because the warp's border is a hard black edge that reads as enormous detail
+    and would flatter every candidate. >1 means blending improves the region;
+    <1 means it degrades it. Returns 0.0 when the footprint is too small.
+
+    Separate from ``registration_ncc`` on purpose: NCC asks whether the close-up
+    is in the RIGHT PLACE, this asks whether putting it there HELPS. On the
+    zoomset spreads every close-up passes the first and fails the second.
+    """
+    m = cv2.erode((mask > 0).astype(np.uint8), np.ones((25, 25), np.uint8)) > 0
+    if int(m.sum()) < 5000:
+        return 0.0
+    def sharp(img: np.ndarray) -> float:
+        lap = cv2.Laplacian(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), cv2.CV_64F)
+        return float(lap[m].var())
+    a = sharp(base)
+    return float(sharp(warped) / a) if a > 0 else 0.0
+
+
+def stitch_closeup(base: np.ndarray, closeup: np.ndarray, p: dict,
+                   dest: np.ndarray | None = None
+                   ) -> tuple[np.ndarray | None, StitchResult, str]:
     """Locate ``closeup`` on ``base`` and blend it in at full base resolution.
 
-    Returns (blended_base_or_None, inliers, note). None means the close-up was
-    not confidently located and the base is left unchanged.
-    """
-    gb = cv2.cvtColor(base, cv2.COLOR_BGR2GRAY)
-    gc = cv2.cvtColor(closeup, cv2.COLOR_BGR2GRAY)
-    orb = cv2.ORB_create(nfeatures=int(p["orb_features"]))
-    kb, db = orb.detectAndCompute(gb, None)
-    kc, dc = orb.detectAndCompute(gc, None)
-    if db is None or dc is None or len(kc) < 4 or len(kb) < 4:
-        return None, 0, "too few features"
+    Returns (blended_or_None, partial StitchResult, note). None means the
+    close-up was not confidently located and nothing is modified; the
+    StitchResult still carries every gate's input so the rejection is diagnosable
+    from ``fuse.json`` without re-running anything.
 
-    bf = cv2.BFMatcher(cv2.NORM_HAMMING)
-    knn = bf.knnMatch(dc, db, k=2)  # query = close-up, train = base
+    ``base`` is what the close-up is matched and photometrically compared
+    AGAINST; ``dest`` is what it is blended INTO, defaulting to ``base``. The
+    runner passes the pristine anchor as ``base`` and the accumulating image as
+    ``dest`` so several close-ups compose without each one changing the reference
+    the next one is matched to.
+
+    The gates run cheapest-first — match count, then RANSAC consensus, then the
+    photometric check, which needs a full-resolution warp (the same warp the
+    blend needs, so an ACCEPTED close-up pays for it only once).
+    """
+    r = StitchResult(name="", matched=False)
+    scale = float(p.get("detect_scale", 1.0))
+    if scale != 1.0:
+        gb = cv2.cvtColor(cv2.resize(base, None, fx=scale, fy=scale), cv2.COLOR_BGR2GRAY)
+        gc = cv2.cvtColor(cv2.resize(closeup, None, fx=scale, fy=scale), cv2.COLOR_BGR2GRAY)
+    else:
+        gb = cv2.cvtColor(base, cv2.COLOR_BGR2GRAY)
+        gc = cv2.cvtColor(closeup, cv2.COLOR_BGR2GRAY)
+
+    det, norm = _detector(p)
+    kb, db = det.detectAndCompute(gb, None)
+    kc, dc = det.detectAndCompute(gc, None)
+    r.kp_base, r.kp_closeup = len(kb or []), len(kc or [])
+    if db is None or dc is None or len(kc) < 4 or len(kb) < 4:
+        return None, r, "too few features"
+
+    knn = cv2.BFMatcher(norm).knnMatch(dc, db, k=2)  # query = close-up, train = base
     good = [m for m, n in (pair for pair in knn if len(pair) == 2)
             if m.distance < p["ratio_test"] * n.distance]
-    if len(good) < p["min_inliers"]:
-        return None, len(good), f"only {len(good)} good matches"
+    r.good_matches = len(good)
+    # Gate 1 — precondition only. The good-match count does not tell right from
+    # wrong (measured: it overlaps completely), so it must not be a quality gate.
+    if len(good) < int(p["min_good_matches"]):
+        return None, r, f"only {len(good)} good matches (need {p['min_good_matches']} to fit)"
 
     src = np.float32([kc[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
     dst = np.float32([kb[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
-    H, mask = cv2.findHomography(src, dst, cv2.RANSAC, 5.0)
+    H, mask = cv2.findHomography(src, dst, cv2.RANSAC, float(p["ransac_reproj_px"]))
     if H is None:
-        return None, 0, "no homography"
-    inliers = int(mask.sum()) if mask is not None else 0
-    if inliers < p["min_inliers"]:
-        return None, inliers, f"only {inliers} inliers"
+        return None, r, "no homography"
+    if scale != 1.0:                      # rescale the fit back to full resolution
+        S = np.diag([scale, scale, 1.0])
+        H = np.linalg.inv(S) @ H @ S
+    r.inliers = int(mask.sum()) if mask is not None else 0
+    r.inlier_ratio = round(r.inliers / len(good), 3)
+    # Gate 2 — RANSAC consensus.
+    if r.inliers < int(p["min_inliers"]):
+        return None, r, f"only {r.inliers} inliers (need {p['min_inliers']})"
+    # Gate 3 — that consensus as a fraction of the evidence.
+    if r.inlier_ratio < float(p["min_inlier_ratio"]):
+        return None, r, (f"inlier ratio {r.inlier_ratio} below "
+                         f"{p['min_inlier_ratio']} ({r.inliers}/{len(good)})")
     # Sanity: reject degenerate/flipped warps (non-positive or extreme scale).
-    det = float(np.linalg.det(H[:2, :2]))
-    if not (0.05 < abs(det) < 20.0) or det <= 0:
-        return None, inliers, f"degenerate homography (det={det:.3f})"
+    det_h = float(np.linalg.det(H[:2, :2]))
+    if not (0.05 < abs(det_h) < 20.0) or det_h <= 0:
+        return None, r, f"degenerate homography (det={det_h:.3f})"
 
     bh, bw = base.shape[:2]
     warped = cv2.warpPerspective(closeup, H, (bw, bh))
     wmask = cv2.warpPerspective(
         np.full(closeup.shape[:2], 255, np.uint8), H, (bw, bh))
+    ch, cw = closeup.shape[:2]
+    corners = cv2.perspectiveTransform(
+        np.float32([[0, 0], [cw, 0], [cw, ch], [0, ch]]).reshape(-1, 1, 2), H)
+    r.corners = [[round(float(x), 1), round(float(y), 1)]
+                 for x, y in corners.reshape(-1, 2)]
+    # Gate 4 — the one that actually asks whether the registration is RIGHT.
+    r.ncc = round(registration_ncc(base, warped, wmask), 3)
+    if r.ncc < float(p["min_ncc"]):
+        return None, r, (f"warped close-up does not agree with the anchor "
+                         f"(ncc {r.ncc} < {p['min_ncc']}) despite {r.inliers} inliers")
+    # Gate 5 — correctly placed, but does it help? Last because it is the only
+    # gate a correctly-registered close-up can still fail, and on real data it is
+    # the one that fires.
+    r.sharpness_ratio = round(footprint_sharpness_ratio(base, warped, wmask), 3)
+    if r.sharpness_ratio < float(p["min_sharpness_ratio"]):
+        return None, r, (f"correctly located (ncc {r.ncc}) but SOFTER than the "
+                         f"anchor there (sharpness ratio {r.sharpness_ratio} < "
+                         f"{p['min_sharpness_ratio']}) - blending it would make "
+                         f"the page worse, so it is left out")
+
     # Feather the border so the higher-res patch blends without a hard seam.
     dist = cv2.distanceTransform((wmask > 0).astype(np.uint8), cv2.DIST_L2, 5)
     alpha = np.clip(dist / max(1.0, p["feather_px"]), 0.0, 1.0)[..., None]
-    blended = (base * (1.0 - alpha) + warped * alpha).astype(np.uint8)
-    return blended, inliers, "ok"
+    into = base if dest is None else dest
+    blended = (into * (1.0 - alpha) + warped * alpha).astype(np.uint8)
+    r.matched = True
+    return blended, r, "ok"
 
 
 # --------------------------------------------------------------------------
@@ -205,17 +438,24 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> FuseResult:
     stitch_results: list[StitchResult] = []
     t_stitch = time.perf_counter()
     n_stitched = 0
+    # Match every close-up against the PRISTINE anchor, not against the base as
+    # previous stitches have modified it. The anchor is the common coordinate
+    # frame; matching into a progressively repainted one makes the outcome depend
+    # on frame order. Measured on zoomset_en_02: blending f03 first repainted the
+    # region f05 needed and dropped f05 from 21 inliers to 5, losing a correct
+    # registration purely because of the order the phone happened to shoot in.
+    anchor = base.copy()
     for i in closeups:
         cu = load(i)
-        blended, inliers, note = stitch_closeup(base, cu, params)
-        ok = blended is not None
-        if ok:
+        blended, res, note = stitch_closeup(anchor, cu, params, dest=base)
+        res.name = frames[i]["name"]
+        res.note = note
+        if blended is not None:
             base = blended
             n_stitched += 1
         else:
             warnings.append(f"close-up {frames[i]['name']} not stitched: {note}")
-        stitch_results.append(StitchResult(
-            name=frames[i]["name"], matched=ok, inliers=inliers, note=note))
+        stitch_results.append(res)
     stitch_ms = (time.perf_counter() - t_stitch) * 1000.0
 
     if len(frames) == 1:
@@ -250,10 +490,13 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> FuseResult:
         params={k: params[k] for k in DEFAULTS},
         timings_ms={"stitch": round(stitch_ms, 1), "total": round(total_ms, 1)},
         warnings=warnings + [
-            "v0.1: multi-zoom stitch is unvalidated on real captures (testset "
-            "has one full-spread frame per page); only the single-frame anchor "
-            "path is exercised on real photos. ECC sub-pixel refine is a "
-            "follow-up.",
+            "v0.2: multi-zoom stitch validated on the 11 real close-ups in "
+            "testset/zoomset_* (5 register, 0 wrong). A close-up is accepted on "
+            "PHOTOMETRIC agreement after warping (min_ncc), not on the inlier "
+            "count alone. The 6 that never register are oblique views of a "
+            "strongly curved page, which a planar homography cannot fit — that "
+            "is a capture-guidance and/or dewarp-before-stitch problem, not a "
+            "matcher tuning one. ECC sub-pixel refine is still a follow-up.",
         ],
     )
     (out_dir / "meta.json").write_text(
@@ -262,9 +505,27 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> FuseResult:
 
 
 def _overlay(anchor: np.ndarray, result: FuseResult) -> np.ndarray:
+    """Anchor + every close-up's footprint, green if blended in, red if rejected.
+
+    The docstring has always promised outlines; until v0.2 this drew only a
+    banner. Now that a rejection can be a WRONG registration rather than simply a
+    weak one, seeing where a close-up thought it belonged is the whole point of
+    the overlay — the en_01 false positive landed on grass, and that is obvious
+    at a glance and invisible in a number.
+    """
     canvas = anchor.copy()
     if canvas.ndim == 2:
         canvas = cv2.cvtColor(canvas, cv2.COLOR_GRAY2BGR)
+    for c in result.closeups:
+        if not c.corners:
+            continue
+        pts = np.int32(c.corners).reshape(-1, 1, 2)
+        colour = (0, 220, 0) if c.matched else (0, 0, 235)
+        cv2.polylines(canvas, [pts], True, colour, 6)
+        x, y = c.corners[0]
+        cv2.putText(canvas, f"{c.name} ncc={c.ncc} sharp={c.sharpness_ratio}",
+                    (int(x) + 12, int(y) + 52), cv2.FONT_HERSHEY_SIMPLEX, 1.1,
+                    colour, 3)
     n_ok = sum(1 for c in result.closeups if c.matched)
     label = (f"fuse: {result.n_frames} frame(s)  anchor={result.anchor_source}  "
              f"method={result.method}  stitched={n_ok}/{len(result.closeups)}")
@@ -293,7 +554,9 @@ def main(argv: list[str] | None = None) -> int:
           f"{result.anchor_source} ({result.method})")
     for c in result.closeups:
         print(f"  close-up {c.name}: {'stitched' if c.matched else 'skipped'} "
-              f"({c.inliers} inliers, {c.note})")
+              f"(good={c.good_matches} inliers={c.inliers} "
+              f"ratio={c.inlier_ratio} ncc={c.ncc} sharp={c.sharpness_ratio}) "
+              f"{c.note}")
     return 0
 
 

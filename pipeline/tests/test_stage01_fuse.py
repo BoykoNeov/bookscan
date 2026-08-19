@@ -69,6 +69,14 @@ def test_partition_separates_closeups():
 # Stitch
 # --------------------------------------------------------------------------
 
+# Registration and "is it worth blending" are two separate policies, so the
+# registration tests switch the do-no-harm gate off rather than fight it: a crop
+# that has been upscaled and warped back down is necessarily SOFTER than its
+# source, so every honest registration fixture fails that gate by construction.
+# The gate gets its own tests below.
+REG_ONLY = dict(S.DEFAULTS, min_sharpness_ratio=0.0)
+
+
 
 def test_stitch_relocates_an_upscaled_crop():
     base = _textured(seed=1)
@@ -76,9 +84,11 @@ def test_stitch_relocates_an_upscaled_crop():
     y0, y1, x0, x1 = 150, 450, 200, 600
     closeup = cv2.resize(base[y0:y1, x0:x1], None, fx=2.0, fy=2.0,
                          interpolation=cv2.INTER_CUBIC)
-    blended, inliers, note = S.stitch_closeup(base, closeup, S.DEFAULTS)
+    blended, res, note = S.stitch_closeup(base, closeup, REG_ONLY)
     assert blended is not None, f"crop should re-locate on its source ({note})"
-    assert inliers >= S.DEFAULTS["min_inliers"]
+    assert res.inliers >= S.DEFAULTS["min_inliers"]
+    assert res.ncc >= S.DEFAULTS["min_ncc"], "a crop of the base must agree with it"
+    assert res.corners is not None and len(res.corners) == 4
     assert blended.shape == base.shape
 
 
@@ -86,8 +96,97 @@ def test_stitch_rejects_unrelated_image():
     base = _textured(seed=2)
     rng = np.random.default_rng(99)
     noise = rng.integers(0, 255, (300, 400, 3), dtype=np.uint8)
-    blended, _inliers, _note = S.stitch_closeup(base, noise, S.DEFAULTS)
+    blended, _res, _note = S.stitch_closeup(base, noise, REG_ONLY)
     assert blended is None, "unrelated image must not be stitched in"
+
+
+def test_registration_ncc_sees_a_misregistration():
+    """The measure itself: warp a crop back onto its source correctly and NCC is
+    high; slide the same warp 40 px and it collapses. Without this the gate is
+    just a number nobody has checked."""
+    base = _textured(seed=5)
+    crop = base[150:450, 200:600]
+    H_ok = np.float64([[1, 0, 200], [0, 1, 150], [0, 0, 1]])
+    H_off = np.float64([[1, 0, 240], [0, 1, 190], [0, 0, 1]])
+    bh, bw = base.shape[:2]
+    scores = []
+    for H in (H_ok, H_off):
+        w = cv2.warpPerspective(crop, H, (bw, bh))
+        m = cv2.warpPerspective(np.full(crop.shape[:2], 255, np.uint8), H, (bw, bh))
+        scores.append(S.registration_ncc(base, w, m))
+    aligned, shifted = scores
+    assert aligned > 0.9, f"a correct warp must agree with the source ({aligned})"
+    assert shifted < aligned - 0.3, f"a 40px slide must show up ({scores})"
+    assert aligned >= S.DEFAULTS["min_ncc"] > shifted
+
+
+def test_photometric_gate_can_veto_a_high_inlier_fit():
+    """The wiring: the photometric check runs AFTER RANSAC and outranks it.
+
+    This is the zoomset_en_01_f03 shape — a registration with plenty of inlier
+    consensus (27, over the old 25 gate) whose warped pixels were grass where the
+    anchor had text. Here the same pair that normally stitches is refused purely
+    because the photometry disagrees, with the inlier count still healthy."""
+    base = _textured(seed=6)
+    closeup = cv2.resize(base[150:450, 200:600], None, fx=2.0, fy=2.0,
+                         interpolation=cv2.INTER_CUBIC)
+    orig = S.registration_ncc
+    S.registration_ncc = lambda b, w, m: 0.05
+    try:
+        blended, res, note = S.stitch_closeup(base, closeup, REG_ONLY)
+    finally:
+        S.registration_ncc = orig
+    assert blended is None, "photometric disagreement must veto the blend"
+    assert "ncc" in note and "inliers" in note, note
+    assert res.inliers >= S.DEFAULTS["min_inliers"], (
+        "the veto must happen DESPITE a passing inlier count, or this test proves "
+        f"nothing (inliers={res.inliers})")
+
+
+def test_do_no_harm_gate_refuses_a_correctly_placed_but_softer_closeup():
+    """The gate the real captures needed. All five close-ups that Stage 01 locates
+    correctly on the zoomset spreads are blurrier than the anchor over the same
+    pixels (0.49-0.83), and blending them cost de_01 178 high-confidence OCR
+    words. Correct placement is not a reason to blend."""
+    base = _textured(seed=11)
+    crop = base[150:450, 200:600]
+    soft = cv2.GaussianBlur(cv2.resize(crop, None, fx=2.0, fy=2.0,
+                                       interpolation=cv2.INTER_CUBIC), (9, 9), 0)
+    blended, res, note = S.stitch_closeup(base, soft, S.DEFAULTS)
+    assert blended is None, f"a softer close-up must not be blended ({note})"
+    assert res.ncc >= S.DEFAULTS["min_ncc"], (
+        "this must fail on SHARPNESS, not on placement, or it tests the wrong gate")
+    assert 0.0 < res.sharpness_ratio < 1.0, res.sharpness_ratio
+    assert "SOFTER" in note
+
+
+def test_do_no_harm_gate_admits_a_genuinely_sharper_closeup():
+    """...and it is a gate, not a ban: a close-up that really does carry more
+    detail than the anchor's view of the same region still goes in."""
+    sharp = _textured(seed=12)
+    base = cv2.GaussianBlur(sharp, (7, 7), 0)      # anchor: a soft view
+    closeup = cv2.resize(sharp[150:450, 200:600], None, fx=2.0, fy=2.0,
+                         interpolation=cv2.INTER_CUBIC)
+    blended, res, note = S.stitch_closeup(base, closeup, S.DEFAULTS)
+    assert blended is not None, f"a sharper close-up must be blended in ({note})"
+    assert res.sharpness_ratio > 1.0, res.sharpness_ratio
+    assert blended.shape == base.shape
+
+
+def test_gates_are_separate_knobs():
+    """min_inliers used to gate BOTH the good-match count and the RANSAC inlier
+    count. They answer different questions and are now separate; this pins that
+    the precondition can be raised without silently moving the quality gate."""
+    base = _textured(seed=3)
+    closeup = cv2.resize(base[150:450, 200:600], None, fx=2.0, fy=2.0,
+                         interpolation=cv2.INTER_CUBIC)
+    strict = dict(REG_ONLY, min_good_matches=10_000)
+    blended, res, note = S.stitch_closeup(base, closeup, strict)
+    assert blended is None and "good matches" in note
+    assert res.inliers == 0, "rejected at the precondition, before RANSAC ran"
+    # ...and the same pair passes once only the precondition is relaxed back.
+    blended, res, _ = S.stitch_closeup(base, closeup, REG_ONLY)
+    assert blended is not None and res.inliers >= S.DEFAULTS["min_inliers"]
 
 
 # --------------------------------------------------------------------------

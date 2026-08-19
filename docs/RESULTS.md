@@ -4309,7 +4309,9 @@ measurably worse photograph on three sets:
 The word counts alone would not carry this: **±60 words in both directions is the
 churn this same instrument was measured to show under nothing but reframing**
 (RESULTS 2026-08-19, book-boundary row), and two of the three margins sit inside
-that band. Mean confidence is what separates them, and it is not a redundant
+it. That ±60 is a **floor**, not a matched estimate — it was measured on the same
+underlying photograph reframed, whereas these are different shots of the same
+spread, which is more variation, not less. Mean confidence is what separates them, and it is not a redundant
 statistic — on `bg_taleb_01` and `de_01` the two disagree about which frame is
 best, which is exactly why agreement means something on the other two. So: two
 sets where the selector is wrong and both statistics say so by a wide margin, one

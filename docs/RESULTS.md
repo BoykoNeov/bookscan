@@ -3970,3 +3970,37 @@ dropped the other without a warning — only *smaller-area* frames are eligible
 to be stitched. That is the documented behaviour, and it is the right default
 for a burst of near-duplicates, but it means additional full-page views of a
 spread cannot contribute anything today.
+
+### Addendum: how much does tighter framing actually buy? — 2026-08-19
+
+"Fill the frame" is not measurable advice, so it was measured. Each of the four
+`zoomset_*` anchors had its book box and true spine hand-read off a 5 % grid
+(the `skewset_manifest.json` convention — no automatic page-crop route is
+trusted on this batch), was then cropped to the book box grown by a margin on
+every side, and `detect_gutter` was re-run on the crop with the shipped params.
+`fill` is the book's width as a fraction of the crop's width; 1.00 means the
+book runs edge to edge. Data: `docs/data/framing_fill_sweep_20260819.json`.
+
+| set | fill as shot | correct as shot? | tightest fill still wrong | loosest fill still correct |
+|---|---|---|---|---|
+| `de_01` | 0.64 | no | 0.75 | **0.83** |
+| `de_02` | 0.59 | **yes** | — | 0.59 (as shot) |
+| `en_01` | 0.51 | no | 0.51 | 0.57 |
+| `en_02` | 0.47 | no | 0.54 | 0.59 |
+
+**All four split correctly once the book covers ≈ 0.83 of the frame width.
+Three of four are already correct at ≈ 0.57.** As shot, at 0.47–0.64, one of
+four was correct. So the instruction that follows from this is a number, not an
+adjective: *the book should span at least four-fifths of the picture's width.*
+
+`de_01` is the demanding one and it is worth knowing why: its true gutter is a
+weak ink valley (the top photo spans the spine), so it never resolves by ink at
+all — it goes through the `pinch` cue at every crop, including the tightest.
+The worry that cropping the room away would starve that cue of the dark
+background it assumes did **not** materialise here. Whether a *pale* background
+hurts it is untested.
+
+Caveat on the method: cropping in software changes framing only, not
+perspective or resolution. That is the right proxy for a gutter finder, which
+sees framing, and the wrong one for anything about sharpness, curvature or
+dewarp.

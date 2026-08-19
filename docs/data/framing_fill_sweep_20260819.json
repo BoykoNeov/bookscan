@@ -1,0 +1,342 @@
+{
+ "_doc": [
+  "How much does tighter framing fix the gutter split? Measured 2026-08-19 on the four",
+  "testset/zoomset_* anchors, which were shot with 40-55% of the frame full of room.",
+  "",
+  "METHOD: each anchor's book box and true spine x were HAND-READ off a 5% grid (the same",
+  "convention testset/skewset_manifest.json uses -- no automatic page-crop route is trusted",
+  "on this batch). Each anchor was then cropped to the book box grown by a margin of M x the",
+  "book's own size on every side, and pipeline.stage02_split.detect_gutter was re-run on the",
+  "crop with the SHIPPED config.yaml params. The detected gutter was mapped back to full-frame",
+  "coordinates and compared with the hand-read spine. 'fill' is the book's width as a fraction",
+  "of the crop's width -- 1.00 means the book exactly fills the frame edge to edge.",
+  "A result counts as correct if it lands within 4% of the book's width of the true spine.",
+  "",
+  "RESULT: all four spreads split correctly once fill >= 0.83. Three of four are already",
+  "correct at fill >= 0.57. As shot (fill 0.47-0.64) only one of four was correct.",
+  "",
+  "CAVEAT: cropping in software is not the same as standing closer -- it changes framing only,",
+  "not perspective or resolution. That is the right proxy for THIS question (the gutter finder",
+  "sees framing) and the wrong one for anything about sharpness or dewarp.",
+  "",
+  "SIDE RESULT: de_01 resolves via the 'pinch' cue at every crop, including the tightest.",
+  "The worry that cropping the room away would remove the dark background that cue depends on",
+  "did not materialise on this batch. Whether a PALE background (a light sofa rather than a",
+  "dark floor) hurts it is NOT tested here."
+ ],
+ "correct_if_within_frac_of_book_width": 0.04,
+ "sets": {
+  "de_01": {
+   "book_box_frac_xyxy": [
+    0.085,
+    0.105,
+    0.725,
+    0.825
+   ],
+   "spine_x_frac_of_frame": 0.415,
+   "as_shot_fill": 0.64,
+   "as_shot_correct": false,
+   "min_fill_still_correct": 0.8331844288449267,
+   "sweep": [
+    {
+     "margin": 0.0,
+     "fill": 1.0,
+     "gutter_x_frac_of_frame": 0.4137,
+     "method": "pinch",
+     "err_frac_of_book_width": 0.002,
+     "correct": true
+    },
+    {
+     "margin": 0.05,
+     "fill": 0.909,
+     "gutter_x_frac_of_frame": 0.4142,
+     "method": "pinch",
+     "err_frac_of_book_width": 0.0012,
+     "correct": true
+    },
+    {
+     "margin": 0.1,
+     "fill": 0.833,
+     "gutter_x_frac_of_frame": 0.4135,
+     "method": "pinch",
+     "err_frac_of_book_width": 0.0024,
+     "correct": true
+    },
+    {
+     "margin": 0.2,
+     "fill": 0.75,
+     "gutter_x_frac_of_frame": 0.3627,
+     "method": "pinch",
+     "err_frac_of_book_width": 0.0816,
+     "correct": false
+    },
+    {
+     "margin": 0.35,
+     "fill": 0.675,
+     "gutter_x_frac_of_frame": 0.3532,
+     "method": "pinch",
+     "err_frac_of_book_width": 0.0966,
+     "correct": false
+    },
+    {
+     "margin": 0.5,
+     "fill": 0.64,
+     "gutter_x_frac_of_frame": 0.6998,
+     "method": "pinch",
+     "err_frac_of_book_width": 0.4449,
+     "correct": false
+    },
+    {
+     "margin": 0.75,
+     "fill": 0.64,
+     "gutter_x_frac_of_frame": 0.6998,
+     "method": "pinch",
+     "err_frac_of_book_width": 0.4449,
+     "correct": false
+    },
+    {
+     "margin": null,
+     "fill": 0.64,
+     "gutter_x_frac_of_frame": 0.6998,
+     "method": "pinch",
+     "err_frac_of_book_width": 0.4449,
+     "correct": false
+    }
+   ]
+  },
+  "de_02": {
+   "book_box_frac_xyxy": [
+    0.1,
+    0.135,
+    0.695,
+    0.8
+   ],
+   "spine_x_frac_of_frame": 0.4,
+   "as_shot_fill": 0.595,
+   "as_shot_correct": true,
+   "min_fill_still_correct": 0.595,
+   "sweep": [
+    {
+     "margin": 0.0,
+     "fill": 1.0,
+     "gutter_x_frac_of_frame": 0.3973,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0045,
+     "correct": true
+    },
+    {
+     "margin": 0.05,
+     "fill": 0.909,
+     "gutter_x_frac_of_frame": 0.3978,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0037,
+     "correct": true
+    },
+    {
+     "margin": 0.1,
+     "fill": 0.833,
+     "gutter_x_frac_of_frame": 0.3985,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0025,
+     "correct": true
+    },
+    {
+     "margin": 0.2,
+     "fill": 0.731,
+     "gutter_x_frac_of_frame": 0.3995,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0008,
+     "correct": true
+    },
+    {
+     "margin": 0.35,
+     "fill": 0.659,
+     "gutter_x_frac_of_frame": 0.4,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0,
+     "correct": true
+    },
+    {
+     "margin": 0.5,
+     "fill": 0.6,
+     "gutter_x_frac_of_frame": 0.4,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0,
+     "correct": true
+    },
+    {
+     "margin": 0.75,
+     "fill": 0.595,
+     "gutter_x_frac_of_frame": 0.3998,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0004,
+     "correct": true
+    },
+    {
+     "margin": null,
+     "fill": 0.595,
+     "gutter_x_frac_of_frame": 0.3998,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0004,
+     "correct": true
+    }
+   ]
+  },
+  "en_01": {
+   "book_box_frac_xyxy": [
+    0.36,
+    0.13,
+    0.865,
+    0.82
+   ],
+   "spine_x_frac_of_frame": 0.59,
+   "as_shot_fill": 0.505,
+   "as_shot_correct": false,
+   "min_fill_still_correct": 0.5657331136738056,
+   "sweep": [
+    {
+     "margin": 0.0,
+     "fill": 1.0,
+     "gutter_x_frac_of_frame": 0.602,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0237,
+     "correct": true
+    },
+    {
+     "margin": 0.05,
+     "fill": 0.909,
+     "gutter_x_frac_of_frame": 0.6086,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0368,
+     "correct": true
+    },
+    {
+     "margin": 0.1,
+     "fill": 0.833,
+     "gutter_x_frac_of_frame": 0.6027,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0251,
+     "correct": true
+    },
+    {
+     "margin": 0.2,
+     "fill": 0.714,
+     "gutter_x_frac_of_frame": 0.6037,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0271,
+     "correct": true
+    },
+    {
+     "margin": 0.35,
+     "fill": 0.618,
+     "gutter_x_frac_of_frame": 0.6061,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0319,
+     "correct": true
+    },
+    {
+     "margin": 0.5,
+     "fill": 0.566,
+     "gutter_x_frac_of_frame": 0.6054,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0305,
+     "correct": true
+    },
+    {
+     "margin": 0.75,
+     "fill": 0.505,
+     "gutter_x_frac_of_frame": 0.3118,
+     "method": "ink",
+     "err_frac_of_book_width": 0.551,
+     "correct": false
+    },
+    {
+     "margin": null,
+     "fill": 0.505,
+     "gutter_x_frac_of_frame": 0.3118,
+     "method": "ink",
+     "err_frac_of_book_width": 0.551,
+     "correct": false
+    }
+   ]
+  },
+  "en_02": {
+   "book_box_frac_xyxy": [
+    0.16,
+    0.15,
+    0.63,
+    0.8
+   ],
+   "spine_x_frac_of_frame": 0.395,
+   "as_shot_fill": 0.47,
+   "as_shot_correct": false,
+   "min_fill_still_correct": 0.5916692378895403,
+   "sweep": [
+    {
+     "margin": 0.0,
+     "fill": 1.0,
+     "gutter_x_frac_of_frame": 0.3998,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0101,
+     "correct": true
+    },
+    {
+     "margin": 0.05,
+     "fill": 0.909,
+     "gutter_x_frac_of_frame": 0.3993,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0091,
+     "correct": true
+    },
+    {
+     "margin": 0.1,
+     "fill": 0.833,
+     "gutter_x_frac_of_frame": 0.399,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0086,
+     "correct": true
+    },
+    {
+     "margin": 0.2,
+     "fill": 0.714,
+     "gutter_x_frac_of_frame": 0.3988,
+     "method": "ink",
+     "err_frac_of_book_width": 0.008,
+     "correct": true
+    },
+    {
+     "margin": 0.35,
+     "fill": 0.592,
+     "gutter_x_frac_of_frame": 0.3968,
+     "method": "ink",
+     "err_frac_of_book_width": 0.0039,
+     "correct": true
+    },
+    {
+     "margin": 0.5,
+     "fill": 0.543,
+     "gutter_x_frac_of_frame": 0.5831,
+     "method": "ink",
+     "err_frac_of_book_width": 0.4002,
+     "correct": false
+    },
+    {
+     "margin": 0.75,
+     "fill": 0.478,
+     "gutter_x_frac_of_frame": 0.663,
+     "method": "ink",
+     "err_frac_of_book_width": 0.5702,
+     "correct": false
+    },
+    {
+     "margin": null,
+     "fill": 0.47,
+     "gutter_x_frac_of_frame": 0.663,
+     "method": "ink",
+     "err_frac_of_book_width": 0.5702,
+     "correct": false
+    }
+   ]
+  }
+ }
+}

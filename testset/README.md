@@ -194,3 +194,32 @@ regression *samples*, not graded fixtures.
 They are **not** multi-view fixtures in the `skewset_*` sense: they were shot as
 a burst from one viewpoint for sharpness selection, not from different viewpoints,
 so they do not carry the complementary-view structure the multi-view work needs.
+
+## Multi-zoom sets (`zoomset`) — added 2026-08-19
+
+The sixteen images in the `zoomset` category are the **first real multi-zoom
+captures the project has ever had**, and they close the fixture gap
+`DEVICE_SESSION.md` goal 3 named: until now Stage 01's multi-zoom stitch had
+only synthetic unit tests, because every other testset entry is a single
+full-spread frame.
+
+Each set is one spread: a full-spread **anchor** plus two to four phone **zoom
+close-ups** of parts of that same spread, shot with the Android app and pushed
+to the desktop server over Wi-Fi (job `20260819-064025`, mode `flag`).
+
+| set | language | frames | what it traps |
+|---|---|---|---|
+| `zoomset_de_01` | german | 3 | gutter landed on the book's **outer edge**, not the spine |
+| `zoomset_de_02` | german | 3 | **the control** — the one spread whose gutter was found correctly, and whose two subpages both OCR'd well |
+| `zoomset_en_01` | english | 4 | the hardest: book tilted, page block fanned, **plus** a 180° flip from an OSD call at conf 2.49 (just over `min_conf` 2.0) |
+| `zoomset_en_02` | english | 6 | **two full-spread frames** — Stage 01 keeps the sharper one and discards the other; also the largest close-up set |
+
+They were shot handheld with the book on the photographer's lap, so 40–55 % of
+each frame is room (floor, desk, cables, chair). That is not a defect in the
+fixture — it is what a real capture looks like, and it is what broke Stage 02
+on three of the four.
+
+They carry **no ground truth of any kind**. They are diagnostic fixtures:
+per-frame roles, sharpness, and the measured Stage 01 match numbers live in
+`testset/zoomset_manifest.json`, and the findings behind them in
+`docs/RESULTS.md` (2026-08-19).

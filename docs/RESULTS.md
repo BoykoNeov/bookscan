@@ -3863,3 +3863,99 @@ it were current. Replay against the shipped constants: steady 15 bursts /
 Costs, recorded rather than discovered later: about 4× the bytes per spread,
 and `uploadSpread` retries the whole multipart request up to 4 times on an
 `IOException`, so a flaky link multiplies that. Fine on a LAN.
+
+## First real spreads reach the pipeline: one missing step upstream broke three of four — 2026-08-19
+
+Four spreads were captured with the Android app and uploaded over Wi-Fi to the
+desktop server (job `20260819-064025-6b4cc4ac`, mode `flag`). All four ran the
+full seven stages and exited 0 — no crash, no stall, no lost page. That is the
+first end-to-end proof of the Gate 5 path on real camera photos, and it is the
+good news. Everything below is what the photos then found.
+
+The originals are committed as `testset/zoomset_*` (16 images, four sets, no
+GT) so every number here is reproducible without `jobs/`, which is gitignored.
+
+### The control comes first
+
+`zoomset_de_02` is the one spread whose gutter was found correctly. Both its
+subpages OCR'd well — 293 words at mean conf 77.4 and 385 at 73.7, real German
+running text. Stages 03–06 are therefore **not** the problem on real captures.
+Everything that went wrong went wrong before them.
+
+### Finding 1 (CRITICAL): no book-boundary crop — 1 of 4 gutters correct
+
+The photos were shot with the book on the photographer's lap, so 40–55 % of
+each frame is room: floor, desk, cables, a chair. Stage 02 searches the whole
+frame for the spine and on three of four spreads preferred a stronger vertical
+valley elsewhere — twice the book's own **outer edge**, once the clutter to the
+left of the book.
+
+| set | gutter_x / width | what it hit | result |
+|---|---|---|---|
+| `zoomset_de_01` | 2855 / 4080 (70 %) | book's right outer edge | left.png = whole spread (566 words), right.png = background (14 words) |
+| `zoomset_de_02` | 1631 / 4080 (40 %) | **the spine** | both subpages good |
+| `zoomset_en_01` | 1272 / 4080 (31 %) | clutter left of the book | left.png = background (8 words), right.png = whole spread |
+| `zoomset_en_02` | 2705 / 4080 (66 %) | book's right outer edge | left.png = whole spread (319 words), right.png = background (4 words) |
+
+Every one of them reported `confident: true` and `corroborated: true`. The
+corroboration is between two cues (ink-ratio and spine-pinch) that agree with
+each other on the wrong edge, so confidence here is not evidence.
+
+The pipeline has no step that finds the book in the frame. Every fixture until
+now was a tightly framed spread, so the gap never showed. Neither a better
+valley metric nor a capture-side framing guide addresses it on its own: the
+missing thing is a page/book-boundary crop between fuse and split.
+
+### Finding 2 (HIGH): Stage 01 stitched 0 of 11 close-ups — starved of features, not blocked by clutter
+
+Every close-up on every page was rejected by the `min_inliers = 25` gate.
+Inlier counts ran 3, 4, 5, 5, 7, 9, 12, 13, 21, 21, and three sets never even
+reached 25 *good matches* to run RANSAC on (23, 19, 16, 21).
+
+Two candidate causes were separated by measurement rather than argued:
+
+- **Clutter** — the anchor for `zoomset_de_01` was cropped to the book by hand
+  and the stitch re-run. With the shipped feature budget one close-up crossed
+  the gate (21 → 27 inliers) and the other barely moved (9 → 11).
+- **Feature budget** — raising ORB's `nfeatures` from 4000 to 20000, changing
+  nothing else, took the whole batch from **0 of 11 to 4 of 11** stitched
+  (`de_01_f02` 21→43, `de_02_f02` 13→31, `en_01_f03` 5→27, `en_02_f05` 21→46).
+- **Both together** added almost nothing over the budget alone (`de_01_f02`
+  43 → 46, `de_01_f01` 15 → 16).
+
+So the clutter hurts the **split**, not the stitch. 4000 ORB features spread
+over a 12 Mpx frame is simply too thin to describe a page. Not shipped — this
+is a measurement on committed fixtures, and the gate constant wants re-deriving
+alongside it (`min_inliers` currently gates two different quantities, the
+good-match count *and* the RANSAC inlier count, with one number).
+
+### Finding 3 (OPEN): the seven that still fail have their inliers in one patch
+
+Of the seven close-ups still rejected at 20000 features, the surviving inliers
+cluster in a small region of the frame — x-spread 0.2–0.4 of the width, against
+0.31–0.8 for the four that pass. A single planar homography cannot describe a
+match whose agreement is local. Page curvature is the obvious suspect, and it
+would mean the ordering is wrong — Stage 01 stitches before Stage 03 flattens —
+but that is a hypothesis, not a result. Nothing here decides it.
+
+### Finding 4: the OSD 180° blind spot, confirmed in the field
+
+`zoomset_en_01`'s anchor was rotated 180° on an OSD call of confidence 2.49,
+just over the `min_osd_conf = 2.0` gate, and the delivered page is upside down
+(782 words at mean conf 33.4, reversed glyphs). This is the already-pinned
+known defect firing on a real capture for the first time, not a new one, and
+the fix already identified still applies: the phone knows its own orientation
+and the capture-hint arm of `tools/normalize`'s cascade is still a stub.
+
+Secondary, same area: 11 of the 16 frames could not be oriented from EXIF or
+OSD with any confidence, and four close-ups came out portrait with an explicit
+"a book spread should be landscape" warning.
+
+### Finding 5 (LOW): a second full-spread frame is silently discarded
+
+`zoomset_en_02` carried two full-spread frames (the app now uploads the whole
+auto-capture burst). `partition_frames` chose the sharper as the anchor and
+dropped the other without a warning — only *smaller-area* frames are eligible
+to be stitched. That is the documented behaviour, and it is the right default
+for a burst of near-duplicates, but it means additional full-page views of a
+spread cannot contribute anything today.

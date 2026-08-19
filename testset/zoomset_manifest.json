@@ -1,0 +1,190 @@
+{
+ "_doc": [
+  "Fixture manifest for the multi-zoom sets (testset/zoomset_*), added 2026-08-19.",
+  "",
+  "These are the FIRST real multi-zoom captures the project has ever had: one full-spread",
+  "anchor plus 2-4 phone zoom close-ups of the same spread, shot with the Android app",
+  "(app-android/) over Wi-Fi and processed by the desktop server. Until now Stage 01's",
+  "multi-zoom stitch path had only synthetic unit tests -- DEVICE_SESSION.md goal 3.",
+  "",
+  "They were shot handheld with the book on the photographer's lap, so 40-55% of each",
+  "frame is room (floor, desk, cables, chair). That is not a flaw in the fixture; it is",
+  "what a real capture looks like, and it is what broke Stage 02 on three of the four.",
+  "",
+  "MEASURED ON ARRIVAL (docs/RESULTS.md 2026-08-19):",
+  "  - Stage 01 stitched 0 of 11 close-ups. Every one was rejected by the min_inliers=25",
+  "    gate. Raising ORB's feature budget 4000 -> 20000 (no other change) takes it to 4 of 11.",
+  "  - Cropping the anchor to the book by hand, with the budget already raised, added",
+  "    almost nothing (de_01_f01 15->16 inliers, de_01_f02 43->46). So the clutter hurts",
+  "    the GUTTER SPLIT, not the stitch; the stitch was starved of features.",
+  "  - The close-ups that still fail have their surviving inliers clustered in a small",
+  "    patch of the frame (x-spread 0.2-0.4 of the width), which a single planar",
+  "    homography cannot explain. Whether that is page curvature is OPEN.",
+  "  - Stage 02 found the true spine on 1 of 4 spreads (zoomset_de_02).",
+  "",
+  "NO GT of any kind yet. These are diagnostic fixtures, not graded ones.",
+  "Append-only, like every other testset entry."
+ ],
+ "sets": {
+  "zoomset_de_01": {
+   "language": "german",
+   "book": "Klettersteigatlas Alpen (alpinverlag), pp. 36-37 'Sextener Dolomiten'",
+   "frames": [
+    {
+     "image_id": "zoomset_de_01_f00",
+     "file": "zoomset_de_01_f00.jpg",
+     "role": "anchor (full spread)",
+     "ingest_sharpness": 564.34,
+     "stage01_shipped_params": null,
+     "inliers_at_20k_features": null
+    },
+    {
+     "image_id": "zoomset_de_01_f01",
+     "file": "zoomset_de_01_f01.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 1329.05,
+     "stage01_shipped_params": "46 good / 9 inliers",
+     "inliers_at_20k_features": 15
+    },
+    {
+     "image_id": "zoomset_de_01_f02",
+     "file": "zoomset_de_01_f02.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 774.27,
+     "stage01_shipped_params": "38 good / 21 inliers",
+     "inliers_at_20k_features": 43
+    }
+   ],
+   "anchor": "zoomset_de_01_f00",
+   "gutter_split": "WRONG - gutter_x=2855/4080 landed on the book's right-hand OUTER edge, not the spine; left.png swallowed the whole spread (566 words), right.png was background (14 words)"
+  },
+  "zoomset_de_02": {
+   "language": "german",
+   "book": "Klettersteigatlas Alpen (alpinverlag), pp. 412-413 'Sentiero delle Palete'",
+   "frames": [
+    {
+     "image_id": "zoomset_de_02_f00",
+     "file": "zoomset_de_02_f00.jpg",
+     "role": "anchor (full spread)",
+     "ingest_sharpness": 786.81,
+     "stage01_shipped_params": null,
+     "inliers_at_20k_features": null
+    },
+    {
+     "image_id": "zoomset_de_02_f01",
+     "file": "zoomset_de_02_f01.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 626.62,
+     "stage01_shipped_params": "36 good / 3 inliers",
+     "inliers_at_20k_features": 6
+    },
+    {
+     "image_id": "zoomset_de_02_f02",
+     "file": "zoomset_de_02_f02.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 359.33,
+     "stage01_shipped_params": "58 good / 13 inliers",
+     "inliers_at_20k_features": 31
+    }
+   ],
+   "anchor": "zoomset_de_02_f00",
+   "gutter_split": "CORRECT - gutter_x=1631/4080 on the spine; both subpages OCR'd well (293 words @ conf 77.4 / 385 @ 73.7). This set is the CONTROL: it shows stages 03-06 are fine on real captures once the split is right"
+  },
+  "zoomset_en_01": {
+   "language": "english",
+   "book": "Via ferrata guide (English), pp. 218-219 'The Via Ferrata Simone and the Via Ferrata dei 50'",
+   "frames": [
+    {
+     "image_id": "zoomset_en_01_f00",
+     "file": "zoomset_en_01_f00.jpg",
+     "role": "anchor (full spread)",
+     "ingest_sharpness": 581.36,
+     "stage01_shipped_params": null,
+     "inliers_at_20k_features": null
+    },
+    {
+     "image_id": "zoomset_en_01_f01",
+     "file": "zoomset_en_01_f01.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 380.81,
+     "stage01_shipped_params": "23 good (below the 25 gate)",
+     "inliers_at_20k_features": 5
+    },
+    {
+     "image_id": "zoomset_en_01_f02",
+     "file": "zoomset_en_01_f02.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 409.72,
+     "stage01_shipped_params": "19 good (below the 25 gate)",
+     "inliers_at_20k_features": 17
+    },
+    {
+     "image_id": "zoomset_en_01_f03",
+     "file": "zoomset_en_01_f03.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 204.92,
+     "stage01_shipped_params": "16 good (below the 25 gate)",
+     "inliers_at_20k_features": 27
+    }
+   ],
+   "anchor": "zoomset_en_01_f00",
+   "gutter_split": "WRONG - gutter_x=1272/4080 landed in the background clutter left of the book; also the anchor was rotated 180 by an OSD call at conf 2.49 (just over the min_conf 2.0 gate) and the delivered page is upside down. Hardest set: book held tilted with a fanned page block, ~55% of the frame is room"
+  },
+  "zoomset_en_02": {
+   "language": "english",
+   "book": "Pale di San Martino (English), 'Cima di Van del Pez'",
+   "frames": [
+    {
+     "image_id": "zoomset_en_02_f00",
+     "file": "zoomset_en_02_f00.jpg",
+     "role": "full spread, NOT chosen as anchor",
+     "ingest_sharpness": 410.11,
+     "stage01_shipped_params": null,
+     "inliers_at_20k_features": null
+    },
+    {
+     "image_id": "zoomset_en_02_f01",
+     "file": "zoomset_en_02_f01.jpg",
+     "role": "anchor (full spread)",
+     "ingest_sharpness": 450.53,
+     "stage01_shipped_params": null,
+     "inliers_at_20k_features": null
+    },
+    {
+     "image_id": "zoomset_en_02_f02",
+     "file": "zoomset_en_02_f02.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 408.12,
+     "stage01_shipped_params": "27 good / 5 inliers",
+     "inliers_at_20k_features": 3
+    },
+    {
+     "image_id": "zoomset_en_02_f03",
+     "file": "zoomset_en_02_f03.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 477.74,
+     "stage01_shipped_params": "21 good (below the 25 gate)",
+     "inliers_at_20k_features": 21
+    },
+    {
+     "image_id": "zoomset_en_02_f04",
+     "file": "zoomset_en_02_f04.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 327.86,
+     "stage01_shipped_params": "28 good / 4 inliers",
+     "inliers_at_20k_features": 6
+    },
+    {
+     "image_id": "zoomset_en_02_f05",
+     "file": "zoomset_en_02_f05.jpg",
+     "role": "close-up",
+     "ingest_sharpness": 567.05,
+     "stage01_shipped_params": "40 good / 21 inliers",
+     "inliers_at_20k_features": 46
+    }
+   ],
+   "anchor": "zoomset_en_02_f01",
+   "gutter_split": "WRONG - gutter_x=2705/4080 on the book's right outer edge; left.png took the whole spread (319 words), right.png was background (4 words)"
+  }
+ }
+}

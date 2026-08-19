@@ -11,12 +11,15 @@ import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -280,10 +283,21 @@ fun CaptureScreen(
             modifier = Modifier.fillMaxSize().padding(24.dp),
             verticalArrangement = Arrangement.Bottom,
         ) {
-            Text(calibrationReadout(lastScore, streak))
-            logStatus?.let { Text(it) }
-            Text(autoStatus)
-            error?.let { Text(it, color = Color.Red) }
+            // On a scrim, in white: the default theme colour is dark-on-dark
+            // over the camera preview, which made the readout unreadable on the
+            // first real device — and an unreadable readout is a useless one,
+            // since its whole job is to be read while hovering over a page.
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+            ) {
+                Text(calibrationReadout(lastScore, streak), color = Color.White)
+                logStatus?.let { Text(it, color = Color.White) }
+                Text(autoStatus, color = Color.White)
+                error?.let { Text(it, color = Color(0xFFFF6B6B)) }
+            }
             // Own row: three buttons side by side clip on a narrow phone.
             Button(
                 enabled = !capturing,

@@ -7,9 +7,15 @@ Tesseract. Run with pytest, or directly:
 
 from __future__ import annotations
 
+import json
+import tempfile
+from pathlib import Path
+
+import cv2
 import numpy as np
 
-from pipeline.stage02_split import DEFAULTS, cut_pages, detect_gutter
+from pipeline import book_boundary as BB
+from pipeline.stage02_split import DEFAULTS, cut_pages, detect_gutter, run
 
 
 def _text_block(canvas: np.ndarray, x0: int, x1: int) -> None:
@@ -135,6 +141,107 @@ def test_single_page_emits_one_subpage():
     pieces = cut_pages(img, None, 40)
     assert [n for n, _, _ in pieces] == ["single.png"]
     assert pieces[0][2].w == img.shape[1]
+
+
+# --------------------------------------------------------------------------
+# The coordinate contract (book-boundary crop, v0.3.0)
+#
+# split.json documents every box and column in ORIGINAL spread pixels. Once
+# Stage 02 may cut from a CROP of the anchor, that promise stops being free: an
+# unadded offset would still produce plausible-looking pages, and the error
+# would only surface much later as patch-mode word crops pulling the wrong
+# pixels out of the full-resolution page. So assert it directly — rebuild each
+# subpage from the untouched anchor using ONLY the box written to split.json,
+# and require it to equal the PNG the stage wrote.
+# --------------------------------------------------------------------------
+
+
+def _cluttered_spread(fw: int = 2000, fh: int = 1500) -> np.ndarray:
+    """Bright two-page spread on a saturated background, book well inside."""
+    rng = np.random.default_rng(20260819)
+    img = np.zeros((fh, fw, 3), np.uint8)
+    img[:, :, 0], img[:, :, 1], img[:, :, 2] = 70, 40, 105
+    img = np.clip(img.astype(np.int16)
+                  + rng.integers(-25, 25, (fh, fw, 3), dtype=np.int16),
+                  0, 255).astype(np.uint8)
+    bx0, by0, bx1, by1 = 400, 300, 1600, 1200
+    page = np.full((by1 - by0, bx1 - bx0, 3), 238, np.uint8)
+    page = np.clip(page.astype(np.int16)
+                   + rng.integers(-8, 8, (by1 - by0, bx1 - bx0, 1), dtype=np.int16),
+                   0, 255).astype(np.uint8)
+    ph, pw = page.shape[:2]
+    gut = pw // 2
+    for y in range(int(ph * 0.1), int(ph * 0.9), 24):
+        page[y:y + 10, int(pw * 0.05):gut - 60] = 25
+        page[y:y + 10, gut + 60:int(pw * 0.95)] = 25
+    img[by0:by1, bx0:bx1] = page
+    return img
+
+
+def _boxes_are_original_coordinates(spread: np.ndarray) -> dict:
+    """Run the real stage on a seeded page dir; verify every emitted box."""
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = Path(td) / "page_001"
+        (page_dir / "01_fuse").mkdir(parents=True)
+        cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), spread)
+
+        result = run(page_dir, {})
+
+        manifest = json.loads(
+            (page_dir / "02_split" / "split.json").read_text(encoding="utf-8"))
+        assert manifest["width"] == spread.shape[1]
+        assert manifest["height"] == spread.shape[0]
+        for page in manifest["pages"]:
+            box = page["box"]
+            written = cv2.imread(str(page_dir / "02_split" / page["name"]),
+                                 cv2.IMREAD_COLOR)
+            rebuilt = spread[box["y"]:box["y"] + box["h"],
+                             box["x"]:box["x"] + box["w"]]
+            assert written.shape == rebuilt.shape, (
+                f"{page['name']}: box {box} describes {rebuilt.shape}, "
+                f"file is {written.shape}")
+            assert np.array_equal(written, rebuilt), (
+                f"{page['name']}: box {box} does not address the pixels that "
+                f"were written — a crop offset was not added back")
+        return manifest, result
+
+
+def test_emitted_boxes_are_original_spread_coordinates_when_cropped():
+    spread = _cluttered_spread()
+    assert BB.find_book(spread).applied, "fixture must exercise the crop path"
+    manifest, result = _boxes_are_original_coordinates(spread)
+    assert manifest["book_crop_applied"] is True
+    # The recorded crop must be a real crop of this frame, not the whole frame.
+    crop = manifest["book_crop"]
+    assert crop["w"] < spread.shape[1] and crop["h"] < spread.shape[0]
+    # And the gutter column is reported in original coordinates: inside the crop.
+    assert result.gutter_x is not None
+    assert crop["x"] < result.gutter_x < crop["x"] + crop["w"]
+
+
+def test_emitted_boxes_are_original_spread_coordinates_when_not_cropped():
+    """The abstain path must satisfy the same contract, trivially."""
+    spread = np.dstack([_two_page_spread(w=2000, h=1500, gutter=1000)] * 3)
+    assert not BB.find_book(spread).applied
+    manifest, _ = _boxes_are_original_coordinates(spread)
+    assert manifest["book_crop_applied"] is False
+    assert manifest["book_crop"] == {"x": 0, "y": 0, "w": 2000, "h": 1500}
+
+
+def test_crop_decision_is_recorded_for_a_human():
+    """A refusal must say why — an unexplained no-op is indistinguishable from
+    a detector that silently did nothing."""
+    spread = np.dstack([_two_page_spread(w=2000, h=1500, gutter=1000)] * 3)
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = Path(td) / "page_001"
+        (page_dir / "01_fuse").mkdir(parents=True)
+        cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), spread)
+        run(page_dir, {})
+        meta = json.loads(
+            (page_dir / "02_split" / "meta.json").read_text(encoding="utf-8"))
+        assert any("book-boundary crop NOT applied" in w
+                   for w in meta["warnings"])
+        assert (page_dir / "debug" / "02_split.png").exists()
 
 
 def _run() -> int:

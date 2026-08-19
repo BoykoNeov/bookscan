@@ -85,7 +85,7 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
 |---|---|---|---|
 | 00 | `stage00_ingest` | RAW/JPEG → normalized RGB, EXIF, per-page folder | Pillow, rawpy |
 | 01 | `stage01_fuse` | multi-zoom stitch onto anchor frame; pick sharpest frame | OpenCV (features + homography, ECC refine) |
-| 02 | `stage02_split` | gutter detection → left/right pages | OpenCV (projection profile) |
+| 02 | `stage02_split` | book-boundary crop (`book_boundary.py`) → gutter detection → left/right pages | OpenCV (projection profile, GrabCut) |
 | 03 | `stage03_dewarp` | flatten page curvature | UVDoc (default), DocTr++ (partial crops) |
 | 04 | `stage04_layout` | block detection + reading order | DocLayout-YOLO + XY-Cut++ |
 | 05 | `stage05_ocr` | word-level text + bbox + confidence | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |

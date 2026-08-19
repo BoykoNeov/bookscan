@@ -10,6 +10,13 @@ proves the layered resolver (a) leaves the 13 flat spreads on their known-good
 ink split and (b) rescues the curved spreads via the spine-pinch cue — WITHOUT
 splitting anything it shouldn't.
 
+Since v0.3.0 it runs the book-boundary crop too, exactly as ``stage02_split.run``
+does — search inside the detected book, report the column in ORIGINAL spread
+coordinates. Grading the bare detector would grade something the pipeline no
+longer does. Where ``testset/gt/book_box.json`` has a label, it also reports how
+much of the labelled book the EMITTED crop would cut away; that column must stay
+0.0 %, because losing text is the one failure Stage 02 treats as real.
+
     python -m tools.split_eval              # table + summary, exit 0 iff all pass
     python -m tools.split_eval --overlays   # also (re)write debug overlays under
                                             #   jobs/split_eval/<id>/ for eyeballing
@@ -25,11 +32,14 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from pipeline.stage02_split import DEFAULTS, detect_gutter, draw_overlay
+from pipeline import book_boundary as BB
+from pipeline.stage02_split import (
+    DEFAULTS, detect_gutter, draw_overlay_full)
 
 REPO = Path(__file__).resolve().parent.parent
 TESTSET = REPO / "testset"
 GT_PATH = TESTSET / "gt" / "gutter.json"
+BOX_GT_PATH = TESTSET / "gt" / "book_box.json"
 
 # de_* need orientation normalization; the orient_fix jobs hold the landscape
 # anchors Stage 00 produces. Everything else is read straight from testset/.
@@ -39,12 +49,33 @@ ANCHOR_OVERRIDE = {
 }
 
 
-def load_anchor(image_id: str) -> np.ndarray:
-    p = ANCHOR_OVERRIDE.get(image_id) or (TESTSET / f"{image_id}.jpg")
+def load_anchor(image_id: str, spec: dict | None = None) -> np.ndarray:
+    """Resolve a spread id to the image Stage 02 would actually see.
+
+    A GT entry may name its own ``anchor`` file under ``testset/``; the zoomset
+    rows do, and their anchors were verified pixel-identical to the Stage 01
+    output, so those rows are reproducible from the repo alone. ``ANCHOR_OVERRIDE``
+    (de_01/de_02) still reaches into gitignored ``jobs/`` — see gutter.json's _doc.
+    """
+    named = (spec or {}).get("anchor")
+    p = (TESTSET / named) if named else (
+        ANCHOR_OVERRIDE.get(image_id) or (TESTSET / f"{image_id}.jpg"))
     img = cv2.imread(str(p), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
     if img is None:
         raise FileNotFoundError(f"cannot read anchor for {image_id}: {p}")
     return img
+
+
+def _clipped_fraction(shape: tuple[int, int], label: dict,
+                      emit: tuple[int, int, int, int]) -> float:
+    """Percent of the labelled book area that falls OUTSIDE the emitted crop."""
+    h, w = shape
+    book = np.zeros((h, w), bool)
+    book[label["y0"]:label["y1"], label["x0"]:label["x1"]] = True
+    kept = np.zeros((h, w), bool)
+    kept[emit[1]:emit[3], emit[0]:emit[2]] = True
+    total = int(book.sum())
+    return 0.0 if total == 0 else 100.0 * float((book & ~kept).sum()) / total
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -54,16 +85,31 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     gt = json.loads(GT_PATH.read_text(encoding="utf-8"))["spreads"]
+    box_gt = (json.loads(BOX_GT_PATH.read_text(encoding="utf-8"))["spreads"]
+              if BOX_GT_PATH.exists() else {})
+    bb_params = BB.resolve_params({})
     overlay_dir = REPO / "jobs" / "split_eval"
 
     print(f"{'id':13} {'expect':>8} {'got':>6} {'method':>6} {'ratio':>6} "
-          f"{'pinch':>6} {'hit':>4}")
-    print("-" * 60)
+          f"{'pinch':>6} {'crop':>5} {'clip':>6} {'hit':>4}")
+    print("-" * 78)
     n_pass = 0
+    worst_clip = 0.0
     for image_id, spec in gt.items():
-        img = load_anchor(image_id)
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = load_anchor(image_id, spec)
+        book = BB.find_book(img, bb_params)
+        sx0, sy0, sx1, sy1 = book.search
+        gray = cv2.cvtColor(img[sy0:sy1, sx0:sx1], cv2.COLOR_BGR2GRAY)
         gx, diag = detect_gutter(gray, DEFAULTS)
+        gx = None if gx is None else gx + sx0   # -> original spread coordinates
+
+        clip = ""
+        if image_id in box_gt:
+            L = box_gt[image_id]
+            ex0, ey0, ex1, ey1 = book.emit
+            lost = _clipped_fraction(img.shape[:2], L, (ex0, ey0, ex1, ey1))
+            worst_clip = max(worst_clip, lost)
+            clip = f"{lost:.1f}%"
 
         if spec.get("single"):
             hit = gx is None
@@ -74,18 +120,25 @@ def main(argv: list[str] | None = None) -> int:
         n_pass += hit
         print(f"{image_id:13} {expect:>8} {str(gx):>6} {diag['method']:>6} "
               f"{diag['ratio']:>6.2f} {diag['pinch_depth']:>6.2f} "
+              f"{('YES' if book.applied else 'no'):>5} {clip:>6} "
               f"{'OK' if hit else 'FAIL':>4}")
 
         if args.overlays:
             d = overlay_dir / image_id / "debug"
             d.mkdir(parents=True, exist_ok=True)
-            cv2.imwrite(str(d / "02_split.png"), draw_overlay(img, gx, diag))
+            cv2.imwrite(str(d / "02_split.png"),
+                        draw_overlay_full(img, book, gx, diag))
 
     total = len(gt)
-    print("-" * 60)
+    print("-" * 78)
     print(f"{n_pass}/{total} spreads correct"
           + ("" if n_pass == total else "  <-- REGRESSION"))
-    return 0 if n_pass == total else 1
+    if box_gt:
+        print(f"worst clipping of a labelled book by the emitted crop: "
+              f"{worst_clip:.1f}%" + ("" if worst_clip == 0.0 else
+                                      "  <-- PAGE CONTENT LOST"))
+    ok = n_pass == total and worst_clip == 0.0
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

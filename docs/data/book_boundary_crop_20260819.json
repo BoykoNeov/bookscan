@@ -1,0 +1,1304 @@
+{
+  "_doc": "Evidence behind the docs/RESULTS.md 2026-08-19 book-boundary-crop rows. 'before' = book_crop.enabled false (the shipped v0.2.0 behaviour), 'after' = v0.3.0 defaults. Both arms call the SAME code paths, so the comparison is like-for-like. The gutter table is the load-bearing metric (testset/gt/gutter.json); clipped_pct_of_labelled_book grades the emitted crop against the six hand labels in testset/gt/book_box.json and must be 0.0. The OCR table is from the real seven-stage run (pipeline.run_all) on the four zoomset sets, NOT an ad-hoc harness; treat its word counts as indicative only \u2014 whole-image OCR at psm 3 was measured to churn +/-60 words in BOTH directions under reframing, so it supports the STRUCTURAL claim (a subpage that was background is now a page) and not a fine-grained accuracy claim.",
+  "stage02_version": "0.3.0",
+  "book_crop_defaults": {
+    "enabled": true,
+    "work_w": 680,
+    "sat_max": 0.25,
+    "val_min": 0.55,
+    "close_k": 15,
+    "open_k": 11,
+    "min_seed_frac": 0.03,
+    "trim_pct": 2.0,
+    "search_pad": 0.08,
+    "grabcut": true,
+    "gc_work_w": 480,
+    "gc_iters": 5,
+    "gc_seed_dilate": 31,
+    "gc_seed_erode": 15,
+    "emit_pad": 0.06,
+    "fallback_pad": 0.2,
+    "abstain_area_frac": 0.83,
+    "min_area_frac": 0.1,
+    "aspect_min": 0.5,
+    "aspect_max": 4.0
+  },
+  "gutter": [
+    {
+      "id": "bg_01",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 1907,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 1907,
+        "method": "ink",
+        "ink_ratio": 0.171,
+        "pinch_depth": 0.055,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 1907,
+        "method": "ink",
+        "ink_ratio": 0.171,
+        "pinch_depth": 0.055,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "bg_02",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 1940,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 1940,
+        "method": "ink",
+        "ink_ratio": 0.106,
+        "pinch_depth": 0.026,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 1940,
+        "method": "ink",
+        "ink_ratio": 0.106,
+        "pinch_depth": 0.026,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "bg_03",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2011,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2011,
+        "method": "ink",
+        "ink_ratio": 0.184,
+        "pinch_depth": 0.029,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 2011,
+        "method": "ink",
+        "ink_ratio": 0.184,
+        "pinch_depth": 0.029,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "en_coins_01",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 1960,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 1960,
+        "method": "ink",
+        "ink_ratio": 0.268,
+        "pinch_depth": 0.043,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 1960,
+        "method": "ink",
+        "ink_ratio": 0.268,
+        "pinch_depth": 0.043,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "en_coins_02",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 1994,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 1994,
+        "method": "ink",
+        "ink_ratio": 0.468,
+        "pinch_depth": 0.05,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 1994,
+        "method": "ink",
+        "ink_ratio": 0.468,
+        "pinch_depth": 0.05,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "en_coins_03",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2024,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2024,
+        "method": "ink",
+        "ink_ratio": 0.329,
+        "pinch_depth": 0.061,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 98% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 0.98,
+        "emit_source": "grabcut",
+        "gutter_x": 2024,
+        "method": "ink",
+        "ink_ratio": 0.329,
+        "pinch_depth": 0.061,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "it_geo_01",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2091,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2091,
+        "method": "ink",
+        "ink_ratio": 0.243,
+        "pinch_depth": 0.026,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 2091,
+        "method": "ink",
+        "ink_ratio": 0.243,
+        "pinch_depth": 0.026,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "it_geo_02",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2099,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2099,
+        "method": "ink",
+        "ink_ratio": 0.227,
+        "pinch_depth": 0.033,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 2099,
+        "method": "ink",
+        "ink_ratio": 0.227,
+        "pinch_depth": 0.033,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "it_geo_03",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2082,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2082,
+        "method": "ink",
+        "ink_ratio": 0.188,
+        "pinch_depth": 0.032,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 2082,
+        "method": "ink",
+        "ink_ratio": 0.188,
+        "pinch_depth": 0.032,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "it_geo_04",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 1941,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 1941,
+        "method": "ink",
+        "ink_ratio": 0.439,
+        "pinch_depth": 0.024,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 1941,
+        "method": "ink",
+        "ink_ratio": 0.439,
+        "pinch_depth": 0.024,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "it_geo_05",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2012,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2012,
+        "method": "ink",
+        "ink_ratio": 0.325,
+        "pinch_depth": 0.089,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 97% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 0.973,
+        "emit_source": "grabcut",
+        "gutter_x": 2012,
+        "method": "ink",
+        "ink_ratio": 0.325,
+        "pinch_depth": 0.089,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "it_geo_06",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2089,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2089,
+        "method": "ink",
+        "ink_ratio": 0.128,
+        "pinch_depth": 0.022,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 2089,
+        "method": "ink",
+        "ink_ratio": 0.128,
+        "pinch_depth": 0.022,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "it_geo_07",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2040,
+      "tol": 180,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2040,
+        "method": "ink",
+        "ink_ratio": 0.249,
+        "pinch_depth": 0.052,
+        "err_px": 0,
+        "hit": true
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 100% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 1.0,
+        "emit_source": "grabcut",
+        "gutter_x": 2040,
+        "method": "ink",
+        "ink_ratio": 0.249,
+        "pinch_depth": 0.052,
+        "err_px": 0,
+        "hit": true
+      }
+    },
+    {
+      "id": "de_01",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2000,
+      "tol": 200,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 1983,
+        "method": "pinch",
+        "ink_ratio": 0.851,
+        "pinch_depth": 0.15,
+        "err_px": 17,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 85% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 0.855,
+        "emit_source": "grabcut",
+        "gutter_x": 1983,
+        "method": "pinch",
+        "ink_ratio": 0.851,
+        "pinch_depth": 0.15,
+        "err_px": 17,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      }
+    },
+    {
+      "id": "de_02",
+      "anchor": null,
+      "frame": [
+        4000,
+        3000
+      ],
+      "gt_gutter_x": 2040,
+      "tol": 200,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2047,
+        "method": "pinch",
+        "ink_ratio": 0.666,
+        "pinch_depth": 0.176,
+        "err_px": 7,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      },
+      "after": {
+        "crop_applied": false,
+        "reason": "book fills 89% of the frame (>= 83%) \u2014 already tightly framed, not cropping",
+        "emit": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "search": [
+          0,
+          0,
+          4000,
+          3000
+        ],
+        "emit_area_frac": 0.892,
+        "emit_source": "grabcut",
+        "gutter_x": 2047,
+        "method": "pinch",
+        "ink_ratio": 0.666,
+        "pinch_depth": 0.176,
+        "err_px": 7,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      }
+    },
+    {
+      "id": "zoomset_de_01",
+      "anchor": "zoomset_de_01_f00.jpg",
+      "frame": [
+        4080,
+        3060
+      ],
+      "gt_gutter_x": 1675,
+      "tol": 200,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4080,
+          3060
+        ],
+        "search": [
+          0,
+          0,
+          4080,
+          3060
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2855,
+        "method": "pinch",
+        "ink_ratio": 0.667,
+        "pinch_depth": 0.316,
+        "err_px": 1180,
+        "hit": false,
+        "clipped_pct_of_labelled_book": 0.0
+      },
+      "after": {
+        "crop_applied": true,
+        "reason": "cropped to detected book",
+        "emit": [
+          157,
+          267,
+          3071,
+          3060
+        ],
+        "search": [
+          391,
+          489,
+          2806,
+          3060
+        ],
+        "emit_area_frac": 0.652,
+        "emit_source": "grabcut",
+        "gutter_x": 1684,
+        "method": "ink",
+        "ink_ratio": 0.468,
+        "pinch_depth": 0.215,
+        "err_px": 9,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      }
+    },
+    {
+      "id": "zoomset_de_02",
+      "anchor": "zoomset_de_02_f00.jpg",
+      "frame": [
+        4080,
+        3060
+      ],
+      "gt_gutter_x": 1631,
+      "tol": 200,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4080,
+          3060
+        ],
+        "search": [
+          0,
+          0,
+          4080,
+          3060
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 1631,
+        "method": "ink",
+        "ink_ratio": 0.248,
+        "pinch_depth": 0.498,
+        "err_px": 0,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      },
+      "after": {
+        "crop_applied": true,
+        "reason": "cropped to detected book",
+        "emit": [
+          240,
+          331,
+          3524,
+          3060
+        ],
+        "search": [
+          271,
+          573,
+          3202,
+          3060
+        ],
+        "emit_area_frac": 0.718,
+        "emit_source": "grabcut",
+        "gutter_x": 1626,
+        "method": "ink",
+        "ink_ratio": 0.09,
+        "pinch_depth": 0.102,
+        "err_px": 5,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      }
+    },
+    {
+      "id": "zoomset_en_01",
+      "anchor": "zoomset_en_01_f00.jpg",
+      "frame": [
+        4080,
+        3060
+      ],
+      "gt_gutter_x": 1615,
+      "tol": 200,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4080,
+          3060
+        ],
+        "search": [
+          0,
+          0,
+          4080,
+          3060
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2807,
+        "method": "ink",
+        "ink_ratio": 0.088,
+        "pinch_depth": 0.431,
+        "err_px": 1192,
+        "hit": false,
+        "clipped_pct_of_labelled_book": 0.0
+      },
+      "after": {
+        "crop_applied": true,
+        "reason": "cropped to detected book",
+        "emit": [
+          392,
+          286,
+          4001,
+          3060
+        ],
+        "search": [
+          484,
+          435,
+          3373,
+          3060
+        ],
+        "emit_area_frac": 0.802,
+        "emit_source": "grabcut",
+        "gutter_x": 1616,
+        "method": "ink",
+        "ink_ratio": 0.186,
+        "pinch_depth": 0.034,
+        "err_px": 1,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      }
+    },
+    {
+      "id": "zoomset_en_02",
+      "anchor": "zoomset_en_02_f01.jpg",
+      "frame": [
+        4080,
+        3060
+      ],
+      "gt_gutter_x": 1660,
+      "tol": 200,
+      "before": {
+        "crop_applied": false,
+        "reason": "book_crop disabled in config",
+        "emit": [
+          0,
+          0,
+          4080,
+          3060
+        ],
+        "search": [
+          0,
+          0,
+          4080,
+          3060
+        ],
+        "emit_area_frac": null,
+        "emit_source": null,
+        "gutter_x": 2705,
+        "method": "ink",
+        "ink_ratio": 0.317,
+        "pinch_depth": 0.443,
+        "err_px": 1045,
+        "hit": false,
+        "clipped_pct_of_labelled_book": 0.0
+      },
+      "after": {
+        "crop_applied": true,
+        "reason": "cropped to detected book",
+        "emit": [
+          426,
+          395,
+          3891,
+          3060
+        ],
+        "search": [
+          467,
+          503,
+          3432,
+          3060
+        ],
+        "emit_area_frac": 0.74,
+        "emit_source": "grabcut",
+        "gutter_x": 1623,
+        "method": "ink",
+        "ink_ratio": 0.305,
+        "pinch_depth": 0.139,
+        "err_px": 37,
+        "hit": true,
+        "clipped_pct_of_labelled_book": 0.0
+      }
+    }
+  ],
+  "pipeline_ocr_ab": [
+    {
+      "set": "zoomset_de_01",
+      "arm": "before",
+      "subpage": "left.png",
+      "gutter_x": 2855,
+      "crop_applied": false,
+      "words": 566,
+      "words_conf_ge_80": 410,
+      "mean_conf": 80.2
+    },
+    {
+      "set": "zoomset_de_01",
+      "arm": "before",
+      "subpage": "right.png",
+      "gutter_x": 2855,
+      "crop_applied": false,
+      "words": 14,
+      "words_conf_ge_80": 0,
+      "mean_conf": 32.2
+    },
+    {
+      "set": "zoomset_de_01",
+      "arm": "after",
+      "subpage": "left.png",
+      "gutter_x": 1684,
+      "crop_applied": true,
+      "words": 268,
+      "words_conf_ge_80": 192,
+      "mean_conf": 77.5
+    },
+    {
+      "set": "zoomset_de_01",
+      "arm": "after",
+      "subpage": "right.png",
+      "gutter_x": 1684,
+      "crop_applied": true,
+      "words": 330,
+      "words_conf_ge_80": 195,
+      "mean_conf": 73.6
+    },
+    {
+      "set": "zoomset_de_02",
+      "arm": "before",
+      "subpage": "left.png",
+      "gutter_x": 1631,
+      "crop_applied": false,
+      "words": 293,
+      "words_conf_ge_80": 204,
+      "mean_conf": 77.4
+    },
+    {
+      "set": "zoomset_de_02",
+      "arm": "before",
+      "subpage": "right.png",
+      "gutter_x": 1631,
+      "crop_applied": false,
+      "words": 385,
+      "words_conf_ge_80": 244,
+      "mean_conf": 73.7
+    },
+    {
+      "set": "zoomset_de_02",
+      "arm": "after",
+      "subpage": "left.png",
+      "gutter_x": 1626,
+      "crop_applied": true,
+      "words": 397,
+      "words_conf_ge_80": 202,
+      "mean_conf": 66.0
+    },
+    {
+      "set": "zoomset_de_02",
+      "arm": "after",
+      "subpage": "right.png",
+      "gutter_x": 1626,
+      "crop_applied": true,
+      "words": 394,
+      "words_conf_ge_80": 200,
+      "mean_conf": 68.2
+    },
+    {
+      "set": "zoomset_en_01",
+      "arm": "before",
+      "subpage": "left.png",
+      "gutter_x": 2807,
+      "crop_applied": false,
+      "words": 798,
+      "words_conf_ge_80": 426,
+      "mean_conf": 68.0
+    },
+    {
+      "set": "zoomset_en_01",
+      "arm": "before",
+      "subpage": "right.png",
+      "gutter_x": 2807,
+      "crop_applied": false,
+      "words": 0,
+      "words_conf_ge_80": 0,
+      "mean_conf": 0.0
+    },
+    {
+      "set": "zoomset_en_01",
+      "arm": "after",
+      "subpage": "left.png",
+      "gutter_x": 1616,
+      "crop_applied": true,
+      "words": 284,
+      "words_conf_ge_80": 66,
+      "mean_conf": 47.2
+    },
+    {
+      "set": "zoomset_en_01",
+      "arm": "after",
+      "subpage": "right.png",
+      "gutter_x": 1616,
+      "crop_applied": true,
+      "words": 444,
+      "words_conf_ge_80": 292,
+      "mean_conf": 76.9
+    },
+    {
+      "set": "zoomset_en_02",
+      "arm": "before",
+      "subpage": "left.png",
+      "gutter_x": 2705,
+      "crop_applied": false,
+      "words": 319,
+      "words_conf_ge_80": 226,
+      "mean_conf": 78.9
+    },
+    {
+      "set": "zoomset_en_02",
+      "arm": "before",
+      "subpage": "right.png",
+      "gutter_x": 2705,
+      "crop_applied": false,
+      "words": 4,
+      "words_conf_ge_80": 0,
+      "mean_conf": 37.2
+    },
+    {
+      "set": "zoomset_en_02",
+      "arm": "after",
+      "subpage": "left.png",
+      "gutter_x": 1623,
+      "crop_applied": true,
+      "words": 128,
+      "words_conf_ge_80": 119,
+      "mean_conf": 91.2
+    },
+    {
+      "set": "zoomset_en_02",
+      "arm": "after",
+      "subpage": "right.png",
+      "gutter_x": 1623,
+      "crop_applied": true,
+      "words": 207,
+      "words_conf_ge_80": 153,
+      "mean_conf": 81.3
+    }
+  ]
+}

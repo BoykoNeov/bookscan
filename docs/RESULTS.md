@@ -4142,3 +4142,96 @@ documents ORB as this stage's tool.
 ground truth. Word counts and confidences are *indicative*, not accuracy; they
 are reported alongside the visual registration proof, not instead of it.
 Suite 425.
+
+## Finding 1 closed: the pipeline can now find the book in the frame — 2026-08-19
+
+Stage 02 v0.3.0 + new `pipeline/book_boundary.py`. Evidence:
+`docs/data/book_boundary_crop_20260819.json`. Both arms below run the same code;
+"before" is `book_crop.enabled: false`, which is exactly the shipped v0.2.0
+behaviour, so the comparison is like-for-like rather than a re-implementation.
+
+**The gutter, which is the load-bearing metric.** Graded by `tools/split_eval`
+against `testset/gt/gutter.json`, now including four newly hand-labelled rows for
+the real captures (read off the anchors at 1.3x zoom with a ruler overlay, from
+the left page's right edge and the right page's first content column —
+independent of every cue the detector computes; the read bands are recorded in
+the GT file's `_doc`).
+
+| spread | before | after | GT | was | now |
+|---|---|---|---|---|---|
+| `zoomset_de_01` | 2855 | **1684** | 1675 | book's right outer edge | 9 px |
+| `zoomset_de_02` | 1631 | **1626** | 1631 | already correct | 5 px |
+| `zoomset_en_01` | 2807 | **1616** | 1615 | clutter left of the book | 1 px |
+| `zoomset_en_02` | 2705 | **1623** | 1660 | book's right outer edge | 37 px |
+
+**16/19 → 19/19**, and the fifteen pre-existing spreads are untouched — not
+"still passing", *untouched*: the crop refuses to fire on every one of them, so
+they run the byte-identical path they ran before this module existed.
+
+`zoomset_en_01`'s "before" column is 2807, not the 1272 published in the table
+above. That is not a regression: the earlier number came from the pre-OSD-fix
+anchor, which was delivered upside down. Same spread, different input.
+
+**Two boxes, because one cannot do both jobs.** This was built the obvious way
+first — one book box, used to aim the search *and* to cut the pages — and the
+obvious way is wrong, by measurement in both directions:
+
+- the bright-paper mask's own bbox padded 2 % **clips up to 32.8 %** of a
+  hand-labelled book (`de_02`: its orange side strips and header are saturated,
+  so a "low-saturation paper" mask simply does not see them);
+- padding until nothing clips (20 %) grows that box to **80-99 % of the frame** —
+  a crop that no longer crops;
+- and going the other way, using a generous box to aim the search puts the gutter
+  straight back onto the outer edge (**17/19**).
+
+So the search box is percentile-trimmed and modest (thin bright leaks — a white
+cable, a pale chair edge — carry almost no pixel mass, so the 2nd/98th
+percentiles ignore what dragged the bbox to the frame border), and the emit box
+is grown by GrabCut seeded from the same paper region, which crosses the coloured
+page areas the mask misses. **Clipping of the six hand-labelled books: 0.0 %, all
+six** (`testset/gt/book_box.json`, a deliberately diagnostic file — the gutter GT
+stays the metric). Clipping first reaches zero at 4 % pad; 6 % ships.
+
+**The abstain gate is justified by a harm, not just by a gap.** Emit-box area is
+65-80 % on the four lap captures and 85-100 % on the fifteen that need nothing, so
+the gate sits at the midpoint, 83 %. The narrow half of that gap is `de_01`/`de_02`
+at 85 %/89 %, and cropping them is not merely unnecessary — cropping `de_02`
+moves its gutter **from 7 px off ground truth to 96 px**, because the ink valley
+turns "confident" on the cropped frame and outranks the spine-pinch cue that had
+been right. A frame the book already fills has nothing to gain and that to lose.
+
+**What it is worth downstream, from the real seven-stage run** (`pipeline.run_all`,
+mode `flag`, both arms):
+
+| set | before: left / right | after: left / right |
+|---|---|---|
+| `zoomset_de_01` | 410 / **0** | 192 / 195 |
+| `zoomset_de_02` | 204 / 244 | 202 / 200 |
+| `zoomset_en_01` | 426 / **0** | 66 / 292 |
+| `zoomset_en_02` | 226 / **0** | 119 / 153 |
+
+(words at conf >= 80). The claim those numbers support is **structural**: on three
+of four spreads one subpage was background and one held the whole spread, and now
+all four yield two real pages. They do **not** support a fine-grained accuracy
+claim in either direction — whole-image OCR at psm 3 was measured to churn ±60
+words in *both* directions under nothing but reframing, so the totals are noise at
+this precision.
+
+The one spread that was already correct, `zoomset_de_02`, is the control, and it
+is a **wash**: OCR'd directly off the dewarped pages (which removes Stage 04's
+block routing from the comparison) it goes 191 → 172 on the left and 216 → 220 on
+the right. Its `right.png` did lose 544 columns — of *room*, not page: 2489 px
+wide before, 1945 after, at no measured cost.
+
+**Caveats, stated rather than buried.** n = 4 real captures and 6 labelled books,
+one photographer, two books, one lighting setup, all lap shots; the thresholds
+separate cleanly on that corpus and have been seen on no other. The paper mask
+assumes the page is the brightest low-saturation thing in frame — a white desk or
+a paper-covered table would break it, though the guards make the failure "no crop"
+rather than "wrong crop". `partition_frames` still ranks anchors by sharpness over
+the whole frame and so still rewards clutter; that item is untouched here, and
+`book_boundary.py` is a plain module precisely so Stage 01 can import it.
+Reproducibility: the four `zoomset_*` GT rows read from committed `testset/` JPEGs
+(verified pixel-identical to the Stage 01 anchors), but the older `de_01`/`de_02`
+rows still resolve through `ANCHOR_OVERRIDE` into gitignored `jobs/orient_fix_de*`,
+so those two rows are not reproducible off this machine. Suite 437.

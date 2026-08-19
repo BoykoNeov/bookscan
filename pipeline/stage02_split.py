@@ -45,10 +45,11 @@ import numpy as np
 import yaml
 from pydantic import BaseModel, Field
 
+from pipeline import book_boundary as BB
 from pipeline.page_model import BBox, StageMeta
 
 STAGE = "stage02_split"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -122,6 +123,14 @@ class SplitResult(BaseModel):
     pinch_x: int | None = None      # Layer 2: spine column from the page-pinch cue
     shadow_x: int | None = None     # binding-shadow luminance-valley column (corroboration only)
     corroborated: bool = False      # for a pinch split: did shadow OR ink agree within tol?
+    # --- book-boundary crop (pipeline/book_boundary.py, v0.3.0) -------------
+    # Every box and column in this file is in ORIGINAL spread pixels whether or
+    # not a crop was applied, so Stage 03 and patch-mode word crops need to know
+    # nothing about the crop. Asserted in test_stage02_split.
+    book_crop_applied: bool = False
+    book_crop_reason: str = ""
+    book_crop: BBox | None = None    # pixels emitted as the page(s)
+    book_search: BBox | None = None  # region the gutter search was restricted to
 
 
 # --------------------------------------------------------------------------
@@ -342,6 +351,41 @@ def draw_overlay(image: np.ndarray, gutter_x: int | None, diag: dict) -> np.ndar
     return canvas
 
 
+def draw_overlay_full(image: np.ndarray, book: "BB.BookBoundary",
+                      gutter_x: int | None, diag: dict) -> np.ndarray:
+    """Full-frame overlay showing BOTH decisions: where the book was, and where
+    the spine is.
+
+    The column profiles only make sense over the pixels they were measured on,
+    so the ordinary overlay is drawn on the search crop and pasted back into a
+    dimmed copy of the whole frame. That way one picture answers both questions a
+    human asks when a page comes out wrong — "did it find the book?" and "did it
+    find the spine?" — and a wrong crop is obvious rather than inferred from a
+    number (the convention Stage 01 set with its footprint outlines).
+    """
+    sx0, sy0, sx1, sy1 = book.search
+    ex0, ey0, ex1, ey1 = book.emit
+    gutter_local = None if gutter_x is None else gutter_x - sx0
+    inner = draw_overlay(image[sy0:sy1, sx0:sx1], gutter_local, diag)
+
+    canvas = (image.copy() * 0.45).astype(np.uint8)
+    canvas[sy0:sy1, sx0:sx1] = inner
+    h = canvas.shape[0]
+
+    # green = book accepted, amber = refused (frame used as-is)
+    ok = book.applied
+    cv2.rectangle(canvas, (ex0, ey0), (ex1 - 1, ey1 - 1),
+                  (0, 220, 0) if ok else (0, 190, 255), 6)
+    cv2.rectangle(canvas, (sx0, sy0), (sx1 - 1, sy1 - 1), (255, 160, 0), 4)
+    if gutter_x is not None:
+        cv2.line(canvas, (gutter_x, 0), (gutter_x, h), (0, 0, 230), 3)
+    label = (f"book crop {'APPLIED' if ok else 'REFUSED'}: {book.reason}"
+             f"  [green=emit, blue=search]")
+    cv2.putText(canvas, label, (30, h - 30), cv2.FONT_HERSHEY_SIMPLEX, 1.1,
+                (0, 220, 0) if ok else (0, 190, 255), 3)
+    return canvas
+
+
 # --------------------------------------------------------------------------
 # Runner
 # --------------------------------------------------------------------------
@@ -380,10 +424,37 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
             f"ingest); gutter detection along the vertical axis is unreliable."
         )
 
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Find the book before looking for the spine. Without this the search runs
+    # over the whole frame, and on a handheld capture that is 40-55 % room it
+    # locks onto the book's outer edge instead of its binding (RESULTS
+    # 2026-08-19). Two boxes come back and they are NOT interchangeable: the
+    # search box aims the detector, the emit box decides which pixels become the
+    # page. When the frame is already tight both are the full frame and every
+    # line below behaves exactly as it did before.
+    bb_params = BB.resolve_params(cfg)
+    t_book = time.perf_counter()
+    book = BB.find_book(image, bb_params)
+    book_ms = (time.perf_counter() - t_book) * 1000.0
+    if book.applied:
+        warnings.append(
+            f"book-boundary crop applied: emit={book.emit} search={book.search} "
+            f"({book.diag.get('emit_source')}, "
+            f"{book.diag.get('emit_area_frac', 0):.0%} of frame). Gutter searched "
+            f"inside the book, not the whole frame.")
+    else:
+        warnings.append(f"book-boundary crop NOT applied: {book.reason}")
+
+    ex0, ey0, ex1, ey1 = book.emit
+    sx0, sy0, sx1, sy1 = book.search
+    emit_img = image[ey0:ey1, ex0:ex1]
+    search_gray = cv2.cvtColor(image[sy0:sy1, sx0:sx1], cv2.COLOR_BGR2GRAY)
+
     t_detect = time.perf_counter()
-    gutter_x, diag = detect_gutter(gray, params)
+    gutter_local, diag = detect_gutter(search_gray, params)
     detect_ms = (time.perf_counter() - t_detect) * 1000.0
+    # Back to ORIGINAL spread coordinates immediately, so nothing downstream ever
+    # sees a search-box coordinate.
+    gutter_x = None if gutter_local is None else gutter_local + sx0
 
     method = diag["method"]
     if gutter_x is None:
@@ -411,8 +482,11 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
             )
 
     margin_frac = params["pinch_margin_frac"] if method == "pinch" else params["margin_frac"]
-    margin = int(w * margin_frac)
-    pieces = cut_pages(image, gutter_x, margin)
+    # Overlap is a fraction of the width being CUT. Identical to the old
+    # ``int(w * margin_frac)`` whenever the crop abstains (emit == full frame).
+    margin = int(emit_img.shape[1] * margin_frac)
+    gutter_in_emit = None if gutter_x is None else gutter_x - ex0
+    pieces = cut_pages(emit_img, gutter_in_emit, margin)
 
     # Write artifacts.
     out_dir = page_dir / "02_split"
@@ -426,7 +500,13 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     subpages: list[SubPage] = []
     for name, img, box in pieces:
         cv2.imwrite(str(out_dir / name), img)
-        subpages.append(SubPage(name=name, box=box))
+        # cut_pages works in the emitted crop's frame; SubPage.box is documented
+        # as ORIGINAL spread coordinates, so put the crop offset back. This is
+        # the one place a silent error would propagate all the way to patch-mode
+        # word crops, so it is asserted in the tests.
+        subpages.append(SubPage(name=name,
+                                box=BBox(x=box.x + ex0, y=box.y + ey0,
+                                         w=box.w, h=box.h)))
 
     result = SplitResult(
         source="01_fuse/anchor.png", width=w, height=h,
@@ -434,8 +514,12 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
         pages=subpages,
         valley=round(diag["valley"], 1), page_ref=round(diag["page_ref"], 1),
         ratio=round(diag["ratio"], 3),
-        pinch_depth=round(diag["pinch_depth"], 3), pinch_x=int(diag["pinch_x"]),
-        shadow_x=int(diag["shadow_x"]), corroborated=bool(diag["corroborated"]),
+        pinch_depth=round(diag["pinch_depth"], 3),
+        pinch_x=int(diag["pinch_x"]) + sx0,
+        shadow_x=int(diag["shadow_x"]) + sx0, corroborated=bool(diag["corroborated"]),
+        book_crop_applied=book.applied, book_crop_reason=book.reason,
+        book_crop=BBox(x=ex0, y=ey0, w=ex1 - ex0, h=ey1 - ey0),
+        book_search=BBox(x=sx0, y=sy0, w=sx1 - sx0, h=sy1 - sy0),
     )
     (out_dir / "split.json").write_text(
         result.model_dump_json(indent=2), encoding="utf-8"
@@ -444,7 +528,7 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     # Debug overlay (always — the contract requires one per stage).
     debug_dir = page_dir / "debug"
     debug_dir.mkdir(parents=True, exist_ok=True)
-    overlay = draw_overlay(image, gutter_x, diag)
+    overlay = draw_overlay_full(image, book, gutter_x, diag)
     cv2.imwrite(str(debug_dir / "02_split.png"), overlay)
     if debug:
         # extra intermediates: raw + smoothed column profile as CSV
@@ -453,8 +537,10 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     total_ms = (time.perf_counter() - t0) * 1000.0
     meta = StageMeta(
         stage=STAGE, version=VERSION,
-        params={k: params[k] for k in DEFAULTS},
-        timings_ms={"detect": round(detect_ms, 1), "total": round(total_ms, 1)},
+        params={**{k: params[k] for k in DEFAULTS},
+                "book_crop": {k: bb_params[k] for k in BB.DEFAULTS}},
+        timings_ms={"book_boundary": round(book_ms, 1),
+                    "detect": round(detect_ms, 1), "total": round(total_ms, 1)},
         warnings=warnings + [
             "single vertical cut assumes a near-vertical gutter; residual "
             "tilt/curvature is Stage 03 (dewarp)'s job. single.png branch is "

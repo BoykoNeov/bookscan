@@ -66,6 +66,18 @@ anchor.
   `de_*` orientation-break fixtures (figure-heavy → OSD can't rescue) and guards
   that the resolver keeps the existing OSD-rescued spreads upright. Checked by the
   `tools/normalize` orientation test.
+- **Book-box GT** (a fourth GT type, and a deliberately *diagnostic* one) lives in
+  `gt/book_box.json`: axis-aligned bounds of the book CONTENT — the two visible
+  facing pages including their coloured headers and side strips, excluding the
+  fanned block of closed pages beside the spread and the room around it — for the
+  six handheld captures. It grades exactly one thing about the Stage 02
+  book-boundary crop (`pipeline/book_boundary.py`): how much labelled page the
+  emitted crop cuts away, for which the bar is **zero**, because losing text is
+  the one Stage 02 failure that cannot be undone. It is NOT a detector accuracy
+  target — do not fit a book detector to these boxes; the load-bearing metric
+  stays `gt/gutter.json`, which is what `tools/split_eval` passes or fails on.
+  Hand-read off the full-resolution anchors with a 100-px ruler overlay,
+  independent of every quantity the detector computes.
 
 ## Composition
 

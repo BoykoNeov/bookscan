@@ -133,3 +133,51 @@ class PickSharpestTest {
         assertEquals("only", pickSharpest(listOf("only" to 0.0)))
     }
 }
+
+/**
+ * The observation surface the capture screen's calibration readout reads.
+ * These must never influence the gate's decisions — only report them.
+ */
+class HoverGateObservationTest {
+    @Test
+    fun `passes agrees with the thresholds the gate acts on`() {
+        val gate = newGate()
+        assertEquals(true, gate.passes(sharpAndStable(sharpness = SHARP, stability = STABLE, t = 0)))
+        assertEquals(false, gate.passes(sharpAndStable(sharpness = SHARP - 0.1, stability = STABLE, t = 0)))
+        assertEquals(false, gate.passes(sharpAndStable(sharpness = SHARP, stability = STABLE + 0.1, t = 0)))
+    }
+
+    @Test
+    fun `passes is pure - calling it never advances the gate`() {
+        val gate = newGate(requiredConsecutiveFrames = 3)
+        repeat(10) { gate.passes(sharpAndStable(t = it * 33L)) }
+        assertEquals(0, gate.consecutivePassCount)
+        // Two real frames still leave it one short of firing.
+        gate.onFrame(sharpAndStable(t = 0))
+        gate.onFrame(sharpAndStable(t = 33))
+        assertEquals(HoverCommand.CaptureNow, gate.onFrame(sharpAndStable(t = 66)))
+    }
+
+    @Test
+    fun `streak counts passing frames and resets the moment one fails`() {
+        val gate = newGate(requiredConsecutiveFrames = 3)
+        gate.onFrame(sharpAndStable(t = 0))
+        gate.onFrame(sharpAndStable(t = 33))
+        assertEquals(2, gate.consecutivePassCount)
+        gate.onFrame(blurryOrMoving(t = 66))
+        assertEquals(0, gate.consecutivePassCount)
+    }
+
+    @Test
+    fun `burstFiredCount tracks stills fired in the open burst`() {
+        val gate = newGate(requiredConsecutiveFrames = 1, maxBurstSize = 2)
+        assertEquals(0, gate.burstFiredCount)
+        gate.onFrame(sharpAndStable(t = 0))
+        assertEquals(1, gate.burstFiredCount)
+        gate.onFrame(sharpAndStable(t = INTERVAL_MS))
+        assertEquals(2, gate.burstFiredCount)
+        // Cap hit -> finalize -> reset.
+        assertEquals(HoverCommand.FinalizeBurst, gate.onFrame(sharpAndStable(t = 2 * INTERVAL_MS)))
+        assertEquals(0, gate.burstFiredCount)
+    }
+}

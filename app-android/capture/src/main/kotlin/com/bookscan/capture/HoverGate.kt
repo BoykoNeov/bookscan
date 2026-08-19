@@ -51,8 +51,28 @@ class HoverGate(
     private var burstFired = 0
     private var lastFiredAtMs: Long? = null
 
+    /**
+     * How many consecutive frames have passed both thresholds so far (resets
+     * to 0 the moment one fails). Read-only observation for the capture
+     * screen's calibration readout — the gate's decisions do not depend on
+     * anyone reading it.
+     */
+    val consecutivePassCount: Int get() = consecutivePasses
+
+    /** Stills fired in the currently open burst; 0 when no burst is open. */
+    val burstFiredCount: Int get() = burstFired
+
+    /**
+     * Whether a frame clears both thresholds. Exposed so the capture screen's
+     * calibration log can record the same pass/fail the gate acts on, rather
+     * than re-deriving it from a copy of the thresholds that could drift.
+     * Pure: reads no gate state and changes none.
+     */
+    fun passes(score: FrameScore): Boolean =
+        score.sharpness >= sharpnessThreshold && score.stability <= stabilityThreshold
+
     fun onFrame(score: FrameScore): HoverCommand {
-        val passes = score.sharpness >= sharpnessThreshold && score.stability <= stabilityThreshold
+        val passes = passes(score)
         if (!passes) {
             val wasOpen = burstOpen
             reset()

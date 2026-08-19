@@ -71,6 +71,11 @@ class MainActivity : ComponentActivity() {
 
                             CaptureFlow.CapturingAnchor -> CaptureScreen(
                                 outputDir = cacheDir,
+                                // External files dir, not cacheDir: calibration
+                                // CSVs are meant to be pulled off the device
+                                // (`adb pull /sdcard/Android/data/<pkg>/files/`),
+                                // which internal storage would need `run-as` for.
+                                logDir = getExternalFilesDir(null) ?: cacheDir,
                                 onCaptured = { file -> flow = CaptureFlow.ReviewingSpread(file, emptyList()) },
                                 onCancel = { flow = CaptureFlow.Hidden },
                             )

@@ -24,16 +24,17 @@ import java.io.File
 private const val THUMBNAIL_SAMPLE_SIZE = 8
 
 /**
- * M4's review step between capture and upload: shows the anchor plus any
- * close-ups captured so far, lets the user add more or finish — upload sends
- * the anchor and all close-ups together in one
+ * M4's review step between capture and upload: shows every shot of the spread
+ * (an auto-capture burst is several near-duplicates) plus any close-ups
+ * captured so far, lets the user add more or finish — upload sends them all
+ * together in one
  * `POST /api/jobs/{id}/pages` request (server/routes_jobs.py; Stage 01 Fuse
  * classifies anchor-vs-closeup by area itself, no per-file tagging needed).
  * See docs/plans/android-guided-capture.md.
  */
 @Composable
 fun SpreadReviewScreen(
-    anchor: File,
+    anchors: List<File>,
     closeups: List<File>,
     uploading: Boolean,
     error: String?,
@@ -45,10 +46,10 @@ fun SpreadReviewScreen(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text("Spread captured — ${closeups.size} close-up(s)")
+        Text("Spread captured — ${anchors.size} shot(s), ${closeups.size} close-up(s)")
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(listOf(anchor) + closeups) { file -> Thumbnail(file) }
+            items(anchors + closeups) { file -> Thumbnail(file) }
         }
 
         error?.let { Text(it, color = Color.Red) }

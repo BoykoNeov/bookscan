@@ -288,6 +288,7 @@ def simulate_gate(
     required_consecutive: int = REQUIRED_CONSECUTIVE_FRAMES,
     min_interval_ms: int = MIN_CAPTURE_INTERVAL_MS,
     max_burst: int = MAX_BURST_SIZE,
+    hold_stability_threshold: float | None = None,
 ) -> SimResult:
     """Replays ``HoverGate.onFrame`` over a recorded log — same state machine,
     so "how often would this pair have triggered" is answerable before
@@ -297,7 +298,13 @@ def simulate_gate(
     stays steady simply qualifies again eight frames later. In the app the
     first finalize hands the winning still to the review screen and the capture
     screen leaves composition, so ``bursts`` here means "how many times a hover
-    would have qualified", not "stills uploaded"."""
+    would have qualified", not "stills uploaded".
+
+    ``hold_stability_threshold`` mirrors HoverGate's hysteresis: the stability
+    tolerated once a burst is open, looser than the one required to open it.
+    Defaults to ``stability_threshold`` (no hysteresis). Leaving it out
+    understates stills per burst badly - on the 2026-08-19 logs one threshold
+    for both gives ONE still per realistic hover, and 3.1/6.0 gives four."""
     consecutive = 0
     burst_open = False
     burst_fired = 0
@@ -313,8 +320,13 @@ def simulate_gate(
         burst_fired = 0
         last_fired = None
 
+    hold_threshold = stability_threshold if hold_stability_threshold is None else hold_stability_threshold
+    if hold_threshold < stability_threshold:
+        raise ValueError("hold_stability_threshold must not be stricter than stability_threshold")
+
     for f in frames:
-        if not (f.sharpness >= sharp_threshold and f.stability <= stability_threshold):
+        limit = hold_threshold if burst_open else stability_threshold
+        if not (f.sharpness >= sharp_threshold and f.stability <= limit):
             if burst_open:
                 bursts += 1
             reset()

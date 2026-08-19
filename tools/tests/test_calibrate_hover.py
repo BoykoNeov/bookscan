@@ -160,5 +160,31 @@ def test_a_broken_hover_ends_the_burst():
     assert sim.captures >= 1
 
 
+# --------------------------------------------------------------------------
+# Hysteresis (mirrors HoverGateHysteresisTest.kt)
+# --------------------------------------------------------------------------
+
+
+def test_a_marginal_frame_collapses_the_burst_without_hysteresis():
+    fs = frames(10, 80.0, 2.0) + frames(1, 80.0, 5.0, start=10 * 33) + frames(10, 80.0, 2.0, start=11 * 33)
+    assert simulate_gate(fs, 40.0, 3.0).bursts == 2
+
+
+def test_a_marginal_frame_keeps_the_burst_open_with_hysteresis():
+    fs = frames(10, 80.0, 2.0) + frames(1, 80.0, 5.0, start=10 * 33) + frames(10, 80.0, 2.0, start=11 * 33)
+    assert simulate_gate(fs, 40.0, 3.0, hold_stability_threshold=6.0).bursts == 1
+
+
+def test_hysteresis_does_not_loosen_the_entry_test():
+    """Frames between the two thresholds must never OPEN a burst."""
+    fs = frames(300, 80.0, 5.0)
+    assert simulate_gate(fs, 40.0, 3.0, hold_stability_threshold=6.0).captures == 0
+
+
+def test_a_hold_threshold_stricter_than_entry_is_rejected():
+    with pytest.raises(ValueError):
+        simulate_gate(frames(10, 80.0, 2.0), 40.0, 6.0, hold_stability_threshold=3.0)
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))

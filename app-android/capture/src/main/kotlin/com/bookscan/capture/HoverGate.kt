@@ -18,10 +18,20 @@ sealed interface HoverCommand {
  * consecutive analysis frames, then keeps firing captures — throttled to at
  * most one per [minCaptureIntervalMs] and capped at [maxBurstSize] — for as
  * long as the hover holds. When the hover breaks (or the cap is hit) it
- * emits [HoverCommand.FinalizeBurst] so the caller can keep only the
- * sharpest still from the burst and upload just that one (mirrors Stage 01's
- * "sharpest wins," done client-side first to avoid uploading redundant
- * blurry frames over Wi-Fi).
+ * emits [HoverCommand.FinalizeBurst] and the caller uploads the whole burst;
+ * Stage 01 picks the sharpest of them at full resolution.
+ *
+ * **Entry and hold are different tests** ([stabilityThreshold] vs
+ * [holdStabilityThreshold]). Opening a burst is strict; keeping one open is
+ * not. Measured on three labelled recordings (2026-08-19, see the RESULTS
+ * row): with one threshold for both, a single frame over the line collapsed
+ * the burst, and realistic use produced exactly **one** still per hover — the
+ * pipeline's Stage 01 expects several near-duplicates to choose between, so
+ * that wasted its selection step and left no margin for a bad frame.
+ * Loosening the hold to 6.0 gives four stills per hover and still fires
+ * **zero** bursts across the whole 21 s moving recording: the
+ * [requiredConsecutiveFrames] entry test is what prevents false captures, and
+ * being strict after that buys nothing.
  *
  * No default thresholds are provided: variance-of-Laplacian on a downsampled
  * on-device luma buffer is not on the same scale as the pipeline's full-res
@@ -40,10 +50,15 @@ class HoverGate(
     private val requiredConsecutiveFrames: Int,
     private val minCaptureIntervalMs: Long,
     private val maxBurstSize: Int,
+    /** Stability tolerated once a burst is open; defaults to no hysteresis. */
+    private val holdStabilityThreshold: Double = stabilityThreshold,
 ) {
     init {
         require(requiredConsecutiveFrames >= 1) { "requiredConsecutiveFrames must be >= 1" }
         require(maxBurstSize >= 1) { "maxBurstSize must be >= 1" }
+        require(holdStabilityThreshold >= stabilityThreshold) {
+            "holdStabilityThreshold must not be stricter than stabilityThreshold"
+        }
     }
 
     private var consecutivePasses = 0
@@ -71,8 +86,12 @@ class HoverGate(
     fun passes(score: FrameScore): Boolean =
         score.sharpness >= sharpnessThreshold && score.stability <= stabilityThreshold
 
+    /** The looser test applied only while a burst is already open. */
+    private fun holds(score: FrameScore): Boolean =
+        score.sharpness >= sharpnessThreshold && score.stability <= holdStabilityThreshold
+
     fun onFrame(score: FrameScore): HoverCommand {
-        val passes = passes(score)
+        val passes = if (burstOpen) holds(score) else passes(score)
         if (!passes) {
             val wasOpen = burstOpen
             reset()
@@ -107,5 +126,14 @@ class HoverGate(
     }
 }
 
-/** Returns the item with the highest score, or null if [candidates] is empty. Ties keep the first max found. */
+/**
+ * Returns the item with the highest score, or null if [candidates] is empty.
+ * Ties keep the first max found.
+ *
+ * No longer used by the capture screen: the whole burst is uploaded and Stage
+ * 01 picks the anchor from **full-resolution** sharpness, which is strictly
+ * better evidence than this module's 320×240 analysis-frame proxy. Kept
+ * because it is the correct client-side choice for any future keep-one mode
+ * (a slow link, say), and because it is covered by tests.
+ */
 fun <T> pickSharpest(candidates: List<Pair<T, Double>>): T? = candidates.maxByOrNull { it.second }?.first

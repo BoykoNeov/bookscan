@@ -101,13 +101,13 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
      * ("frame_00" server-side); Stage 01 Fuse classifies anchor-vs-closeup by
      * area itself (see docs/plans/android-guided-capture.md M4).
      */
-    fun uploadSpread(anchor: File, closeups: List<File>) {
+    fun uploadSpread(anchors: List<File>, closeups: List<File>) {
         val api = api ?: return
         val jobId = (_state.value as? UiState.Ready)?.jobId ?: return
         viewModelScope.launch {
             updateReady { it.copy(uploading = true, error = null) }
             try {
-                val parts = (listOf(anchor) + closeups).mapIndexed { index, file -> multipartPart(index, file) }
+                val parts = (anchors + closeups).mapIndexed { index, file -> multipartPart(index, file) }
                 withRetry(maxAttempts = UPLOAD_MAX_ATTEMPTS) { api.uploadPage(jobId, parts) }
                 refreshStatus(jobId)
             } catch (e: Exception) {

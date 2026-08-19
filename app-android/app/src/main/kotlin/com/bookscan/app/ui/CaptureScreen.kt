@@ -42,7 +42,6 @@ import com.bookscan.capture.FrameScore
 import com.bookscan.capture.FrameScorer
 import com.bookscan.capture.HoverCommand
 import com.bookscan.capture.HoverGate
-import com.bookscan.capture.pickSharpest
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -73,6 +72,17 @@ import java.util.concurrent.Executors
  */
 private const val SHARPNESS_THRESHOLD = 400.0
 private const val STABILITY_THRESHOLD = 3.1
+
+/**
+ * Stability tolerated once a burst is already open - deliberately looser than
+ * [STABILITY_THRESHOLD]. Opening a burst is what must be strict; the
+ * eight-consecutive-frame entry test is what keeps false captures at zero, and
+ * on the 2026-08-19 recordings loosening the hold to 6.0 took a realistic
+ * hover from ONE still to FOUR while still firing zero bursts across the whole
+ * 21 s moving log. One still per hover left Stage 01 nothing to choose between
+ * and no margin for a bad frame.
+ */
+private const val HOLD_STABILITY_THRESHOLD = 6.0
 private const val REQUIRED_CONSECUTIVE_FRAMES = 8
 private const val MIN_CAPTURE_INTERVAL_MS = 400L
 private const val MAX_BURST_SIZE = 4
@@ -103,7 +113,7 @@ fun CaptureScreen(
     logDir: File,
     autoArmed: Boolean,
     onAutoArmedChange: (Boolean) -> Unit,
-    onCaptured: (File) -> Unit,
+    onCaptured: (List<File>) -> Unit,
     onCancel: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -140,20 +150,25 @@ fun CaptureScreen(
             requiredConsecutiveFrames = REQUIRED_CONSECUTIVE_FRAMES,
             minCaptureIntervalMs = MIN_CAPTURE_INTERVAL_MS,
             maxBurstSize = MAX_BURST_SIZE,
+            holdStabilityThreshold = HOLD_STABILITY_THRESHOLD,
         )
     }
 
     fun finalizeBurst() {
-        val winner = pickSharpest(burstCandidates)
-        burstCandidates.filter { it.first != winner }.forEach { it.first.delete() }
+        // The WHOLE burst goes up, best-guess first. Stage 01 picks the anchor
+        // from full-resolution sharpness ("handheld bursts give several near
+        // duplicates; the sharpest wins"), which beats deciding here from a
+        // 320×240 analysis frame — see pickSharpest's note.
+        val shots = burstCandidates.sortedByDescending { it.second }.map { it.first }
         burstCandidates.clear()
         autoStatus = "hold steady over the page…"
         capturing = false
-        // winner can be null if the burst's takePicture callback(s) haven't
-        // landed yet when hover breaks (finalize races the async capture) —
-        // nothing to hand off; the UI stays interactive for the next hover.
-        if (winner != null) {
-            onCaptured(winner)
+        // Empty if the burst's takePicture callback(s) haven't landed yet when
+        // hover breaks (finalize races the async capture) — nothing to hand
+        // off; the UI stays interactive for the next hover rather than opening
+        // a review screen with no photos in it.
+        if (shots.isNotEmpty()) {
+            onCaptured(shots)
         }
     }
 
@@ -412,7 +427,7 @@ fun CaptureScreen(
                             object : ImageCapture.OnImageSavedCallback {
                                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                                     capturing = false
-                                    onCaptured(file)
+                                    onCaptured(listOf(file))
                                 }
 
                                 override fun onError(exc: ImageCaptureException) {

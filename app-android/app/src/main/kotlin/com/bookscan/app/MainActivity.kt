@@ -32,8 +32,11 @@ import java.io.File
 private sealed interface CaptureFlow {
     data object Hidden : CaptureFlow
     data object CapturingAnchor : CaptureFlow
-    data class CapturingCloseup(val anchor: File, val closeups: List<File>) : CaptureFlow
-    data class ReviewingSpread(val anchor: File, val closeups: List<File>) : CaptureFlow
+    // `anchors` is the whole auto-capture burst, best-guess first: Stage 01
+    // selects the sharpest at full resolution, so the phone does not throw the
+    // rest away. A manual shot is a one-element list.
+    data class CapturingCloseup(val anchors: List<File>, val closeups: List<File>) : CaptureFlow
+    data class ReviewingSpread(val anchors: List<File>, val closeups: List<File>) : CaptureFlow
 }
 
 class MainActivity : ComponentActivity() {
@@ -91,29 +94,29 @@ class MainActivity : ComponentActivity() {
                                 logDir = getExternalFilesDir(null) ?: cacheDir,
                                 autoArmed = autoArmed,
                                 onAutoArmedChange = { autoArmed = it },
-                                onCaptured = { file -> flow = CaptureFlow.ReviewingSpread(file, emptyList()) },
+                                onCaptured = { files -> flow = CaptureFlow.ReviewingSpread(files, emptyList()) },
                                 onCancel = { flow = CaptureFlow.Hidden },
                             )
 
                             is CaptureFlow.CapturingCloseup -> CloseupScreen(
                                 outputDir = cacheDir,
                                 closeupCount = f.closeups.size,
-                                onCaptured = { file -> flow = CaptureFlow.ReviewingSpread(f.anchor, f.closeups + file) },
-                                onDone = { flow = CaptureFlow.ReviewingSpread(f.anchor, f.closeups) },
+                                onCaptured = { file -> flow = CaptureFlow.ReviewingSpread(f.anchors, f.closeups + file) },
+                                onDone = { flow = CaptureFlow.ReviewingSpread(f.anchors, f.closeups) },
                             )
 
                             is CaptureFlow.ReviewingSpread -> SpreadReviewScreen(
-                                anchor = f.anchor,
+                                anchors = f.anchors,
                                 closeups = f.closeups,
                                 uploading = s.uploading,
                                 error = s.error,
-                                onAddCloseup = { flow = CaptureFlow.CapturingCloseup(f.anchor, f.closeups) },
+                                onAddCloseup = { flow = CaptureFlow.CapturingCloseup(f.anchors, f.closeups) },
                                 onUpload = {
-                                    viewModel.uploadSpread(f.anchor, f.closeups)
+                                    viewModel.uploadSpread(f.anchors, f.closeups)
                                     flow = CaptureFlow.Hidden
                                 },
                                 onDiscard = {
-                                    f.anchor.delete()
+                                    f.anchors.forEach { it.delete() }
                                     f.closeups.forEach { it.delete() }
                                     flow = CaptureFlow.Hidden
                                 },

@@ -2,6 +2,9 @@ package com.bookscan.capture
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.test.assertNull
 
 private const val SHARP = 50.0
@@ -179,5 +182,78 @@ class HoverGateObservationTest {
         // Cap hit -> finalize -> reset.
         assertEquals(HoverCommand.FinalizeBurst, gate.onFrame(sharpAndStable(t = 2 * INTERVAL_MS)))
         assertEquals(0, gate.burstFiredCount)
+    }
+}
+
+/**
+ * Entry and hold are different tests. Measured on real device recordings
+ * (2026-08-19): with one threshold for both, a single frame over the line
+ * collapsed the burst and a realistic hover produced exactly one still.
+ */
+class HoverGateHysteresisTest {
+    private fun hysteresisGate(maxBurstSize: Int = 4) = HoverGate(
+        sharpnessThreshold = SHARP,
+        stabilityThreshold = STABLE,           // 5.0 to open
+        requiredConsecutiveFrames = 2,
+        minCaptureIntervalMs = INTERVAL_MS,
+        maxBurstSize = maxBurstSize,
+        holdStabilityThreshold = 20.0,         // 20.0 to stay open
+    )
+
+    @Test
+    fun `a frame between the two thresholds does not open a burst`() {
+        val gate = hysteresisGate()
+        repeat(5) { i -> assertEquals(HoverCommand.None, gate.onFrame(sharpAndStable(stability = 12.0, t = i * INTERVAL_MS))) }
+        assertEquals(0, gate.burstFiredCount)
+    }
+
+    @Test
+    fun `a frame between the two thresholds keeps an open burst alive`() {
+        val gate = hysteresisGate()
+        gate.onFrame(sharpAndStable(t = 0))
+        assertEquals(HoverCommand.CaptureNow, gate.onFrame(sharpAndStable(t = INTERVAL_MS)))
+        // 12.0 would have failed the entry test; the burst survives it and keeps firing.
+        assertEquals(HoverCommand.None, gate.onFrame(sharpAndStable(stability = 12.0, t = INTERVAL_MS + 1)))
+        assertEquals(HoverCommand.CaptureNow, gate.onFrame(sharpAndStable(stability = 12.0, t = 2 * INTERVAL_MS)))
+        assertEquals(2, gate.burstFiredCount)
+    }
+
+    @Test
+    fun `a frame past the hold threshold still ends the burst`() {
+        val gate = hysteresisGate()
+        gate.onFrame(sharpAndStable(t = 0))
+        gate.onFrame(sharpAndStable(t = INTERVAL_MS))
+        assertEquals(HoverCommand.FinalizeBurst, gate.onFrame(sharpAndStable(stability = 25.0, t = 2 * INTERVAL_MS)))
+        assertEquals(0, gate.burstFiredCount)
+    }
+
+    @Test
+    fun `without hysteresis one marginal frame still collapses the burst`() {
+        // The behaviour being fixed, pinned so a default change is visible.
+        val gate = newGate(requiredConsecutiveFrames = 2)
+        gate.onFrame(sharpAndStable(t = 0))
+        assertEquals(HoverCommand.CaptureNow, gate.onFrame(sharpAndStable(t = INTERVAL_MS)))
+        assertEquals(HoverCommand.FinalizeBurst, gate.onFrame(sharpAndStable(stability = 6.0, t = 2 * INTERVAL_MS)))
+    }
+
+    @Test
+    fun `a hold threshold stricter than the entry threshold is rejected`() {
+        assertFailsWith<IllegalArgumentException> {
+            HoverGate(
+                sharpnessThreshold = SHARP,
+                stabilityThreshold = STABLE,
+                requiredConsecutiveFrames = 2,
+                minCaptureIntervalMs = INTERVAL_MS,
+                maxBurstSize = 4,
+                holdStabilityThreshold = 1.0,
+            )
+        }
+    }
+
+    @Test
+    fun `passes stays the entry test and ignores the hold threshold`() {
+        val gate = hysteresisGate()
+        assertFalse(gate.passes(sharpAndStable(stability = 12.0, t = 0)))
+        assertTrue(gate.passes(sharpAndStable(stability = 1.0, t = 0)))
     }
 }

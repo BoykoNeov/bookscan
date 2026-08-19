@@ -3827,3 +3827,39 @@ distributions and the fitter's own suggestion in
 burst per 15 s of realistic use, and whether that feels right or sluggish is
 the one thing a replay cannot answer — it needs a confirmation run on the
 device with the gate armed by hand. The default flips only after that.
+
+### Addendum, same day: one still per hover was not enough — hysteresis
+
+Owner feedback after the armed confirmation run: firing felt right, but *"a
+single frame won't be enough in practice."* Correct, and worse than it looks.
+`HoverGate.onFrame` called `reset()` the instant one frame failed, so with a
+strict threshold a single marginal frame collapsed the whole burst. Replay on
+the three logs: **one still per hover** in realistic use. Stage 01's own
+docstring says it expects the opposite — *"handheld bursts give several near
+duplicates; the sharpest wins"* — selecting on Stage 00's **full-resolution**
+sharpness, which is strictly better evidence than the 320×240 analysis-frame
+proxy the phone was using to throw the others away.
+
+Two changes, both measured on the same three recordings:
+
+* **Entry and hold are now different tests** (`stabilityThreshold` 3.1 to open,
+  `holdStabilityThreshold` 6.0 to stay open). Realistic use goes from 1 still
+  per hover to **4**, and the moving log still produces **zero** bursts —
+  because the eight-consecutive-frame entry test is what prevents false
+  captures, and strictness after that buys nothing. A grace-frames knob was
+  prototyped and dropped: the sweep showed it inert (`/0` and `/3` both gave 4).
+  Hold 8.0 gave 5 stills but the cap is 4, so it was unreachable — unmeasured
+  risk for nothing.
+* **The whole burst is uploaded**, best-guess first, instead of the phone
+  keeping one. `pickSharpest` is kept, unused, with a note saying selection
+  moved to Stage 01 — it stays correct for a future keep-one mode on a slow
+  link.
+
+`simulate_gate` in `tools/calibrate_hover.py` gained the same hysteresis, or
+its replay would have kept reporting the old one-still-per-hover figure as if
+it were current. Replay against the shipped constants: steady 15 bursts /
+54 stills, **moving 0 / 0**, mixed 1 burst / 4 stills.
+
+Costs, recorded rather than discovered later: about 4× the bytes per spread,
+and `uploadSpread` retries the whole multipart request up to 4 times on an
+`IOException`, so a flaky link multiplies that. Fine on a LAN.

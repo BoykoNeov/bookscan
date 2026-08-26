@@ -5067,3 +5067,222 @@ being flat.
 * **N=1 for the benefit.** One page in the corpus has the over-segmented shape.
 
 Suite 477 green.
+
+## The words that were on the page and not in the document — 2026-08-26
+
+The corpus's segmentation headline was **106/112 GT blocks matched** over the eight
+block-order fixtures. Six misses. This pass asked one question of each — *does that
+block's text reach the shipped document at all?* — and the answer split them three
+ways, only one of which is a defect in the pipeline.
+
+| miss | what the harness says | what the shipped pipeline does | class |
+|---|---|---|---|
+| `it_geo_05` C2 | caption not detected | **is** a caption block, via Stage 05's `caption_eject` | harness blind spot |
+| `en_coins_01` FN1 | footnote not detected | **is** a block, via Stage 05's orphan-word rescue | harness blind spot |
+| `en_coins_03` P2 | paragraph not detected | **is** detected — block #10 scores 0.875 for it | matcher artifact |
+| `it_geo_04` B6L | figure fragment lost | Stage 02 cuts the cross-gutter panorama; no Stage 04 change reaches it | upstream, out of scope |
+| `it_geo_07` T5right | paragraph not matched | detected at **exactly** its GT box — the OCR read 8 of ~25 words | **real: text lost** |
+| `it_geo_07` D1 | figure not detected | genuinely absent — a picture missing from the book | **real: figure lost** |
+
+### Correction 1 — the harness grades Stage 04, and two shipped mechanisms live in Stage 05
+
+`tools/layout_order_eval` stops after `stage04_layout` and routes page-level OCR
+words into the detected boxes. But **caption ejection** (`pipeline/caption_eject.py`,
+shipped 2026-08-10) and **orphan-word rescue** (`attach_words`, shipped with Stage 05)
+both run *after* that, in Stage 05, and both create blocks. So the harness cannot
+see them.
+
+Concretely, `jobs/floor_it_geo_05/page_001/05_ocr/ocr.json` block #6 is
+`type=caption`, 60 words, conf 91.7, reading as C2 verbatim — while the eval reports
+C2 as a miss and the 2026-08-26 pairing row above states "*the caption is printed
+inside the map, so the detector emits no caption block*". That sentence is true of
+**Stage 04** and false of the **deliverable**. Same for `en_coins_01` FN1: production
+`ocr.json` carries it as an 8-word block at the page foot, five of five anchor
+tokens present, built out of orphan words.
+
+**So 106/112 understates the shipped pipeline, and every figure the eval prints is
+measured on a block set two mechanisms younger than the one that ships.** Closing
+that is its own piece of work — it would move every number in the corpus, for
+reasons unrelated to anything measured here — and it is deliberately NOT bundled
+into this change. What is recorded here is that the gap exists and how wide it is
+on these two cases.
+
+### Correction 2 — `en_coins_03` P2 is the greedy matcher, not the detector
+
+`match_subpage` assigns each detected block to at most one GT block, greedily by
+anchor-token overlap. On `en_coins_03`-right, detected block #10 scores **0.875**
+for P2 — and is claimed first by **H1**, a short heading anchor whose every token
+also appears in that paragraph. P2 then has nothing left to match. The text is in
+the document; the miss is an artifact of one-to-one assignment meeting a short
+anchor. Not fixed here — recorded, because "segmentation recall" currently counts it.
+
+### Correction 3 — `it_geo_07` D1 is the corpus's one genuinely lost figure
+
+The GT calls it a thin cross-section diagram in the far-left column. The detector
+emits figure boxes for D2/D3/D4/D5 at y1204/1482/1926/2377 and **nothing** in D1's
+band — IoU 0.000 against all four. The crop confirms a real drawing is there (pink
+strata, `DPR`, a sea-level line). The detector even found the diagram's *furniture*:
+blocks #2 and #3 are its scale bars (`0.5 cm = 200m`, `0.5 cm = 5 Km`) and #6 is its
+own label `7 Piana tidale`. It read everything around the picture and not the
+picture. Open, and the honest next figure-side task.
+
+## Starved blocks: text that is on the page, readable, and absent from the document
+
+`it_geo_07`-left block #22 is the paragraph the GT calls `T5right`. Stage 04 boxed it
+at `1527,2464 501x223` — **exactly** its GT box. The subpage OCR pass returned:
+
+    8 words, conf 77.5:  "In questo cont, esto acino Bellunese de el"
+
+The pixels are sharp enough to read by eye. Re-reading that block's own crop as one
+uniform block (`--psm 6`) returns:
+
+    21 words, conf 90.1:  "In questo contesto nel Bacino Bellunese si depone la
+                           Formazione di Igne (IGN), che include le peliti
+                           anossiche del Toarciano."
+
+Because OCR output IS the visible document here, those were words a reader simply
+lost — and the loss was invisible to every metric in the repo, because the block
+matched nothing and dropped out of the graded set rather than scoring badly.
+
+**It is not a page-level parameter.** Re-running the whole subpage and counting words
+whose centre lands in that block: psm 3 gives 8, psm 4 gives 21, psm 6 gives 31,
+psm 11 gives 25, psm 12 gives 25 — and every one but psm 3 is garbled or duplicated,
+because a three-column page with figures between the columns is exactly what "uniform
+block" is wrong for. The win is the PAIR: this block's crop, read as one block. A
+per-block pass, not a different page-level setting.
+
+### The rule: a comparison against the block's own score, never a cutoff
+
+`pipeline/block_reocr.py` re-reads every non-figure block and keeps the re-read only
+when it is better on **both** counts at once — **more words AND mean confidence no
+lower than the page pass gave that same block**. No fixed confidence floor appears
+anywhere in the module: Stage 05 emits raw confidence and every threshold is Stage
+06's (CLAUDE.md).
+
+Two consequences, stated rather than glossed:
+
+* **It rescues starvation, not garbling.** On `de_01`-left #1 the re-read returns 149
+  words at conf 93.3 against the page pass's 165 at 71.4 — clearly the better read,
+  and this rule **rejects** it because the count fell. That is a scope choice.
+* **A block the page pass read as EMPTY accepts any re-read**, since its conf is 0.0.
+  Three of the four such accepts are real (a caption reading "Piattaforma di Trento
+  (in annegamento)" at conf 96.3, two page numbers); the fourth is two junk tokens at
+  conf 33.3. That is not silent — a low-confidence word is precisely what Stage 06's
+  flag/patch machinery acts on, whereas a block holding no words at all is invisible
+  to it.
+
+**Padding was measured, not assumed.** All 163 text blocks were re-read at pad 0 and
+pad 12. Padding manufactures two accepts that pad 0 does not (both junk bleeding in
+from a neighbour) and rescues nothing extra. The `it_geo_05` caption header looked
+like it might be a bbox-tightness artifact — the detected caption starts 68px below
+the GT box — and it is not: it recovers at pad 0 too. Shipped at **pad 0**.
+
+**The crop goes to Tesseract in COLOUR**, which is a deliberate divergence from the
+page pass's grayscale, and it is load-bearing rather than incidental:
+
+| `it_geo_05`-left #6, re-read | words | conf | opens |
+|---|---|---|---|
+| grayscale (page-pass path) | 67 | 90.9 | mangled: `n questa pagina: Foa 2 pag` |
+| **colour (shipped)** | **66** | **92.6** | **`In questa pagina: Figura 2`** |
+
+Grayscale falls *below* that block's own page-pass confidence (91.7) and the rescue
+is refused — taking the caption header with it. Over the corpus: colour rescues 4
+GT-graded blocks, grayscale 2, neither regresses anything.
+
+### Measured against ground truth, not against its own opinion
+
+Graded on the block-order GT **anchors** over all eight fixtures, comparing the
+shipped `ocr.json` before and after. Each GT text block scores the best anchor-token
+overlap over the subpage's blocks — deliberately without the one-to-one greedy
+assignment, so this measures text recovery and not the matcher (Correction 2).
+
+| | value |
+|---|---|
+| GT text blocks graded | 80 |
+| mean anchor recall | **0.9254 to 0.9468** (+0.0214) |
+| blocks improved / regressed | **4 / 0** |
+| blocks at or above the harness's 0.5 match bar | 78 to 79 |
+
+| block | before | after |
+|---|---|---|
+| `it_geo_07`-left T5right (paragraph) | 0.400 | **0.900** |
+| `en_coins_03`-right H2 (heading) | 0.500 | **1.000** |
+| `de_01`-left P2 (paragraph) | 0.625 | **1.000** |
+| `it_geo_05`-left C2 (caption) | 0.667 | **1.000** |
+
+**15 rescues fire across the eight fixtures**, listed with before/after counts and
+confidences in each page's `05_ocr/meta.json` under `params.block_reocr.rescued`
+(and as `note:` lines, the same channel `caption_eject` uses).
+
+**Non-regression is block-by-block, not "similar".** Of **195 blocks** across the
+eight fixtures, **180 are byte-identical** to the pre-change `ocr.json`, **15 changed
+— exactly the 15 rescued** — and **0 changed unexpectedly**. Block counts per subpage
+are unchanged everywhere.
+
+### The coordinate contract, verified on pixels
+
+A rescued word's box is in *crop* coordinates and must be mapped back — divide by
+the page scale, then add the crop origin — or Stage 06's patch mode crops the wrong
+pixels while the text still looks right. Verified the way the per-page-source work
+was: every one of the 58 rescued words on `it_geo_07`-left was cropped from the
+full-res dewarp at its **stored** box and OCR'd alone. **45 read back as the same
+token**; all 13 that did not are 1-3 character tokens (`i`, `|`, `;`, `0.5`) or a
+case difference (`peliti` read back `Peliti`), i.e. single-glyph psm-8 noise, not
+displacement. Every multi-letter word in the rescued paragraph and caption read back
+exactly.
+
+### It reaches the deliverable
+
+Re-running Stage 06 then Stage 07 on `it_geo_05`: caption C2 now carries
+`figure_ref -> page_001__left block 5` with `pair_source=sole_figure`. It was
+**unpaired** before. The GT's own pairs list says `C2 -> F2`, so this is a correct
+pair the pipeline could not previously make — `caption_parser` needs the printed
+`Figura N` header to number a caption, and the header is exactly the line the
+subpage pass was missing. This also closes `caption_eject`'s stated limit, that its
+re-OCR'd header was "used as evidence only and deliberately NOT added as words".
+
+**The harness cannot see that pair either** (Correction 1), so the 16/19 figure in
+the row above does not move. The pair is in `document.json`; the number is measured
+at Stage 04.
+
+### Cost, and why no cheap gate was added
+
+| | Stage 05, rescue off | rescue on |
+|---|---|---|
+| `it_geo_07` (41 blocks) | 15.3s | 24.8s |
+| `en_coins_03` (23 blocks) | 9.9s | 21.4s |
+
+Stage 05 is already the largest per-page stage (13.6s of ~27s on `it_geo_07`), so
+this is roughly **+35% on the whole per-page pipeline**. The obvious lever is a cheap
+precondition so only suspicious blocks are re-read. Read off the census, there isn't
+one worth placing:
+
+| word-density gate (words per 1000 px² of block) | blocks re-read | rescues lost |
+|---|---|---|
+| <= 0.05 | 7/163 | 10 of 15 |
+| <= 0.10 | 15/163 | 7 of 15 |
+| <= 0.20 | 61/163 | 5 of 15 |
+| <= 0.238 | 105/163 | 0 of 15 |
+
+The tightest gate that keeps every rescue still re-reads **105 of 163 blocks** — a 36%
+saving — and 0.238 is the rescued blocks' own maximum, i.e. a threshold fitted with
+zero margin, sitting on top of healthy blocks like `en_coins_03` #7 at 0.232. A knob
+placed there would break on the first page that starves a denser block. Not added.
+
+### Limits, stated
+
+* **The rule was fitted and graded on the same 163 blocks.** There is no held-out set.
+* **The gain is concentrated.** Of 15 rescues, 4 move a GT-graded block; the rest are
+  headers (stripped by default), page numbers, or single tokens. One of the four —
+  `it_geo_07` T5right — is the whole reason to build this.
+* **`total_words` changed meaning.** It was the subpage pass's recognized count; it is
+  now the words actually in the page's blocks. Stage 05's word-conservation assert is
+  amended to match (recognized minus dropped plus added) and is unchanged when
+  nothing is rescued.
+* **This is the only pass in Stage 05 that may REPLACE words rather than move them.**
+  Ejection and orphan slotting both preserve the original invariant; this does not.
+* **Nothing here touches the two real losses' causes.** `it_geo_07` D1 is still
+  undetected and `it_geo_04` B6L is still cut by the gutter. T5right was the third
+  real one, and it is closed.
+
+Suite 493 green (was 477).

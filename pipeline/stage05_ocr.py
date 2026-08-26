@@ -52,7 +52,19 @@ in a block. Orphan words (in no block — a detection-coverage diagnostic) are
 grouped into synthetic OTHER blocks and slotted into reading order by the SAME
 recursive XY-Cut Stage 04 uses, so nothing is dropped and orphans land in their
 geometric place. A word-conservation invariant is asserted: every recognized
-word ends up in exactly one output block.
+word ends up in exactly one output block — amended for the one pass that may
+REPLACE words rather than move them (below).
+
+STARVED-BLOCK RE-READ (``pipeline/block_reocr.py``, on by default). The single
+psm-3 subpage pass sometimes mis-segments a region and returns a fraction of the
+words that are plainly there — measured on it_geo_07-left, a correctly detected
+paragraph came back as 8 garbled words where its own crop reads 21 at higher
+confidence. Each text block is therefore re-read from its own crop as one uniform
+block, and the re-read is kept ONLY when it beats the page pass on word count AND
+mean confidence (a comparison against this block's own score — never a fixed
+confidence cutoff, which stays Stage 06's). This runs after caption ejection, so
+an ejected caption's missing header line is recovered as words too. It is the one
+pass that can change the word COUNT, hence the amended invariant.
 
 Usage:
     python -m pipeline.stage05_ocr jobs/<job>/<page>/ [--lang eng|bul|ita|deu] [--debug]
@@ -71,6 +83,7 @@ from pydantic import BaseModel, Field
 
 from pipeline.page_model import BBox, Block, BlockType, StageMeta, Word
 from pipeline import stage04_layout as S4
+from pipeline import block_reocr as BR
 from pipeline import caption_eject as CE
 from pipeline.second_opinion import (
     EasyOCRSecondOpinion, find_disagreements, load_lexicon)
@@ -87,7 +100,7 @@ from tools.gate1_harness import (
 )
 
 STAGE = "stage05_ocr"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -117,6 +130,9 @@ class OCRPage(BaseModel):
     language: str             # Tesseract lang code used (e.g. eng, bul, eng+bul)
     scale: float              # OCR upscale factor (1.0 or 2.0)
     engine: str = "tesseract"
+    # Words actually IN the page's blocks. Equal to the subpage pass's recognized
+    # count unless a starved block was re-read (pipeline/block_reocr.py), which
+    # replaces that block's words with a fresh read of the same pixels.
     total_words: int = 0
     orphan_words: int = 0     # words that fell outside every Stage 04 block
     blocks: list[Block] = Field(default_factory=list)
@@ -380,6 +396,8 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
 
     pages: list[OCRPage] = []
     panels: list[np.ndarray] = []
+    rescued_meta: list[dict] = []
+    tcfg_oem = int((cfg.get("tesseract", {}) or {}).get("oem", 1))
     t_ocr = time.perf_counter()
     for pl in layout.pages:
         src = dewarp_dir / pl.name
@@ -407,15 +425,44 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
         # requires that in its own commit, so they are prefixed instead.
         warnings.extend(f"note: {n}" for n in eject_notes)
 
-        # Word-conservation invariant: every recognized word in exactly one block.
+        # A block the subpage pass STARVED — its words are plainly on the page and
+        # the box is right, but psm-3 page segmentation returned a fraction of
+        # them — is re-read from its own crop as one uniform block, and the re-read
+        # is kept only when it beats the page pass on word count AND mean
+        # confidence. Runs AFTER ejection on purpose: the ejected caption is itself
+        # starved of the header line, and this recovers it as words. See
+        # pipeline/block_reocr.py.
+        ordered, rescues, n_dropped, n_added = BR.rescue_starved_blocks(
+            ordered, img, binary, resolve_tessdata_dir(cfg), lang_code_used,
+            int(tcfg_oem), scale,
+            next_line_id=1 + max((wd.line_id for b in ordered for wd in b.words),
+                                 default=-1),
+            p=(cfg.get("block_reocr", {}) or {}))
+        # Successful rescues, like ejections, are an intended outcome and not a
+        # problem — same "note:" prefix, same reason (StageMeta has no notes
+        # channel and adding one is a schema change owed its own commit).
+        warnings.extend(
+            f"note: re-read starved {r.block_type} block {r.block_id}: "
+            f"{r.n_before} words at conf {r.conf_before} -> {r.n_after} at "
+            f"{r.conf_after}" for r in rescues)
+        rescued_meta.append({"page": pl.name,
+                             "blocks": [vars(r) for r in rescues]})
+
+        # Word-conservation invariant, AMENDED for the rescue. Every recognized
+        # word still ends up in exactly one block — except in a rescued block,
+        # where a fresh read of the same pixels REPLACES the routed words. So the
+        # count is the page pass's, minus what rescues dropped, plus what they
+        # added; with no rescues this is the original assert unchanged.
         attached = sum(len(b.words) for b in ordered)
-        if attached != len(twords):
+        expect = len(twords) - n_dropped + n_added
+        if attached != expect:
             raise AssertionError(
                 f"word conservation violated on {pl.name}: attached {attached} "
-                f"!= recognized {len(twords)}")
+                f"!= recognized {len(twords)} - rescue-dropped {n_dropped} + "
+                f"rescue-added {n_added} = {expect}")
 
         page = OCRPage(name=pl.name, width=w, height=h, language=lang_code_used,
-                       scale=scale, total_words=len(twords),
+                       scale=scale, total_words=attached,
                        orphan_words=n_orphan, blocks=ordered)
 
         # Second opinion: flag Tesseract words EasyOCR reads differently. Runs on
@@ -457,6 +504,12 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
             "psm": int(tcfg.get("psm", 3)),
             "upscale_median_px": UPSCALE_MEDIAN_PX,
             "upscale_factor": UPSCALE_FACTOR,
+            "block_reocr": {
+                **{k: v for k, v in BR.DEFAULTS.items()},
+                **{k: v for k, v in (cfg.get("block_reocr", {}) or {}).items()
+                   if k in BR.DEFAULTS},
+                "rescued": rescued_meta,
+            },
             "xy_gap_frac": p["xy_gap_frac"],
             "reads": ["04_layout/layout.json", "03_dewarp/<subpage images>"],
             "second_opinion": (

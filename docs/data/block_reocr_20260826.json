@@ -1,0 +1,4185 @@
+{
+ "what": "Starved-block re-read (pipeline/block_reocr.py): the census the acceptance rule was read off, the rescues it fires, and the miss triage behind the three corrections. Backs the 2026-08-26 RESULTS row 'The words that were on the page and not in the document'.",
+ "corpus": "the 8 block-order fixtures, run through the real chain (run_all 00-06)",
+ "census": {
+  "what": "every non-figure Stage-05 block: words+conf from the page pass, and from a re-read of the block's own crop at pad 0 and pad 12 (psm 6, colour)",
+  "n_blocks": 163,
+  "rows": [
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 0,
+    "type": "other",
+    "bbox": [
+     1367,
+     46,
+     68,
+     29
+    ],
+    "n_page": 1,
+    "conf_page": 73.6,
+    "n_p0": 1,
+    "conf_p0": 85.5,
+    "n_p12": 1,
+    "conf_p12": 95.6,
+    "text_page": "orme",
+    "text_p0": "orme"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 1,
+    "type": "other",
+    "bbox": [
+     1442,
+     18,
+     191,
+     52
+    ],
+    "n_page": 2,
+    "conf_page": 62.2,
+    "n_p0": 1,
+    "conf_p0": 85.9,
+    "n_p12": 2,
+    "conf_p12": 39.6,
+    "text_page": "Cc arbonatiche",
+    "text_p0": "carbonatiche"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 2,
+    "type": "other",
+    "bbox": [
+     1645,
+     0,
+     136,
+     43
+    ],
+    "n_page": 2,
+    "conf_page": 0.0,
+    "n_p0": 2,
+    "conf_p0": 69.6,
+    "n_p12": 2,
+    "conf_p12": 54.9,
+    "text_page": "ed bacri",
+    "text_p0": "oi paci\""
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 4,
+    "type": "paragraph",
+    "bbox": [
+     203,
+     1333,
+     600,
+     548
+    ],
+    "n_page": 71,
+    "conf_page": 93.5,
+    "n_p0": 71,
+    "conf_p0": 93.7,
+    "n_p12": 71,
+    "conf_p12": 93.9,
+    "text_page": "Nuo verso sud, sul versante est della dorsale del Pelsa, fino al Monte Framont e al Corno di Framont. Gran parte di questi affioramenti è costituita dagli strati tabulari della laguna interna. Le clinostratifica- zioni d",
+    "text_p0": "NUuo verso sud, sul versante est della dorsale del Pelsa, fino al Monte Framont e al Corno di Framont. Gran parte di questi affioramenti è costituita dagli strati tabulari della laguna interna. Le clinostratifica- zioni "
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 5,
+    "type": "paragraph",
+    "bbox": [
+     844,
+     1336,
+     599,
+     170
+    ],
+    "n_page": 20,
+    "conf_page": 88.9,
+    "n_p0": 20,
+    "conf_p0": 87.3,
+    "n_p12": 20,
+    "conf_p12": 89.1,
+    "text_page": "tettoniche che impediscono rico- struzioni paleoambientali, e in piccole paretine che coronano la base dell'Antelao sui lati est e sud.",
+    "text_p0": "tettoniche che impediscono rico- struzioni paleoambientali, e in piccole paretine che coronano la base dell'Antelao sui lati est e sud."
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     836,
+     1546,
+     600,
+     425
+    ],
+    "n_page": 52,
+    "conf_page": 94.6,
+    "n_p0": 52,
+    "conf_p0": 93.9,
+    "n_p12": 52,
+    "conf_p12": 94.8,
+    "text_page": "Notevolmente diversa è la situa- zione nelle Dolomiti orientali. Quest'area, lontana (allora più di oggi) dai centri eruttivi, fu raggiun- ta solo marginalmente dai detriti della Formazione di Wengen e la subsidenza era ",
+    "text_p0": "Notevolmente diversa è la situa- zione nelle Dolomiti orientali. Quest'area, lontana (allora più di oggi) dai centri eruttivi, fu raggiun- ta solo marginalmente dai detriti della Formazione di Wengen e la subsidenza era "
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     192,
+     1884,
+     597,
+     465
+    ],
+    "n_page": 64,
+    "conf_page": 95.2,
+    "n_p0": 64,
+    "conf_p0": 94.7,
+    "n_p12": 64,
+    "conf_p12": 95.0,
+    "text_page": "Nei dintorni del Pelmo, la Dolomia Cassiana costituisce il Monte Penna (o Monte Pena, a seconda delle dizio- ni), anche questo dall’inconfondi- bile conformazione a rampa che si innalza verso sud. Il Monte Penna è costit",
+    "text_p0": "Nei dintorni del Pelmo, la Dolomia Cassiana costituisce il Monte Penna (o Monte Pena, a seconda delle dizio- ni), anche questo dall’inconfondi- bile conformazione a rampa che si innalza verso sud. Il Monte Penna è costit"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     826,
+     1973,
+     594,
+     291
+    ],
+    "n_page": 35,
+    "conf_page": 95.2,
+    "n_p0": 35,
+    "conf_p0": 95.0,
+    "n_p12": 36,
+    "conf_p12": 91.9,
+    "text_page": "Abbiamo spiegato che questa situa- zione obbligò le piattaforme cassia- ne a installarsi direttamente sopra a quelle più antiche, rendendo ostico il riconoscimento del limite tra la Formazione dello Sciliar e la Dolo- mi",
+    "text_p0": "Abbiamo spiegato che questa situa- zione obbligò le piattaforme cassia- ne a installarsi direttamente sopra a quelle più antiche, rendendo ostico il riconoscimento del limite tra la Formazione dello Sciliar e la Dolo- mi"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 9,
+    "type": "paragraph",
+    "bbox": [
+     190,
+     2353,
+     588,
+     335
+    ],
+    "n_page": 50,
+    "conf_page": 94.0,
+    "n_p0": 50,
+    "conf_p0": 93.6,
+    "n_p12": 50,
+    "conf_p12": 93.8,
+    "text_page": "Sotto la mole del Pelmo vi sono altri affioramenti discontinui di Dolomia Cassiana (come il Sass de Formedal, il Col de le Crepe, la Crepa Toronda e il Monte Crot; si noti che questi oronimi indicano tutti roccioni isola",
+    "text_p0": "Sotto la mole del Pelmo vi sono altri affioramenti discontinui di Dolomia Cassiana (come il Sass de Formedal, il Col de le Crepe, la Crepa Toronda e il Monte Crot; si noti che questi oronimi indicano tutti roccioni isola"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 10,
+    "type": "paragraph",
+    "bbox": [
+     195,
+     2692,
+     579,
+     127
+    ],
+    "n_page": 13,
+    "conf_page": 93.8,
+    "n_p0": 13,
+    "conf_p0": 94.1,
+    "n_p12": 28,
+    "conf_p12": 55.5,
+    "text_page": "La Dolomia Cassiana affiora anche sul versante settentrionale del Bosconero, all’interno di scaglie",
+    "text_p0": "La Dolomia Cassiana affiora anche sul versante settentrionale del Bosconero, all’interno di scaglie"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 11,
+    "type": "paragraph",
+    "bbox": [
+     812,
+     2266,
+     593,
+     552
+    ],
+    "n_page": 73,
+    "conf_page": 95.2,
+    "n_p0": 73,
+    "conf_p0": 95.4,
+    "n_p12": 73,
+    "conf_p12": 95.2,
+    "text_page": "Tale limite, in realtà, corrisponde ad una superficie di erosione notevole, legata alla lunga fase di emersio- ne che uccise le piattaforme dello Sciliar. In alcune località quella superficie è evidenziata da argilliti v",
+    "text_p0": "Tale limite, in realtà, corrisponde ad una superficie di erosione notevole, legata alla lunga fase di emersio- ne che uccise le piattaforme dello Sciliar. In alcune località quella superficie è evidenziata da argilliti v"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "left.png",
+    "bid": 12,
+    "type": "caption",
+    "bbox": [
+     1438,
+     2452,
+     454,
+     365
+    ],
+    "n_page": 25,
+    "conf_page": 94.7,
+    "n_p0": 25,
+    "conf_p0": 92.7,
+    "n_p12": 25,
+    "conf_p12": 92.8,
+    "text_page": "A lato: Figura 20 La piattaforma cassiana del Nuvolau, con gli strati della iattaforma interna ortemente inclinati verso nordest (a sinistra). Foto di T. Abbà",
+    "text_p0": "A lato: Figura 20 La piattaforma cassiana del Nuvolau, con gli strati della piatialorina interna ortemente inclinati verso nordest (a sinistra). Foto di T. Abbà"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     176,
+     89,
+     764,
+     50
+    ],
+    "n_page": 8,
+    "conf_page": 92.5,
+    "n_p0": 8,
+    "conf_p0": 94.2,
+    "n_p12": 8,
+    "conf_p12": 94.1,
+    "text_page": "3. Le piattaforme carbonatiche e i bacini post-vulcanici",
+    "text_p0": "3. Le piattaforme carbonatiche e i bacini post-vulcanici"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "bid": 1,
+    "type": "header",
+    "bbox": [
+     1862,
+     100,
+     38,
+     30
+    ],
+    "n_page": 0,
+    "conf_page": 0.0,
+    "n_p0": 1,
+    "conf_p0": 96.5,
+    "n_p12": 1,
+    "conf_p12": 96.4,
+    "text_page": "",
+    "text_p0": "87"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "bid": 3,
+    "type": "paragraph",
+    "bbox": [
+     203,
+     1870,
+     430,
+     940
+    ],
+    "n_page": 79,
+    "conf_page": 93.7,
+    "n_p0": 80,
+    "conf_p0": 93.0,
+    "n_p12": 81,
+    "conf_p12": 91.1,
+    "text_page": "Sopra: Figura 21 Ampia veduta dei monti a nord del Passo Falzarego. Il Lagazuoi è costituito quasi interamente da olomia Cassiana (DCS), che si assottiglia verso destra (est), dove si interdigita con la Formazione di San",
+    "text_p0": "Sopra: Figura 21 Ampia veduta dei monti a nord del Passo Falzarego. Il Lagazuoi è costituito quasi interamente da olomia Cassiana (DCS), che si assottiglia verso destra (est), dove si interdigita con la Formazione di San"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "bid": 4,
+    "type": "paragraph",
+    "bbox": [
+     680,
+     1330,
+     588,
+     586
+    ],
+    "n_page": 79,
+    "conf_page": 95.1,
+    "n_p0": 79,
+    "conf_p0": 93.2,
+    "n_p12": 83,
+    "conf_p12": 89.6,
+    "text_page": "è il rosso (a volte con tonalità verso il giallo) e il loro aspetto è fangoso, da cui il nome. Questi prodotti resi- duali, però, non sempre si formano e non sempre si conservano. Dove mancano, le dolomie post-vul- canic",
+    "text_p0": "è il rosso (a volte con tonalità verso il giallo) e il loro aspetto è fangoso, da cui il nome. Questi prodotti resi- duali, però, non sempre si formano e non sempre si conservano. Dove mancano, le dolomie post-vul- canic"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "bid": 5,
+    "type": "paragraph",
+    "bbox": [
+     680,
+     1919,
+     590,
+     461
+    ],
+    "n_page": 60,
+    "conf_page": 93.3,
+    "n_p0": 60,
+    "conf_p0": 93.8,
+    "n_p12": 60,
+    "conf_p12": 93.8,
+    "text_page": "A complicare le cose, questa poten- te successione di rocce tenaci porta spesso i limiti stratigrafici ad affio- rare nel bel mezzo di pareti vertica- li, irraggiungibili da un geologo che non sia anche un alpinista prov",
+    "text_p0": "A complicare le cose, questa poten- te successione di rocce tenaci porta spesso i limiti stratigrafici ad affio- rare nel bel mezzo di pareti vertica- li, irraggiungibili da un geologo che non sia anche un alpinista prov"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     678,
+     2381,
+     593,
+     426
+    ],
+    "n_page": 58,
+    "conf_page": 95.0,
+    "n_p0": 58,
+    "conf_p0": 95.1,
+    "n_p12": 58,
+    "conf_p12": 95.1,
+    "text_page": "La migliore esposizione si ha senza dubbio sulla piattaforma che forma il Monte Piana (fig. 25), il Monte Specie, il Picco di Vallandro e la parte occidentale del Monte Rudo. Questo potente edificio calcareo è solcato da",
+    "text_p0": "La migliore esposizione si ha senza dubbio sulla piattaforma che forma il Monte Piana (fig. 25), il Monte Specie, il Picco di Vallandro e la parte occidentale del Monte Rudo. Questo potente edificio calcareo è solcato da"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     1301,
+     1337,
+     588,
+     747
+    ],
+    "n_page": 100,
+    "conf_page": 95.4,
+    "n_p0": 100,
+    "conf_p0": 94.0,
+    "n_p12": 100,
+    "conf_p12": 95.4,
+    "text_page": "rilievi è impostata sulle clinostra- tificazioni, mentre sulla loro parte superiore affiora la laguna interna. Più ad est, la Dolomia Cassiana affiora sulla sommità dei Tre Scar- peri, della Croda dei Baranci e del Poper",
+    "text_p0": "rilievi è impostata sulle clinostra- tificazioni, mentre sulla loro parte superiore affiora la laguna interna. Più ad est, la Dolomia Cassiana affiora sulla sommità dei Tre Scar- peri, della Croda dei Baranci e del Poper"
+   },
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     1309,
+     2084,
+     588,
+     253
+    ],
+    "n_page": 35,
+    "conf_page": 94.4,
+    "n_p0": 35,
+    "conf_p0": 94.2,
+    "n_p12": 35,
+    "conf_p12": 94.3,
+    "text_page": "Un'altra piattaforma cassiana costi- tuisce la sommità dei rilievi dolo- mitici più orientali, che si affacciano sulla Val Padola e sul Comelico: la Croda Rossa di Sesto, Cima Undici, il Popera e le cime circostanti.",
+    "text_p0": "Un'altra piattaforma cassiana costi- tuisce la sommità dei rilievi dolo- mitici più orientali, che si affacciano sulla Val Padola e sul Comelico: la Croda Rossa di Sesto, Cima Undici, il Popera e le cime circostanti."
+   },
+   {
+    "image": "it_geo_05",
+    "page": "left.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     225,
+     104,
+     57,
+     33
+    ],
+    "n_page": 1,
+    "conf_page": 96.0,
+    "n_p0": 1,
+    "conf_p0": 70.9,
+    "n_p12": 1,
+    "conf_p12": 96.0,
+    "text_page": "168",
+    "text_p0": "4168"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "left.png",
+    "bid": 1,
+    "type": "header",
+    "bbox": [
+     629,
+     90,
+     1399,
+     60
+    ],
+    "n_page": 21,
+    "conf_page": 85.8,
+    "n_p0": 18,
+    "conf_p0": 92.4,
+    "n_p12": 18,
+    "conf_p12": 92.6,
+    "text_page": "; i taforma Friulana 7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piat",
+    "text_p0": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la piattaforma Friulana"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "left.png",
+    "bid": 2,
+    "type": "other",
+    "bbox": [
+     0,
+     1971,
+     21,
+     671
+    ],
+    "n_page": 14,
+    "conf_page": 24.3,
+    "n_p0": 0,
+    "conf_p0": 0.0,
+    "n_p12": 0,
+    "conf_p12": 0.0,
+    "text_page": "I nia pica ian na n PE aaa EEE EEE pa —_ a ed",
+    "text_p0": ""
+   },
+   {
+    "image": "it_geo_05",
+    "page": "left.png",
+    "bid": 3,
+    "type": "other",
+    "bbox": [
+     1072,
+     280,
+     234,
+     48
+    ],
+    "n_page": 2,
+    "conf_page": 33.3,
+    "n_p0": 2,
+    "conf_p0": 40.1,
+    "n_p12": 2,
+    "conf_p12": 31.5,
+    "text_page": "CL 'INEAMENTO",
+    "text_p0": "CL INEAMENTO"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "left.png",
+    "bid": 4,
+    "type": "other",
+    "bbox": [
+     1403,
+     308,
+     231,
+     35
+    ],
+    "n_page": 1,
+    "conf_page": 33.8,
+    "n_p0": 1,
+    "conf_p0": 24.2,
+    "n_p12": 1,
+    "conf_p12": 9.4,
+    "text_page": "PERIADR\\A",
+    "text_p0": "PERIADRIA"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "left.png",
+    "bid": 6,
+    "type": "caption",
+    "bbox": [
+     259,
+     2108,
+     365,
+     691
+    ],
+    "n_page": 60,
+    "conf_page": 91.7,
+    "n_p0": 66,
+    "conf_p0": 92.6,
+    "n_p12": 66,
+    "conf_p12": 92.1,
+    "text_page": "La geografia nei dintorni della penisola italiana nel Giurassico inferiore. La Piattaforma di Trento e la Piattaforma Friulana si fronteggiano ai lati del Bacino di Belluno, che comunica a nord con il Bacino Carnico-Slov",
+    "text_p0": "In questa pagina: Figura 2 La geografia nei dintorni della penisola italiana nel Giurassico inferiore. La Piattaforma di Trento e la Piattaforma Friulana si fronteggiano ai lati del Bacino di Belluno, che comunica a nord"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     79,
+     86,
+     1312,
+     61
+    ],
+    "n_page": 18,
+    "conf_page": 83.3,
+    "n_p0": 18,
+    "conf_p0": 91.3,
+    "n_p12": 18,
+    "conf_p12": 91.9,
+    "text_page": "7. V ©neto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana",
+    "text_p0": "7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 1,
+    "type": "header",
+    "bbox": [
+     1735,
+     94,
+     60,
+     33
+    ],
+    "n_page": 1,
+    "conf_page": 96.2,
+    "n_p0": 1,
+    "conf_p0": 95.4,
+    "n_p12": 1,
+    "conf_p12": 96.2,
+    "text_page": "169",
+    "text_p0": "169"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 3,
+    "type": "other",
+    "bbox": [
+     1952,
+     783,
+     8,
+     7
+    ],
+    "n_page": 1,
+    "conf_page": 0.0,
+    "n_p0": 0,
+    "conf_p0": 0.0,
+    "n_p12": 1,
+    "conf_p12": 52.9,
+    "text_page": "I",
+    "text_p0": ""
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 4,
+    "type": "other",
+    "bbox": [
+     1931,
+     891,
+     7,
+     13
+    ],
+    "n_page": 1,
+    "conf_page": 9.9,
+    "n_p0": 0,
+    "conf_p0": 0.0,
+    "n_p12": 0,
+    "conf_p12": 0.0,
+    "text_page": "ei",
+    "text_p0": ""
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 5,
+    "type": "other",
+    "bbox": [
+     1943,
+     868,
+     22,
+     34
+    ],
+    "n_page": 2,
+    "conf_page": 20.1,
+    "n_p0": 1,
+    "conf_p0": 48.4,
+    "n_p12": 0,
+    "conf_p12": 0.0,
+    "text_page": "di i]",
+    "text_p0": "I"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 6,
+    "type": "caption",
+    "bbox": [
+     87,
+     2520,
+     466,
+     292
+    ],
+    "n_page": 23,
+    "conf_page": 76.8,
+    "n_p0": 20,
+    "conf_p0": 84.7,
+    "n_p12": 20,
+    "conf_p12": 84.7,
+    "text_page": "Sopra: Figura 3 ; A possile di Ellipsactinia, un idrozoo che : colonizzava il margine della Piattaforma Friulana. ; Foto di T. Abbà",
+    "text_p0": "Sopra: Figura 3 Fossile di Fllipsactinia un idrozoo che 4 colonizzava il margine della Piattaforma Friulana- Foto di T. Abbà"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     600,
+     1389,
+     1141,
+     534
+    ],
+    "n_page": 106,
+    "conf_page": 94.8,
+    "n_p0": 106,
+    "conf_p0": 94.5,
+    "n_p12": 121,
+    "conf_p12": 86.2,
+    "text_page": "negli esemplari maggiori il diametro poteva raggiungere 30 cme lo spessore del guscio 10 centimetri. Le rudiste friulane non raggiun- gevano taglie simili, ma sono comunque dei fossili molto appari- scenti. Nel Cansiglio",
+    "text_p0": "negli esemplari maggiori il diametro poteva raggiungere 30 cme lo spessore del guscio 10 centimetri. Le rudiste friulane non raggiun gevano taglie simili, ma sono comunque dei fossili molto appari- scenti. Nel Cansiglio,"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     602,
+     1925,
+     1139,
+     481
+    ],
+    "n_page": 88,
+    "conf_page": 94.8,
+    "n_p0": 88,
+    "conf_p0": 94.3,
+    "n_p12": 88,
+    "conf_p12": 95.0,
+    "text_page": "Durante il Cretaceo la Piattaforma Friulana fu interessata da un'at- tività tettonica piuttosto intensa (fig. 4), inquadrabile sempre nel processo di distensione crostale iniziato nel Triassico superiore. Nella parte int",
+    "text_p0": "Durante 11 Uretaceo la Piattaforma Friulana fu interessata da un'at- tività tettonica piuttosto intensa (fig. 4), inquadrabile sempre nel processo di distensione crostale iniziato nel Triassico superiore. Nella parte int"
+   },
+   {
+    "image": "it_geo_05",
+    "page": "right.png",
+    "bid": 9,
+    "type": "paragraph",
+    "bbox": [
+     609,
+     2410,
+     1135,
+     396
+    ],
+    "n_page": 87,
+    "conf_page": 95.5,
+    "n_p0": 87,
+    "conf_p0": 95.2,
+    "n_p12": 87,
+    "conf_p12": 95.4,
+    "text_page": "Erano i prodromi dell'annegamento. Nel Cretaceo superiore, infatti, intorno a 85 milioni di anni fa, la Piattaforma Friulana sprofondò, seguendo la sorte che più di cento milioni di anni prima era tocca- ta a quella tren",
+    "text_p0": "Erano i prodromi dell'annegamento. Nel Cretaceo superiore, infatti, intorno a 85 milioni di anni fa, la Piattaforma Friulana sprofondò, seguendo la sorte che più di cento milioni di anni prima era tocca- ta a quella tren"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "left.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     7,
+     65,
+     2113,
+     181
+    ],
+    "n_page": 7,
+    "conf_page": 33.2,
+    "n_p0": 22,
+    "conf_p0": 70.7,
+    "n_p12": 32,
+    "conf_p12": 64.1,
+    "text_page": "A__AX. z 4) 4 / N a:",
+    "text_p0": "188 NI Il VeRet6” tralpiura sica e Cretaceo Parte seconda: il Bacino di Belluno e la Piattaforma Friulana SE ii o e"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "left.png",
+    "bid": 1,
+    "type": "header",
+    "bbox": [
+     665,
+     67,
+     1405,
+     65
+    ],
+    "n_page": 19,
+    "conf_page": 69.8,
+    "n_p0": 15,
+    "conf_p0": 81.9,
+    "n_p12": 17,
+    "conf_p12": 70.0,
+    "text_page": "i a Friulana ‘conda: il Bacino di Belluno e la Piattaform || Veget6 trarBiurassico e C e PNex c",
+    "text_p0": "| Venet6 traBiurassico e Cretaceo Parte seconda: il Bacino di Belluno e la piattaforma Friula!"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "left.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     1608,
+     1267,
+     459,
+     181
+    ],
+    "n_page": 18,
+    "conf_page": 90.9,
+    "n_p0": 17,
+    "conf_p0": 93.8,
+    "n_p12": 17,
+    "conf_p12": 93.6,
+    "text_page": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo il Lago del Corlo. Foto di T. Abbà",
+    "text_p0": "In questa pagina: Figura 25 La Maiolica, affiorante lungo il Lago del Corlo. Foto di T. Abbà"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "left.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     1604,
+     1480,
+     467,
+     631
+    ],
+    "n_page": 49,
+    "conf_page": 88.7,
+    "n_p0": 48,
+    "conf_p0": 89.5,
+    "n_p12": 48,
+    "conf_p12": 90.6,
+    "text_page": "Figura 26 CSR Fossili della Maiolica rinvenuti sul Monte Grappa. Essi sono due brachiopodi del genere Pygope - (f) e (i) -, un rostro di belemnite (ec), un bivalve (h) e alcune ammoniti: a) Leymeriella tardefurcata; b) O",
+    "text_p0": "Figura 26 Fossili della Maiolica rinvenuti sul Monte Grappa. Essi sono due brachiopodi del genere Pygope - (f) e (i) -, un rostro di belemnite (ec), un bivalve (h) e alcune ammoniti: a) Leymeriella tardefurcata; b) Olcos"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "left.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     1605,
+     2139,
+     442,
+     218
+    ],
+    "n_page": 18,
+    "conf_page": 93.9,
+    "n_p0": 18,
+    "conf_p0": 90.8,
+    "n_p12": 18,
+    "conf_p12": 91.1,
+    "text_page": "Figura 27 Il Calcare di Soccher, affiorante nella località Pieve di Castellavazzo, presso Longarone. oto di M. ion",
+    "text_p0": "Figura 27 Il Calcare di Soccher, affiorante nella località Pieve di Castellavazzo, presso Longarone: oto di M. Ghion"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "left.png",
+    "bid": 9,
+    "type": "paragraph",
+    "bbox": [
+     1595,
+     2398,
+     441,
+     429
+    ],
+    "n_page": 40,
+    "conf_page": 94.2,
+    "n_p0": 40,
+    "conf_p0": 90.9,
+    "n_p12": 40,
+    "conf_p12": 93.5,
+    "text_page": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella località di Cornolade (BL). In basso a sinistra si intravvedono gli strati regolari e fitti della Maiolica (MAI), affioranti per qualche decina di centimetri sopra",
+    "text_p0": "Figura zo Il Calcare del Fadalto (FAD), affiorante nella località di Cornolade (BL). In basso a sinistra si intravvedono gli strati regolari e fitti della Maiolica (MAI), affioranti per qualche decina di centimetri sopra"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "right.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     121,
+     84,
+     1254,
+     54
+    ],
+    "n_page": 18,
+    "conf_page": 89.9,
+    "n_p0": 17,
+    "conf_p0": 86.8,
+    "n_p12": 17,
+    "conf_p12": 87.7,
+    "text_page": "7. LI Vene a Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana",
+    "text_p0": "7 Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "right.png",
+    "bid": 1,
+    "type": "header",
+    "bbox": [
+     1685,
+     111,
+     52,
+     31
+    ],
+    "n_page": 1,
+    "conf_page": 97.0,
+    "n_p0": 1,
+    "conf_p0": 96.9,
+    "n_p12": 1,
+    "conf_p12": 96.2,
+    "text_page": "189",
+    "text_p0": "189"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "right.png",
+    "bid": 3,
+    "type": "paragraph",
+    "bbox": [
+     156,
+     1487,
+     440,
+     720
+    ],
+    "n_page": 65,
+    "conf_page": 94.1,
+    "n_p0": 65,
+    "conf_p0": 89.1,
+    "n_p12": 65,
+    "conf_p12": 88.9,
+    "text_page": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaiolica, che caratterizza la sommità degli altopiani prealpini della Lessinia, di Asiago e del Grappa: pendii dolci e prativi, con chiazze di detrito bianco affioran",
+    "text_p0": "Sopra: Figura 29 Il tipico paesaggio gp ee Miaiolica, che caratterizza la sommità degli altopiani prealpini delia Lessinia, di Asiago e del Grappa: ped dolci e i con chiazze di detrito bianco affioranti qua e 1à, spesso "
+   },
+   {
+    "image": "it_geo_06",
+    "page": "right.png",
+    "bid": 5,
+    "type": "paragraph",
+    "bbox": [
+     154,
+     2239,
+     439,
+     581
+    ],
+    "n_page": 47,
+    "conf_page": 92.6,
+    "n_p0": 47,
+    "conf_p0": 92.9,
+    "n_p12": 47,
+    "conf_p12": 92.1,
+    "text_page": "A lato: Figura 30 La Maiolica è una roccia geliva che tipicamente si sgretola >roducendo minuti pi mmenti spigolosi. Talvolta il ruscellamento mobilizza questi detriti e li sedimenta più a valle disponendoli ordinatament",
+    "text_p0": "A lato: Figura 30 La Maiolica è una roccia geliva che tipicamente si sgretola p roducendo minuti rammenti spigolosi. Talvolta il ruscellamento mobilizza questi detriti e li sedimenta più a valle disponendoli ordinatament"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "right.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     636,
+     2221,
+     529,
+     252
+    ],
+    "n_page": 35,
+    "conf_page": 93.7,
+    "n_p0": 35,
+    "conf_p0": 94.5,
+    "n_p12": 35,
+    "conf_p12": 93.8,
+    "text_page": "sfrangiavano interdigitandosi con i depositi bacinali. Ad esempio, il Calcare del Fadalto ha uno spesso- re di 400-500 m in Alpago, di circa 200 tra il Col Visentin e il Nevegàl, per poi ridursi ulteriormente.",
+    "text_p0": "sfrangiavano interdigitandosi con i depositi bacinali. Ad esempio, il Calcare del Fadalto ha uno spesso- re di 400-500 m in Alpago, di circa 200 tra il Col Visentin e il Nevegàl, per poi ridursi ulteriormente."
+   },
+   {
+    "image": "it_geo_06",
+    "page": "right.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     638,
+     2475,
+     525,
+     338
+    ],
+    "n_page": 46,
+    "conf_page": 95.5,
+    "n_p0": 46,
+    "conf_p0": 95.6,
+    "n_p12": 46,
+    "conf_p12": 95.5,
+    "text_page": "La loro parte inferiore è eteropica con la Maiolica ma, essendosi de- poste per un intervallo temporale superiore, entrambe finiscono per ricoprirla (fig. 28). La loro base ri- sale al Titoniano, la più recente età del G",
+    "text_p0": "La loro parte inferiore è eteropica con la Maiolica ma, essendosi de- poste per un intervallo temporale superiore, entrambe finiscono per ricoprirla (fig. 28). La loro base ri- sale al Titoniano, la più recente età del G"
+   },
+   {
+    "image": "it_geo_06",
+    "page": "right.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     1193,
+     2225,
+     519,
+     465
+    ],
+    "n_page": 52,
+    "conf_page": 92.4,
+    "n_p0": 52,
+    "conf_p0": 92.5,
+    "n_p12": 52,
+    "conf_p12": 92.4,
+    "text_page": "arriva al Santoniano, nel Cretaceo superiore (85 milioni di anni fa). La fine della loro deposizione sem- bra legata alla morte delle colonie di rudiste, che indica l'annega- mento della Piattaforma Friulana e l’arretram",
+    "text_p0": "arriva al Santoniano, nel Cretaceo superiore (85 milioni di anni fa). La fine della loro deposizione sem- bra legata alla morte delle colonie di rudiste, che indica l'annega- mento della Piattaforma Friulana e l’arretram"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     0,
+     80,
+     2062,
+     180
+    ],
+    "n_page": 25,
+    "conf_page": 64.4,
+    "n_p0": 29,
+    "conf_p0": 65.9,
+    "n_p12": 29,
+    "conf_p12": 66.1,
+    "text_page": "i pr i ; i iattaform net6 tralitrassica e Cretaceo - Parte seconda: il Bacino di Belluno e la Piat |; RO GEIN a Friulana",
+    "text_p0": "Friulana i ijattaforma tr parte seconda: il Bacino di Belluno e la Pi x Ive gelo tralpitrassica e Cretaceo - Pe ' 90 t ; 2 » a sa"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 1,
+    "type": "paragraph",
+    "bbox": [
+     206,
+     291,
+     352,
+     429
+    ],
+    "n_page": 39,
+    "conf_page": 91.4,
+    "n_p0": 38,
+    "conf_p0": 90.7,
+    "n_p12": 38,
+    "conf_p12": 90.7,
+    "text_page": "In queste pagine: Figura 3 Schema evolutivo del Bacino di Belluno in rapporto alle . piattaforme trentina e friulana. La scala delle altezze è esagerata di circa 25 volte rispetto a quella orizzontale, cosa che falsa mol",
+    "text_p0": "In queste pagine: Figura 3 dio evolutivo del Bacino di Belluno in apporto alle piattaforme trentina e friulana. La scala delle altezze è esagerata di circa 25 volte rispetto a quella orizzontale, cosa che falsa molto la "
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 2,
+    "type": "other",
+    "bbox": [
+     218,
+     831,
+     162,
+     20
+    ],
+    "n_page": 4,
+    "conf_page": 88.9,
+    "n_p0": 5,
+    "conf_p0": 69.0,
+    "n_p12": 4,
+    "conf_p12": 91.5,
+    "text_page": "0.5 cm = 200m",
+    "text_p0": "() 5 cm = 20UUm"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 3,
+    "type": "other",
+    "bbox": [
+     218,
+     857,
+     244,
+     91
+    ],
+    "n_page": 5,
+    "conf_page": 70.6,
+    "n_p0": 1,
+    "conf_p0": 22.2,
+    "n_p12": 1,
+    "conf_p12": 33.1,
+    "text_page": "lo 0.5 cm =5 Km",
+    "text_p0": "Dia"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 4,
+    "type": "paragraph",
+    "bbox": [
+     641,
+     285,
+     374,
+     429
+    ],
+    "n_page": 37,
+    "conf_page": 96.0,
+    "n_p0": 37,
+    "conf_p0": 94.0,
+    "n_p12": 37,
+    "conf_p12": 94.0,
+    "text_page": "topografia (i dislivelli sono enormemente accentuati), ma permette di evidenziare i rapporti stratigrafici tra le varie unità. Inoltre è enfatizzato lo spessore delle unità deposte sul plateau pelagico trentino (le quali",
+    "text_p0": "topografia (i dislivelli sono enormemente accentuati), ma permette di evidenziare i rapporti stratigrafici tra le varie unità. Inoltre è enfatizzato lo spessore delle unità deposte sul plateau puagico trentino (le quali,"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 5,
+    "type": "table",
+    "bbox": [
+     1073,
+     261,
+     951,
+     678
+    ],
+    "n_page": 26,
+    "conf_page": 86.1,
+    "n_p0": 41,
+    "conf_p0": 56.2,
+    "n_p12": 41,
+    "conf_p12": 55.8,
+    "text_page": "L CRETACEO INFERI RASSICO SUPERIORE GIURASSICO MEDIO GIURASSICO INFERIORE Kimmeridgiano Oxtordiano 3 Calloviano Bathoniano > RE “RONOLOGIA TRA IL TRIASSICO SUPERIO! O = RE Aaleniano Pliensbachiano",
+    "text_p0": "CRONOLOGIA TRA IL TRIASSICO SU PERIORE Ma E IL CRETACEO INFERIORE 145,0 GIURASSICO SUPERIORE horse mina 152,1 losiordiano n] 163,5 GIURASSICO MEDIO lira ii 166,1 pahoniana i a 168,3 lasciano n] 170,5 |asieniano__—__ io] "
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 6,
+    "type": "other",
+    "bbox": [
+     895,
+     1102,
+     135,
+     37
+    ],
+    "n_page": 3,
+    "conf_page": 94.2,
+    "n_p0": 5,
+    "conf_p0": 54.0,
+    "n_p12": 5,
+    "conf_p12": 56.0,
+    "text_page": "7 Piana tidale",
+    "text_p0": "4 O A Piana tidale"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     1076,
+     1016,
+     388,
+     115
+    ],
+    "n_page": 10,
+    "conf_page": 94.3,
+    "n_p0": 10,
+    "conf_p0": 93.9,
+    "n_p12": 10,
+    "conf_p12": 94.3,
+    "text_page": "1) Triassico sup. (Carnico sup. - Retico) Su una estesissima",
+    "text_p0": "1) Triassico sup. (Carnico sup. - Retico) Su una estesissima"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     1548,
+     1018,
+     414,
+     114
+    ],
+    "n_page": 10,
+    "conf_page": 87.3,
+    "n_p0": 9,
+    "conf_p0": 95.4,
+    "n_p12": 9,
+    "conf_p12": 95.5,
+    "text_page": "piana di marea ; si depone la Dolomia Principale (DPR).",
+    "text_p0": "piana di marea si depone la Dolomia Principale (DPR)."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 11,
+    "type": "paragraph",
+    "bbox": [
+     1076,
+     1225,
+     394,
+     222
+    ],
+    "n_page": 19,
+    "conf_page": 94.5,
+    "n_p0": 19,
+    "conf_p0": 94.5,
+    "n_p12": 19,
+    "conf_p12": 94.4,
+    "text_page": "2) Retico sup. - Sinemuriano Inizia a formarsi il Bacino di Belluno, dove iniziano a sedimentare depositi bacinali con",
+    "text_p0": "2) Retico sup. - Sinemuriano Inizia a formarsi il Bacino di Belluno, dove iniziano a sedimentare depositi bacinali con"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 12,
+    "type": "paragraph",
+    "bbox": [
+     1078,
+     1591,
+     379,
+     223
+    ],
+    "n_page": 19,
+    "conf_page": 93.9,
+    "n_p0": 19,
+    "conf_p0": 89.8,
+    "n_p12": 19,
+    "conf_p12": 89.6,
+    "text_page": "3) Sinemuriano - Pliensbachiano Il Bacino di Belluno si approfondisce e vi si depone la Formazione di Soverzene (SOV).",
+    "text_p0": "3) Sinemuriano - Pliensbachiano Il Bacino di Belluno si approfondisce e vi si depone la Formazione di Done (SOV)."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 13,
+    "type": "paragraph",
+    "bbox": [
+     1547,
+     1228,
+     480,
+     226
+    ],
+    "n_page": 19,
+    "conf_page": 84.7,
+    "n_p0": 19,
+    "conf_p0": 90.9,
+    "n_p12": 19,
+    "conf_p12": 91.1,
+    "text_page": "molto materiale detritico proveniente dalla sponda trentina (SO Va). Sulle piattaforme laterali inizia la deposizione dei Calcari Grigi (CG).",
+    "text_p0": "molto materiale detritico proveniente dalla sponda trentina (SO Va). Sulle piattaforme laterali inizia la deposizione dei Calcari Grigi (CG)."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 14,
+    "type": "paragraph",
+    "bbox": [
+     1550,
+     1601,
+     493,
+     158
+    ],
+    "n_page": 15,
+    "conf_page": 95.7,
+    "n_p0": 15,
+    "conf_p0": 90.1,
+    "n_p12": 15,
+    "conf_p12": 90.1,
+    "text_page": "Il margine orientale della Piattaforma di Trento collassa e il bacino si amplia verso ovest.",
+    "text_p0": "Il margine orientale della Paterno di Trento collassa e il bacino si amplia verso ovest."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 16,
+    "type": "caption",
+    "bbox": [
+     214,
+     2286,
+     460,
+     34
+    ],
+    "n_page": 0,
+    "conf_page": 0.0,
+    "n_p0": 5,
+    "conf_p0": 96.3,
+    "n_p12": 5,
+    "conf_p12": 96.4,
+    "text_page": "",
+    "text_p0": "Piattaforma di Trento (in annegamento)"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 17,
+    "type": "paragraph",
+    "bbox": [
+     1078,
+     1984,
+     385,
+     329
+    ],
+    "n_page": 25,
+    "conf_page": 92.9,
+    "n_p0": 25,
+    "conf_p0": 89.3,
+    "n_p12": 25,
+    "conf_p12": 89.3,
+    "text_page": "4) Pliensbachiano sup. La Piattaforma di Trento comincia a sprofondare e sul plateau in annegamento si depone l’Encrinite di Fanes Piccola (FAS). L'abbondante sedimento, costituito",
+    "text_p0": "4) Pliensbachiano sup. La Piattaforma di Trento comincia a sprofondare e sul plateau in annegamento si depone l’Encrinite di Fanes Piccola (FAS). L’abbondante sedimento, costituito"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 18,
+    "type": "paragraph",
+    "bbox": [
+     1541,
+     2002,
+     478,
+     330
+    ],
+    "n_page": 30,
+    "conf_page": 89.6,
+    "n_p0": 30,
+    "conf_p0": 93.5,
+    "n_p12": 30,
+    "conf_p12": 93.6,
+    "text_page": "da sabbie a crinoidi, precipita in parte nel acino, dove alimenta la Calcarenite di Val degli Erbandoli (IGNa). Ne resto del Bacino inizia a deposizione della ormazione di (IGN). Igne",
+    "text_p0": "da sabbie a crinoidi, precipita in parte nel acino, dove alimenta la Calcarenite di Val degli Erbandoli (UGNAa). Nel resto del Bacino inizia la deposizione della Formazione di Igne (IGN)."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 20,
+    "type": "footnote",
+    "bbox": [
+     215,
+     2772,
+     483,
+     35
+    ],
+    "n_page": 6,
+    "conf_page": 83.7,
+    "n_p0": 6,
+    "conf_p0": 90.7,
+    "n_p12": 6,
+    "conf_p12": 92.4,
+    "text_page": "Plateau pelagico (ex Piattaforma di Trento)",
+    "text_p0": "Piateau pelagico (ex Piattaforma di Trento)"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 21,
+    "type": "paragraph",
+    "bbox": [
+     1067,
+     2438,
+     399,
+     355
+    ],
+    "n_page": 26,
+    "conf_page": 94.2,
+    "n_p0": 26,
+    "conf_p0": 94.7,
+    "n_p12": 26,
+    "conf_p12": 94.5,
+    "text_page": "5) Pliensbachiano sup. - Bajociano Sul plateau trentino in rapido sprofondamento la sedimentazione è lacunosa e discontinua e la Piattaforma Friulana attraversa una momentanea crisi produttiva.",
+    "text_p0": "5) Pliensbachiano sup. - Bajociano Sul plateau trentino in rapido sprofondamento la sedimentazione è lacunosa e discontinua e la Piattaforma Friulana attraversa una momentanea crisi produttiva."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "bid": 22,
+    "type": "paragraph",
+    "bbox": [
+     1527,
+     2464,
+     501,
+     223
+    ],
+    "n_page": 8,
+    "conf_page": 77.5,
+    "n_p0": 21,
+    "conf_p0": 90.1,
+    "n_p12": 20,
+    "conf_p12": 89.0,
+    "text_page": "In questo cont, esto acino Bellunese de el",
+    "text_p0": "In questo contesto nel Bacino Bellunese si depone la Formazione di Igne (IGN), che inelude le peliti anossiche del Toarcia no."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     91,
+     90,
+     1285,
+     43
+    ],
+    "n_page": 18,
+    "conf_page": 91.2,
+    "n_p0": 18,
+    "conf_p0": 90.4,
+    "n_p12": 19,
+    "conf_p12": 88.9,
+    "text_page": "7. ll Veneto ’ Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana",
+    "text_p0": "‘. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piattaforma Friulana"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 1,
+    "type": "header",
+    "bbox": [
+     1700,
+     107,
+     54,
+     33
+    ],
+    "n_page": 1,
+    "conf_page": 96.2,
+    "n_p0": 1,
+    "conf_p0": 96.7,
+    "n_p12": 1,
+    "conf_p12": 69.8,
+    "text_page": "191",
+    "text_p0": "191"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 3,
+    "type": "caption",
+    "bbox": [
+     104,
+     729,
+     562,
+     60
+    ],
+    "n_page": 12,
+    "conf_page": 89.8,
+    "n_p0": 12,
+    "conf_p0": 88.1,
+    "n_p12": 11,
+    "conf_p12": 88.6,
+    "text_page": "Riem pPimento del Bacino di Belluno: fondale omogeneo dal Cansiglio al Garda",
+    "text_p0": "fon Pimento del Bacino di Belluno: fondale omogeneo dal Cansiglio al Garda"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 4,
+    "type": "paragraph",
+    "bbox": [
+     1001,
+     302,
+     312,
+     428
+    ],
+    "n_page": 37,
+    "conf_page": 93.0,
+    "n_p0": 37,
+    "conf_p0": 91.9,
+    "n_p12": 37,
+    "conf_p12": 91.8,
+    "text_page": "6) Bajociano sup. - Bathoniano med. Mentre sul plateau trentino riprende la sedimentazione, anche se con uno stile molto condensato (Rosso Ammonitico Inferiore - RAI), sulla Piattaforma Friulana si attiva una produzione ",
+    "text_p0": "6) Bajociano sup. - Bathoniano med. Mentre sul plateau trentino riprende la sedimentazione, anche se con uno stile molto condensato (Rosso Ammonitico Inferiore - RAI), sulla Piattaforma Friulana si attiva una produzione "
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 5,
+    "type": "paragraph",
+    "bbox": [
+     1367,
+     303,
+     357,
+     331
+    ],
+    "n_page": 33,
+    "conf_page": 95.0,
+    "n_p0": 32,
+    "conf_p0": 90.6,
+    "n_p12": 32,
+    "conf_p12": 90.7,
+    "text_page": "nel Bacino Bellunese in quantità tali da riempirlo in pochi milioni di anni. Tali sedimenti formano il Calcare del Vajont (OOV). Le ultime colate oolitiche superano la soglia del plateau pareggiando il fondale.",
+    "text_p0": "nel Bacino Bellunese in quantità tali da riempirlo in pochi milioni di anni. Tali sedimenti formano il Calcare del Vajont (OOV). Le ultime colate oolitiche superano la soglia dea pareggiando il fondale."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 6,
+    "type": "other",
+    "bbox": [
+     104,
+     825,
+     149,
+     23
+    ],
+    "n_page": 2,
+    "conf_page": 96.4,
+    "n_p0": 2,
+    "conf_p0": 91.6,
+    "n_p12": 2,
+    "conf_p12": 84.8,
+    "text_page": "Livello del",
+    "text_p0": "Livello del"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     1000,
+     850,
+     326,
+     646
+    ],
+    "n_page": 54,
+    "conf_page": 93.1,
+    "n_p0": 54,
+    "conf_p0": 91.4,
+    "n_p12": 53,
+    "conf_p12": 90.5,
+    "text_page": "7) Bathoniano sup. - Kimmeridgiano. Il Bacino Bellunese si #pprofetidisco rapidamente passando da 400-500 m fino a 1400 m di profondità. Il margine della Piattaforma Friulana, dopo un momentaneo arretramento (Dolomia di ",
+    "text_p0": "7) Bathoniano sup. - Kimmeridgiano. Il Bacino Bellunese si #pprofetidisco rapidamente passando da 400-500 m fino a 1400 m di profondità. Il margine della pipe Friulana, dopo un momentaneo arretramento (Dolomia di Cerasol"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 9,
+    "type": "paragraph",
+    "bbox": [
+     1372,
+     859,
+     301,
+     396
+    ],
+    "n_page": 32,
+    "conf_page": 91.6,
+    "n_p0": 32,
+    "conf_p0": 88.2,
+    "n_p12": 32,
+    "conf_p12": 91.3,
+    "text_page": "da oltre 1000 m vicino al margine della Piattaforma a poche decine di metri in posizioni più distali. iù al largo ancora continua la sedimentazione condensata con il Rosso Ammonitico Medio (RAM).",
+    "text_p0": "da oltre 1000 m vicino al margine della Piattaforma a poche decine di metri in osizioni più distali. Fiù al largo ancora continua la sedimentazione condensata con il Rosso Ammonitico Medio (RAM)."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 11,
+    "type": "paragraph",
+    "bbox": [
+     994,
+     1553,
+     345,
+     610
+    ],
+    "n_page": 50,
+    "conf_page": 93.4,
+    "n_p0": 50,
+    "conf_p0": 94.2,
+    "n_p12": 50,
+    "conf_p12": 93.6,
+    "text_page": "8) Kimmeridgiano - Cretaceo inferiore (Barremiano). Una temporanea crisi sedimentaria estende la sedimentazione condensata su tutto il Bacino Bellunese (Rosso Ammonitico Superiore - RAS), ma dal Tithoniano, con il fiorir",
+    "text_p0": "8) Kimmeridgiano - Cretaceo inferiore (Barremiano). Una temporanea crisi sedimentaria estende la sedimentazione condensata su tutto il Bacino Bellunese (Rosso Ammonitico Superiore - RAS), ma dal Tithoniano, con il fiorir"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 12,
+    "type": "paragraph",
+    "bbox": [
+     1373,
+     1558,
+     323,
+     538
+    ],
+    "n_page": 46,
+    "conf_page": 95.2,
+    "n_p0": 46,
+    "conf_p0": 93.2,
+    "n_p12": 46,
+    "conf_p12": 92.8,
+    "text_page": "Nel frattempo, sulla Piattaforma Friulana si deposita il Calcare del Cellina (CEL). Dal margine della iattaforma, via via più instabile, provengono ingenti quantità di depositi torbiditici (Calcare di Soccher - SOC, Calc",
+    "text_p0": "Nel frattempo, sulla Piattaforma Friulana si deposita il Calcare del Cellina (CEL). Dal margine della piattaforma, via via più instabile, provengono ingenti quantità gi depositi torbiditici (Calcare di Soccher - SOC, Cal"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 14,
+    "type": "paragraph",
+    "bbox": [
+     604,
+     2403,
+     349,
+     401
+    ],
+    "n_page": 32,
+    "conf_page": 93.7,
+    "n_p0": 32,
+    "conf_p0": 92.3,
+    "n_p12": 32,
+    "conf_p12": 91.7,
+    "text_page": "Nel riquadro è stato ingrandito il settore del plateau trentino per evidenziare i rapporti stratigrafici e, in particolare, la complessa distribuzione dei membri del Rosso Ammonitico, Sull'Altopiano di Asiago questa form",
+    "text_p0": "Nel riquadro è stato ingrandito il settore ne plateau trentino per evidenziare i rapporti stratigrafici e, in particolare, la complessa distribuzione dei membri del Rosso Ammonitico, Sull'Altopiano di Asiago questa forma"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 15,
+    "type": "paragraph",
+    "bbox": [
+     997,
+     2406,
+     346,
+     396
+    ],
+    "n_page": 40,
+    "conf_page": 93.1,
+    "n_p0": 40,
+    "conf_p0": 91.2,
+    "n_p12": 40,
+    "conf_p12": 91.2,
+    "text_page": "resenta tripartita. Elle Vette Feltrine, ovvero in una posizione più marginale del plateau, il membro medio non si è deposto e troviamo in sua vece la Formazione di Fonzaso. Procedendo Verso est, viene meno anche il Memb",
+    "text_p0": "resenta tripartita. Elle Vette en ovvero in una posizione più marginale del plateau, il membro medio non si è deposto e troviamo in sua vece la Formazione di Fonzaso. Procedendo Verso est, viene meno anche il Membro infe"
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 16,
+    "type": "paragraph",
+    "bbox": [
+     1376,
+     2410,
+     330,
+     324
+    ],
+    "n_page": 24,
+    "conf_page": 94.8,
+    "n_p0": 24,
+    "conf_p0": 94.3,
+    "n_p12": 24,
+    "conf_p12": 94.2,
+    "text_page": "nella parte occidentale del gruppo della Schiara, corrispondente alla porzione più esterna del plateau, il Calcare del Vajont giace direttamente sull’Encrinite di Fanes Piccola.",
+    "text_p0": "nella parte occidentale del gruppo della Schiara, corrispondente alla porzione più esterna del plateau, il Calcare del Vajont giace direttamente sull’Encrinite di Fanes Piccola."
+   },
+   {
+    "image": "it_geo_07",
+    "page": "right.png",
+    "bid": 17,
+    "type": "other",
+    "bbox": [
+     1895,
+     2874,
+     8,
+     126
+    ],
+    "n_page": 3,
+    "conf_page": 36.4,
+    "n_p0": 0,
+    "conf_p0": 0.0,
+    "n_p12": 4,
+    "conf_p12": 40.1,
+    "text_page": "i: dad aan",
+    "text_p0": ""
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "bid": 1,
+    "type": "paragraph",
+    "bbox": [
+     575,
+     1139,
+     1484,
+     632
+    ],
+    "n_page": 165,
+    "conf_page": 71.4,
+    "n_p0": 149,
+    "conf_p0": 93.2,
+    "n_p12": 149,
+    "conf_p12": 93.3,
+    "text_page": "it des Karerpasses, die im stetigen Auf und Ab un- nwe n Jjerheiten: Prachtferrata u Latemartürme-Klettersteig (Via geünme Quer DCHALSIKT twa 2700[m auf der. Sonnense terhalb der Ni celLarema) verläuft auf einer DE senkr",
+    "text_p0": "Besonderheiten: Prachtferrata unweit des Karerpasses, die im stetigen Auf und Ab un- terhalb der Latemartürme quert. Der 1,4 km lange Latemartürme-Klettersteig (Via fer- rata Campanili del Latemar) verläuft auf einer Höh"
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "bid": 2,
+    "type": "paragraph",
+    "bbox": [
+     611,
+     1793,
+     1438,
+     202
+    ],
+    "n_page": 21,
+    "conf_page": 76.1,
+    "n_p0": 32,
+    "conf_p0": 78.3,
+    "n_p12": 35,
+    "conf_p12": 72.2,
+    "text_page": "—— en, 1561 m Talort: Bergstation Oberholz, 2100 m om 4 Boze ’ , ; Karten: abacco Nr. 0 ’ A",
+    "text_p0": "Talort: Obereggen, 1561 m SF ZT Ausgangspunkt: Bergstation Oberholz, 2100 m = Karten: Tabacco Nr. 029, Latemar; F&B, WKS 7, Ü Y ’ ‚ Überetsch: Kom . ; pass WK 54, Bozen"
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "bid": 3,
+    "type": "other",
+    "bbox": [
+     1991,
+     1778,
+     56,
+     45
+    ],
+    "n_page": 0,
+    "conf_page": 0.0,
+    "n_p0": 2,
+    "conf_p0": 33.3,
+    "n_p12": 1,
+    "conf_p12": 15.4,
+    "text_page": "",
+    "text_p0": "| nf"
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "bid": 4,
+    "type": "other",
+    "bbox": [
+     1771,
+     2002,
+     52,
+     2
+    ],
+    "n_page": 1,
+    "conf_page": 57.1,
+    "n_p0": 0,
+    "conf_p0": 0.0,
+    "n_p12": 0,
+    "conf_p12": 0.0,
+    "text_page": "pas",
+    "text_p0": ""
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "bid": 5,
+    "type": "other",
+    "bbox": [
+     346,
+     2374,
+     184,
+     50
+    ],
+    "n_page": 3,
+    "conf_page": 67.9,
+    "n_p0": 4,
+    "conf_p0": 59.9,
+    "n_p12": 4,
+    "conf_p12": 65.6,
+    "text_page": "Y 2842 m",
+    "text_p0": "AA | 2842 m"
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "bid": 6,
+    "type": "other",
+    "bbox": [
+     342,
+     2479,
+     176,
+     63
+    ],
+    "n_page": 5,
+    "conf_page": 56.2,
+    "n_p0": 4,
+    "conf_p0": 92.3,
+    "n_p12": 4,
+    "conf_p12": 91.3,
+    "text_page": "1 [3 11.526074 N 46.38138",
+    "text_p0": "E 11.526074 N 46.38138"
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "bid": 7,
+    "type": "caption",
+    "bbox": [
+     333,
+     2587,
+     235,
+     233
+    ],
+    "n_page": 30,
+    "conf_page": 60.4,
+    "n_p0": 29,
+    "conf_p0": 59.4,
+    "n_p12": 31,
+    "conf_p12": 39.8,
+    "text_page": "© Gehzeiten/Time Bergst.- Gamssell.Sch.: 1 Std, E.Laner - Gamsstll.Sch.: 2 Std, Gamsstll.Sch. „Einstieg: | Std, Instieg - Bivacco: | Std, \"Vacco-Latemarspitze:20 Min. Bivacco-Gamssull Sch.: 14Std. Gamsstll.Sch, - Bergst.",
+    "text_p0": "©) Gehzeiten/Time Bergst.- Gamsstll.Sch.: IXStd, E.Laner - Gamsstll.Sch.: 2 Std, Gamsstll.Sch. „Einstieg: 1VSıd, Einstieg - Bivacco: V Sud, Bivacco-Latemarspitze: 20 Min‘ Bivacco-Gamssull Sch.: 14Std. Gamsstll.Sch, - Ber"
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "bid": 9,
+    "type": "page_number",
+    "bbox": [
+     321,
+     2821,
+     440,
+     179
+    ],
+    "n_page": 1,
+    "conf_page": 85.7,
+    "n_p0": 8,
+    "conf_p0": 56.3,
+    "n_p12": 3,
+    "conf_p12": 78.3,
+    "text_page": "alpinverlag.at",
+    "text_p0": "A A a N A ZZ A alpinverlag.at"
+   },
+   {
+    "image": "de_01",
+    "page": "right.png",
+    "bid": 1,
+    "type": "paragraph",
+    "bbox": [
+     113,
+     1187,
+     1465,
+     289
+    ],
+    "n_page": 71,
+    "conf_page": 91.5,
+    "n_p0": 71,
+    "conf_p0": 92.0,
+    "n_p12": 71,
+    "conf_p12": 92.1,
+    "text_page": "‚eise: Auf der Autobahn A22 bis zur Ausfahrt Bozen Nord. Weiter auf der Staatsstra- Be 241 nach Birchabruck und auf der Staatsstraße 620 etwa einen Kilometer weiter. Dort links abzweigen und auf der Straße 76 nach Obereg",
+    "text_p0": "Anreise: Auf der Autobahn A22 bis zur Ausfahrt Bozen Nord. Weiter auf der Staatsstra- Be 241 nach Birchabruck und auf der Staatsstraße 620 etwa einen Kilometer weiter. Dort links abzweigen und auf der Straße 76 nach Ober"
+   },
+   {
+    "image": "de_01",
+    "page": "right.png",
+    "bid": 2,
+    "type": "paragraph",
+    "bbox": [
+     113,
+     1486,
+     1468,
+     199
+    ],
+    "n_page": 54,
+    "conf_page": 95.2,
+    "n_p0": 54,
+    "conf_p0": 93.2,
+    "n_p12": 54,
+    "conf_p12": 94.6,
+    "text_page": "Zustieg: Von Oberholz (erreichbar in ca. 45 Min. vom Epircher Laner auf dem Weg 18) steigt man weiter auf dem Weg 18 zur Gamsstallscharte (2590 m) auf. Dort in nördlicher Richtung durch den oberen Valsorda-Kessel in die ",
+    "text_p0": "Zustieg: Von Oberholz (erreichbar in ca, 45 Min. vom Epircher Laner auf dem Weg 18) steigt man weiter auf dem Weg 18 zur Gamsstallscharte (2590 m) auf. Dort in nördlicher Richtung durch den oberen Valsorda-Kessel in die "
+   },
+   {
+    "image": "de_01",
+    "page": "right.png",
+    "bid": 3,
+    "type": "paragraph",
+    "bbox": [
+     113,
+     1691,
+     1466,
+     315
+    ],
+    "n_page": 85,
+    "conf_page": 94.6,
+    "n_p0": 85,
+    "conf_p0": 95.0,
+    "n_p12": 85,
+    "conf_p12": 95.0,
+    "text_page": "ıte: Vom Einstieg (A/B) auf ein bequemes Band (A) und im Gehgelände zu einer erdi- gen Rinne mit markantem Felsblock (A/B) - sehr schöner Gesteinswechsel in der Scharte. Von der Scharte gestuft (B) auf ein weiteres Band ",
+    "text_p0": "Route: Vom Einstieg (A/B) auf ein bequemes Band (A) und im Gehgelände zu einer erdi- gen Rinne mit markantem Felsblock (A/B) - sehr schöner Gesteinswechsel in der Scharte. Von der Scharte gestuft (B) auf ein weiteres Ban"
+   },
+   {
+    "image": "de_01",
+    "page": "right.png",
+    "bid": 5,
+    "type": "heading",
+    "bbox": [
+     1610,
+     1188,
+     263,
+     44
+    ],
+    "n_page": 3,
+    "conf_page": 59.2,
+    "n_p0": 3,
+    "conf_p0": 80.0,
+    "n_p12": 3,
+    "conf_p12": 62.4,
+    "text_page": "SZ English Version",
+    "text_p0": "SI English Version"
+   },
+   {
+    "image": "de_01",
+    "page": "right.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     1613,
+     1233,
+     271,
+     962
+    ],
+    "n_page": 94,
+    "conf_page": 89.4,
+    "n_p0": 94,
+    "conf_p0": 89.1,
+    "n_p12": 94,
+    "conf_p12": 89.0,
+    "text_page": "This gorgeous 1.4 km long ferrata crosses up and down on the sunny side of the well-known Latemar rock towers in approximately 2700 m above sea level. Contrary to the nearly vertical north face the edges here are only mo",
+    "text_p0": "This gorgeous 1.4 km long ferrata crosses up and down on the sunny side of the well-known Latemar rock towers in approximately 2700 m above sea level. Contrary to the nearly vertical north face the edges here are only mo"
+   },
+   {
+    "image": "de_01",
+    "page": "right.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     1611,
+     2210,
+     254,
+     481
+    ],
+    "n_page": 40,
+    "conf_page": 87.2,
+    "n_p0": 40,
+    "conf_p0": 87.6,
+    "n_p12": 40,
+    "conf_p12": 87.7,
+    "text_page": "Route: From Ober. holz ascend trail |8 +9 Gamsstallscharte (2590 m) and head north to Rotlahnscharte (2685 m) where the climb starts, Route see topo! Descend to Große Latemarscharte (2650 m, bivouac) and follow trail 18 ",
+    "text_p0": "Route: From Ober. holz ascend trail |8 +9 Gamsstallscharte (2590 m) and head north to Rotlahnscharte (2685 m) where the climb starts, Route see topo! Descend to Große Latemarscharte (2650 m, bivouac) and follow trail 18 "
+   },
+   {
+    "image": "de_01",
+    "page": "right.png",
+    "bid": 8,
+    "type": "other",
+    "bbox": [
+     1396,
+     2886,
+     195,
+     35
+    ],
+    "n_page": 1,
+    "conf_page": 90.4,
+    "n_p0": 1,
+    "conf_p0": 54.3,
+    "n_p12": 1,
+    "conf_p12": 11.2,
+    "text_page": "www.alpinverlag",
+    "text_p0": "Wwww.alpinverlag"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     203,
+     162,
+     659,
+     52
+    ],
+    "n_page": 6,
+    "conf_page": 85.2,
+    "n_p0": 6,
+    "conf_p0": 78.9,
+    "n_p12": 10,
+    "conf_p12": 54.7,
+    "text_page": "Chapmarked Coins by Nationality - Guatemala",
+    "text_p0": "Coopmarked Coins by Nationality - Guatemala"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 2,
+    "type": "caption",
+    "bbox": [
+     1360,
+     795,
+     573,
+     125
+    ],
+    "n_page": 15,
+    "conf_page": 80.8,
+    "n_p0": 15,
+    "conf_p0": 83.5,
+    "n_p12": 15,
+    "conf_p12": 80.8,
+    "text_page": "Fig. 96. 1786-NG Guatemala Portrait Light Reales, Charles 111 NG’ Mintmark) (KM# 36.24). Murphy Collection.",
+    "text_p0": "Fig. 96. 1786-NG Guatemala Portrait Light Reales, Charles 111 ‘NG’ Mintmark) (KM# 36.2a). Murphy Collection."
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 3,
+    "type": "paragraph",
+    "bbox": [
+     243,
+     923,
+     186,
+     48
+    ],
+    "n_page": 1,
+    "conf_page": 95.1,
+    "n_p0": 1,
+    "conf_p0": 95.9,
+    "n_p12": 1,
+    "conf_p12": 95.3,
+    "text_page": "Description:",
+    "text_p0": "Description:"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 4,
+    "type": "paragraph",
+    "bbox": [
+     170,
+     1008,
+     1819,
+     317
+    ],
+    "n_page": 134,
+    "conf_page": 92.9,
+    "n_p0": 133,
+    "conf_p0": 92.2,
+    "n_p12": 133,
+    "conf_p12": 92.2,
+    "text_page": "While Guatemala introduced the new Pillar design in 1772, following the pattern of the higher-volume mints, a series of earthquakes (a frequent occurrence in Guatemala; the San Miguel earthquakes of 1717 were devastating",
+    "text_p0": "While Guatemala introduced the new Pillar design in 1772, following the pattern of the higher-volume mints, a series of earthquakes (a frequent occurrence in Guatemala; the San Miguel earthquakes of 1717 were devastating"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 5,
+    "type": "paragraph",
+    "bbox": [
+     164,
+     1344,
+     1821,
+     142
+    ],
+    "n_page": 61,
+    "conf_page": 93.4,
+    "n_p0": 61,
+    "conf_p0": 93.3,
+    "n_p12": 61,
+    "conf_p12": 94.0,
+    "text_page": "According to a study conducted by WE Spalding testing the relative fineness of coins in the possession of a Chinese bank (prior to 1920), Guatemala Eight Reales of Charles I] 2nd Charles IV were not identified while thos",
+    "text_p0": "According to a study conducted by WE Spalding testing the relative fineness of coins in the possession of a Chinese bank (prior to 1920), Guatemala Eight Reales of Charles IIT and Charles IV were not identified while tho"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     168,
+     1502,
+     677,
+     47
+    ],
+    "n_page": 7,
+    "conf_page": 80.6,
+    "n_p0": 7,
+    "conf_p0": 78.4,
+    "n_p12": 7,
+    "conf_p12": 80.0,
+    "text_page": "(Spanish Monarchy) Charles IV” Portrait Eight Reales",
+    "text_p0": "(Spanish Monarchy) Charies IV\" Portrait Eight Reales"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     213,
+     1577,
+     1594,
+     144
+    ],
+    "n_page": 32,
+    "conf_page": 92.2,
+    "n_p0": 35,
+    "conf_p0": 85.7,
+    "n_p12": 35,
+    "conf_p12": 85.7,
+    "text_page": "Year(s) Issued: 1789-1807 Catalog Reference(s): KM# 45 (Bust of Charles IIT) (1789-90); KM# 53 (Bust of Charles IV) (1790-1807) Rarity Rating: (Bust of Charles III) R-3 (U); (Bust of Charles IV) R-5",
+    "text_p0": "® Year(s) Issued: 1789-1807 ¢ Caralog Reference(s): KM# 45 (Bust of Charles IIT) (1789-90); KM# 53 (Bust of Charles IV) (1790-1807) ® Rarity Rating: (Bust of Charles III) R-3 (U); (Bust of Charles IV) R-5"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 9,
+    "type": "caption",
+    "bbox": [
+     1324,
+     2070,
+     603,
+     322
+    ],
+    "n_page": 52,
+    "conf_page": 87.7,
+    "n_p0": 52,
+    "conf_p0": 88.2,
+    "n_p12": 53,
+    "conf_p12": 86.3,
+    "text_page": "Fig. 97. 1805-NG Guatemala Portrait ISight Reales, Charles IV (Bust of Charles IV) (KM# 53). Leverage Collection. Lot 793, Spink USA Auction 379, George Blaine Collection Part I: Ancient, Islamic, Europe, South and Centr",
+    "text_p0": "Fig. 97. 1805-NG Guatemala Portrait IZight Reales, Charles IV (Bust of Charles IV) (KM# 53). Leverage Collection. Lot 793, Spink USA Auction 379, George Blaine Collection Part 1: Ancient, Islamic, Europe, South and Centr"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 10,
+    "type": "caption",
+    "bbox": [
+     165,
+     2418,
+     201,
+     47
+    ],
+    "n_page": 1,
+    "conf_page": 0.0,
+    "n_p0": 1,
+    "conf_p0": 54.3,
+    "n_p12": 1,
+    "conf_p12": 4.5,
+    "text_page": "Description:",
+    "text_p0": "Descripton:"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 11,
+    "type": "paragraph",
+    "bbox": [
+     91,
+     2492,
+     1854,
+     183
+    ],
+    "n_page": 79,
+    "conf_page": 92.7,
+    "n_p0": 80,
+    "conf_p0": 91.8,
+    "n_p12": 80,
+    "conf_p12": 90.2,
+    "text_page": "The output of Nueva Guatemala mint under Charles IV almost perfectly mirrored that of the high-volume facilities in Mexico City and Bolivia in date range, but not in quantity. Like those mints, a transitional type exists",
+    "text_p0": "The output of Nueva Guatemala mint under Charles IV almost perfectly mirrored that of the high-volume facilities in Mexico City and Bolivia in date range, but not in quantity. Like those mints, a transitional type exists"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 12,
+    "type": "other",
+    "bbox": [
+     102,
+     2704,
+     723,
+     31
+    ],
+    "n_page": 8,
+    "conf_page": 72.7,
+    "n_p0": 8,
+    "conf_p0": 64.7,
+    "n_p12": 8,
+    "conf_p12": 79.6,
+    "text_page": "1 Spalding, Eastern Exchange Currency and Finance, (314).",
+    "text_p0": "| Spalding, Fastern Focchanoe Currency and Fruance, (314)."
+   },
+   {
+    "image": "en_coins_01",
+    "page": "left.png",
+    "bid": 13,
+    "type": "page_number",
+    "bbox": [
+     1000,
+     2809,
+     58,
+     35
+    ],
+    "n_page": 1,
+    "conf_page": 96.7,
+    "n_p0": 1,
+    "conf_p0": 95.6,
+    "n_p12": 1,
+    "conf_p12": 96.7,
+    "text_page": "100",
+    "text_p0": "100"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     98,
+     136,
+     709,
+     48
+    ],
+    "n_page": 6,
+    "conf_page": 93.9,
+    "n_p0": 6,
+    "conf_p0": 77.1,
+    "n_p12": 6,
+    "conf_p12": 93.5,
+    "text_page": "Chopmarked Coins by Nationality - Guatemala",
+    "text_p0": "Chopmarked Coins by Nationality - Guatemala"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 1,
+    "type": "paragraph",
+    "bbox": [
+     99,
+     248,
+     789,
+     53
+    ],
+    "n_page": 8,
+    "conf_page": 91.2,
+    "n_p0": 7,
+    "conf_p0": 90.2,
+    "n_p12": 7,
+    "conf_p12": 93.3,
+    "text_page": "(Spanish M, onarchy) Ferdinand VII Portrait Eight Reales",
+    "text_p0": "(Spanish Monarchy) Ferdinand VII Portrait Eight Reales"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 2,
+    "type": "paragraph",
+    "bbox": [
+     168,
+     327,
+     1678,
+     135
+    ],
+    "n_page": 34,
+    "conf_page": 81.0,
+    "n_p0": 36,
+    "conf_p0": 82.5,
+    "n_p12": 36,
+    "conf_p12": 83.6,
+    "text_page": "® Year(s) Issued: 1808-21 i 21 . Hit Reference(s): KM# 64 (Bust of Charles IV) (1808-10); KM 69 (Bustof Ferdimnd VI) (1805-21) Rarity Rating: (Bust of Charles IV) R-2; (Bust of Ferdinand VII) R-3",
+    "text_p0": "® Year(s) Issued: 1808-21 ; 2 ° —— Reference(s): KM# 64 (Bust of Charles IV) (1808-10); KM# 69 (Bust of Ferdinand VII) (1808-21) ® Rarity Rating: (Bust of Charles IV) R-2; (Bust of Ferdinand VII) R-3"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 4,
+    "type": "caption",
+    "bbox": [
+     1380,
+     1003,
+     603,
+     124
+    ],
+    "n_page": 17,
+    "conf_page": 89.5,
+    "n_p0": 17,
+    "conf_p0": 90.4,
+    "n_p12": 17,
+    "conf_p12": 89.6,
+    "text_page": "Fig. 98. 1819-NG Guatemala Portrait Fight Reales, Ferdinand VII (Bust of Ferdinand VLE) (KM# 69). Murphy Collection:",
+    "text_p0": "Fig. 98. 1819-NG Guatemala Portrait Fight Reales, Ferdinand VII (Bust of Ferdinand VLE) (KM# 69). Murphy Collection."
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 5,
+    "type": "caption",
+    "bbox": [
+     172,
+     1145,
+     204,
+     49
+    ],
+    "n_page": 1,
+    "conf_page": 96.4,
+    "n_p0": 1,
+    "conf_p0": 91.3,
+    "n_p12": 1,
+    "conf_p12": 96.2,
+    "text_page": "Description:",
+    "text_p0": "Description:"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     94,
+     1228,
+     1933,
+     506
+    ],
+    "n_page": 206,
+    "conf_page": 93.8,
+    "n_p0": 206,
+    "conf_p0": 93.4,
+    "n_p12": 206,
+    "conf_p12": 92.7,
+    "text_page": "The imprisonment of Ferdinand VII by Napoleonic forces inspired revolutionary activity in the Captaincy General of Guatemala, including independence movements in San Salvador and Ledn as early as 1811; though quickly sup",
+    "text_p0": "\"The imprisonment of Ferdinand VII by Napoleonic forces inspired revolutionary activity in the Captaincy General of Guatemala, including independence movements in San Salvador and Ledn as early as 1811; though quickly su"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     88,
+     1743,
+     645,
+     57
+    ],
+    "n_page": 4,
+    "conf_page": 77.4,
+    "n_p0": 4,
+    "conf_p0": 79.8,
+    "n_p12": 4,
+    "conf_p12": 89.7,
+    "text_page": "(Republic) Counnterstamped Coinage (183841)",
+    "text_p0": "(Republic) Counnterstamped Coinage (183841)"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     149,
+     1824,
+     1839,
+     202
+    ],
+    "n_page": 52,
+    "conf_page": 87.9,
+    "n_p0": 53,
+    "conf_p0": 86.7,
+    "n_p12": 52,
+    "conf_p12": 87.9,
+    "text_page": "® Year(s) Issued: 1838-41 : ® Catalog Reference(s): KM# 77.1-77.17 (Type 1) (1838); KM# 94.1-111.6 (Type 2) (1839); KM#112.1-112.2, 120.1- 120.6 (Type 3) (1840); KM# 113-119, 121.1-122 (Type 4) (1841) (Various Host Types",
+    "text_p0": "® Year(s) Issued: 1838-41 : ; ® Catalog Reference(s): KM# 77.1-77.17 (Type 1) (1838); KM# 94.1-111.6 (Type 2) (1839); KM#112.1-112.2, 120.1 120.6 (Type 3) (1840); KM# 113-119, 121.1-122 (Type 4) (1841) (Various Host Type"
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 10,
+    "type": "caption",
+    "bbox": [
+     1416,
+     2593,
+     581,
+     129
+    ],
+    "n_page": 18,
+    "conf_page": 80.8,
+    "n_p0": 17,
+    "conf_p0": 90.7,
+    "n_p12": 17,
+    "conf_p12": 90.6,
+    "text_page": "Fig. 99. (1841) Guatemala Type LV Republic Counterstamp, Peru 1828 MA Eight Reales Host (KM# 118.1). Murphy Collection.",
+    "text_p0": "Fig. 99. (1841) Guatemala Type LV Republic Counterstamp, Peru 1828-MA Eight Reales Host (KM# 118.1). Murphy Collection."
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "bid": 11,
+    "type": "page_number",
+    "bbox": [
+     1071,
+     2807,
+     63,
+     40
+    ],
+    "n_page": 0,
+    "conf_page": 0.0,
+    "n_p0": 1,
+    "conf_p0": 96.1,
+    "n_p12": 1,
+    "conf_p12": 96.5,
+    "text_page": "",
+    "text_p0": "101"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     186,
+     141,
+     596,
+     43
+    ],
+    "n_page": 6,
+    "conf_page": 79.1,
+    "n_p0": 6,
+    "conf_p0": 90.7,
+    "n_p12": 10,
+    "conf_p12": 56.8,
+    "text_page": "Chopmarked Coins by Nationality - Guatemala",
+    "text_p0": "Chopmarked Coins by Nationality - Guatemala"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 1,
+    "type": "paragraph",
+    "bbox": [
+     241,
+     251,
+     175,
+     44
+    ],
+    "n_page": 1,
+    "conf_page": 92.0,
+    "n_p0": 1,
+    "conf_p0": 94.5,
+    "n_p12": 1,
+    "conf_p12": 92.9,
+    "text_page": "Description:",
+    "text_p0": "Description:"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 2,
+    "type": "paragraph",
+    "bbox": [
+     180,
+     315,
+     1694,
+     264
+    ],
+    "n_page": 121,
+    "conf_page": 87.1,
+    "n_p0": 116,
+    "conf_p0": 94.6,
+    "n_p12": 116,
+    "conf_p12": 94.5,
+    "text_page": "After independence, a proposal for the newly established nation to join with the First Mexican Epis to he Soh (via the Plan of Iguala) was made, though support for such a venture was largely limited to local clites and 2",
+    "text_p0": "After independence, a proposal for the newly established nation to join with the First Mexican Empire Ane) the north (via the Plan of Iguala) was made, though support for such a venture was largely limited to local elite"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 3,
+    "type": "other",
+    "bbox": [
+     1911,
+     381,
+     4,
+     2
+    ],
+    "n_page": 1,
+    "conf_page": 0.0,
+    "n_p0": 0,
+    "conf_p0": 0.0,
+    "n_p12": 1,
+    "conf_p12": 63.9,
+    "text_page": ":",
+    "text_p0": ""
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 4,
+    "type": "paragraph",
+    "bbox": [
+     178,
+     602,
+     1730,
+     136
+    ],
+    "n_page": 64,
+    "conf_page": 90.2,
+    "n_p0": 63,
+    "conf_p0": 92.7,
+    "n_p12": 64,
+    "conf_p12": 91.7,
+    "text_page": "Though many are dated prior to the formal dissolution of the Central American Republic (and the founding of Gua- temala in its modern form), a series of counterstamps were issued in the absence of sufficient circulating ",
+    "text_p0": "Though many are dated prior to the formal dissolution of the Central American Republic (and the founding of Gua- temala in its modern form), a series of counterstamps were issued in the absence of sufficient circulating "
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 5,
+    "type": "paragraph",
+    "bbox": [
+     231,
+     764,
+     1686,
+     270
+    ],
+    "n_page": 106,
+    "conf_page": 89.8,
+    "n_p0": 107,
+    "conf_p0": 86.8,
+    "n_p12": 107,
+    "conf_p12": 87.3,
+    "text_page": "Type 1: 1838; “Sun at left behind volcano under Quetzal” 3 Type 2: 1839; “Sun above a row of volcanoes in 6.5mm circle a : : 2 Type 3: 1840; “Oby: Sun above 3 volcanoes in 6.5mm circle. Rev: Sunface in star, bow and arro",
+    "text_p0": "® Type I: 1838; “Sun at left behind volcano under Quetzal” =r ® Type 2: 1839; “Sun above a row of volcanoes in 6.5mm circle” =x * Type 3: 1840; “Ob: Sun above 3 volcanoes in 6.5mm circle. Rev: Sunface in star, bow and ar"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     165,
+     1058,
+     359,
+     54
+    ],
+    "n_page": 3,
+    "conf_page": 67.0,
+    "n_p0": 3,
+    "conf_p0": 72.9,
+    "n_p12": 3,
+    "conf_p12": 78.7,
+    "text_page": "(Republic) Peso Connterstamp",
+    "text_p0": "(Republic) Peco Connterstamp"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     218,
+     1138,
+     1192,
+     140
+    ],
+    "n_page": 21,
+    "conf_page": 81.6,
+    "n_p0": 22,
+    "conf_p0": 72.9,
+    "n_p12": 23,
+    "conf_p12": 71.5,
+    "text_page": "Year(s) Issued: 1894 ; Catalog ari KM 216 (Chile Condor Peso Host), KM# 224 (Peru Peso Host) * Rarity Rating: R-4",
+    "text_p0": "* Year(s) Issued: 1894 3 o Sdn KM 216 (Chile Condor Peso Host), KM# 224 (Peru Peso Host) * Rarity Rating: R-4"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 9,
+    "type": "caption",
+    "bbox": [
+     1227,
+     1829,
+     646,
+     124
+    ],
+    "n_page": 15,
+    "conf_page": 92.9,
+    "n_p0": 15,
+    "conf_p0": 93.0,
+    "n_p12": 15,
+    "conf_p12": 92.3,
+    "text_page": "Fig. 100. (1894) Guatemala Republic Peso Counterstamp, Peru 1888-Lima Sol Host (KM# 224). Murphy Collection.",
+    "text_p0": "Fig. 100. (1894) Guatemala Republic Peso Counterstamp, Peru 1888-Lima Sol Host (KM# 224). Murphy Collection."
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 10,
+    "type": "paragraph",
+    "bbox": [
+     186,
+     1976,
+     186,
+     48
+    ],
+    "n_page": 1,
+    "conf_page": 96.3,
+    "n_p0": 1,
+    "conf_p0": 96.4,
+    "n_p12": 1,
+    "conf_p12": 96.5,
+    "text_page": "Description:",
+    "text_p0": "Description:"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 11,
+    "type": "paragraph",
+    "bbox": [
+     118,
+     2051,
+     1796,
+     608
+    ],
+    "n_page": 262,
+    "conf_page": 93.6,
+    "n_p0": 263,
+    "conf_p0": 93.3,
+    "n_p12": 266,
+    "conf_p12": 92.2,
+    "text_page": "Though a number of types were produced in Guatemala in the years following the collapse of the Central American Republic and the emergence of independent Guatemala, including an effort towards decimalization (no types of",
+    "text_p0": "Though a number of types were produced in Guatemala in the years following the collapse of the Central American Republic and the emergence of independent Guatemala, including an effort towards decimalization (no types of"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 12,
+    "type": "other",
+    "bbox": [
+     109,
+     2650,
+     240,
+     24
+    ],
+    "n_page": 2,
+    "conf_page": 0.0,
+    "n_p0": 1,
+    "conf_p0": 0.0,
+    "n_p12": 4,
+    "conf_p12": 37.9,
+    "text_page": "A —",
+    "text_p0": "—"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 13,
+    "type": "other",
+    "bbox": [
+     118,
+     2677,
+     3,
+     19
+    ],
+    "n_page": 1,
+    "conf_page": 39.0,
+    "n_p0": 0,
+    "conf_p0": 0.0,
+    "n_p12": 0,
+    "conf_p12": 0.0,
+    "text_page": "1",
+    "text_p0": ""
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 14,
+    "type": "page_number",
+    "bbox": [
+     145,
+     2668,
+     907,
+     56
+    ],
+    "n_page": 13,
+    "conf_page": 81.0,
+    "n_p0": 12,
+    "conf_p0": 83.2,
+    "n_p12": 13,
+    "conf_p12": 66.9,
+    "text_page": "Michael et al Standard Catalog of World Coins, 1801-1900, 8° Edition, (566 56)",
+    "text_p0": "Michacl et al, Standard Catalog of World Coins, 1801-1900, 8 Edition, (366-569),"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 15,
+    "type": "page_number",
+    "bbox": [
+     949,
+     2787,
+     54,
+     39
+    ],
+    "n_page": 1,
+    "conf_page": 97.0,
+    "n_p0": 1,
+    "conf_p0": 97.0,
+    "n_p12": 1,
+    "conf_p12": 97.0,
+    "text_page": "102",
+    "text_p0": "102"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 16,
+    "type": "other",
+    "bbox": [
+     1963,
+     2730,
+     29,
+     216
+    ],
+    "n_page": 3,
+    "conf_page": 18.1,
+    "n_p0": 1,
+    "conf_p0": 0.0,
+    "n_p12": 2,
+    "conf_p12": 32.0,
+    "text_page": "Oe nL rs",
+    "text_p0": "*"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "left.png",
+    "bid": 17,
+    "type": "other",
+    "bbox": [
+     1997,
+     2959,
+     10,
+     34
+    ],
+    "n_page": 1,
+    "conf_page": 21.8,
+    "n_p0": 0,
+    "conf_p0": 0.0,
+    "n_p12": 1,
+    "conf_p12": 26.4,
+    "text_page": "i,",
+    "text_p0": ""
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     0,
+     136,
+     722,
+     47
+    ],
+    "n_page": 6,
+    "conf_page": 85.5,
+    "n_p0": 6,
+    "conf_p0": 79.0,
+    "n_p12": 6,
+    "conf_p12": 82.7,
+    "text_page": "_baopmarked Coins by Nationality - Guatemala",
+    "text_p0": "_Lopmarked Coins by Nationality - Guatemala"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "bid": 1,
+    "type": "paragraph",
+    "bbox": [
+     0,
+     240,
+     236,
+     50
+    ],
+    "n_page": 2,
+    "conf_page": 89.0,
+    "n_p0": 2,
+    "conf_p0": 86.4,
+    "n_p12": 2,
+    "conf_p12": 86.4,
+    "text_page": "Republic) Peg,",
+    "text_p0": "Republic) Peg,"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "bid": 2,
+    "type": "paragraph",
+    "bbox": [
+     55,
+     314,
+     607,
+     144
+    ],
+    "n_page": 10,
+    "conf_page": 95.0,
+    "n_p0": 13,
+    "conf_p0": 80.0,
+    "n_p12": 13,
+    "conf_p12": 80.1,
+    "text_page": "Year(s) Issued: 1894-97 Catalog Reference(s): KM# 210 Rarity Rating: R-4",
+    "text_p0": "® Year(s) Issued: 1894-97 * Catalog Reference(s): KM# 210 ® Rarity Rating: R-4"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "bid": 4,
+    "type": "caption",
+    "bbox": [
+     1285,
+     903,
+     594,
+     201
+    ],
+    "n_page": 34,
+    "conf_page": 73.4,
+    "n_p0": 31,
+    "conf_p0": 79.0,
+    "n_p12": 31,
+    "conf_p12": 79.0,
+    "text_page": "Fig. 101. 1894 Guatemala Peso (KM# 210). Huntsinger Collection. Ex-Colin Gullberg, ex- EF. M. Rose. Fig, 71, Chopmarkéd Coins — A History by Colin Gullberg. Fig, 48, Chapmarks by FM. Rose. : 3 os",
+    "text_p0": "Fig. 101. 1894 Guatemala Peso (KM# 210). Huntsinger Collection. Ex-Colin Gullberg, ex- TF. M. Rose. Fig. 71; Chopmarkéd Coins — A History by Colin Gullberg: Fig, 48, Chapmarks by FM. Rose."
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "bid": 6,
+    "type": "caption",
+    "bbox": [
+     1310,
+     1721,
+     594,
+     86
+    ],
+    "n_page": 16,
+    "conf_page": 89.3,
+    "n_p0": 16,
+    "conf_p0": 91.8,
+    "n_p12": 16,
+    "conf_p12": 91.8,
+    "text_page": "Fig. 102. 1895 Guatemala Peso (KM# 210; Du: plicate of Type in Fig, 101), Murphy Collection.",
+    "text_p0": "Fig. 102. 1895 Guatemala Peso (KM# 210; Du- plicate of Type in Fig, 101), Murphy Collection."
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "bid": 7,
+    "type": "caption",
+    "bbox": [
+     62,
+     1846,
+     232,
+     51
+    ],
+    "n_page": 1,
+    "conf_page": 96.1,
+    "n_p0": 1,
+    "conf_p0": 95.5,
+    "n_p12": 1,
+    "conf_p12": 95.7,
+    "text_page": "Description:",
+    "text_p0": "Description:"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     2,
+     1920,
+     1968,
+     370
+    ],
+    "n_page": 149,
+    "conf_page": 92.0,
+    "n_p0": 150,
+    "conf_p0": 93.0,
+    "n_p12": 150,
+    "conf_p12": 93.9,
+    "text_page": "The new national coinage of Guatemala featured iconography that had used on prior coinage (not known with . marks) but with slight design modifications and improved die work from the Heaton Mint, and came into peadirton)",
+    "text_p0": "The new national coinage of Guatemala featured iconography that had used on prior coinage (not known with chop- marks) but with slight design modifications and improved die work from the Heaton Mint, and came into produc"
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "bid": 9,
+    "type": "page_number",
+    "bbox": [
+     1023,
+     2802,
+     65,
+     38
+    ],
+    "n_page": 1,
+    "conf_page": 96.7,
+    "n_p0": 1,
+    "conf_p0": 96.3,
+    "n_p12": 1,
+    "conf_p12": 96.7,
+    "text_page": "103",
+    "text_p0": "103"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     156,
+     133,
+     604,
+     43
+    ],
+    "n_page": 6,
+    "conf_page": 79.9,
+    "n_p0": 7,
+    "conf_p0": 80.4,
+    "n_p12": 7,
+    "conf_p12": 65.3,
+    "text_page": "Chaopmarked Coins by Nationality - Hawai'i",
+    "text_p0": "Chopmarked Coins by Nationality - Hawai 't"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 1,
+    "type": "heading",
+    "bbox": [
+     152,
+     244,
+     155,
+     49
+    ],
+    "n_page": 1,
+    "conf_page": 0.0,
+    "n_p0": 1,
+    "conf_p0": 71.1,
+    "n_p12": 1,
+    "conf_p12": 0.0,
+    "text_page": "Hawai'i",
+    "text_p0": "Hawai'i"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 2,
+    "type": "paragraph",
+    "bbox": [
+     152,
+     327,
+     72,
+     41
+    ],
+    "n_page": 1,
+    "conf_page": 91.8,
+    "n_p0": 1,
+    "conf_p0": 89.0,
+    "n_p12": 1,
+    "conf_p12": 88.4,
+    "text_page": "Dala",
+    "text_p0": "Dala"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 3,
+    "type": "paragraph",
+    "bbox": [
+     209,
+     403,
+     484,
+     148
+    ],
+    "n_page": 12,
+    "conf_page": 82.0,
+    "n_p0": 13,
+    "conf_p0": 77.2,
+    "n_p12": 13,
+    "conf_p12": 77.5,
+    "text_page": "Year(s) Issued: 1883 * Catalog Reference(s): KM# 7 ¢ Ranty Rating: R-1",
+    "text_p0": "® Year(s) Issued: 1883 * Catalog Reference(s): KM# 7 ¢ Ranty Rating: R-1"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 5,
+    "type": "caption",
+    "bbox": [
+     1278,
+     994,
+     663,
+     246
+    ],
+    "n_page": 37,
+    "conf_page": 84.8,
+    "n_p0": 39,
+    "conf_p0": 87.8,
+    "n_p12": 39,
+    "conf_p12": 86.5,
+    "text_page": "Fig. 103. 1883 Hawai'i Dala (IKM# 7). Licat Collection. Ex-F. M. Rose. Fig. 79, Chap; Coins — A History by Colin Gullberg. IF Chopmarks by I. M. Rose. Photography b Todd Pollock, reprinted with permission Michael Chou.",
+    "text_p0": "Fig. 103. 1883 Hawai'i Dala (KM# 7). Licato Collection. Ex-I. M. Rose. Fig. 79, Chopmarked Coins — A History by Colin Gullberg. Fig. 133, Chopmarks by F. M. Rose. Photography by: Todd Pollock, reprinted with permission f"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 6,
+    "type": "paragraph",
+    "bbox": [
+     203,
+     1263,
+     186,
+     48
+    ],
+    "n_page": 1,
+    "conf_page": 94.7,
+    "n_p0": 1,
+    "conf_p0": 95.4,
+    "n_p12": 1,
+    "conf_p12": 94.2,
+    "text_page": "Description:",
+    "text_p0": "Description:"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 7,
+    "type": "paragraph",
+    "bbox": [
+     137,
+     1336,
+     1815,
+     885
+    ],
+    "n_page": 372,
+    "conf_page": 93.1,
+    "n_p0": 375,
+    "conf_p0": 92.5,
+    "n_p12": 376,
+    "conf_p12": 92.8,
+    "text_page": "Already boasting a robust and well-developed society that had flourished for centuries in relative isolation, Hawai first came into contact with European explorers during the third voyage of Captain James Cook; conflicts",
+    "text_p0": "Already boasting a robust and well-developed society that had flourished for centuries in relative isolation, Hawaii first came into contact with European explorers during the third voyage of Captain James Cook; conflict"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     136,
+     2247,
+     1806,
+     457
+    ],
+    "n_page": 195,
+    "conf_page": 91.6,
+    "n_p0": 203,
+    "conf_p0": 91.7,
+    "n_p12": 204,
+    "conf_p12": 89.5,
+    "text_page": "The Dala itself was a single-year type with a mintage of 500,000 pieces. Despite Hawai‘i’s position between Chir the United States (major trading partners at the time), very few are known to have been chopmarked; even in",
+    "text_p0": "The Dala itself was a single-year type with a mintage of 500,000 pieces. Despite Hawai'i’s position between China and the United States (major trading partners at the time), very few are known to have been chopmarked; ev"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 9,
+    "type": "page_number",
+    "bbox": [
+     137,
+     2718,
+     538,
+     38
+    ],
+    "n_page": 7,
+    "conf_page": 61.1,
+    "n_p0": 6,
+    "conf_p0": 67.8,
+    "n_p12": 6,
+    "conf_p12": 71.7,
+    "text_page": "1 Fish, The Mansla- Acapulco Galleons, (360).",
+    "text_p0": "1 Fash, The Manila-“icapules Galleons, (360),"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "bid": 10,
+    "type": "page_number",
+    "bbox": [
+     972,
+     2784,
+     53,
+     36
+    ],
+    "n_page": 1,
+    "conf_page": 97.0,
+    "n_p0": 1,
+    "conf_p0": 96.5,
+    "n_p12": 1,
+    "conf_p12": 97.0,
+    "text_page": "104",
+    "text_p0": "104"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 0,
+    "type": "header",
+    "bbox": [
+     27,
+     125,
+     695,
+     54
+    ],
+    "n_page": 3,
+    "conf_page": 94.4,
+    "n_p0": 6,
+    "conf_p0": 87.5,
+    "n_p12": 6,
+    "conf_p12": 92.3,
+    "text_page": "Nationality - Honduras",
+    "text_p0": "Chopmarked Coins by Nationality - Honduras"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 1,
+    "type": "heading",
+    "bbox": [
+     23,
+     230,
+     240,
+     58
+    ],
+    "n_page": 1,
+    "conf_page": 40.3,
+    "n_p0": 1,
+    "conf_p0": 76.7,
+    "n_p12": 1,
+    "conf_p12": 40.2,
+    "text_page": "Honduras",
+    "text_p0": "Honduras"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 2,
+    "type": "paragraph",
+    "bbox": [
+     22,
+     312,
+     250,
+     56
+    ],
+    "n_page": 2,
+    "conf_page": 92.7,
+    "n_p0": 3,
+    "conf_p0": 94.1,
+    "n_p12": 3,
+    "conf_p12": 89.4,
+    "text_page": "(Republic) Peg,",
+    "text_p0": "( Republic) Peso"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 3,
+    "type": "paragraph",
+    "bbox": [
+     98,
+     398,
+     1285,
+     151
+    ],
+    "n_page": 19,
+    "conf_page": 83.9,
+    "n_p0": 23,
+    "conf_p0": 72.8,
+    "n_p12": 22,
+    "conf_p12": 76.4,
+    "text_page": "Year(s) Issued: 1883-1914 * Catalog Reference(s): KM# 47 (1881-83); KIM# 52 (1883-1914); KM# 62 (1894-96) ® Rarity Rating: R-3",
+    "text_p0": "® Year(s) Issued: 1883-1914 : Aon % Catalog Reference(s): KM# 47 (1881-83); KM# 52 (1883-1914); KM## 62 (1894-96) ® Rarity Rating: R-3 i)"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 5,
+    "type": "paragraph",
+    "bbox": [
+     1269,
+     1163,
+     574,
+     86
+    ],
+    "n_page": 10,
+    "conf_page": 88.4,
+    "n_p0": 10,
+    "conf_p0": 83.4,
+    "n_p12": 10,
+    "conf_p12": 82.6,
+    "text_page": "Fig. 104. 1890 Honduras Peso (KM# 52). Hun- tsinger Collection.",
+    "text_p0": "Fig. 104. 1890 Honduras Peso (KM# 52). Hun tsinger Collection."
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 7,
+    "type": "caption",
+    "bbox": [
+     1275,
+     1851,
+     575,
+     83
+    ],
+    "n_page": 16,
+    "conf_page": 89.1,
+    "n_p0": 16,
+    "conf_p0": 90.4,
+    "n_p12": 16,
+    "conf_p12": 89.9,
+    "text_page": "Fig. 105. 1892/0 Honduras Peso (KM# 52; Du- plicate of Type in Fig; 104). Marphy Collection.",
+    "text_p0": "Fig. 105. 1892/0 Honduras Peso (KM# 52; Du- plicate of Type in Fig: 104). Murphy Collection."
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 8,
+    "type": "paragraph",
+    "bbox": [
+     77,
+     1933,
+     250,
+     53
+    ],
+    "n_page": 1,
+    "conf_page": 96.0,
+    "n_p0": 1,
+    "conf_p0": 94.5,
+    "n_p12": 1,
+    "conf_p12": 94.8,
+    "text_page": "Description:",
+    "text_p0": "Description:"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 9,
+    "type": "paragraph",
+    "bbox": [
+     0,
+     2018,
+     1889,
+     438
+    ],
+    "n_page": 177,
+    "conf_page": 93.2,
+    "n_p0": 178,
+    "conf_p0": 92.4,
+    "n_p12": 179,
+    "conf_p12": 91.8,
+    "text_page": "Honduras was somewhat unusual among the Spanish colonies of the New World in that it produced both silver and old from the earliest days of colonization, but never in sufficient quantities to warrant the establishment of",
+    "text_p0": "Honduras was somewhat unusual among the Spanish colonies of the New World in that it produced both silver and old from the earliest days of colonization, but never in sufficient quantities to warrant the establishment of"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 10,
+    "type": "paragraph",
+    "bbox": [
+     5,
+     2487,
+     1873,
+     136
+    ],
+    "n_page": 49,
+    "conf_page": 89.5,
+    "n_p0": 49,
+    "conf_p0": 89.2,
+    "n_p12": 48,
+    "conf_p12": 92.7,
+    "text_page": "Despite their silver resources, Honduras would not produce their own crown-sized silver type uatil the late 19“ cen- tury with the Honduras Peso. Virtually unknown as an exporter of silver coin for use abroad, the Hondur",
+    "text_p0": "Despite their silver resources, Honduras would not produce their own crown-sized silver type uatil the late 19“ cen- tury with the Honduras Peso. Virtually unknown as an exporter of silver coin for use abroad, the Hondur"
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "bid": 11,
+    "type": "page_number",
+    "bbox": [
+     968,
+     2803,
+     62,
+     37
+    ],
+    "n_page": 1,
+    "conf_page": 96.5,
+    "n_p0": 1,
+    "conf_p0": 96.7,
+    "n_p12": 1,
+    "conf_p12": 96.5,
+    "text_page": "105",
+    "text_p0": "105"
+   }
+  ]
+ },
+ "rescued": {
+  "what": "the blocks the shipped rule accepted",
+  "n": 15,
+  "rows": [
+   {
+    "image": "it_geo_04",
+    "page": "right.png",
+    "block_id": 1,
+    "block_type": "header",
+    "n_before": 0,
+    "n_after": 1,
+    "conf_before": 0.0,
+    "conf_after": 96.5
+   },
+   {
+    "image": "it_geo_05",
+    "page": "left.png",
+    "block_id": 6,
+    "block_type": "caption",
+    "n_before": 60,
+    "n_after": 66,
+    "conf_before": 91.7,
+    "conf_after": 92.6
+   },
+   {
+    "image": "it_geo_06",
+    "page": "left.png",
+    "block_id": 0,
+    "block_type": "header",
+    "n_before": 7,
+    "n_after": 22,
+    "conf_before": 33.2,
+    "conf_after": 70.7
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "block_id": 0,
+    "block_type": "header",
+    "n_before": 25,
+    "n_after": 29,
+    "conf_before": 64.4,
+    "conf_after": 65.9
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "block_id": 16,
+    "block_type": "caption",
+    "n_before": 0,
+    "n_after": 5,
+    "conf_before": 0.0,
+    "conf_after": 96.3
+   },
+   {
+    "image": "it_geo_07",
+    "page": "left.png",
+    "block_id": 22,
+    "block_type": "paragraph",
+    "n_before": 8,
+    "n_after": 21,
+    "conf_before": 77.5,
+    "conf_after": 90.1
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "block_id": 2,
+    "block_type": "paragraph",
+    "n_before": 21,
+    "n_after": 32,
+    "conf_before": 76.1,
+    "conf_after": 78.3
+   },
+   {
+    "image": "de_01",
+    "page": "left.png",
+    "block_id": 3,
+    "block_type": "other",
+    "n_before": 0,
+    "n_after": 2,
+    "conf_before": 0.0,
+    "conf_after": 33.3
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "block_id": 2,
+    "block_type": "paragraph",
+    "n_before": 34,
+    "n_after": 36,
+    "conf_before": 81.0,
+    "conf_after": 82.5
+   },
+   {
+    "image": "en_coins_01",
+    "page": "right.png",
+    "block_id": 11,
+    "block_type": "page_number",
+    "n_before": 0,
+    "n_after": 1,
+    "conf_before": 0.0,
+    "conf_after": 96.1
+   },
+   {
+    "image": "en_coins_02",
+    "page": "right.png",
+    "block_id": 8,
+    "block_type": "paragraph",
+    "n_before": 149,
+    "n_after": 150,
+    "conf_before": 92.0,
+    "conf_after": 93.0
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "block_id": 0,
+    "block_type": "header",
+    "n_before": 6,
+    "n_after": 7,
+    "conf_before": 79.9,
+    "conf_after": 80.4
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "block_id": 5,
+    "block_type": "caption",
+    "n_before": 37,
+    "n_after": 39,
+    "conf_before": 84.8,
+    "conf_after": 87.8
+   },
+   {
+    "image": "en_coins_03",
+    "page": "left.png",
+    "block_id": 8,
+    "block_type": "paragraph",
+    "n_before": 195,
+    "n_after": 203,
+    "conf_before": 91.6,
+    "conf_after": 91.7
+   },
+   {
+    "image": "en_coins_03",
+    "page": "right.png",
+    "block_id": 2,
+    "block_type": "paragraph",
+    "n_before": 2,
+    "n_after": 3,
+    "conf_before": 92.7,
+    "conf_after": 94.1
+   }
+  ]
+ },
+ "gt_grading": {
+  "what": "block-order GT anchor recall over the shipped ocr.json, before vs after; best-overlap per GT block, no one-to-one assignment",
+  "n_gt_text_blocks": 80,
+  "mean_anchor_recall_before": 0.9254,
+  "mean_anchor_recall_after": 0.9468,
+  "improved": 4,
+  "regressed": 0,
+  "at_or_above_0.5_before": 78,
+  "at_or_above_0.5_after": 79,
+  "moved": [
+   {
+    "image": "it_geo_07",
+    "subpage": "left",
+    "gt_id": "T5right",
+    "type": "paragraph",
+    "before": 0.4,
+    "after": 0.9
+   },
+   {
+    "image": "en_coins_03",
+    "subpage": "right",
+    "gt_id": "H2",
+    "type": "heading",
+    "before": 0.5,
+    "after": 1.0
+   },
+   {
+    "image": "de_01",
+    "subpage": "left",
+    "gt_id": "P2",
+    "type": "paragraph",
+    "before": 0.625,
+    "after": 1.0
+   },
+   {
+    "image": "it_geo_05",
+    "subpage": "left",
+    "gt_id": "C2",
+    "type": "caption",
+    "before": 0.667,
+    "after": 1.0
+   }
+  ]
+ },
+ "non_regression": {
+  "blocks": 195,
+  "byte_identical": 180,
+  "changed_rescued": 15,
+  "changed_unexpected": 0
+ },
+ "word_box_readback": {
+  "what": "each rescued word cropped from the full-res dewarp at its STORED box and OCR'd alone (it_geo_07-left)",
+  "words": 58,
+  "read_back_exact": 45,
+  "note": "all 13 others are 1-3 char tokens or a case difference"
+ },
+ "cost_seconds": {
+  "it_geo_07": {
+   "off": 15.3,
+   "on": 24.8,
+   "blocks": 41
+  },
+  "en_coins_03": {
+   "off": 9.9,
+   "on": 21.4,
+   "blocks": 23
+  }
+ },
+ "density_gate_sweep": [
+  {
+   "gate": 0.05,
+   "blocks_reocrd": 7,
+   "rescues_lost": 10
+  },
+  {
+   "gate": 0.1,
+   "blocks_reocrd": 15,
+   "rescues_lost": 7
+  },
+  {
+   "gate": 0.2,
+   "blocks_reocrd": 61,
+   "rescues_lost": 5
+  },
+  {
+   "gate": 0.238,
+   "blocks_reocrd": 105,
+   "rescues_lost": 0
+  }
+ ],
+ "miss_triage": {
+  "it_geo_04": [
+   {
+    "image": "it_geo_04",
+    "subpage": "left",
+    "gt_id": "B6L",
+    "gt_type": "figure",
+    "gt_bbox": null,
+    "anchor": "LAGAZUOI PICCOLO",
+    "n_det": 10,
+    "cands": [],
+    "anchor_cands": [
+     {
+      "idx": 0,
+      "type": "figure",
+      "score": 0.0,
+      "bbox": [
+       [
+        "x",
+        236
+       ],
+       [
+        "y",
+        265
+       ],
+       [
+        "w",
+        1219
+       ],
+       [
+        "h",
+        1036
+       ]
+      ],
+      "claimed_by": "B5",
+      "text_head": ""
+     },
+     {
+      "idx": 1,
+      "type": "paragraph",
+      "score": 0.0,
+      "bbox": [
+       [
+        "x",
+        203
+       ],
+       [
+        "y",
+        1333
+       ],
+       [
+        "w",
+        600
+       ],
+       [
+        "h",
+        548
+       ]
+      ],
+      "claimed_by": "B9",
+      "text_head": "Nuo verso sud, sul versante est della dorsale del Pelsa, fino al Monte Framont e al Corno di Framont. Gran par"
+     },
+     {
+      "idx": 2,
+      "type": "paragraph",
+      "score": 0.0,
+      "bbox": [
+       [
+        "x",
+        844
+       ],
+       [
+        "y",
+        1336
+       ],
+       [
+        "w",
+        599
+       ],
+       [
+        "h",
+        170
+       ]
+      ],
+      "claimed_by": "B10",
+      "text_head": "tettoniche che impediscono rico- struzioni paleoambientali, e in piccole paretine che coronano la base dell'An"
+     },
+     {
+      "idx": 3,
+      "type": "paragraph",
+      "score": 0.0,
+      "bbox": [
+       [
+        "x",
+        836
+       ],
+       [
+        "y",
+        1546
+       ],
+       [
+        "w",
+        600
+       ],
+       [
+        "h",
+        425
+       ]
+      ],
+      "claimed_by": null,
+      "text_head": "Notevolmente diversa è la situa- zione nelle Dolomiti orientali. Quest'area, lontana (allora più di oggi) dai "
+     }
+    ]
+   }
+  ],
+  "it_geo_05": [
+   {
+    "image": "it_geo_05",
+    "subpage": "left",
+    "gt_id": "C2",
+    "gt_type": "caption",
+    "gt_bbox": [
+     255,
+     2040,
+     540,
+     760
+    ],
+    "anchor": "In questa pagina: Figura 2 La geografia nei dintorni della penisola italiana nel Giurassico inferiore",
+    "n_det": 3,
+    "cands": [],
+    "anchor_cands": [
+     {
+      "idx": 2,
+      "type": "figure",
+      "score": 0.667,
+      "bbox": [
+       [
+        "x",
+        231
+       ],
+       [
+        "y",
+        331
+       ],
+       [
+        "w",
+        1806
+       ],
+       [
+        "h",
+        2658
+       ]
+      ],
+      "claimed_by": "F2",
+      "text_head": "T IE BELLUNO LE La geografia nei dintorni della penisola italiana nel Giurassico inferiore. La Piattaforma di "
+     },
+     {
+      "idx": 1,
+      "type": "header",
+      "score": 0.133,
+      "bbox": [
+       [
+        "x",
+        629
+       ],
+       [
+        "y",
+        90
+       ],
+       [
+        "w",
+        1399
+       ],
+       [
+        "h",
+        60
+       ]
+      ],
+      "claimed_by": null,
+      "text_head": "; i taforma Friulana 7. Il Veneto tra Giurassico e Cretaceo - Parte seconda: il Bacino di Belluno e la Piat"
+     },
+     {
+      "idx": 0,
+      "type": "header",
+      "score": 0.0,
+      "bbox": [
+       [
+        "x",
+        225
+       ],
+       [
+        "y",
+        104
+       ],
+       [
+        "w",
+        57
+       ],
+       [
+        "h",
+        33
+       ]
+      ],
+      "claimed_by": null,
+      "text_head": "168"
+     }
+    ]
+   }
+  ],
+  "it_geo_07": [
+   {
+    "image": "it_geo_07",
+    "subpage": "left",
+    "gt_id": "D1",
+    "gt_type": "figure",
+    "gt_bbox": [
+     80,
+     880,
+     940,
+     240
+    ],
+    "anchor": null,
+    "n_det": 20,
+    "cands": [
+     {
+      "idx": 6,
+      "type": "figure",
+      "bbox": [
+       [
+        "x",
+        211
+       ],
+       [
+        "y",
+        1204
+       ],
+       [
+        "w",
+        829
+       ],
+       [
+        "h",
+        222
+       ]
+      ],
+      "iou": 0.0,
+      "claimed_by": "D2"
+     },
+     {
+      "idx": 7,
+      "type": "figure",
+      "bbox": [
+       [
+        "x",
+        211
+       ],
+       [
+        "y",
+        1482
+       ],
+       [
+        "w",
+        832
+       ],
+       [
+        "h",
+        380
+       ]
+      ],
+      "iou": 0.0,
+      "claimed_by": "D3"
+     },
+     {
+      "idx": 12,
+      "type": "figure",
+      "bbox": [
+       [
+        "x",
+        210
+       ],
+       [
+        "y",
+        1926
+       ],
+       [
+        "w",
+        831
+       ],
+       [
+        "h",
+        348
+       ]
+      ],
+      "iou": 0.0,
+      "claimed_by": "D4"
+     },
+     {
+      "idx": 16,
+      "type": "figure",
+      "bbox": [
+       [
+        "x",
+        211
+       ],
+       [
+        "y",
+        2377
+       ],
+       [
+        "w",
+        822
+       ],
+       [
+        "h",
+        368
+       ]
+      ],
+      "iou": 0.0,
+      "claimed_by": "D5"
+     }
+    ]
+   },
+   {
+    "image": "it_geo_07",
+    "subpage": "left",
+    "gt_id": "T5right",
+    "gt_type": "paragraph",
+    "gt_bbox": [
+     1527,
+     2464,
+     501,
+     223
+    ],
+    "anchor": "In questo contesto nel Bacino Bellunese si depone la Formazione di Igne (IGN), che include le peliti anossiche del Toarciano",
+    "n_det": 20,
+    "cands": [],
+    "anchor_cands": [
+     {
+      "idx": 15,
+      "type": "paragraph",
+      "score": 0.4,
+      "bbox": [
+       [
+        "x",
+        1541
+       ],
+       [
+        "y",
+        2002
+       ],
+       [
+        "w",
+        478
+       ],
+       [
+        "h",
+        330
+       ]
+      ],
+      "claimed_by": "T4right",
+      "text_head": "da sabbie a crinoidi, precipita in parte nel acino, dove alimenta la Calcarenite di Val degli Erbandoli (IGNa)"
+     },
+     {
+      "idx": 1,
+      "type": "paragraph",
+      "score": 0.3,
+      "bbox": [
+       [
+        "x",
+        206
+       ],
+       [
+        "y",
+        291
+       ],
+       [
+        "w",
+        352
+       ],
+       [
+        "h",
+        429
+       ]
+      ],
+      "claimed_by": "C31",
+      "text_head": "In queste pagine: Figura 3 Schema evolutivo del Bacino di Belluno in rapporto alle . piattaforme trentina e fr"
+     },
+     {
+      "idx": 9,
+      "type": "paragraph",
+      "score": 0.3,
+      "bbox": [
+       [
+        "x",
+        1078
+       ],
+       [
+        "y",
+        1591
+       ],
+       [
+        "w",
+        379
+       ],
+       [
+        "h",
+        223
+       ]
+      ],
+      "claimed_by": "T3mid",
+      "text_head": "3) Sinemuriano - Pliensbachiano Il Bacino di Belluno si approfondisce e vi si depone la Formazione di Soverzen"
+     },
+     {
+      "idx": 14,
+      "type": "paragraph",
+      "score": 0.25,
+      "bbox": [
+       [
+        "x",
+        1078
+       ],
+       [
+        "y",
+        1984
+       ],
+       [
+        "w",
+        385
+       ],
+       [
+        "h",
+        329
+       ]
+      ],
+      "claimed_by": "T4mid",
+      "text_head": "4) Pliensbachiano sup. La Piattaforma di Trento comincia a sprofondare e sul plateau in annegamento si depone "
+     }
+    ]
+   }
+  ],
+  "en_coins_01": [
+   {
+    "image": "en_coins_01",
+    "subpage": "left",
+    "gt_id": "FN1",
+    "gt_type": "footnote",
+    "gt_bbox": null,
+    "anchor": "Spalding Eastern Exchange Currency and Finance",
+    "n_det": 13,
+    "cands": [],
+    "anchor_cands": [
+     {
+      "idx": 5,
+      "type": "paragraph",
+      "score": 0.333,
+      "bbox": [
+       [
+        "x",
+        164
+       ],
+       [
+        "y",
+        1344
+       ],
+       [
+        "w",
+        1821
+       ],
+       [
+        "h",
+        142
+       ]
+      ],
+      "claimed_by": "P2",
+      "text_head": "According to a study conducted by WE Spalding testing the relative fineness of coins in the possession of a Ch"
+     },
+     {
+      "idx": 4,
+      "type": "paragraph",
+      "score": 0.167,
+      "bbox": [
+       [
+        "x",
+        170
+       ],
+       [
+        "y",
+        1008
+       ],
+       [
+        "w",
+        1819
+       ],
+       [
+        "h",
+        317
+       ]
+      ],
+      "claimed_by": "P1",
+      "text_head": "While Guatemala introduced the new Pillar design in 1772, following the pattern of the higher-volume mints, a "
+     },
+     {
+      "idx": 9,
+      "type": "caption",
+      "score": 0.167,
+      "bbox": [
+       [
+        "x",
+        1324
+       ],
+       [
+        "y",
+        2070
+       ],
+       [
+        "w",
+        603
+       ],
+       [
+        "h",
+        322
+       ]
+      ],
+      "claimed_by": "C97",
+      "text_head": "Fig. 97. 1805-NG Guatemala Portrait ISight Reales, Charles IV (Bust of Charles IV) (KM# 53). Leverage Collecti"
+     },
+     {
+      "idx": 11,
+      "type": "paragraph",
+      "score": 0.167,
+      "bbox": [
+       [
+        "x",
+        91
+       ],
+       [
+        "y",
+        2492
+       ],
+       [
+        "w",
+        1854
+       ],
+       [
+        "h",
+        183
+       ]
+      ],
+      "claimed_by": "P3",
+      "text_head": "The output of Nueva Guatemala mint under Charles IV almost perfectly mirrored that of the high-volume faciliti"
+     }
+    ]
+   }
+  ],
+  "en_coins_03": [
+   {
+    "image": "en_coins_03",
+    "subpage": "right",
+    "gt_id": "P2",
+    "gt_type": "paragraph",
+    "gt_bbox": null,
+    "anchor": "Despite their silver resources Honduras would not produce their own crown-sized silver type until the late 19th century",
+    "n_det": 12,
+    "cands": [],
+    "anchor_cands": [
+     {
+      "idx": 10,
+      "type": "paragraph",
+      "score": 0.875,
+      "bbox": [
+       [
+        "x",
+        5
+       ],
+       [
+        "y",
+        2487
+       ],
+       [
+        "w",
+        1873
+       ],
+       [
+        "h",
+        136
+       ]
+      ],
+      "claimed_by": "H1",
+      "text_head": "Despite their silver resources, Honduras would not produce their own crown-sized silver type uatil the late 19"
+     },
+     {
+      "idx": 9,
+      "type": "paragraph",
+      "score": 0.5,
+      "bbox": [
+       [
+        "x",
+        0
+       ],
+       [
+        "y",
+        2018
+       ],
+       [
+        "w",
+        1889
+       ],
+       [
+        "h",
+        438
+       ]
+      ],
+      "claimed_by": "P1",
+      "text_head": "Honduras was somewhat unusual among the Spanish colonies of the New World in that it produced both silver and "
+     },
+     {
+      "idx": 7,
+      "type": "caption",
+      "score": 0.125,
+      "bbox": [
+       [
+        "x",
+        1275
+       ],
+       [
+        "y",
+        1851
+       ],
+       [
+        "w",
+        575
+       ],
+       [
+        "h",
+        83
+       ]
+      ],
+      "claimed_by": "C105",
+      "text_head": "Fig. 105. 1892/0 Honduras Peso (KM# 52; Du- plicate of Type in Fig; 104). Marphy Collection."
+     },
+     {
+      "idx": 0,
+      "type": "header",
+      "score": 0.062,
+      "bbox": [
+       [
+        "x",
+        27
+       ],
+       [
+        "y",
+        125
+       ],
+       [
+        "w",
+        695
+       ],
+       [
+        "h",
+        54
+       ]
+      ],
+      "claimed_by": null,
+      "text_head": "Nationality - Honduras"
+     }
+    ]
+   }
+  ]
+ }
+}

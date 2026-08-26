@@ -157,13 +157,15 @@ layout:
   # the repo root. Missing -> Stage 04 falls back to classical (flagged).
   yolo_ckpt: "models/doclayout_yolo/doclayout_yolo_docstructbench_imgsz1024.pt"
 
-  # Sub-threshold FIGURE rescue (Stage 04 v0.5.0). OFF by default: it recovered
-  # two real pictures on the 14 graded subpages (it_geo_07 D1 at conf 0.247,
-  # it_geo_04 B6L at 0.229 — both under the 0.25 floor) with zero wrong
-  # caption<->figure pairs, but its three gates are measured on THIS corpus only.
-  # See docs/RESULTS.md "The picture under the floor" (2026-08-26) before turning
-  # it on; every number below sits in a measured gap, none is a guess.
-  fig_rescue: false
+  # Sub-threshold FIGURE rescue (Stage 04 v0.5.0). ON: on the 14 graded subpages it
+  # recovers two real pictures the 0.25 confidence floor was dropping (it_geo_07 D1
+  # at conf 0.247, it_geo_04 B6L at 0.229), adds ZERO boxes on the other 12
+  # subpages, and leaves wrong caption<->figure pairs at 0. Its one cost is one
+  # caption that stops being paired — see docs/RESULTS.md "The picture under the
+  # floor" (2026-08-26). Honest limit: the three gates below are measured on THIS
+  # 8-fixture corpus; every one sits in a measured gap, none is a guess, but a book
+  # whose junk detections are more confident would need them re-measured.
+  fig_rescue: true
   fig_rescue_conf: 0.10           # 2.1x above the junk cluster, 2.3x below the pictures
   fig_rescue_max_cover: 0.20      # admitted boxes score 0.000; nearest rejected 0.640
   fig_rescue_max_text_cover: 0.50 # printed matter 1.000, photographs 0.074/0.044

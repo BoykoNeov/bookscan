@@ -455,8 +455,16 @@ def test_rescue_refuses_a_box_the_model_also_boxed_as_text():
     assert [round(k.conf, 3) for k in kept] == [0.247]
 
 
-def test_rescue_is_off_by_default():
-    assert DEFAULTS["fig_rescue"] is False
+def test_rescue_is_on_by_default_and_its_gates_keep_their_measured_margins():
+    """Rescue ships ON (owner's call, 2026-08-26): it recovered two real pictures
+    with zero wrong pairs and added no box on the other 12 subpages. The gates are
+    pinned here because each is a MEASURED margin, not a preference — moving one
+    silently would move the corpus."""
+    assert DEFAULTS["fig_rescue"] is True
+    assert DEFAULTS["fig_rescue_conf"] == 0.10        # junk tops out at 0.047
+    assert DEFAULTS["fig_rescue_max_cover"] == 0.20   # pictures 0.000, next reject 0.640
+    assert DEFAULTS["fig_rescue_max_text_cover"] == 0.50  # print 1.000, photos 0.074/0.044
+    assert DEFAULTS["fig_rescue_text_conf"] == 0.02   # the pass the gate was measured on
 
 
 class _StubDetector:

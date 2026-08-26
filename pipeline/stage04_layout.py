@@ -86,7 +86,7 @@ DEFAULTS = {
     "fig_min_subbox_frac": 0.06, # each sub-box must be >= this frac of the original area
     "fig_eject_text_cover": 0.60,  # drop a figure sub-box this-covered by a text det
     # Sub-threshold figure rescue (see rescue_unclaimed_figures). OFF by default.
-    "fig_rescue": False,            # admit sub-threshold figure dets in unclaimed regions
+    "fig_rescue": True,             # admit sub-threshold figure dets in unclaimed regions
     "fig_rescue_conf": 0.10,        # second confidence floor for such a rescue
     "fig_rescue_max_cover": 0.20,   # reject if this much of it is already claimed
     "fig_rescue_max_text_cover": 0.50,  # reject if the model also boxed it as TEXT

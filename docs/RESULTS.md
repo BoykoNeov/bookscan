@@ -4814,6 +4814,8 @@ editor can re-check the weaker inferences.
 | en_coins_03 | 2/2 | 0 | 0 | 0/2/0 | unchanged |
 | **total** | **16/19** | **0** | **7** | 5/10/**2** | was 14/19, 9 abstained |
 
+**Annotated 2026-08-26** — with sub-threshold figure rescue on by default ("The picture under the floor" below) this total reads **15/19, 0 wrong, 8 abstained**. The lost pair is `it_geo_04` B8, and it was never discriminated: the `sole_figure` arm claimed it because the page had exactly one detected figure. The page has two; the second was under the confidence floor. Fewer pairs, same zero wrong, one more honest abstention.
+
 **Non-regression is field-by-field identical, not "similar".** Every graded field
 of all eight fixtures was diffed against a baseline captured before the change —
 every match, miss, type verdict, tau, pair and abstain reason. Six fixtures are
@@ -5550,6 +5552,29 @@ nearest figure becomes its true partner (`nearest_ok` false -> **true**). The pa
 is still not claimed, for the pre-existing reason that C31 is mistyped `paragraph`
 and sits in another column.
 
+### Rendered end to end, because the eval never gets that far
+
+`layout_order_eval` stops after Stage 04, so "the block is back" is not the same
+claim as "the picture is in the document". Both spreads were run through the whole
+pipeline (`run_all` -> assemble -> render) with the rescue on:
+
+* `it_geo_07`-left assembles **five** figure blocks where it had four, D1 at reading
+  order **6** — ahead of D2-D5, which is where the GT puts it. Cropping its box out
+  of the rendered page asset shows the cross-section itself: pink strata, the
+  sea-level line labelled *Livello del mare*, the `DPR` box, *Piana tidale*. It is a
+  figure, not a strip, and it is placed correctly.
+* `it_geo_04`-left assembles **two** figure blocks where it had one, the recovered
+  box at reading order 4. Its crop is the Lagazuoi Piccolo photograph — sky, the
+  peak, the `HKS` label, the red fault line — cleanly bounded. (It is the fragment
+  on this side of the gutter; the panorama continuing onto the facing page is the
+  pre-existing Stage 02 cut, untouched here.) Assemble reports the page's caption
+  as `paired=0 unpaired=1`, which is the trade above showing up in the deliverable
+  exactly as the eval predicted: an abstention, not a wrong pairing.
+
+Two starved blocks on `it_geo_07`-left were re-read as usual (block 16: 0 -> 5
+words; block 22: 8 -> 21), unaffected by the added figure.
+
+
 ### Limits, stated
 
 * **One of the two recoveries is confirmed by measurement, the other by eye.**
@@ -5557,9 +5582,12 @@ and sits in another column.
   predates figure bboxes in GT, so B6L's recovery is confirmed by looking at the
   crop — a photograph of Lagazuoi Piccolo — and by the block being typed `figure`
   in the right place. It is not a second measurement.
-* **Off by default.** Two pictures on 14 subpages is not a mandate to lower a
-  confidence floor everywhere; the gates are measured on this corpus only, and
-  `fig_rescue` ships inert until a wider census says otherwise.
+* **On by default — owner's call, same day, and the reason is that it measured
+  positive.** The repo's other off-by-default option (`per_page_source`) ships off
+  because it measured *null*; that precedent does not transfer to a change that
+  gains on every axis and loses on none. What ships off instead is the *excuse*:
+  the gates below are measured on this corpus only, so a book whose junk
+  detections are more confident needs them re-measured, not re-guessed.
 * **The confidence gate is a corpus artifact.** 0.10 sits in a gap that is real on
   these 8 fixtures. A book whose junk detections are more confident, or whose faint
   pictures are less, would need it re-measured — not re-guessed.
@@ -5571,4 +5599,5 @@ and sits in another column.
   numbers above are Stage-04 numbers.
 
 Suite 503 green (was 496) — the seven added tests are `covered_fraction`, the
-five rescue gates, and the text-set-population regression test.
+five rescue gates, and the text-set-population regression test. Re-run green
+with `fig_rescue` on by default.

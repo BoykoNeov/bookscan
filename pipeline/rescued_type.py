@@ -49,6 +49,13 @@ typography) rather than fitted, which is the whole argument for trusting them pa
 n=1; the thresholds attached to them are not, and are stated with their measured
 values so a later corpus can contradict them.
 
+TUNING. The three thresholds live in ``DEFAULTS`` below. ``attach_words`` passes
+Stage 04's resolved param dict straight through, so an override goes in the
+**layout** section of ``config.yaml`` under the same key names — deliberately
+that dict and not a section of this module's own, so the pipeline and
+``tools.layout_order_eval`` (which calls ``attach_words`` at the same seam) can
+never be tuned apart from each other.
+
 This module is PURE: blocks in, types out. No I/O, no OCR, no cv2.
 """
 

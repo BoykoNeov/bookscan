@@ -23,8 +23,9 @@ restores the old arm for reproducing pre-2026-08-26 rows; it does NOT grade the
 deliverable. Two reading notes for the shipped arm: ``reading_order`` is Stage
 05's (an orphan re-ranks the whole set through the same XY-Cut), so the tau
 column is the SHIPPED order and is not comparable to an older row; and an
-orphan-rescued block is typed ``other`` by construction, so recovering one raises
-segmentation recall and LOWERS type accuracy.
+orphan-rescued block is typed by ``pipeline/rescued_type.py``, which abstains to
+``other`` unless the page proves a type — so recovering one raises segmentation
+recall and, unless that rung fires, still lowers type accuracy.
 
 Method (per subpage — Stage 02 splits the spread, Stage 04 orders each half):
   1. split -> dewarp (auto/UVDoc) -> Stage 04 layout, exactly the Gate-2/3 path
@@ -599,6 +600,23 @@ def stage05_blocks(pl: "S4.PageLayout", img: np.ndarray, twords: list,
 
     ordered, n_orphan = S5.attach_words(twords, pl.blocks, scale, w, h, p)
     n_after_attach = len(ordered)
+    # Census the SYNTHETIC (orphan-rescued) blocks while they are still
+    # identifiable. attach_words copies a real block's bbox BY REFERENCE, so
+    # object identity separates real from synthetic exactly; after this point the
+    # ids are renumbered and the two are indistinguishable. Recorded so the typing
+    # rule for rescued blocks can be designed on what is actually there rather
+    # than on the single one that happens to match a GT anchor.
+    _real_bbox_ids = {id(b.bbox) for b in pl.blocks}
+    orphan_notes = [
+        {"bbox": [blk.bbox.x, blk.bbox.y, blk.bbox.w, blk.bbox.h],
+         "type": blk.type.value,
+         "n_words": len(blk.words),
+         "median_word_h": (
+             sorted(wd.bbox.h for wd in blk.words)[len(blk.words) // 2]
+             if blk.words else 0),
+         "text": " ".join(wd.text for wd in blk.words if wd.text.strip())[:160]}
+        for blk in ordered if id(blk.bbox) not in _real_bbox_ids
+    ]
     ordered, eject_notes = CE.eject_inline_captions(
         ordered, img, binary, tessdata, lang, p, w, h)
     ordered, rescues, n_dropped, n_added = BR.rescue_starved_blocks(
@@ -623,6 +641,15 @@ def stage05_blocks(pl: "S4.PageLayout", img: np.ndarray, twords: list,
     return ordered, {
         "orphan_words": n_orphan,
         "n_orphan_blocks": n_after_attach - len(pl.blocks),
+        "orphan_notes": orphan_notes,
+        "page_wh": [w, h],
+        "real_blocks": [{"type": b.type.value,
+                         "bbox": [b.bbox.x, b.bbox.y, b.bbox.w, b.bbox.h],
+                         "n_words": len(b.words),
+                         "median_word_h": (
+                             sorted(wd.bbox.h for wd in b.words)[len(b.words) // 2]
+                             if b.words else 0)}
+                        for b in ordered if id(b.bbox) in _real_bbox_ids],
         "n_ejected": len(eject_notes),
         "n_rescued": len(rescues),
         "eject_notes": list(eject_notes),
@@ -886,8 +913,10 @@ def _block_set_note(stage05_on: bool) -> str:
             "with: (a) `reading_order` is Stage 05's \u2014 an orphan re-ranks the "
             "whole set through the same XY-Cut \u2014 so the tau column is the "
             "SHIPPED order, not Stage 04's, and is NOT comparable to a "
-            "pre-2026-08-26 row; (b) an orphan-rescued block is typed `other` by "
-            "construction, so recovering one raises seg recall and LOWERS type "
+            "pre-2026-08-26 row; (b) an orphan-rescued block is typed by "
+            "`pipeline/rescued_type.py`, which abstains to `other` unless the page "
+            "proves a type, so recovering one raises seg recall and — unless that "
+            "rung fires — still lowers type "
             "accuracy. `--no-stage05` reproduces the old arm.")
     return (
         "**Block set graded: Stage 04 alone (`--no-stage05`).** Reproduces rows "

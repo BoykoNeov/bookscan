@@ -5868,3 +5868,96 @@ second group*. It did not, and must not, merge the two groups. A test pinning
 `gate1_harness`'s literals to `UPSCALE_MEDIAN_PX` was considered and **rejected**
 for exactly this reason: it would assert a coupling the file forbids in writing.
 
+
+## The rescued blocks were all called "other" — one of them wasn't — 2026-08-26
+
+**What was asked.** Stage 05 rescues words that fall outside every detected block
+into synthetic blocks so nothing is dropped. Those blocks were typed `other` by
+construction, nobody having looked at what they are. The task was to type them.
+
+**What the census said, before any rule was written.** `tools/layout_order_eval`
+now records every rescued block (bbox, word count, median word height, text) next
+to the page's real blocks, so the question "what ARE these?" is answerable instead
+of assumed. All 16 on the eight block-order GT subpages, read by hand —
+`docs/data/rescued_type_census_20260826.json`:
+
+| what it is | n | examples |
+|---|---|---|
+| OCR noise, 1–2 garbage tokens | 10 | `n,` `ME` `ei` `di i]` `orme` `ed bacri` `I nia pica ian na n PE aaa EEE EEE pa` |
+| real words printed ON a figure | 5 | `CL 'INEAMENTO` / `PERIADR\A` (a map's title), `0.5 cm = 200m`, `lo 0.5 cm =5 Km` (scale bars), `Livello del` |
+| body text the document should carry | **1** | `1 Spalding, Eastern Exchange Currency and Finance, (314).` — en_coins_01's footnote, an honest detector miss already recorded in that fixture's `known_detector_gap` |
+
+So for 15 of 16, **`other` is the accurate label** and the premise of the task is
+mostly false on this corpus. That reframes the work from "classify them" to "find
+the one rung that is worth having, and abstain everywhere else".
+
+**Two rules that suggest themselves, measured and NOT shipped.**
+
+* *"Default them to `paragraph`."* `stage08_render._TAG` maps both `OTHER` and
+  `PARAGRAPH` to a bare `<p>`, and no CSS separates `.other` from `.paragraph`. It
+  would change **nothing** in the deliverable while asserting body-text status for
+  15 blocks that are not body text.
+* *"Run the caption parser over them."* `figure_grouping.PROMOTABLE` already
+  contains `other`, so a rescued caption is ALREADY promoted at Stage 07. The rung
+  would be dead code — and it fires on nothing in this corpus regardless.
+
+**What shipped: one rung.** `pipeline/rescued_type.py` types a rescued block
+`FOOTNOTE` only when all three definitional conditions hold — it sits BELOW the
+body, INSIDE the horizontal span of a text column, and is SET SMALLER than that
+column — and returns `OTHER` otherwise. `HEADER` and `PAGE_NUMBER` are
+deliberately **unreachable**: both are stripped by default, so a wrong call there
+does not mislabel text, it deletes it, and nothing in this corpus is a rescued
+header or page number to buy that risk with. `FOOTNOTE` is safe in exactly the way
+they are not — it renders, only smaller.
+
+**The condition that carries the rule.** "Below the body" alone is 1 right / 1
+wrong: `i: dad aan` (it_geo_07 right, y=2874) has the same shape as the footnote.
+The column condition separates them — the footnote overlaps its column 1.00, the
+stray overlaps no text column at all. A third guard matters too: it_geo_05 left is
+a full-page figure with no text column, where "below the body" is vacuously true
+for all three of its strays; requiring a real column to hang under rejects them.
+
+Measured on the true positive: word height **24 against its column's 28** (ratio
+0.86), 8 words, column overlap 1.00.
+
+**Result — the eval, all eight images, every field.**
+
+```
+type accuracy   92/112  ->  93/112
+```
+
+A full-field diff of before/after (float tolerance 1e-9) returns exactly **one**
+substantive difference across the whole corpus:
+
+```
+en_coins_01/subpages[0]/type_ok/FN1         False -> True
+en_coins_01/subpages[0]/type_ok_parser/FN1  False -> True
+(+ the derived type_acc on that one subpage: 0.667 -> 0.750)
+```
+
+Segmentation recall stays 112/112, pairs stay 16/19 with 0 wrong, every tau
+identical to nine decimals. The rung fired **once**, on the one block that
+deserved it, and abstained on the other 15.
+
+### Limits, stated
+
+* **One true positive, no second example.** The three conditions are definitional
+  (what a footnote IS typographically) rather than fitted, which is the whole
+  argument for trusting them past n=1. The *thresholds* attached to them are not,
+  and are recorded above with their measured values so a later corpus can
+  contradict them.
+* **The metric is structurally blind to the failure mode.** The 15 noise/figure
+  blocks match no GT anchor, so `type_ok` cannot see a wrong call on any of them.
+  `92/112 -> 93/112` is evidence the rung fired once and correctly — it is **not**
+  evidence that it is safe. That half was checked by reading all 16 blocks by eye,
+  which is why the census is committed rather than summarized.
+* **Five rescued blocks are still wrong, and typing is not their fix.** The map
+  titles and scale-bar labels belong to the artwork; they are text that needs
+  SEGMENTING onto its figure, not a label. They currently render as loose
+  paragraphs in the reading flow. Untouched here, and a real open defect.
+* **The prose that said otherwise is fixed in the same commit.**
+  `tools/layout_order_eval` asserted in two places that "an orphan-rescued block is
+  typed `other` by construction"; that stopped being true with this commit.
+
+Suite **534 green** (was 512): +13 for the new module, +9 for the editor commit
+immediately before it.

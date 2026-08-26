@@ -27,7 +27,7 @@ metadata, and Stage 04 already set the reach-back precedent):
     ``03_dewarp/`` for the pixels. Image filenames come from the manifest — never
     hardcoded. Runs PER half-page.
   * **Writes** ``05_ocr/ocr.json`` (per subpage: the Stage 04 blocks with
-    ``page_model.Word``s attached, plus synthetic OTHER blocks holding any words
+    ``page_model.Word``s attached, plus synthetic RESCUED blocks holding any words
     that fell outside every detected block), ``05_ocr/meta.json``, and
     ``debug/05_ocr.png`` (word boxes colored by confidence band + block
     outlines).
@@ -49,9 +49,13 @@ Word ROUTING + ORDER: each word routes to the smallest-area Stage 04 block whose
 box contains the word's center; within a block words keep natural (line, word)
 order. Stage 04's block ``reading_order`` is TRUSTED as-is when every word lands
 in a block. Orphan words (in no block — a detection-coverage diagnostic) are
-grouped into synthetic OTHER blocks and slotted into reading order by the SAME
+grouped into synthetic blocks and slotted into reading order by the SAME
 recursive XY-Cut Stage 04 uses, so nothing is dropped and orphans land in their
-geometric place. A word-conservation invariant is asserted: every recognized
+geometric place. Those rescued blocks are then TYPED by
+``pipeline/rescued_type.py``, which abstains to ``OTHER`` unless the page proves a
+type — on this corpus ``other`` is the accurate label for 15 of the 16 of them, so
+that module is deliberately one rung (footnote) and not a classifier. A
+word-conservation invariant is asserted: every recognized
 word ends up in exactly one output block — amended for the one pass that may
 REPLACE words rather than move them (below).
 
@@ -84,6 +88,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import BBox, Block, BlockType, StageMeta, Word
 from pipeline import stage04_layout as S4
 from pipeline import block_reocr as BR
+from pipeline import rescued_type as RT
 from pipeline import caption_eject as CE
 from pipeline.second_opinion import (
     EasyOCRSecondOpinion, find_disagreements, load_lexicon)
@@ -120,8 +125,10 @@ class OCRPage(BaseModel):
     """Per-subpage OCR: the Stage 04 blocks with words attached, in reading order.
 
     ``blocks`` includes the real Stage 04 blocks (empty-word blocks like FIGUREs
-    are kept — Stage 07 crops them) plus any synthetic OTHER blocks holding
-    orphan words. ``reading_order``/``id`` are 0-based and gapless over ALL blocks.
+    are kept — Stage 07 crops them) plus any synthetic blocks holding orphan words,
+    typed by ``pipeline/rescued_type.py`` (usually ``OTHER``, which is an honest
+    "unknown", occasionally ``FOOTNOTE``).
+    ``reading_order``/``id`` are 0-based and gapless over ALL blocks.
     """
 
     name: str                 # left.png | right.png | single.png
@@ -221,7 +228,9 @@ def attach_words(twords: list[M.TWord], blocks: list[Block], scale: float,
 
     Each word routes to the smallest-area block containing its center; within a
     block words keep natural (line, word) TSV order. Orphans (no block) group by
-    their TSV (block, par) paragraph into synthetic OTHER blocks. If there are no
+    their TSV (block, par) paragraph into synthetic blocks, which ``rescued_type``
+    then types against the page (``OTHER`` unless the page proves otherwise — see
+    that module for why that is one rung and not a classifier). If there are no
     orphans, Stage 04's block ``reading_order`` is trusted verbatim; otherwise all
     blocks (real + synthetic) are re-ranked by the SAME XY-Cut Stage 04 uses, so
     real blocks keep their relative order and orphans land in geometric place.
@@ -281,6 +290,14 @@ def attach_words(twords: list[M.TWord], blocks: list[Block], scale: float,
                            bbox=_union([wboxes[wi] for wi in members]),
                            reading_order=-1,
                            words=[make_word(wi, None) for wi in members]))
+
+    # Give each rescued block a real type where the page proves one. Runs against
+    # the REAL blocks (Stage 04's), not against the other rescued ones — a stray
+    # cannot be evidence about a stray. Abstains to OTHER, which is what 15 of the
+    # 16 rescued blocks in this corpus actually are.
+    rescue_types: list[RT.RescueType] = RT.type_rescued(synth, real, p)
+    for blk, verdict in zip(synth, rescue_types):
+        blk.type = verdict.type
 
     # Order all blocks. No orphans -> trust Stage 04 exactly. Orphans -> re-rank
     # real+synthetic together by the same XY-Cut (real relative order preserved).

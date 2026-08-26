@@ -1,0 +1,236 @@
+{
+ "what": "every block Stage 05 rescues on the eight block-order GT subpages, with the type pipeline/rescued_type.py assigns it",
+ "date": "2026-08-26",
+ "why": "the rescued-type rung has ONE true positive and the eval's type-accuracy column is blind to a wrong call on the rest (they match no GT anchor), so the safety argument rests on reading all of them. This is that list.",
+ "n_rescued": 16,
+ "by_type": {
+  "footnote": 1,
+  "other": 15
+ },
+ "blocks": [
+  {
+   "image": "de_01",
+   "subpage": "left.png",
+   "bbox": [
+    944,
+    1811,
+    4,
+    1
+   ],
+   "type": "other",
+   "n_words": 1,
+   "median_word_h": 1,
+   "text": "n,"
+  },
+  {
+   "image": "de_01",
+   "subpage": "left.png",
+   "bbox": [
+    1799,
+    2021,
+    42,
+    3
+   ],
+   "type": "other",
+   "n_words": 1,
+   "median_word_h": 3,
+   "text": "ME"
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "left.png",
+   "bbox": [
+    102,
+    2704,
+    723,
+    31
+   ],
+   "type": "footnote",
+   "n_words": 8,
+   "median_word_h": 24,
+   "text": "1 Spalding, Eastern Exchange Currency and Finance, (314)."
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left.png",
+   "bbox": [
+    1367,
+    46,
+    68,
+    29
+   ],
+   "type": "other",
+   "n_words": 1,
+   "median_word_h": 29,
+   "text": "orme"
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left.png",
+   "bbox": [
+    1442,
+    18,
+    191,
+    52
+   ],
+   "type": "other",
+   "n_words": 2,
+   "median_word_h": 50,
+   "text": "Cc arbonatiche"
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left.png",
+   "bbox": [
+    1645,
+    0,
+    136,
+    43
+   ],
+   "type": "other",
+   "n_words": 2,
+   "median_word_h": 35,
+   "text": "ed bacri"
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "left.png",
+   "bbox": [
+    0,
+    1971,
+    21,
+    671
+   ],
+   "type": "other",
+   "n_words": 14,
+   "median_word_h": 31,
+   "text": "I nia pica ian na n PE aaa EEE EEE pa —_ a ed"
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "left.png",
+   "bbox": [
+    1072,
+    280,
+    234,
+    48
+   ],
+   "type": "other",
+   "n_words": 2,
+   "median_word_h": 48,
+   "text": "CL 'INEAMENTO"
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "left.png",
+   "bbox": [
+    1403,
+    308,
+    231,
+    35
+   ],
+   "type": "other",
+   "n_words": 1,
+   "median_word_h": 35,
+   "text": "PERIADR\\A"
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "right.png",
+   "bbox": [
+    1952,
+    783,
+    8,
+    7
+   ],
+   "type": "other",
+   "n_words": 1,
+   "median_word_h": 7,
+   "text": "I"
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "right.png",
+   "bbox": [
+    1931,
+    891,
+    7,
+    13
+   ],
+   "type": "other",
+   "n_words": 1,
+   "median_word_h": 13,
+   "text": "ei"
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "right.png",
+   "bbox": [
+    1943,
+    868,
+    22,
+    34
+   ],
+   "type": "other",
+   "n_words": 2,
+   "median_word_h": 21,
+   "text": "di i]"
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left.png",
+   "bbox": [
+    218,
+    831,
+    162,
+    20
+   ],
+   "type": "other",
+   "n_words": 4,
+   "median_word_h": 18,
+   "text": "0.5 cm = 200m"
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left.png",
+   "bbox": [
+    218,
+    857,
+    244,
+    91
+   ],
+   "type": "other",
+   "n_words": 5,
+   "median_word_h": 19,
+   "text": "lo 0.5 cm =5 Km"
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "right.png",
+   "bbox": [
+    104,
+    825,
+    149,
+    23
+   ],
+   "type": "other",
+   "n_words": 2,
+   "median_word_h": 22,
+   "text": "Livello del"
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "right.png",
+   "bbox": [
+    1895,
+    2874,
+    8,
+    126
+   ],
+   "type": "other",
+   "n_words": 3,
+   "median_word_h": 39,
+   "text": "i: dad aan"
+  }
+ ]
+}

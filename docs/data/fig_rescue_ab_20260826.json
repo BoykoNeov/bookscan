@@ -1,0 +1,1664 @@
+{
+ "generated": "2026-08-26",
+ "what": "Stage 04 v0.5.0 sub-threshold figure rescue: 14 graded subpages, fig_rescue off (before) vs on (after). Grader: tools/layout_order_eval.",
+ "subpages": [
+  {
+   "image": "de_01",
+   "subpage": "left.png",
+   "n_gt": 4,
+   "before": {
+    "matched": {
+     "T1": 0,
+     "F1": 5,
+     "P2": 4,
+     "P1": 3
+    },
+    "misses": [],
+    "type_ok": {
+     "T1": true,
+     "F1": true,
+     "P2": true,
+     "P1": true
+    },
+    "n_det_blocks": 7,
+    "tau_layout": 1.0,
+    "tau_all": null,
+    "n_fig_graded": 0,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 0,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [],
+    "abstain_reasons": {
+     "det2": "no figure shares this caption's column within the gap limit"
+    },
+    "groups": []
+   },
+   "after": {
+    "matched": {
+     "T1": 0,
+     "F1": 5,
+     "P2": 4,
+     "P1": 3
+    },
+    "misses": [],
+    "type_ok": {
+     "T1": true,
+     "F1": true,
+     "P2": true,
+     "P1": true
+    },
+    "n_det_blocks": 7,
+    "tau_layout": 1.0,
+    "tau_all": null,
+    "n_fig_graded": 0,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 0,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [],
+    "abstain_reasons": {
+     "det2": "no figure shares this caption's column within the gap limit"
+    },
+    "groups": []
+   }
+  },
+  {
+   "image": "de_01",
+   "subpage": "right.png",
+   "n_gt": 8,
+   "before": {
+    "matched": {
+     "F2": 0,
+     "F3": 6,
+     "H1": 4,
+     "E2": 7,
+     "R2": 2,
+     "E1": 5,
+     "R3": 3,
+     "R1": 1
+    },
+    "misses": [],
+    "type_ok": {
+     "F2": true,
+     "F3": true,
+     "H1": true,
+     "E2": true,
+     "R2": true,
+     "E1": true,
+     "R3": true,
+     "R1": true
+    },
+    "n_det_blocks": 8,
+    "tau_layout": 1.0,
+    "tau_all": null,
+    "n_fig_graded": 0,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 0,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [],
+    "abstain_reasons": {},
+    "groups": []
+   },
+   "after": {
+    "matched": {
+     "F2": 0,
+     "F3": 6,
+     "H1": 4,
+     "E2": 7,
+     "R2": 2,
+     "E1": 5,
+     "R3": 3,
+     "R1": 1
+    },
+    "misses": [],
+    "type_ok": {
+     "F2": true,
+     "F3": true,
+     "H1": true,
+     "E2": true,
+     "R2": true,
+     "E1": true,
+     "R3": true,
+     "R1": true
+    },
+    "n_det_blocks": 8,
+    "tau_layout": 1.0,
+    "tau_all": null,
+    "n_fig_graded": 0,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 0,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [],
+    "abstain_reasons": {},
+    "groups": []
+   }
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "left.png",
+   "n_gt": 12,
+   "before": {
+    "matched": {
+     "F96": 1,
+     "F97": 8,
+     "D1": 3,
+     "D2": 10,
+     "H1": 6,
+     "L1": 7,
+     "P2": 5,
+     "P3": 11,
+     "P1": 4,
+     "C97": 9,
+     "C96": 2
+    },
+    "misses": [
+     "FN1"
+    ],
+    "type_ok": {
+     "F96": true,
+     "F97": true,
+     "D1": false,
+     "D2": false,
+     "H1": false,
+     "L1": true,
+     "P2": true,
+     "P3": true,
+     "P1": true,
+     "C97": true,
+     "C96": true
+    },
+    "n_det_blocks": 13,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 2,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [
+     {
+      "caption": "C96",
+      "figure": "F96",
+      "caption_text": "Fig. 96. 1786-NG Guatemala Portrait Light Reales, Charles 11",
+      "source": "geometry",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C97",
+      "figure": "F97",
+      "caption_text": "Fig. 97. 1805-NG Guatemala Portrait ISight Reales, Charles I",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {
+     "D2": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+    },
+    "groups": [
+     {
+      "caption": "C96",
+      "figure": "F96",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     },
+     {
+      "caption": "C97",
+      "figure": "F97",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "F96": 1,
+     "F97": 8,
+     "D1": 3,
+     "D2": 10,
+     "H1": 6,
+     "L1": 7,
+     "P2": 5,
+     "P3": 11,
+     "P1": 4,
+     "C97": 9,
+     "C96": 2
+    },
+    "misses": [
+     "FN1"
+    ],
+    "type_ok": {
+     "F96": true,
+     "F97": true,
+     "D1": false,
+     "D2": false,
+     "H1": false,
+     "L1": true,
+     "P2": true,
+     "P3": true,
+     "P1": true,
+     "C97": true,
+     "C96": true
+    },
+    "n_det_blocks": 13,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 2,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [
+     {
+      "caption": "C96",
+      "figure": "F96",
+      "caption_text": "Fig. 96. 1786-NG Guatemala Portrait Light Reales, Charles 11",
+      "source": "geometry",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C97",
+      "figure": "F97",
+      "caption_text": "Fig. 97. 1805-NG Guatemala Portrait ISight Reales, Charles I",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {
+     "D2": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+    },
+    "groups": [
+     {
+      "caption": "C96",
+      "figure": "F96",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     },
+     {
+      "caption": "C97",
+      "figure": "F97",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   }
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "right.png",
+   "n_gt": 10,
+   "before": {
+    "matched": {
+     "F99": 9,
+     "F98": 3,
+     "D3": 5,
+     "L3": 8,
+     "P4": 6,
+     "C99": 10,
+     "L2": 2,
+     "C98": 4,
+     "H2": 1,
+     "H3": 7
+    },
+    "misses": [],
+    "type_ok": {
+     "F99": true,
+     "F98": true,
+     "D3": false,
+     "L3": true,
+     "P4": true,
+     "C99": true,
+     "L2": true,
+     "C98": true,
+     "H2": false,
+     "H3": false
+    },
+    "n_det_blocks": 12,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 2,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [
+     {
+      "caption": "C98",
+      "figure": "F98",
+      "caption_text": "Fig. 98. 1819-NG Guatemala Portrait Fight Reales, Ferdinand ",
+      "source": "geometry",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C99",
+      "figure": "F99",
+      "caption_text": "Fig. 99. (1841) Guatemala Type LV Republic Counterstamp, Per",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {
+     "D3": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+    },
+    "groups": [
+     {
+      "caption": "C98",
+      "figure": "F98",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     },
+     {
+      "caption": "C99",
+      "figure": "F99",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "F99": 9,
+     "F98": 3,
+     "D3": 5,
+     "L3": 8,
+     "P4": 6,
+     "C99": 10,
+     "L2": 2,
+     "C98": 4,
+     "H2": 1,
+     "H3": 7
+    },
+    "misses": [],
+    "type_ok": {
+     "F99": true,
+     "F98": true,
+     "D3": false,
+     "L3": true,
+     "P4": true,
+     "C99": true,
+     "L2": true,
+     "C98": true,
+     "H2": false,
+     "H3": false
+    },
+    "n_det_blocks": 12,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 2,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [
+     {
+      "caption": "C98",
+      "figure": "F98",
+      "caption_text": "Fig. 98. 1819-NG Guatemala Portrait Fight Reales, Ferdinand ",
+      "source": "geometry",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C99",
+      "figure": "F99",
+      "caption_text": "Fig. 99. (1841) Guatemala Type LV Republic Counterstamp, Per",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {
+     "D3": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+    },
+    "groups": [
+     {
+      "caption": "C98",
+      "figure": "F98",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     },
+     {
+      "caption": "C99",
+      "figure": "F99",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   }
+  },
+  {
+   "image": "en_coins_02",
+   "subpage": "right.png",
+   "n_gt": 8,
+   "before": {
+    "matched": {
+     "F101": 3,
+     "F102": 5,
+     "D1": 7,
+     "L1": 2,
+     "P1": 8,
+     "C102": 6,
+     "C101": 4,
+     "H1": 1
+    },
+    "misses": [],
+    "type_ok": {
+     "F101": true,
+     "F102": true,
+     "D1": false,
+     "L1": true,
+     "P1": true,
+     "C102": true,
+     "C101": true,
+     "H1": false
+    },
+    "n_det_blocks": 10,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 2,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [
+     {
+      "caption": "C101",
+      "figure": "F101",
+      "caption_text": "Fig. 101. 1894 Guatemala Peso (KM# 210). Huntsinger Collecti",
+      "source": "geometry",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C102",
+      "figure": "F102",
+      "caption_text": "Fig. 102. 1895 Guatemala Peso (KM# 210; Du: plicate of Type ",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {
+     "D1": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+    },
+    "groups": [
+     {
+      "caption": "C101",
+      "figure": "F101",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     },
+     {
+      "caption": "C102",
+      "figure": "F102",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "F101": 3,
+     "F102": 5,
+     "D1": 7,
+     "L1": 2,
+     "P1": 8,
+     "C102": 6,
+     "C101": 4,
+     "H1": 1
+    },
+    "misses": [],
+    "type_ok": {
+     "F101": true,
+     "F102": true,
+     "D1": false,
+     "L1": true,
+     "P1": true,
+     "C102": true,
+     "C101": true,
+     "H1": false
+    },
+    "n_det_blocks": 10,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 2,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [
+     {
+      "caption": "C101",
+      "figure": "F101",
+      "caption_text": "Fig. 101. 1894 Guatemala Peso (KM# 210). Huntsinger Collecti",
+      "source": "geometry",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C102",
+      "figure": "F102",
+      "caption_text": "Fig. 102. 1895 Guatemala Peso (KM# 210; Du: plicate of Type ",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {
+     "D1": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+    },
+    "groups": [
+     {
+      "caption": "C101",
+      "figure": "F101",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     },
+     {
+      "caption": "C102",
+      "figure": "F102",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   }
+  },
+  {
+   "image": "en_coins_03",
+   "subpage": "right.png",
+   "n_gt": 10,
+   "before": {
+    "matched": {
+     "F104": 4,
+     "F105": 6,
+     "C104": 5,
+     "D1": 8,
+     "H1": 1,
+     "L1": 3,
+     "P1": 9,
+     "C105": 7,
+     "P2": 10,
+     "H2": 2
+    },
+    "misses": [],
+    "type_ok": {
+     "F104": true,
+     "F105": true,
+     "C104": false,
+     "D1": false,
+     "H1": true,
+     "L1": true,
+     "P1": true,
+     "C105": true,
+     "P2": true,
+     "H2": false
+    },
+    "n_det_blocks": 12,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 2,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "C104",
+      "figure": "F104",
+      "caption_text": "Fig. 104. 1890 Honduras Peso (KM# 52). Hun- tsinger Collecti",
+      "source": "geometry",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C105",
+      "figure": "F105",
+      "caption_text": "Fig. 105. 1892/0 Honduras Peso (KM# 52; Du- plicate of Type ",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "C104",
+      "figure": "F104",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C105",
+      "figure": "F105",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "F104": 4,
+     "F105": 6,
+     "C104": 5,
+     "D1": 8,
+     "H1": 1,
+     "L1": 3,
+     "P1": 9,
+     "C105": 7,
+     "P2": 10,
+     "H2": 2
+    },
+    "misses": [],
+    "type_ok": {
+     "F104": true,
+     "F105": true,
+     "C104": false,
+     "D1": false,
+     "H1": true,
+     "L1": true,
+     "P1": true,
+     "C105": true,
+     "P2": true,
+     "H2": false
+    },
+    "n_det_blocks": 12,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 2,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "C104",
+      "figure": "F104",
+      "caption_text": "Fig. 104. 1890 Honduras Peso (KM# 52). Hun- tsinger Collecti",
+      "source": "geometry",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C105",
+      "figure": "F105",
+      "caption_text": "Fig. 105. 1892/0 Honduras Peso (KM# 52; Du- plicate of Type ",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "C104",
+      "figure": "F104",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C105",
+      "figure": "F105",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   }
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left.png",
+   "n_gt": 5,
+   "before": {
+    "matched": {
+     "B5": 0,
+     "B8": 9,
+     "B10": 2,
+     "B9": 1
+    },
+    "misses": [
+     "B6L"
+    ],
+    "type_ok": {
+     "B5": true,
+     "B8": true,
+     "B10": true,
+     "B9": true
+    },
+    "n_det_blocks": 10,
+    "tau_layout": 1.0,
+    "tau_all": null,
+    "n_fig_graded": 0,
+    "n_pairs_by_number": 1,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "B8",
+      "figure": "B5",
+      "caption_text": "A lato: Figura 20 La piattaforma cassiana del Nuvolau, con g",
+      "source": "sole_figure",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "B8",
+      "figure": "B5",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 1,
+      "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "B5": 0,
+     "B6L": 1,
+     "B8": 10,
+     "B10": 3,
+     "B9": 2
+    },
+    "misses": [],
+    "type_ok": {
+     "B5": true,
+     "B6L": true,
+     "B8": true,
+     "B10": true,
+     "B9": true
+    },
+    "n_det_blocks": 11,
+    "tau_layout": 1.0,
+    "tau_all": null,
+    "n_fig_graded": 0,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [],
+    "abstain_reasons": {
+     "B8": "no figure shares this caption's column within the gap limit"
+    },
+    "groups": [
+     {
+      "caption": "B8",
+      "figure": "B5",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner"
+     }
+    ]
+   }
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "right.png",
+   "n_gt": 4,
+   "before": {
+    "matched": {
+     "B6R": 2,
+     "B7": 3,
+     "B11": 4,
+     "B12": 7
+    },
+    "misses": [],
+    "type_ok": {
+     "B6R": true,
+     "B7": false,
+     "B11": true,
+     "B12": true
+    },
+    "n_det_blocks": 9,
+    "tau_layout": 1.0,
+    "tau_all": null,
+    "n_fig_graded": 0,
+    "n_pairs_by_number": 1,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "B7",
+      "figure": "B6R",
+      "caption_text": "Sopra: Figura 21 Ampia veduta dei monti a nord del Passo Fal",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "B7",
+      "figure": "B6R",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 1,
+      "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated); caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "B6R": 2,
+     "B7": 3,
+     "B11": 4,
+     "B12": 7
+    },
+    "misses": [],
+    "type_ok": {
+     "B6R": true,
+     "B7": false,
+     "B11": true,
+     "B12": true
+    },
+    "n_det_blocks": 9,
+    "tau_layout": 1.0,
+    "tau_all": null,
+    "n_fig_graded": 0,
+    "n_pairs_by_number": 1,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "B7",
+      "figure": "B6R",
+      "caption_text": "Sopra: Figura 21 Ampia veduta dei monti a nord del Passo Fal",
+      "source": "geometry",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "B7",
+      "figure": "B6R",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 1,
+      "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated); caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     }
+    ]
+   }
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "left.png",
+   "n_gt": 2,
+   "before": {
+    "matched": {
+     "F2": 2
+    },
+    "misses": [
+     "C2"
+    ],
+    "type_ok": {
+     "F2": true
+    },
+    "n_det_blocks": 3,
+    "tau_layout": null,
+    "tau_all": null,
+    "n_fig_graded": 1,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "C2",
+      "figure": "F2",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 1,
+      "reason": "caption or figure block not matched on this subpage"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "F2": 2
+    },
+    "misses": [
+     "C2"
+    ],
+    "type_ok": {
+     "F2": true
+    },
+    "n_det_blocks": 3,
+    "tau_layout": null,
+    "tau_all": null,
+    "n_fig_graded": 1,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "C2",
+      "figure": "F2",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 1,
+      "reason": "caption or figure block not matched on this subpage"
+     }
+    ]
+   }
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "right.png",
+   "n_gt": 5,
+   "before": {
+    "matched": {
+     "F3": 2,
+     "P3": 6,
+     "C3": 3,
+     "P2": 5,
+     "P1": 4
+    },
+    "misses": [],
+    "type_ok": {
+     "F3": true,
+     "P3": true,
+     "C3": true,
+     "P2": true,
+     "P1": true
+    },
+    "n_det_blocks": 7,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 1,
+    "n_pairs_by_number": 1,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "C3",
+      "figure": "F3",
+      "caption_text": "Sopra: Figura 3 ; A possile di Ellipsactinia, un idrozoo che",
+      "source": "sole_figure",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "C3",
+      "figure": "F3",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 1,
+      "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "F3": 2,
+     "P3": 6,
+     "C3": 3,
+     "P2": 5,
+     "P1": 4
+    },
+    "misses": [],
+    "type_ok": {
+     "F3": true,
+     "P3": true,
+     "C3": true,
+     "P2": true,
+     "P1": true
+    },
+    "n_det_blocks": 7,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 1,
+    "n_pairs_by_number": 1,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "C3",
+      "figure": "F3",
+      "caption_text": "Sopra: Figura 3 ; A possile di Ellipsactinia, un idrozoo che",
+      "source": "sole_figure",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "C3",
+      "figure": "F3",
+      "caption_typed_ok": true,
+      "nearest_ok": true,
+      "n_figures": 1,
+      "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+     }
+    ]
+   }
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left.png",
+   "n_gt": 8,
+   "before": {
+    "matched": {
+     "F26": 5,
+     "F25": 2,
+     "F27": 3,
+     "F28": 4,
+     "C25": 6,
+     "C26": 7,
+     "C27": 8,
+     "C28": 9
+    },
+    "misses": [],
+    "type_ok": {
+     "F26": true,
+     "F25": true,
+     "F27": true,
+     "F28": true,
+     "C25": false,
+     "C26": false,
+     "C27": false,
+     "C28": false
+    },
+    "n_det_blocks": 10,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 4,
+    "n_pairs_by_number": 4,
+    "n_pairs_gt": 4,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "C25",
+      "figure": "F25",
+      "caption_text": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo ",
+      "source": "number",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C26",
+      "figure": "F26",
+      "caption_text": "Figura 26 CSR Fossili della Maiolica rinvenuti sul Monte Gra",
+      "source": "number",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C27",
+      "figure": "F27",
+      "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+      "source": "number",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C28",
+      "figure": "F28",
+      "caption_text": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella loc",
+      "source": "number",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "C25",
+      "figure": "F25",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 4,
+      "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C26",
+      "figure": "F26",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 4,
+      "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C27",
+      "figure": "F27",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 4,
+      "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C28",
+      "figure": "F28",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 4,
+      "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "F26": 5,
+     "F25": 2,
+     "F27": 3,
+     "F28": 4,
+     "C25": 6,
+     "C26": 7,
+     "C27": 8,
+     "C28": 9
+    },
+    "misses": [],
+    "type_ok": {
+     "F26": true,
+     "F25": true,
+     "F27": true,
+     "F28": true,
+     "C25": false,
+     "C26": false,
+     "C27": false,
+     "C28": false
+    },
+    "n_det_blocks": 10,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 4,
+    "n_pairs_by_number": 4,
+    "n_pairs_gt": 4,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "C25",
+      "figure": "F25",
+      "caption_text": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo ",
+      "source": "number",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C26",
+      "figure": "F26",
+      "caption_text": "Figura 26 CSR Fossili della Maiolica rinvenuti sul Monte Gra",
+      "source": "number",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C27",
+      "figure": "F27",
+      "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+      "source": "number",
+      "verdict": "ok"
+     },
+     {
+      "caption": "C28",
+      "figure": "F28",
+      "caption_text": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella loc",
+      "source": "number",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": [
+     {
+      "caption": "C25",
+      "figure": "F25",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 4,
+      "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C26",
+      "figure": "F26",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 4,
+      "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C27",
+      "figure": "F27",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 4,
+      "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C28",
+      "figure": "F28",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 4,
+      "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     }
+    ]
+   }
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "right.png",
+   "n_gt": 6,
+   "before": {
+    "matched": {
+     "F29": 2,
+     "F30": 4,
+     "P1": 6,
+     "C30": 5,
+     "P2": 8,
+     "C29": 3
+    },
+    "misses": [],
+    "type_ok": {
+     "F29": true,
+     "F30": true,
+     "P1": true,
+     "C30": false,
+     "P2": true,
+     "C29": false
+    },
+    "n_det_blocks": 9,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 1,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [
+     {
+      "caption": "C29",
+      "figure": "F29",
+      "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+      "source": "number",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {
+     "C30": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering"
+    },
+    "groups": [
+     {
+      "caption": "C29",
+      "figure": "F29",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 2,
+      "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C30",
+      "figure": "F30",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "F29": 2,
+     "F30": 4,
+     "P1": 6,
+     "C30": 5,
+     "P2": 8,
+     "C29": 3
+    },
+    "misses": [],
+    "type_ok": {
+     "F29": true,
+     "F30": true,
+     "P1": true,
+     "C30": false,
+     "P2": true,
+     "C29": false
+    },
+    "n_det_blocks": 9,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 2,
+    "n_pairs_by_number": 1,
+    "n_pairs_gt": 2,
+    "n_pairs_wrong": 0,
+    "n_abstained": 1,
+    "pairs_detail": [
+     {
+      "caption": "C29",
+      "figure": "F29",
+      "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+      "source": "number",
+      "verdict": "ok"
+     }
+    ],
+    "abstain_reasons": {
+     "C30": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering"
+    },
+    "groups": [
+     {
+      "caption": "C29",
+      "figure": "F29",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 2,
+      "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     },
+     {
+      "caption": "C30",
+      "figure": "F30",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 2,
+      "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     }
+    ]
+   }
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left.png",
+   "n_gt": 17,
+   "before": {
+    "matched": {
+     "D5": 16,
+     "D4": 12,
+     "D3": 7,
+     "D2": 6,
+     "T1mid": 4,
+     "T1right": 5,
+     "T2mid": 8,
+     "T3mid": 9,
+     "T3right": 11,
+     "T4mid": 14,
+     "T5mid": 18,
+     "T4right": 15,
+     "T2right": 10,
+     "C31": 1,
+     "TB": 3
+    },
+    "misses": [
+     "D1",
+     "T5right"
+    ],
+    "type_ok": {
+     "D5": true,
+     "D4": true,
+     "D3": true,
+     "D2": true,
+     "T1mid": true,
+     "T1right": true,
+     "T2mid": true,
+     "T3mid": true,
+     "T3right": true,
+     "T4mid": true,
+     "T5mid": true,
+     "T4right": true,
+     "T2right": true,
+     "C31": false,
+     "TB": true
+    },
+    "n_det_blocks": 20,
+    "tau_layout": 0.9636363636363636,
+    "tau_all": 0.9428571428571428,
+    "n_fig_graded": 4,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 2,
+    "pairs_detail": [],
+    "abstain_reasons": {
+     "det13": "caption block carries no text",
+     "C31": "no figure shares this caption's column within the gap limit"
+    },
+    "groups": [
+     {
+      "caption": "C31",
+      "figure": "D1",
+      "caption_typed_ok": false,
+      "nearest_ok": false,
+      "n_figures": 4,
+      "reason": "caption or figure block not matched on this subpage"
+     }
+    ]
+   },
+   "after": {
+    "matched": {
+     "D5": 17,
+     "D4": 13,
+     "D3": 8,
+     "D2": 7,
+     "D1": 4,
+     "T1mid": 5,
+     "T1right": 6,
+     "T2mid": 9,
+     "T3mid": 10,
+     "T3right": 12,
+     "T4mid": 15,
+     "T5mid": 19,
+     "T4right": 16,
+     "T2right": 11,
+     "C31": 1,
+     "TB": 3
+    },
+    "misses": [
+     "T5right"
+    ],
+    "type_ok": {
+     "D5": true,
+     "D4": true,
+     "D3": true,
+     "D2": true,
+     "D1": true,
+     "T1mid": true,
+     "T1right": true,
+     "T2mid": true,
+     "T3mid": true,
+     "T3right": true,
+     "T4mid": true,
+     "T5mid": true,
+     "T4right": true,
+     "T2right": true,
+     "C31": false,
+     "TB": true
+    },
+    "n_det_blocks": 21,
+    "tau_layout": 0.9636363636363636,
+    "tau_all": 0.95,
+    "n_fig_graded": 5,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 1,
+    "n_pairs_wrong": 0,
+    "n_abstained": 2,
+    "pairs_detail": [],
+    "abstain_reasons": {
+     "det14": "caption block carries no text",
+     "C31": "no figure shares this caption's column within the gap limit"
+    },
+    "groups": [
+     {
+      "caption": "C31",
+      "figure": "D1",
+      "caption_typed_ok": false,
+      "nearest_ok": true,
+      "n_figures": 5,
+      "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+     }
+    ]
+   }
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "right.png",
+   "n_gt": 13,
+   "before": {
+    "matched": {
+     "D6": 2,
+     "D7": 6,
+     "D8": 9,
+     "Dins": 12,
+     "T6mid": 4,
+     "T8mid": 10,
+     "T9a": 13,
+     "T7right": 8,
+     "T9c": 15,
+     "T6right": 5,
+     "T8right": 11,
+     "T7mid": 7,
+     "T9b": 14
+    },
+    "misses": [],
+    "type_ok": {
+     "D6": true,
+     "D7": true,
+     "D8": true,
+     "Dins": true,
+     "T6mid": true,
+     "T8mid": true,
+     "T9a": true,
+     "T7right": true,
+     "T9c": true,
+     "T6right": true,
+     "T8right": true,
+     "T7mid": true,
+     "T9b": true
+    },
+    "n_det_blocks": 16,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 4,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 0,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "det3",
+      "figure": "D6",
+      "caption_text": "Riem pPimento del Bacino di Belluno: fondale omogeneo dal Ca",
+      "source": "geometry",
+      "verdict": "ungraded"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": []
+   },
+   "after": {
+    "matched": {
+     "D6": 2,
+     "D7": 6,
+     "D8": 9,
+     "Dins": 12,
+     "T6mid": 4,
+     "T8mid": 10,
+     "T9a": 13,
+     "T7right": 8,
+     "T9c": 15,
+     "T6right": 5,
+     "T8right": 11,
+     "T7mid": 7,
+     "T9b": 14
+    },
+    "misses": [],
+    "type_ok": {
+     "D6": true,
+     "D7": true,
+     "D8": true,
+     "Dins": true,
+     "T6mid": true,
+     "T8mid": true,
+     "T9a": true,
+     "T7right": true,
+     "T9c": true,
+     "T6right": true,
+     "T8right": true,
+     "T7mid": true,
+     "T9b": true
+    },
+    "n_det_blocks": 16,
+    "tau_layout": 1.0,
+    "tau_all": 1.0,
+    "n_fig_graded": 4,
+    "n_pairs_by_number": 0,
+    "n_pairs_gt": 0,
+    "n_pairs_wrong": 0,
+    "n_abstained": 0,
+    "pairs_detail": [
+     {
+      "caption": "det3",
+      "figure": "D6",
+      "caption_text": "Riem pPimento del Bacino di Belluno: fondale omogeneo dal Ca",
+      "source": "geometry",
+      "verdict": "ungraded"
+     }
+    ],
+    "abstain_reasons": {},
+    "groups": []
+   }
+  }
+ ],
+ "admitted": [
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.247,
+   "bbox": [
+    213,
+    1001,
+    828,
+    144
+   ],
+   "covered": 0.0,
+   "text_cover": 0.074,
+   "iou_gt": 0.386,
+   "gt_id": "D1"
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left",
+   "conf": 0.229,
+   "bbox": [
+    1501,
+    205,
+    480,
+    1081
+   ],
+   "covered": 0.0,
+   "text_cover": 0.044,
+   "iou_gt": null,
+   "note": "it_geo_04 GT figures carry no bbox; confirmed by eye on the crop"
+  }
+ ],
+ "identity_check": "one forward pass at 0.02 filtered at conf_thresh == detecting at conf_thresh directly, 16/16 half-pages, 0 mismatches"
+}

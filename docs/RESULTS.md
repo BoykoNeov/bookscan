@@ -4754,7 +4754,7 @@ failures.** The other three were something else, and saying so is half the resul
 |---|---|---|
 | `it_geo_05` C2 | the caption is printed *inside* the map, so the detector emits no caption block | segmentation |
 | `it_geo_06` C30 | its figure's printed corner label cannot be read | closed 2026-08-10 as a measured recognizer ceiling |
-| `it_geo_07` C31 | its ground-truth partner D1 **is not detected at all** | segmentation |
+| `it_geo_07` C31 | its ground-truth partner D1 is not detected *at the shipped floor* — it is boxed at 0.247, see "The picture under the floor" (2026-08-26); with D1 back the pair is still not claimed, but now because C31 is mistyped and in another column | segmentation |
 | **`it_geo_04` B8** | "A lato: Figura 20" | **pairing** |
 | **`it_geo_05` C3** | "Sopra: Figura 3" | **pairing** |
 
@@ -5080,9 +5080,9 @@ ways, only one of which is a defect in the pipeline.
 | `it_geo_05` C2 | caption not detected | **is** a caption block, via Stage 05's `caption_eject` | harness blind spot |
 | `en_coins_01` FN1 | footnote not detected | **is** a block, via Stage 05's orphan-word rescue | harness blind spot |
 | `en_coins_03` P2 | paragraph not detected | **is** detected — block #10 scores 0.875 for it | matcher artifact |
-| `it_geo_04` B6L | figure fragment lost | Stage 02 cuts the cross-gutter panorama; no Stage 04 change reaches it | upstream, out of scope |
+| `it_geo_04` B6L | figure fragment lost | Stage 02 cuts the panorama, but the surviving fragment IS detected, at 0.229 — **superseded**, see "The picture under the floor" below | ~~upstream~~ under the floor |
 | `it_geo_07` T5right | paragraph not matched | detected at **exactly** its GT box — the OCR read 8 of ~25 words | **real: text lost** |
-| `it_geo_07` D1 | figure not detected | genuinely absent — a picture missing from the book | **real: figure lost** |
+| `it_geo_07` D1 | figure not detected | detected at **0.247**, 0.003 under the floor — **superseded**, see "The picture under the floor" below | ~~real loss~~ under the floor |
 
 ### Correction 1 — the harness grades Stage 04, and two shipped mechanisms live in Stage 05
 
@@ -5109,6 +5109,8 @@ on these two cases.
 
 ### Correction 2 — `en_coins_03` P2 is the greedy matcher, not the detector
 
+**Superseded 2026-08-26** — fixed in "The heading that ate the paragraph" below.
+
 `match_subpage` assigns each detected block to at most one GT block, greedily by
 anchor-token overlap. On `en_coins_03`-right, detected block #10 scores **0.875**
 for P2 — and is claimed first by **H1**, a short heading anchor whose every token
@@ -5117,6 +5119,13 @@ the document; the miss is an artifact of one-to-one assignment meeting a short
 anchor. Not fixed here — recorded, because "segmentation recall" currently counts it.
 
 ### Correction 3 — `it_geo_07` D1 is the corpus's one genuinely lost figure
+
+**Superseded 2026-08-26 — this section's central claim is wrong.** D1 is not
+undetected: at `conf_thresh` 0.02 the detector boxes it at confidence **0.247**,
+IoU 0.386 against its GT box, three thousandths under the shipped 0.25 floor. The
+observation below that the detector "read everything around the picture and not
+the picture" is false; it read the picture too, and the floor discarded it. See
+"The picture under the floor" below.
 
 The GT calls it a thin cross-section diagram in the far-left column. The detector
 emits figure boxes for D2/D3/D4/D5 at y1204/1482/1926/2377 and **nothing** in D1's
@@ -5433,3 +5442,133 @@ on this corpus once the tie-break is specified, so the simpler code stays.
   that, and closing it remains its own piece of work.
 
 Suite 496 green (was 493).
+
+## The picture under the floor — 2026-08-26
+
+The same-day census called `it_geo_07` D1 "the corpus's one genuinely lost
+figure … the detector emits figure boxes for D2/D3/D4/D5 and **nothing** in D1's
+band — IoU 0.000 against all four", and closed with "It read everything around the
+picture and not the picture." That is true of the **shipped block set** and false
+of the **detector**, and this row corrects it.
+
+### Correction A — D1 is not undetected. It is 0.003 under the floor.
+
+Re-run at `conf_thresh` 0.02, DocLayout-YOLO puts a `figure` box over D1 at
+confidence **0.247**, IoU **0.386** against its GT bbox. The shipped floor is
+0.250. The picture was never invisible; it lost by three thousandths.
+
+### Correction B — `it_geo_04` B6L is reachable by a Stage 04 change after all
+
+The same census row classified B6L as "upstream, out of scope — Stage 02 cuts the
+cross-gutter panorama; **no Stage 04 change reaches it**". Wrong on both halves:
+the detector boxes the Lagazuoi Piccolo photo at **0.229**, unclaimed by anything
+the page emitted, and the change below recovers it. Its fragment is cut by the
+gutter, but the fragment that survives is a picture the page was dropping.
+
+### The rule: three gates, each in a measured gap
+
+Nudging the floor to 0.24 would be a threshold fitted to one box with no margin,
+so the admission test is not confidence alone. `tools/subthreshold_figure_census`
+measures every `figure` detection down to 0.02 on all 14 graded subpages. Of 22
+sub-threshold boxes, 14 already lie under an accepted block. The 8 that do not
+separate cleanly:
+
+| conf | what it is (verified on the pixels) | covered | text-covered | verdict |
+|---|---|---|---|---|
+| 0.247 | `it_geo_07` D1, the cross-section diagram | 0.000 | 0.074 | **picture** |
+| 0.230 | D1's two printed scale bars | 0.000 | **1.000** | text |
+| 0.229 | `it_geo_04` B6L, the Lagazuoi Piccolo photo | 0.000 | 0.044 | **picture** |
+| 0.047 | the table the book is lying on | 0.000 | 0.000 | junk |
+| 0.035 | a whole column of `it_geo_04` (photo + text) | 0.110 | 0.150 | blob |
+| 0.023 | `de_01`'s decorative page-number glyph | 0.000 | 1.000 | text |
+| 0.022 | a running-header text strip | 0.000 | 1.000 | text |
+| 0.022 | a near-duplicate of the B6L box | 0.000 | 0.044 | dup |
+
+`pipeline/stage04_layout.rescue_unclaimed_figures` (Stage 04 v0.5.0, config
+`fig_rescue`, **off by default**) admits a sub-threshold figure box only if:
+
+* **nothing already claims it** — coverage by the blocks the page actually emitted
+  at most 0.20. Both admitted boxes score 0.000; the nearest rejected one, 0.640.
+* **confidence above the junk cluster** — floor 0.10, sitting 2.1x above the
+  highest junk box (0.047) and 2.3x below the lowest real one (0.229). Deliberately
+  not 0.24, which would be fitted to D1 with no margin at all.
+* **not something the model also boxed as text** — the three printed things score
+  1.000 text coverage, the two photographs 0.074 and 0.044. A 13x gap.
+
+Admitted boxes are fed back through `dets_to_blocks`, so they go through NMS,
+figure-splitting and XY-cut like any other detection; nothing is appended after
+ordering.
+
+### The third gate is load-bearing, and the first build of it was wrong
+
+Without the text gate the scale-bar box is admitted, the figure-splitter carves it
+into two 15px strips, one lands nearer to caption C31 than D1 does, and an honest
+unpaired caption becomes a **wrong** caption↔figure pair — measured, `wrong 0 → 1`.
+
+Then the gate itself failed the same way for a subtler reason. The census measured
+text coverage over every non-figure box down to 0.02; the code built its text set
+from the pass floored at the **rescue** confidence, 0.10. A printed scale bar is
+faint — the detector's own text box over it scores under 0.10 — so at that floor
+its coverage read 0.000 instead of the measured 1.000 and it was admitted anyway,
+`wrong 0 → 1` a second time. **A gate must be applied to the population it was
+measured on.** The pass now runs at 0.02 (`fig_rescue_text_conf`), rescue
+candidates are filtered at 0.10, the text set at 0.02, and a unit test pins it by
+raising the text floor and asserting the bug comes back.
+
+Verified separately on all 16 half-pages: one forward pass at 0.02, filtered at
+0.25, is byte-identical to detecting at 0.25 — the accepted path is untouched and
+only the discarded tail is new.
+
+### Measured: 14 graded subpages, rescue off vs on
+
+| subpage | seg recall | type acc | order incl. figures | pairs |
+|---|---|---|---|---|
+| `it_geo_07`-left | 15/17 -> **16/17** | 14/15 -> **15/16** | +0.943 -> **+0.950** | 0/1 wrong 0 -> 0/1 wrong 0 |
+| `it_geo_04`-left | 4/5 -> **5/5** | 4/4 -> **5/5** | n/a (no GT fig bboxes) | 1/1 wrong 0 -> **0/1** wrong 0 |
+| the other 12 | unchanged | unchanged | unchanged | unchanged |
+
+Corpus: segmentation **107/112 -> 109/112**, type **88/107 -> 90/109**, figures
+graded in the order metric **24 -> 25**, caption↔figure **16/19 wrong 0 -> 15/19
+wrong 0**, abstentions **7 -> 8**. Both recovered blocks are typed `figure`
+correctly. Nothing else on any subpage moved.
+
+### The one trade, stated as a trade
+
+`it_geo_04`-left loses a correct pair — and it is not a regression to fix. B8's
+pair was produced by the `sole_figure` arm, which fires when a subpage has exactly
+one detected figure and reads no geometry at all. The page has two figures; it was
+under-segmented, and the pair was earned by the missing picture. With B6L back, the
+geometric arm has to decide, and it abstains ("no figure shares this caption's
+column within the gap limit"). The eval's own grouping check still says *"nearest
+figure is the partner"* — the geometry is right, the shipped rule declines to claim
+it. That is abstain-over-guess working as designed, and loosening the proximity
+rule to recover it is the move measurement already refused (2026-08-26 pairing row,
+overlap 0.04/0.00). **Do not re-attempt.**
+
+The mirror-image effect on `it_geo_07`-left is the gain: with D1 matched, C31's
+nearest figure becomes its true partner (`nearest_ok` false -> **true**). The pair
+is still not claimed, for the pre-existing reason that C31 is mistyped `paragraph`
+and sits in another column.
+
+### Limits, stated
+
+* **One of the two recoveries is confirmed by measurement, the other by eye.**
+  `it_geo_07` D1 has a GT bbox, so its IoU 0.386 is independent evidence. `it_geo_04`
+  predates figure bboxes in GT, so B6L's recovery is confirmed by looking at the
+  crop — a photograph of Lagazuoi Piccolo — and by the block being typed `figure`
+  in the right place. It is not a second measurement.
+* **Off by default.** Two pictures on 14 subpages is not a mandate to lower a
+  confidence floor everywhere; the gates are measured on this corpus only, and
+  `fig_rescue` ships inert until a wider census says otherwise.
+* **The confidence gate is a corpus artifact.** 0.10 sits in a gap that is real on
+  these 8 fixtures. A book whose junk detections are more confident, or whose faint
+  pictures are less, would need it re-measured — not re-guessed.
+* **Two boxes is a small sample for a three-gate rule.** Each gate is justified by
+  a measured margin, but the population it separates is 2 pictures against 6
+  non-pictures.
+* **This does not fix the harness gap.** The eval still stops after Stage 04 and
+  cannot see `caption_eject`, orphan-word rescue, or `block_reocr`; the corpus
+  numbers above are Stage-04 numbers.
+
+Suite 503 green (was 496) — the seven added tests are `covered_fraction`, the
+five rescue gates, and the text-set-population regression test.

@@ -54,7 +54,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import BBox, Block, BlockType, StageMeta
 
 STAGE = "stage04_layout"
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -85,6 +85,12 @@ DEFAULTS = {
     "fig_seam_min_frac": 0.012,  # min seam-run thickness (frac of the cut dimension)
     "fig_min_subbox_frac": 0.06, # each sub-box must be >= this frac of the original area
     "fig_eject_text_cover": 0.60,  # drop a figure sub-box this-covered by a text det
+    # Sub-threshold figure rescue (see rescue_unclaimed_figures). OFF by default.
+    "fig_rescue": False,            # admit sub-threshold figure dets in unclaimed regions
+    "fig_rescue_conf": 0.10,        # second confidence floor for such a rescue
+    "fig_rescue_max_cover": 0.20,   # reject if this much of it is already claimed
+    "fig_rescue_max_text_cover": 0.50,  # reject if the model also boxed it as TEXT
+    "fig_rescue_text_conf": 0.02,   # floor of the TEXT set that gate is measured on
     # Classical fallback:
     "cls_col_gap_frac": 0.06,    # min vertical valley width (frac of W) to call a column boundary
     "cls_row_gap_frac": 0.012,   # min horizontal gap (frac of H) between blocks in a column
@@ -643,6 +649,113 @@ def _map_abandon(bbox: BBox, page_h: int) -> BlockType:
     return BlockType.OTHER
 
 
+# Coverage mask resolution. A "does anything already claim this region" question
+# does not need sub-pixel edges, and 1/8 keeps the mask small on a 2000x3000 page.
+COVER_MASK_DIV = 8
+
+
+def covered_fraction(box: BBox, claimed: list[BBox], page_w: int, page_h: int) -> float:
+    """Fraction of ``box``'s own area covered by the UNION of ``claimed`` boxes."""
+    mw, mh = max(1, page_w // COVER_MASK_DIV), max(1, page_h // COVER_MASK_DIV)
+    mask = np.zeros((mh, mw), dtype=bool)
+    for b in claimed:
+        x0, y0 = max(0, b.x // COVER_MASK_DIV), max(0, b.y // COVER_MASK_DIV)
+        x1, y1 = min(mw, b.x2 // COVER_MASK_DIV), min(mh, b.y2 // COVER_MASK_DIV)
+        if x1 > x0 and y1 > y0:
+            mask[y0:y1, x0:x1] = True
+    x0, y0 = max(0, box.x // COVER_MASK_DIV), max(0, box.y // COVER_MASK_DIV)
+    x1, y1 = min(mw, box.x2 // COVER_MASK_DIV), min(mh, box.y2 // COVER_MASK_DIV)
+    if x1 <= x0 or y1 <= y0:
+        return 0.0
+    sub = mask[y0:y1, x0:x1]
+    return float(sub.sum()) / float(sub.size)
+
+
+def rescue_unclaimed_figures(cands: list[RawDet], blocks: list[Block],
+                             text_boxes: list[BBox], page_w: int, page_h: int,
+                             p: dict) -> list[RawDet]:
+    """Admit sub-threshold ``figure`` detections that land where Stage 04 accepted
+    NOTHING — the pictures the confidence floor drops on the floor.
+
+    The motivating case is ``it_geo_07``-left's D1, a thin cross-section diagram
+    RESULTS recorded as "genuinely absent … IoU 0.000 against all four". It is not
+    absent: the detector boxes it at confidence **0.247**, three thousandths under
+    the shipped 0.25 floor, at IoU 0.386 against its GT box. Nudging the floor to
+    catch it would be a threshold fitted with no margin, so the admission test is
+    not confidence alone.
+
+    Measured instead (``tools/subthreshold_figure_census``, 14 graded subpages, all
+    ``figure`` detections down to conf 0.02). Of 22 sub-threshold figure boxes, 14
+    are already covered by an accepted block — they are duplicates of figures the
+    page detected at full confidence, or blobs lying over accepted text. The 8 that
+    are NOT covered split cleanly by confidence:
+
+    ======  ============================================  ==== ====== =========
+    conf    what it is (verified on the pixels)           cov  txtcov verdict
+    ======  ============================================  ==== ====== =========
+    0.247   ``it_geo_07`` D1, the cross-section diagram    0.00  0.07  PICTURE
+    0.229   ``it_geo_04`` B6L, the Lagazuoi Piccolo photo  0.00  0.04  PICTURE
+    0.230   D1's two printed scale bars                    0.00  1.00  text
+    0.023   ``de_01``'s decorative page-number glyph       0.00  1.00  text
+    0.022   a running-header text strip                    0.00  1.00  text
+    0.047   the table the book is lying on                 0.00  0.00  junk
+    0.035   a whole column of ``it_geo_04`` (photo+text)   0.11  0.15  blob
+    0.022   a near-duplicate of the B6L box                0.00  0.04  dup
+    ======  ============================================  ==== ====== =========
+
+    So the rule is THREE gates, each placed in a measured gap rather than under the
+    box it wants:
+
+    * **claimed by nothing** — coverage by the blocks the page already emitted, at
+      most ``fig_rescue_max_cover``. Both admitted boxes score 0.000; the nearest
+      rejected one is 0.640.
+    * **confidence above the junk cluster** — ``fig_rescue_conf`` 0.10 sits 2.1x
+      above the highest junk box (0.047) and 2.3x below the lowest real one
+      (0.229). It is deliberately NOT placed just under 0.247: a floor at 0.24
+      would be fitted to D1 with no margin at all.
+    * **not text the model already boxed as text** — the same forward pass also
+      emits TEXT-labelled boxes, and the three things here that are printed matter
+      rather than pictures are covered by them 1.00, while the two photographs are
+      0.07 and 0.04. A 13x gap, and a mechanism rather than a number: it is the
+      same idea as ``fig_eject_text_cover`` one stage earlier.
+
+    **Which pass that text set comes from is load-bearing**, and getting it wrong
+    is not hypothetical — the first build of this gate did. The census measured
+    text coverage over EVERY non-figure box down to 0.02 (``fig_rescue_text_conf``),
+    but the code first built its text set from the pass floored at the rescue
+    confidence, 0.10. A printed scale bar is small and faint: the detector's own
+    TEXT box over it scores under 0.10, so at that floor the scale bar's coverage
+    reads 0.000 instead of the measured 1.000 and it is admitted. The gate must be
+    applied to the population it was measured on, so the pass runs at 0.02 and the
+    text set is filtered at 0.02 while rescue candidates are still filtered at 0.10.
+
+    That third gate is not decoration. Without it the scale-bar box is admitted,
+    the figure-splitter carves it into two thin strips, one of them lands nearer to
+    ``it_geo_07``'s C31 caption than D1 does, and an honest unpaired caption becomes
+    a WRONG caption<->figure pair — the one thing this repo refuses. Measured, not
+    argued: see the RESULTS row.
+
+    The admitted boxes are fed back through ``dets_to_blocks`` with the accepted
+    ones, so they take part in NMS, figure-splitting and XY-cut like any other
+    detection; nothing is appended after ordering.
+    """
+    floor = float(p.get("fig_rescue_conf", 0.10))
+    max_cover = float(p.get("fig_rescue_max_cover", 0.20))
+    max_text = float(p.get("fig_rescue_max_text_cover", 0.50))
+    claimed = [b.bbox for b in blocks]
+    kept: list[RawDet] = []
+    for d in sorted(cands, key=lambda d: d.conf, reverse=True):
+        if d.conf < floor:
+            continue
+        if covered_fraction(d.bbox, claimed + [k.bbox for k in kept],
+                            page_w, page_h) > max_cover:
+            continue
+        if covered_fraction(d.bbox, text_boxes, page_w, page_h) > max_text:
+            continue
+        kept.append(d)
+    return kept
+
+
 def dets_to_blocks(dets: list[RawDet], page_w: int, page_h: int, p: dict,
                    bgr: np.ndarray | None = None) -> list[Block]:
     """NMS the raw detections, type them, order by XY-Cut, emit page_model.Block
@@ -842,14 +955,40 @@ def layout_page(bgr: np.ndarray, cfg: dict, p: dict, warnings: list[str],
     h, w = bgr.shape[:2]
     arm = "doclayout"
     note = ""
+    rescue_cands: list[RawDet] = []
+    rescue_text: list[BBox] = []
     if det is not None:
         try:
-            raw = det.detect(bgr, p)
+            conf = float(p["conf_thresh"])
+            if p.get("fig_rescue", False):
+                # ONE forward pass at the rescue floor, then split by confidence.
+                # Verified on four subpages that the >= conf_thresh subset is
+                # identical to detecting at conf_thresh directly (NMS cannot let a
+                # weaker box suppress a stronger one), so the accepted path is
+                # unchanged and only the discarded tail is new.
+                p_low = dict(p)
+                floor = float(p.get("fig_rescue_conf", 0.10))
+                text_floor = float(p.get("fig_rescue_text_conf", 0.02))
+                p_low["conf_thresh"] = min(floor, text_floor, conf)
+                allraw = det.detect(bgr, p_low)
+                raw = [d for d in allraw if d.conf >= conf]
+                rescue_cands = [d for d in allraw
+                                if d.conf < conf and d.label == "figure"]
+                # The text set is the FULL low pass, not the rescue floor: the
+                # third gate's numbers were measured at 0.02, and a scale bar's
+                # own text box sits below 0.10. Measuring the gate on one
+                # population and applying it to another admits the scale bar.
+                rescue_text = [d.bbox for d in allraw
+                               if d.label != "figure" and d.conf >= text_floor]
+            else:
+                raw = det.detect(bgr, p)
         except YOLO_FALLBACK_ERRORS as e:
             warnings.append(f"DocLayout-YOLO failed on a page "
                             f"({type(e).__name__}: {e}); classical for this page.")
             raw, note = detect_classical(bgr, p)
             arm = "classical"
+            rescue_cands = []
+            rescue_text = []
     else:
         raw, note = detect_classical(bgr, p)
         arm = "classical"
@@ -857,6 +996,18 @@ def layout_page(bgr: np.ndarray, cfg: dict, p: dict, warnings: list[str],
     # Figure-splitting only for the neural arm (only it types figures); classical
     # gets bgr=None so a merged-figure split is never attempted on its untyped boxes.
     blocks = dets_to_blocks(raw, w, h, p, bgr=(bgr if arm == "doclayout" else None))
+
+    # Sub-threshold figure rescue: judged against the blocks the page ACTUALLY
+    # emitted, then re-ordered with them so the added boxes go through NMS,
+    # figure-splitting and XY-cut like any other detection.
+    if rescue_cands and blocks:
+        kept = rescue_unclaimed_figures(rescue_cands, blocks, rescue_text,
+                                        w, h, p)
+        if kept:
+            blocks = dets_to_blocks(raw + kept, w, h, p, bgr=bgr)
+            note = (note + "; " if note else "") + (
+                f"rescued {len(kept)} sub-threshold figure box(es) from unclaimed "
+                f"regions (conf " + ", ".join(f"{k.conf:.3f}" for k in kept) + ")")
 
     if not blocks:
         note = (note + "; " if note else "") + "no blocks detected — emitting a " \

@@ -16,8 +16,11 @@ import numpy as np
 from pipeline.page_model import BBox, BlockType
 from pipeline.stage04_layout import (
     DEFAULTS, RawDet, _column_split, _contain_frac, _map_abandon, _reading_rows,
-    dets_to_blocks, nms_and_dedup, split_merged_figures, xy_cut_order,
+    covered_fraction, dets_to_blocks, layout_page, nms_and_dedup,
+    rescue_unclaimed_figures,
+    split_merged_figures, xy_cut_order,
 )
+from pipeline.page_model import Block
 
 
 def _b(x: int, y: int, w: int, h: int) -> BBox:
@@ -389,6 +392,114 @@ def test_dets_to_blocks_splits_when_image_supplied():
     without = dets_to_blocks(dets, 400, 600, DEFAULTS, bgr=None)
     assert sum(b.type == BlockType.FIGURE for b in with_img) == 2
     assert sum(b.type == BlockType.FIGURE for b in without) == 1
+
+
+# --- sub-threshold figure rescue ------------------------------------------
+
+def _blk(x, y, w, h, t=BlockType.PARAGRAPH):
+    return Block(id=0, type=t, bbox=_b(x, y, w, h), reading_order=0)
+
+
+def test_covered_fraction_counts_the_union_not_the_best_single_box():
+    box = _b(0, 0, 800, 100)
+    halves = [_b(0, 0, 400, 100), _b(400, 0, 400, 100)]
+    assert covered_fraction(box, halves, 800, 800) == 1.0
+    assert covered_fraction(box, [halves[0]], 800, 800) == 0.5
+    assert covered_fraction(box, [_b(0, 400, 800, 100)], 800, 800) == 0.0
+
+
+def test_rescue_admits_the_unclaimed_figure_and_refuses_the_covered_duplicate():
+    """it_geo_07-left in miniature: D1's box lands where nothing was accepted, and
+    a same-confidence box lying on an accepted figure is a duplicate, not a find."""
+    blocks = [_blk(1000, 0, 900, 3000), _blk(100, 1500, 800, 400, BlockType.FIGURE)]
+    cands = [
+        RawDet(label="figure", bbox=_b(100, 800, 800, 150), conf=0.247),   # unclaimed
+        RawDet(label="figure", bbox=_b(110, 1510, 780, 380), conf=0.240),  # duplicate
+    ]
+    kept = rescue_unclaimed_figures(cands, blocks, [], 2000, 3000, DEFAULTS)
+    assert [round(k.conf, 3) for k in kept] == [0.247]
+
+
+def test_rescue_refuses_the_junk_cluster_below_its_confidence_floor():
+    """Every uncovered box the census judged junk sits at conf <= 0.047 — the
+    table the book lies on, a decorative page-number glyph, a header strip."""
+    blocks = [_blk(1000, 0, 900, 3000)]
+    cands = [RawDet(label="figure", bbox=_b(100, 800, 800, 150), conf=0.047)]
+    assert rescue_unclaimed_figures(cands, blocks, [], 2000, 3000, DEFAULTS) == []
+
+
+def test_rescue_does_not_admit_two_boxes_over_the_same_unclaimed_region():
+    """A weaker near-duplicate of an admitted box is claimed by it, not by the
+    accepted blocks — the it_geo_04 case, where the same photo is boxed twice."""
+    blocks = [_blk(1000, 0, 900, 3000)]
+    cands = [
+        RawDet(label="figure", bbox=_b(100, 800, 800, 400), conf=0.229),
+        RawDet(label="figure", bbox=_b(102, 802, 796, 396), conf=0.220),
+    ]
+    kept = rescue_unclaimed_figures(cands, blocks, [], 2000, 3000, DEFAULTS)
+    assert [round(k.conf, 3) for k in kept] == [0.229]
+
+
+def test_rescue_refuses_a_box_the_model_also_boxed_as_text():
+    """it_geo_07's scale bars: an unclaimed, confident figure box that is 100%
+    covered by the same pass's TEXT detections. Admitting it put a non-picture
+    nearer to the C31 caption than the real diagram and produced a WRONG pair."""
+    blocks = [_blk(1000, 0, 900, 3000)]
+    cands = [RawDet(label="figure", bbox=_b(211, 822, 261, 127), conf=0.230)]
+    text = [_b(211, 822, 261, 127)]
+    assert rescue_unclaimed_figures(cands, blocks, text, 2000, 3000, DEFAULTS) == []
+    # a photograph carries a caption-sized text box at most -> still admitted
+    small = [_b(214, 996, 173, 28)]
+    cands = [RawDet(label="figure", bbox=_b(213, 1001, 828, 144), conf=0.247)]
+    kept = rescue_unclaimed_figures(cands, blocks, small, 2000, 3000, DEFAULTS)
+    assert [round(k.conf, 3) for k in kept] == [0.247]
+
+
+def test_rescue_is_off_by_default():
+    assert DEFAULTS["fig_rescue"] is False
+
+
+class _StubDetector:
+    """Returns a fixed detection list, ignoring the image, so layout_page's
+    rescue WIRING can be tested without a model."""
+
+    def __init__(self, dets):
+        self._dets = dets
+
+    def detect(self, bgr, p):
+        return [d for d in self._dets if d.conf >= float(p["conf_thresh"])]
+
+    def close(self):
+        pass
+
+
+def test_rescue_text_set_reaches_below_the_rescue_confidence_floor():
+    """The gate must be APPLIED to the population it was MEASURED on.
+
+    The scale bar that produced it_geo_07's wrong pair is a confident figure box
+    (0.230) whose own TEXT box is faint — under the 0.10 rescue floor. The first
+    build of this took its text set from the pass floored at the rescue
+    confidence, so that text box was invisible, the bar's text coverage read
+    0.000 instead of the measured 1.000, and it was admitted. The text set is
+    filtered at ``fig_rescue_text_conf`` (0.02), the census floor, NOT at
+    ``fig_rescue_conf``."""
+    accepted = RawDet(label="paragraph", bbox=_b(1000, 0, 900, 3000), conf=0.90)
+    bar = RawDet(label="figure", bbox=_b(211, 822, 261, 127), conf=0.230)
+    faint_text = RawDet(label="plain text", bbox=_b(211, 822, 261, 127), conf=0.04)
+    img = np.full((3000, 2000, 3), 255, dtype=np.uint8)
+    p = dict(DEFAULTS)
+    p["fig_rescue"] = True
+    det = _StubDetector([accepted, bar, faint_text])
+
+    got = layout_page(img, {}, p, [], det)
+    assert not [b for b in got.blocks if b.type is BlockType.FIGURE],         "the scale bar was admitted: its faint text box was filtered out"
+
+    # and with the text floor raised above that box, the bug reappears -> the
+    # assertion above is testing the floor, not something incidental.
+    p_blind = dict(p)
+    p_blind["fig_rescue_text_conf"] = 0.10
+    got = layout_page(img, {}, p_blind, [], _StubDetector([accepted, bar, faint_text]))
+    assert [b for b in got.blocks if b.type is BlockType.FIGURE]
 
 
 def _run() -> int:

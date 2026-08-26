@@ -1,0 +1,874 @@
+{
+ "generated": "2026-08-26",
+ "low_conf": 0.02,
+ "shipped_conf_thresh": 0.25,
+ "rows": [
+  {
+   "image": "de_01",
+   "subpage": "left",
+   "conf": 0.9096,
+   "bbox": [
+    617,
+    2057,
+    1402,
+    796
+   ],
+   "shipped": true,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.1839,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "left",
+   "conf": 0.4702,
+   "bbox": [
+    0,
+    17,
+    2023,
+    1109
+   ],
+   "shipped": true,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.3697,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "left",
+   "conf": 0.1869,
+   "bbox": [
+    345,
+    1136,
+    227,
+    1627
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.0609,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "left",
+   "conf": 0.029,
+   "bbox": [
+    348,
+    2833,
+    138,
+    99
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.0023,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "right",
+   "conf": 0.9092,
+   "bbox": [
+    47,
+    2030,
+    1492,
+    834
+   ],
+   "shipped": true,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.2016,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "right",
+   "conf": 0.3542,
+   "bbox": [
+    28,
+    148,
+    1801,
+    1029
+   ],
+   "shipped": true,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.3003,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "right",
+   "conf": 0.1639,
+   "bbox": [
+    23,
+    91,
+    1809,
+    1087
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 0.9402,
+   "area_frac": 0.3186,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "right",
+   "conf": 0.1014,
+   "bbox": [
+    70,
+    405,
+    1764,
+    769
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 0.9955,
+   "area_frac": 0.2198,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "right",
+   "conf": 0.0467,
+   "bbox": [
+    1871,
+    425,
+    186,
+    2518
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 0.0,
+   "area_frac": 0.0759,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "de_01",
+   "subpage": "right",
+   "conf": 0.0231,
+   "bbox": [
+    1642,
+    2830,
+    134,
+    108
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 0.0,
+   "area_frac": 0.0023,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "left",
+   "conf": 0.9648,
+   "bbox": [
+    234,
+    277,
+    1114,
+    647
+   ],
+   "shipped": true,
+   "iou_gt": 0.9901,
+   "gt_id": "F96",
+   "covered": 1.0,
+   "area_frac": 0.1201,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "left",
+   "conf": 0.9521,
+   "bbox": [
+    157,
+    1742,
+    1150,
+    658
+   ],
+   "shipped": true,
+   "iou_gt": 0.9852,
+   "gt_id": "F97",
+   "covered": 1.0,
+   "area_frac": 0.1261,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "right",
+   "conf": 0.9546,
+   "bbox": [
+    144,
+    485,
+    1210,
+    649
+   ],
+   "shipped": true,
+   "iou_gt": 0.9782,
+   "gt_id": "F98",
+   "covered": 1.0,
+   "area_frac": 0.1258,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "right",
+   "conf": 0.9124,
+   "bbox": [
+    131,
+    2046,
+    1249,
+    675
+   ],
+   "shipped": true,
+   "iou_gt": 0.9919,
+   "gt_id": "F99",
+   "covered": 1.0,
+   "area_frac": 0.1351,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "en_coins_02",
+   "subpage": "right",
+   "conf": 0.8797,
+   "bbox": [
+    12,
+    474,
+    1262,
+    1348
+   ],
+   "shipped": true,
+   "iou_gt": 0.4835,
+   "gt_id": "F102",
+   "covered": 0.9405,
+   "area_frac": 0.2772,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "en_coins_03",
+   "subpage": "right",
+   "conf": 0.933,
+   "bbox": [
+    62,
+    580,
+    1196,
+    1352
+   ],
+   "shipped": true,
+   "iou_gt": 0.48,
+   "gt_id": "F104",
+   "covered": 0.9408,
+   "area_frac": 0.2674,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left",
+   "conf": 0.9324,
+   "bbox": [
+    236,
+    265,
+    1219,
+    1036
+   ],
+   "shipped": true,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.2125,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left",
+   "conf": 0.2292,
+   "bbox": [
+    1501,
+    205,
+    480,
+    1081
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 0.0,
+   "area_frac": 0.0873,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left",
+   "conf": 0.0352,
+   "bbox": [
+    1466,
+    145,
+    512,
+    2671
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 0.1141,
+   "area_frac": 0.2301,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left",
+   "conf": 0.0222,
+   "bbox": [
+    1501,
+    208,
+    479,
+    1077
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 0.0,
+   "area_frac": 0.0868,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left",
+   "conf": 0.0221,
+   "bbox": [
+    1197,
+    0,
+    703,
+    102
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 0.0,
+   "area_frac": 0.0121,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "right",
+   "conf": 0.7518,
+   "bbox": [
+    0,
+    268,
+    2071,
+    1025
+   ],
+   "shipped": true,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.3371,
+   "n_gt_fig_bbox": 0
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "left",
+   "conf": 0.6629,
+   "bbox": [
+    231,
+    331,
+    1806,
+    2658
+   ],
+   "shipped": true,
+   "iou_gt": 1.0,
+   "gt_id": "F2",
+   "covered": 1.0,
+   "area_frac": 0.7798,
+   "n_gt_fig_bbox": 1
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "left",
+   "conf": 0.0947,
+   "bbox": [
+    230,
+    241,
+    1804,
+    2543
+   ],
+   "shipped": false,
+   "iou_gt": 0.8908,
+   "gt_id": "F2",
+   "covered": 0.9654,
+   "area_frac": 0.7452,
+   "n_gt_fig_bbox": 1
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "right",
+   "conf": 0.9421,
+   "bbox": [
+    609,
+    285,
+    1140,
+    1065
+   ],
+   "shipped": true,
+   "iou_gt": 1.0,
+   "gt_id": "F3",
+   "covered": 1.0,
+   "area_frac": 0.1996,
+   "n_gt_fig_bbox": 1
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "right",
+   "conf": 0.103,
+   "bbox": [
+    586,
+    286,
+    1167,
+    2532
+   ],
+   "shipped": false,
+   "iou_gt": 0.4103,
+   "gt_id": "F3",
+   "covered": 0.9481,
+   "area_frac": 0.4857,
+   "n_gt_fig_bbox": 1
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.7909,
+   "bbox": [
+    1611,
+    253,
+    498,
+    622
+   ],
+   "shipped": true,
+   "iou_gt": 1.0,
+   "gt_id": "F26",
+   "covered": 1.0,
+   "area_frac": 0.0485,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.3763,
+   "bbox": [
+    212,
+    272,
+    1345,
+    777
+   ],
+   "shipped": true,
+   "iou_gt": 0.9741,
+   "gt_id": "F25",
+   "covered": 1.0,
+   "area_frac": 0.1636,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.3267,
+   "bbox": [
+    203,
+    262,
+    1358,
+    2550
+   ],
+   "shipped": true,
+   "iou_gt": 0.3569,
+   "gt_id": "F28",
+   "covered": 0.9557,
+   "area_frac": 0.5422,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.3048,
+   "bbox": [
+    200,
+    1971,
+    1348,
+    836
+   ],
+   "shipped": true,
+   "iou_gt": 0.908,
+   "gt_id": "F28",
+   "covered": 1.0,
+   "area_frac": 0.1764,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.2786,
+   "bbox": [
+    203,
+    1091,
+    1354,
+    833
+   ],
+   "shipped": true,
+   "iou_gt": 0.9274,
+   "gt_id": "F27",
+   "covered": 1.0,
+   "area_frac": 0.1766,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.106,
+   "bbox": [
+    201,
+    287,
+    1356,
+    2504
+   ],
+   "shipped": false,
+   "iou_gt": 0.3512,
+   "gt_id": "F28",
+   "covered": 0.963,
+   "area_frac": 0.5316,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.05,
+   "bbox": [
+    201,
+    1088,
+    1358,
+    835
+   ],
+   "shipped": false,
+   "iou_gt": 0.9319,
+   "gt_id": "F27",
+   "covered": 1.0,
+   "area_frac": 0.1775,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.0386,
+   "bbox": [
+    204,
+    281,
+    1354,
+    2009
+   ],
+   "shipped": false,
+   "iou_gt": 0.4226,
+   "gt_id": "F27",
+   "covered": 0.9539,
+   "area_frac": 0.4259,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left",
+   "conf": 0.0328,
+   "bbox": [
+    199,
+    441,
+    1353,
+    2368
+   ],
+   "shipped": false,
+   "iou_gt": 0.3804,
+   "gt_id": "F28",
+   "covered": 0.9557,
+   "area_frac": 0.5016,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "right",
+   "conf": 0.4411,
+   "bbox": [
+    154,
+    279,
+    1554,
+    1925
+   ],
+   "shipped": true,
+   "iou_gt": 0.5195,
+   "gt_id": "F29",
+   "covered": 0.9398,
+   "area_frac": 0.5111,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "right",
+   "conf": 0.3181,
+   "bbox": [
+    637,
+    1341,
+    1070,
+    837
+   ],
+   "shipped": true,
+   "iou_gt": 0.9041,
+   "gt_id": "F30",
+   "covered": 0.9925,
+   "area_frac": 0.153,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "right",
+   "conf": 0.2158,
+   "bbox": [
+    164,
+    280,
+    1542,
+    1021
+   ],
+   "shipped": false,
+   "iou_gt": 0.9701,
+   "gt_id": "F29",
+   "covered": 1.0,
+   "area_frac": 0.269,
+   "n_gt_fig_bbox": 2
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.9013,
+   "bbox": [
+    210,
+    1926,
+    831,
+    348
+   ],
+   "shipped": true,
+   "iou_gt": 0.8406,
+   "gt_id": "D4",
+   "covered": 1.0,
+   "area_frac": 0.0463,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.8469,
+   "bbox": [
+    211,
+    2377,
+    822,
+    368
+   ],
+   "shipped": true,
+   "iou_gt": 0.9279,
+   "gt_id": "D5",
+   "covered": 1.0,
+   "area_frac": 0.0485,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.5936,
+   "bbox": [
+    211,
+    1482,
+    832,
+    380
+   ],
+   "shipped": true,
+   "iou_gt": 0.7199,
+   "gt_id": "D3",
+   "covered": 1.0,
+   "area_frac": 0.0507,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.3786,
+   "bbox": [
+    211,
+    1204,
+    829,
+    222
+   ],
+   "shipped": true,
+   "iou_gt": 0.626,
+   "gt_id": "D2",
+   "covered": 1.0,
+   "area_frac": 0.0295,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.2468,
+   "bbox": [
+    213,
+    1001,
+    828,
+    144
+   ],
+   "shipped": false,
+   "iou_gt": 0.386,
+   "gt_id": "D1",
+   "covered": 0.0,
+   "area_frac": 0.0191,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.23,
+   "bbox": [
+    211,
+    822,
+    261,
+    127
+   ],
+   "shipped": false,
+   "iou_gt": 0.0748,
+   "gt_id": "D1",
+   "covered": 0.0,
+   "area_frac": 0.0053,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.2096,
+   "bbox": [
+    207,
+    314,
+    839,
+    2525
+   ],
+   "shipped": false,
+   "iou_gt": 0.1688,
+   "gt_id": "D3",
+   "covered": 0.671,
+   "area_frac": 0.3395,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.1458,
+   "bbox": [
+    1073,
+    261,
+    951,
+    678
+   ],
+   "shipped": false,
+   "iou_gt": 0.0,
+   "gt_id": null,
+   "covered": 1.0,
+   "area_frac": 0.1033,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left",
+   "conf": 0.1045,
+   "bbox": [
+    201,
+    248,
+    1854,
+    2615
+   ],
+   "shipped": false,
+   "iou_gt": 0.0744,
+   "gt_id": "D3",
+   "covered": 0.6397,
+   "area_frac": 0.777,
+   "n_gt_fig_bbox": 5
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "right",
+   "conf": 0.8907,
+   "bbox": [
+    91,
+    842,
+    876,
+    624
+   ],
+   "shipped": true,
+   "iou_gt": 1.0,
+   "gt_id": "D7",
+   "covered": 1.0,
+   "area_frac": 0.0911,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "right",
+   "conf": 0.8864,
+   "bbox": [
+    125,
+    2401,
+    441,
+    401
+   ],
+   "shipped": true,
+   "iou_gt": 1.0,
+   "gt_id": "Dins",
+   "covered": 1.0,
+   "area_frac": 0.0295,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "right",
+   "conf": 0.8817,
+   "bbox": [
+    114,
+    1537,
+    852,
+    742
+   ],
+   "shipped": true,
+   "iou_gt": 1.0,
+   "gt_id": "D8",
+   "covered": 1.0,
+   "area_frac": 0.1054,
+   "n_gt_fig_bbox": 4
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "right",
+   "conf": 0.8088,
+   "bbox": [
+    108,
+    258,
+    865,
+    467
+   ],
+   "shipped": true,
+   "iou_gt": 1.0,
+   "gt_id": "D6",
+   "covered": 1.0,
+   "area_frac": 0.0673,
+   "n_gt_fig_bbox": 4
+  }
+ ]
+}

@@ -4517,9 +4517,12 @@ inventing a number.
 | `bg_taleb_01` | left | `…_093636` | +14 | **−2.3** (fails on conf) |
 | `zoomset_en_02` | right | `…_f00` | 0 (tie) | +10.0 |
 
-The largest thing on the table is +37 words on one page of one set. Summed over
-every set, choosing each page's best frame **with the answer key in hand** buys
-about **+73 words out of ~4,400** — 1.7 % — and that is an oracle, not a
+The largest thing on the table is +37 words on one page of one set. **Add the
+column up carefully**: only two sets have a challenger ahead on both statistics
+at all, so choosing each page's best frame **with the answer key in hand** buys
+**+37 and +22 — 59 words** across ~4,400. The other two lines are not gains to
+be summed: `bg_taleb_01`'s +14 words comes with 2.3 points *less* confidence, and
+`zoomset_en_02`'s is a tie. And 59 words is what an ORACLE collects, not a
 selector.
 
 **3. No cheap rule gets near even the oracle.** Three statistics a Stage 02
@@ -4569,7 +4572,11 @@ whose gutter came from the ink cue reproduces the census exactly (that is the
 self-check working); every pinch frame reads higher here. The consequence for the
 row above: `de_01`'s "+43 words / +8.4 confidence, the largest surviving
 disagreement in the corpus" is **+10 / +0.8** once the split uses the margin the
-pipeline actually applies. The direction is unchanged and the census's verdict
+pipeline actually applies. (Both confidences are the same statistic computed the
+same way — the word-count-weighted mean over a frame's subpages, as the census's
+`_combine` does — over different pixels, which is the point. The wider cut lifts
+that frame from 73.2 to 85.5, so the narrow one was clipping text off a curved
+page, which is exactly what `pinch_margin_frac` exists to prevent.) The direction is unchanged and the census's verdict
 (no incumbent error at the stated bar) is unchanged — but the size of the one
 lead it reported is mostly an artefact of a harness cutting narrower than the
 stage. `de_01` was quarantined from this row's headline in advance for exactly
@@ -4583,7 +4590,27 @@ cheap criteria a Stage 02 selector could use ranks frames the way OCR does. One
 criterion certainly *would* reach the oracle: OCR each candidate's dewarped side
 and keep the better one. That is the metric itself, so it cannot lose — at the
 cost of a dewarp and an OCR pass per candidate per side (roughly two to three
-times Stage 03 + a probe Tesseract run per spread), to collect ~1.7 %.
+times Stage 03 + a probe Tesseract run per spread), to collect 59 words.
+
+**Where the stage boundary actually is, since the next person will ask.** The
+question was posed as one that crosses the stage contract, and it does, but by
+less than it looks — worth recording so this is not re-derived:
+
+* **Full-spread candidates need no registration at all.** Each candidate splits
+  on its own, and the halves correspond BY NAME: left is left. The homography
+  machinery Stage 01 owns is needed only for the close-up arm, which coverage
+  has now closed.
+* **Everything below Stage 02 is already per-subpage** and reads the pages
+  manifest for `name` only (Stage 03 does; Stages 04-06 chain from its output).
+  So two pages coming from two different photographs is invisible downstream.
+* **The one real contract cost is `SubPage.box`.** It is documented as ORIGINAL
+  spread coordinates and two tests in `pipeline/tests/test_stage02_split.py`
+  assert it by rebuilding each page from the anchor with that box. The moment
+  left and right come from different frames the box needs a `source_frame`
+  beside it — a `page_model` change, its own commit per CLAUDE.md.
+
+That is the whole bill. The feature is cheap to build; what it lacks is a
+criterion to drive it.
 
 **Limits.** Seven scored sets, one photographer, one dewarper, and 15 decided
 side races — small enough that 11/15 and 6.8 are the same number. The label stops

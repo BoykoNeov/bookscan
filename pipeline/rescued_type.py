@@ -42,9 +42,10 @@ so a wrong call costs a font size and never a sentence.
 HONEST LIMIT, and it is a real one. The footnote rung has ONE true positive and no
 second example. Worse, the eval cannot police it: the 15 noise blocks match no GT
 anchor, so ``tools/layout_order_eval``'s type-accuracy column is structurally BLIND
-to a wrong call on them. "111/112 -> 112/112" is evidence the rung fired once and
-correctly, NOT evidence that it is safe — that part was checked by reading all 16
-blocks by eye. The three conditions below are definitional (what a footnote IS in
+to a wrong call on them. The measured "92/112 -> 93/112" (and a full-field diff of
+all eight images at 1e-9 returning exactly that one change) is evidence the rung
+fired once and correctly, NOT evidence that it is safe — that part was checked by
+reading all 16 blocks by eye. The three conditions below are definitional (what a footnote IS in
 typography) rather than fitted, which is the whole argument for trusting them past
 n=1; the thresholds attached to them are not, and are stated with their measured
 values so a later corpus can contradict them.

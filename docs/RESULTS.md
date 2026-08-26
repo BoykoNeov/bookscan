@@ -4886,3 +4886,62 @@ layouts, the `de_01` refusal, the two-figure and two-caption declines, the
 numbering-regime precedence, the geometry-keeps-its-provenance ordering, and the
 stamp on the editable block. Evidence:
 `docs/data/figure_grouping_sole_20260826.json`.
+
+### Addendum, same day — two claims above were unmeasured, and one of them was wrong
+
+**"Fires on exactly two subpages" is now measured, and it holds.** The row above
+asserted that from the eight graded fixtures, but the eval only ever looks at
+subpages that carry ground truth — and this corpus deliberately leaves some
+facing pages ungraded *because they carry one figure each*, which is precisely
+this arm's trigger. So the claim was made about pages nothing had checked. All 15
+curated testset spreads (30 subpages) were then run through the real chain
+(`run_all` 00→06 → `stage07_assemble`) and every subpage's pairing arm read off:
+
+| arm | subpages |
+|---|---|
+| **sole_figure** | **2** — `it_geo_04`-left, `it_geo_05`-right |
+| number | 2 (`it_geo_06`, both subpages) |
+| geometry | 8 |
+| no pair emitted | the rest |
+
+The two ungraded English facing pages the metric could not see (`en_coins_02`-left,
+`en_coins_03`-left) do pair — by **geometry**, not by this arm: that book sets its
+caption right beside its plate, so proximity reaches it and the weaker arm never
+runs. The arm still has not been shown to do anything on a second book, and now
+that is a measurement rather than an assumption.
+
+**"The subpage prints exactly one figure" is not what the code tests, and
+`it_geo_04`-left is the proof.** The code tests *one figure **block***, i.e. one
+Stage-04 detection. That page prints **two** figures — the Fig.21 panorama spans
+the gutter and its left fragment `B6L` is a segmentation miss (visible in the
+eval's own `misses` list). **The headline case fires because a figure was not
+found, not because the page holds one.** The pair it makes is still correct.
+
+The same gap runs the other way on `it_geo_05`-left, which prints one figure and
+still gets no pair from this arm: the detector also emits a **21×671px sliver** at
+the page edge, and that sliver counts as a second figure block.
+
+So detector noise can both manufacture this trigger and destroy it. It is
+tolerable only because the arm's *other* signal is a printed one — but a page that
+merges several plates into one box (the documented under-segmentation failure this
+repo has a whole scope document for) and prints a single numbered caption **would**
+be paired to the merged box. Nothing in this corpus has that shape. A
+minimum-area floor on what counts as a figure block is the obvious guard and was
+deliberately not added: nothing has measured where that floor belongs. Both the
+module docstring and the code comment now say "figure block" and carry these two
+cases by name.
+
+**The rendered page was checked, and it corrects the `it_geo_05` C2 limit above.**
+`stage08_render` on the same job: the "Sopra: Figura 3" caption comes out inside a
+`<figure>` with its photograph, so the pair reaches the reader and not just
+`document.json`.
+
+On the left page the ejected `Figura 2` caption *also* renders inside the right
+figure — via Stage 08's **adjacency fallback**, which groups a caption carrying no
+`figure_ref` with the figure block immediately before it. That is worth stating
+plainly because it qualifies the whole "abstaining is safer than a wrong pair"
+premise: an abstention does **not** mean the caption stands alone in the output. It
+means the pairing decision falls back to the weakest rule there is. Here that rule
+happens to land on the correct figure (the 21px sliver sorts before the map, so the
+map is what precedes the caption), so the rendered output for `it_geo_05` is right
+on both pages — but by adjacency, not by anything this pass decided.

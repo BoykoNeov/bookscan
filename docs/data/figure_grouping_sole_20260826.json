@@ -651,5 +651,34 @@
     "command": "python -m pipeline.run_all --job solecheck --input testset/it_geo_05.jpg --lang ita && python -m pipeline.stage07_assemble jobs/solecheck/",
     "page_001__right": "captions=1 paired=1 (sole_figure) unpaired=0 -> block id6 'Sopra: Figura 3' carries caption_number=3, figure_ref=block 2, pair_source=sole_figure",
     "page_001__left": "Stage 05 DID eject the swallowed caption ('ejected caption (Figura 2) printed inside figure 231,331 1806x2658: 60 words'), so a caption block exists — but it stays unpaired: the detector emits TWO figure blocks on that subpage (so the uniqueness arm declines) and the ejected block's words do not include the re-OCR'd 'Figura 2' header, so it carries no printed number."
+  },
+  "corpus_census_production_path": {
+    "what": "every one of the 15 curated testset spreads (30 subpages) run through run_all 00-06 + stage07_assemble; which arm made each pair",
+    "sole_figure": [
+      "it_geo_04-left",
+      "it_geo_05-right"
+    ],
+    "number": [
+      "it_geo_06-left (4 pairs)",
+      "it_geo_06-right (1 pair)"
+    ],
+    "geometry": [
+      "en_coins_01 both subpages (2+2)",
+      "en_coins_02 both (1+2)",
+      "en_coins_03 both (1+2)",
+      "it_geo_01-? (1)",
+      "it_geo_04-right (1)",
+      "it_geo_07-right (1)"
+    ],
+    "note": "the two ungraded English facing pages (en_coins_02-left, en_coins_03-left) that the eval cannot see DO pair — by geometry, not by the new arm."
+  },
+  "one_figure_block_is_not_one_printed_figure": {
+    "it_geo_04-left": "prints TWO figures; B6L (left fragment of the gutter-spanning Fig.21 panorama) is a segmentation miss, so the arm's trigger was manufactured by a missed detection. Pair still correct.",
+    "it_geo_05-left": "prints ONE figure and the arm declines: a 21x671px sliver figure block at the page edge counts as a second figure.",
+    "unguarded_risk": "a subpage whose plates are under-segmented into one merged box, carrying a single numbered caption, would pair to the merged box. No page in this corpus has that shape; no minimum-area floor added because nothing has measured where it belongs."
+  },
+  "rendered_output": {
+    "it_geo_05 right": "stage08_render emits <figure> wrapping the 'Sopra: Figura 3' caption with its photograph — the pair reaches the reader.",
+    "it_geo_05 left": "the ejected 'Figura 2' caption also renders inside the correct figure, but via stage08_render's ADJACENCY FALLBACK (a caption with no figure_ref groups with the preceding figure block), not via this pass. So an abstention does not leave a caption standing alone in the output; it hands the decision to the weakest rule available."
   }
 }

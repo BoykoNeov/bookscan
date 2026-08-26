@@ -86,13 +86,34 @@ THE PAIRING POLICY (two arms, number first, geometry guarded):
    ``it_geo_06`` trap is built out of, so **loosening arm 2's limits would buy
    these two pairs by re-opening the wrong-photo failure it exists to prevent.**
 
-   What IS present is uniqueness. So this arm fires only when the subpage prints
-   **exactly one figure**, that figure is still unpaired, and **exactly one**
+   What IS present is uniqueness. So this arm fires only when the subpage holds
+   **exactly one figure BLOCK**, that block is still unpaired, and **exactly one**
    eligible caption remains — and that caption carries a printed figure number.
    Two independent signals again, neither of them a distance: the block declares
-   itself a caption *in print*, and there is no other figure on the page it could
-   be describing. It runs LAST, so a caption arm 2 can already place keeps its
-   proximity-backed provenance and nothing that pairs today changes.
+   itself a caption *in print*, and there is no other figure block on the page it
+   could be describing. It runs LAST, so a caption arm 2 can already place keeps
+   its proximity-backed provenance and nothing that pairs today changes.
+
+   **"One figure block" is not "one printed figure", and the difference is the
+   detector.** Both of the pages this arm was built for prove it, in opposite
+   directions:
+
+   * ``it_geo_04``-left actually prints TWO figures — the Fig.21 panorama spans
+     the gutter and its left fragment ``B6L`` is a *segmentation miss*. The arm's
+     headline case therefore fires because a figure was not found, not because the
+     page holds one. The pair it makes is still the right one.
+   * ``it_geo_05``-left prints one figure and the arm still declines, because the
+     detector also emits a **21x671px sliver** at the page edge and that sliver
+     counts as a second figure block.
+
+   So detector noise can both manufacture this trigger and destroy it. That is
+   tolerable only because the arm's other signal is a *printed* one; a page that
+   under-segments several plates into one merged box (the documented
+   DocLayout-YOLO failure mode — see docs/FIGURE_SEPARATION_SCOPE.md) and prints a
+   single numbered caption WOULD be paired to the merged box. No page in this
+   corpus has that shape. A minimum-area floor on what counts as a figure block is
+   the obvious guard and is deliberately NOT added here: nothing has measured
+   where that floor would sit.
 
    Honest limit, and the shape of the only way it can be wrong: a spread whose
    single figure on one page belongs to the FACING page's caption while this
@@ -443,9 +464,11 @@ def _sole_figure_pair(caps: list[BlockView], figs: list[BlockView],
     distances on this layout are not usable, and why loosening arm 2 instead would
     re-open the ``it_geo_06`` wrong-photo trap.
 
-    ``all_figs`` is every figure block on the subpage, not just the unpaired ones:
-    the claim being made is "this page prints ONE figure", and a page that printed
-    two and had one already claimed is not that page.
+    ``all_figs`` is every figure BLOCK on the subpage, not just the unpaired ones:
+    the claim being made is "there is one figure block here", and a page that had
+    two and got one claimed is not that page. Note the claim is about detections,
+    not about the printed page — see the module docstring for the two measured
+    cases where those come apart in opposite directions.
 
     Returns the (caption key, figure key) pair, or None to abstain.
     """

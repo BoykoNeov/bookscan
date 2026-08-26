@@ -5737,8 +5737,18 @@ recovered it finally has two blocks to order.
   perturbed the *before* arm too, on a commit whose whole value is a clean
   comparison of one thing. The duplication is noted, not fixed here.
 
-Suite 509 green (was 503) — six added tests pin the new view: text comes from the
-block's final words, `native_ranks` stay the page pass's TSV order, the
+One question this run raised and closed: `it_geo_05`-left's text-only tau reads
+`None` in BOTH arms while `tau+figures` becomes +1.00. That is correct, not a
+blind spot in the tau path — the subpage's ground truth is exactly two blocks,
+F2 (figure) and C2 (caption), and text-only tau excludes figures, so it has one
+graded block and cannot be scored. The recovered caption is in the tau path: it
+matches, types correctly, and sits in the right place in `seq_det`.
+
+Suite 511 green (was 503) — eight added tests. Six pin the new view: text comes
+from the block's final words, `native_ranks` stay the page pass's TSV order, the
 smallest-containing-box rule and the upscale division are unchanged, an
 orphan-rescued block is matchable but typed `other`, and each arm names itself in
-its own report.
+its own report. Two pin the OLD arm, which is otherwise reachable only through
+`--no-stage05` and would break silently: `_route_words` routes by the page pass,
+and the two arms are identical block-for-block on a subpage where no Stage 05
+pass fires — so they may only ever differ BECAUSE of the three passes.

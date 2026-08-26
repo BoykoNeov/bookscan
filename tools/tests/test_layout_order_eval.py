@@ -12,8 +12,8 @@ from pipeline import stage04_layout as S4
 from pipeline.page_model import BBox, Block, BlockType, Word
 from tools import ocr_metrics as M
 from tools.layout_order_eval import (
-    DetBlock, _bbox_iou, _block_set_note, anchor_precision, anchor_score,
-    apply_param_overrides, det_from_blocks, grouping_eval,
+    DetBlock, _bbox_iou, _block_set_note, _route_words, anchor_precision,
+    anchor_score, apply_param_overrides, det_from_blocks, grouping_eval,
     kendall_tau, match_subpage, norm_tokens, order_with_figures,
 )
 
@@ -573,3 +573,49 @@ def test_block_set_note_names_the_arm_in_both_directions():
     shipped, old = _block_set_note(True), _block_set_note(False)
     assert "what SHIPS" in shipped and "--no-stage05" in shipped
     assert "Stage 04 alone" in old and "does NOT grade the deliverable" in old
+
+
+# --- the OLD arm (--no-stage05) stays reproducible ------------------------
+#
+# `_route_words` is only reachable through `--no-stage05` now, so without a test
+# a later refactor could break it while the suite stays green -- and the claim
+# that flag exists for ("reproduces pre-2026-08-26 rows") would quietly become
+# false. That is the exact failure the arm is there to prevent.
+
+
+def _page_layout(blocks):
+    return S4.PageLayout(name="left.png", width=1000, height=1000,
+                         arm="doclayout", blocks=list(blocks))
+
+
+def test_route_words_pins_the_old_arm():
+    """Old arm: text is the PAGE PASS's words routed by smallest containing box,
+    the words the block itself carries are irrelevant (Stage 04 blocks have
+    none), and native ranks are TSV indices."""
+    pl = _page_layout([_blk(0, BlockType.PARAGRAPH, 0, 0, 100, 100),
+                       _blk(1, BlockType.PARAGRAPH, 0, 200, 100, 100)])
+    twords = [_tw("x", 10, 210), _tw("y", 10, 10), _tw("z", 40, 10)]
+    det = _route_words(pl, twords, scale=1.0)
+    assert det[0].text == "y z" and det[1].text == "x"
+    assert det[0].native_ranks == [1, 2] and det[1].native_ranks == [0]
+
+
+def test_both_arms_agree_when_no_stage05_pass_fires():
+    """The two arms may only differ BECAUSE of Stage 05. On a subpage where no
+    word is orphaned, no caption is ejected and no block is re-read, Stage 05
+    hands back the page pass's own routing -- so the views must be identical
+    block for block. A divergence here would mean the new arm changed something
+    other than the three passes."""
+    stage04 = [_blk(0, BlockType.PARAGRAPH, 0, 0, 100, 100),
+               _blk(1, BlockType.CAPTION, 0, 200, 100, 100)]
+    twords = [_tw("y", 10, 10), _tw("z", 40, 10), _tw("x", 10, 210)]
+    old = _route_words(_page_layout(stage04), twords, scale=1.0)
+
+    # What attach_words leaves behind with zero orphans: the same blocks, each
+    # carrying the words that routed into it, in the same order.
+    after05 = [_blk(0, BlockType.PARAGRAPH, 0, 0, 100, 100, words=["y", "z"]),
+               _blk(1, BlockType.CAPTION, 0, 200, 100, 100, words=["x"])]
+    new = det_from_blocks(after05, twords, scale=1.0)
+
+    assert [(d.text, d.btype, d.ro, d.native_ranks) for d in old] == \
+           [(d.text, d.btype, d.ro, d.native_ranks) for d in new]

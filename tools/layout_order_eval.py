@@ -113,7 +113,12 @@ from tools.gate1_harness import (
     tesseract_version,
 )
 from tools.dewarp_ab import split_halves, dewarp_halves, lang_code
-from tools.layout_ab import ocr_words, _word_box, _center_in
+# OCR + word routing come from production (Stage 05), not from a harness copy
+# — see the note in tools/layout_ab.py. ``layout_ab`` re-exports the same
+# objects under the same names; imported from the source module here.
+from pipeline.stage05_ocr import (   # noqa: PLC2701  (deliberate: same code)
+    _center_in, _word_box, ocr_subpage as ocr_words,
+)
 from pipeline import stage04_layout as S4
 from pipeline import figure_grouping as FG
 from pipeline import block_reocr as BR
@@ -727,10 +732,9 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str,
             pl.name = name
             # The graded block set. With Stage 05 on this is what SHIPS; with it
             # off it is Stage 04 alone, reproducing rows written before
-            # 2026-08-26. (`ocr_words` here is byte-identical to production's
-            # `stage05_ocr.ocr_subpage` — same oem/psm, same 20px/2x upscale
-            # probe — but is deliberately NOT swapped for it in this change, so
-            # the two arms differ in the three passes and nothing else.)
+            # 2026-08-26. (`ocr_words` IS `stage05_ocr.ocr_subpage` since
+            # 2026-08-26 — the harness copy that used to shadow it is gone — so
+            # the two arms differ in the three Stage 05 passes and nothing else.)
             if stage05:
                 blocks5, s5info = stage05_blocks(pl, img, words, scale, cfg,
                                                  binary, lang, p)

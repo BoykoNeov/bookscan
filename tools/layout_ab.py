@@ -28,9 +28,10 @@ Also dumps a Stage 04 block/reading-order overlay for EVERY manifest image
 overlay" (Gate 1); the no-GT overlays are the only handle on the multi-column
 question, which is otherwise UNPROVEN.
 
-Reuses the Gate 1 Tesseract path + the dewarp_ab pipeline-geometry helpers; MAY
-depend on ``pipeline/`` (it measures the pipeline). N=3 GT spreads — read the
-rows, not the mean.
+Reuses the dewarp_ab pipeline-geometry helpers and, since 2026-08-26, Stage 05's
+OWN OCR call (``ocr_subpage``) rather than a copy of it; MAY depend on
+``pipeline/`` (it measures the pipeline). N=3 GT spreads — read the rows, not the
+mean.
 
 Usage:
     python -m tools.layout_ab --testset testset/ [--report docs/RESULTS.md]
@@ -52,40 +53,31 @@ import numpy as np
 from tools import normalize as NORM
 from tools import ocr_metrics as M
 from tools.gate1_harness import (
-    LANG_CODES, REPO_ROOT, find_tesseract, load_config, median_word_height,
-    resolve_tessdata_dir, run_tesseract, tesseract_version, to_gray, upscale,
+    LANG_CODES, REPO_ROOT, find_tesseract, load_config, resolve_tessdata_dir,
+    tesseract_version,
 )
 from tools.dewarp_ab import split_halves, dewarp_halves, lang_code
 from pipeline import stage04_layout as S4
 from pipeline.page_model import BBox
+# The eval's OCR call IS production's, not a copy of it (2026-08-26). These three
+# were duplicated here byte-for-byte; the duplication was left in place by the
+# commit that first noticed it, because that commit's whole value was a clean
+# before/after and touching the OCR path would have perturbed both arms. Imported
+# now, so the harness can never silently drift from the pipeline it grades.
+# ``ocr_words`` is the name this module and tools/layout_order_eval.py have always
+# called it by; it is an alias, not a wrapper — there is one implementation.
+from pipeline.stage05_ocr import (       # noqa: PLC2701  (deliberate: same code)
+    _center_in, _word_box, ocr_subpage as ocr_words,
+)
 
 
 # --------------------------------------------------------------------------
 # OCR — one pass per half, returning WORDS (we reorder them, never re-OCR).
-# Same probe-upscale + grayscale path as dewarp_ab so absolute numbers stay
-# comparable to the Gate 2 split+dewarp arm.
+# ``ocr_words`` / ``_word_box`` / ``_center_in`` are Stage 05's own functions
+# (imported above): the probe-upscale + grayscale path, the ``/scale`` map-back
+# to 1x block coords, and the center-in-box test the router uses. Same code, so
+# the arms stay comparable to Gate 2's split+dewarp numbers by construction.
 # --------------------------------------------------------------------------
-
-
-def ocr_words(binary: str, cfg: dict, bgr: np.ndarray, lang: str
-              ) -> tuple[list[M.TWord], float]:
-    tcfg = cfg.get("tesseract", {})
-    tessdata = resolve_tessdata_dir(cfg)
-    oem, psm = int(tcfg.get("oem", 1)), int(tcfg.get("psm", 3))
-    gray = to_gray(bgr)
-    probe = M.parse_tsv(run_tesseract(binary, gray, lang, tessdata, oem, psm))
-    scale = 2.0 if 0 < median_word_height(probe) < 20 else 1.0
-    words = M.parse_tsv(run_tesseract(binary, upscale(gray, scale), lang,
-                                      tessdata, oem, psm))
-    return words, scale
-
-
-def _word_box(w: M.TWord, scale: float) -> BBox:
-    """Word bbox mapped back to the 1x layout-image coords (OCR may run upscaled;
-    Stage 04 blocks are in 1x). Text is unaffected — boxes only route words to
-    blocks."""
-    return BBox(x=int(w.left / scale), y=int(w.top / scale),
-                w=max(1, int(w.width / scale)), h=max(1, int(w.height / scale)))
 
 
 # --------------------------------------------------------------------------
@@ -117,11 +109,6 @@ def _emit_lines(seq: list[tuple[int, M.TWord]]) -> str:
             out.append("\n" + w.text)
         last = key
     return "".join(out)
-
-
-def _center_in(box: BBox, wb: BBox) -> bool:
-    cx, cy = wb.x + wb.w / 2.0, wb.y + wb.h / 2.0
-    return box.x <= cx <= box.x2 and box.y <= cy <= box.y2
 
 
 def layout_text(words: list[M.TWord], blocks: list, scale: float,

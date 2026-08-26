@@ -9,6 +9,7 @@ Run: ``python -m pytest tools/tests/test_layout_order_eval.py`` or directly.
 from __future__ import annotations
 
 from pipeline import stage04_layout as S4
+from pipeline import stage05_ocr as S5
 from pipeline.page_model import BBox, Block, BlockType, Word
 from tools import ocr_metrics as M
 from tools.layout_order_eval import (
@@ -619,3 +620,22 @@ def test_both_arms_agree_when_no_stage05_pass_fires():
 
     assert [(d.text, d.btype, d.ro, d.native_ranks) for d in old] == \
            [(d.text, d.btype, d.ro, d.native_ranks) for d in new]
+
+
+def test_the_evals_ocr_call_is_productions_not_a_copy():
+    """The harness must grade the pipeline with the pipeline's OWN OCR path.
+    These three used to be a byte-identical copy living in tools/layout_ab.py;
+    a copy that agrees today can drift tomorrow, and the drift would surface as
+    a metric move with no code change behind it. They are the same objects now,
+    and this test is what stops a copy from quietly coming back."""
+    from tools import layout_ab as LAB
+    from tools import layout_order_eval as EVAL
+
+    assert EVAL.ocr_words is S5.ocr_subpage
+    assert EVAL._word_box is S5._word_box
+    assert EVAL._center_in is S5._center_in
+    # The WER arm (tools/layout_ab.py) reads the page the same way, so its
+    # absolute numbers stay comparable to the block-order arm's by construction.
+    assert LAB.ocr_words is S5.ocr_subpage
+    assert LAB._word_box is S5._word_box
+    assert LAB._center_in is S5._center_in

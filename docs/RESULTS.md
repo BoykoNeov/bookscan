@@ -5752,3 +5752,86 @@ its own report. Two pin the OLD arm, which is otherwise reachable only through
 `--no-stage05` and would break silently: `_route_words` routes by the page pass,
 and the two arms are identical block-for-block on a subpage where no Stage 05
 pass fires — so they may only ever differ BECAUSE of the three passes.
+
+---
+
+## The harness had its own copy of the OCR call — closing that — 2026-08-26
+
+The row above closes with a deferral, stated in its own words:
+
+> **The eval's OCR call was deliberately NOT unified with production's.**
+> `tools.layout_ab.ocr_words` and `stage05_ocr.ocr_subpage` are byte-identical
+> today (same oem/psm, same 20px/2× upscale probe), but swapping them would have
+> perturbed the *before* arm too, on a commit whose whole value is a clean
+> comparison of one thing. The duplication is noted, not fixed here.
+
+That reasoning was right for that commit and does not survive it. This one does
+nothing but the swap.
+
+### What was actually duplicated
+
+Three functions, living in `tools/layout_ab.py` as a byte-for-byte copy of
+`pipeline/stage05_ocr.py`:
+
+| copy in `tools/layout_ab.py` | original in `pipeline/stage05_ocr.py` |
+|---|---|
+| `ocr_words` | `ocr_subpage` — the Tesseract TSV call, `oem=1 psm=3`, probe at 1× then re-OCR at 2× when median word height < 20px |
+| `_word_box` | `_word_box` — the `/scale` map-back from OCR space to 1× dewarp coords |
+| `_center_in` | `_center_in` — the word-centre-inside-box test the routing rule is built on |
+
+`tools/layout_order_eval.py` imported all three *from the copy*, so there were two
+import sites and one duplicate implementation. Both now import from
+`pipeline.stage05_ocr` directly; `ocr_words` is kept as an alias because that is
+the name both harnesses have always called it by, and an alias is not a wrapper —
+after this commit there is exactly one implementation of each.
+
+Direction matters and is unchanged: `tools/` depends on `pipeline/`, never the
+reverse. The harness grades the pipeline, so importing the thing it grades is the
+correct arrow — a copy is what made it possible for the arrow to be wrong.
+
+### Why this is worth a commit when it changes no number
+
+Because a copy that agrees today can disagree tomorrow, and the disagreement
+would not look like a bug. Anyone tuning the OCR call — a psm change, a different
+upscale trigger, a new preprocessing step — edits the pipeline and not the two
+harness copies of it. Every metric this repo reports on block structure would then
+move, in a commit that touched no metric code, and the RESULTS row would read as a
+finding about the pipeline. The `/scale` map-back is the sharpest case: it is the
+coordinate contract Stage 06's patch crops depend on, and the harness silently
+holding its own version of it is exactly the kind of drift that gets discovered
+three rows later.
+
+### The bar: identical, not better
+
+Since the two were byte-identical, the correct result is **no movement at all**.
+An improvement here would be evidence the refactor changed behaviour under cover
+of a cleanup, and would have to be investigated rather than reported.
+
+Re-ran `tools/layout_order_eval` over all 8 ground-truth spreads in **both** arms
+(default and `--no-stage05`) and diffed every field against the committed baseline
+`docs/data/harness_stage05_ab_20260826.json`, float tolerance 1e-9:
+
+```
+de_01 en_coins_01 en_coins_02 en_coins_03 it_geo_04 it_geo_05 it_geo_06 it_geo_07
+  × {before, after}  ->  16 graded runs
+=== 0 differences ===
+```
+
+Segmentation recall stays 112/112, pairs stay 16/19 with 0 wrong, every tau to
+nine decimals. Nothing in this file's tables changes.
+
+### Limits, stated
+
+* **This is debt removal, not a measurement.** It makes no claim about OCR,
+  layout, or ordering quality, and no row above becomes more or less true.
+* **Identity is pinned by a test, not by discipline.**
+  `test_the_evals_ocr_call_is_productions_not_a_copy` asserts all six references
+  (two harnesses × three functions) *are* the Stage 05 objects. Without it,
+  re-introducing a copy is a two-line edit that nothing catches.
+* **Only these three functions were shared.** The harnesses still own their own
+  routing and grading code, which is correct — that code is the measurement, and
+  a harness that imported the pipeline's grader would be marking its own work.
+* **The 0-difference result is over this corpus.** It is a very strong signal (16
+  runs, every field, exact match) but it verifies the swap, not the OCR call.
+
+Suite **512 green** (was 511) — one added test, the identity guard above.

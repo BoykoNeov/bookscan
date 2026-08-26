@@ -102,18 +102,28 @@ THE PAIRING POLICY (two arms, number first, geometry guarded):
      the gutter and its left fragment ``B6L`` is a *segmentation miss*. The arm's
      headline case therefore fires because a figure was not found, not because the
      page holds one. The pair it makes is still the right one.
-   * ``it_geo_05``-left prints one figure and the arm still declines, because the
-     detector also emits a **21x671px sliver** at the page edge and that sliver
-     counts as a second figure block.
+   * ``it_geo_02``-right prints ONE photograph and the detector emits it as TWO
+     boxes — a 1202x81px sky strip above the 1202x628px body — so the page looked
+     like a two-figure page and the arm declined. ``sole_min_fig_frac`` (below)
+     drops boxes that thin from the COUNT, and the "Figura 1" caption pairs.
 
-   So detector noise can both manufacture this trigger and destroy it. That is
-   tolerable only because the arm's other signal is a *printed* one; a page that
-   under-segments several plates into one merged box (the documented
-   DocLayout-YOLO failure mode — see docs/FIGURE_SEPARATION_SCOPE.md) and prints a
-   single numbered caption WOULD be paired to the merged box. No page in this
-   corpus has that shape. A minimum-area floor on what counts as a figure block is
-   the obvious guard and is deliberately NOT added here: nothing has measured
-   where that floor would sit.
+   **CORRECTION, 2026-08-26.** This paragraph used to name ``it_geo_05``-left's
+   "21x671px sliver" as a second *figure block*. It is not one. That block is an
+   orphan junk-text region at the page edge which Stage 07's ``unreadable_panel``
+   pass re-types FIGURE **after** ``group_figures`` has already run, so the arm
+   never saw it. The census (tools/sole_floor_census.py, 15 spreads / 30 subpages
+   / 50 figure blocks) found **no detector-noise figure block anywhere in the
+   corpus**. ``it_geo_05``-left declines for exactly ONE reason: Stage 05 ejects
+   its swallowed caption without the "In questa pagina: Figura 2" header line, so
+   the caption carries no printed number. Recovering that number is sufficient to
+   make the pair — nothing else on that page is in the way.
+
+   So the count is broken by SEGMENTATION, in both directions. Over-segmentation
+   is what the floor addresses. Under-segmentation — several plates merged into
+   one box, then handed a single numbered caption — is untouched, and no size
+   floor can touch it, because a merged box is large (the documented
+   DocLayout-YOLO failure mode; see docs/FIGURE_SEPARATION_SCOPE.md). No page in
+   this corpus has that shape.
 
    Honest limit, and the shape of the only way it can be wrong: a spread whose
    single figure on one page belongs to the FACING page's caption while this
@@ -171,6 +181,45 @@ DEFAULTS: dict[str, float] = {
     # may sit before it is read as a misread rather than a figure number. See
     # _plausible_figure_numbers.
     "fig_number_window": 3.0,
+    # SOLE-FIGURE arm ONLY (arm 3): how thin a `figure` block may be and still
+    # count toward "this subpage holds exactly one figure". Scoped to that arm's
+    # uniqueness COUNT — it never changes what the detector emits, what arm 2 can
+    # pair to, or any eval metric over blocks.
+    #
+    # What it is actually for is NOT detector noise. The corpus census
+    # (tools/sole_floor_census.py, 15 spreads / 30 subpages / 50 figure blocks,
+    # 2026-08-26) found ZERO noise figure blocks: the "21x671px sliver" this
+    # arm's docstring used to blame for it_geo_05-left is not a figure block at
+    # all — it is an orphan junk-text block that Stage 07's unreadable_panel pass
+    # re-types FIGURE *after* group_figures has run. What DOES break the count is
+    # OVER-SEGMENTATION: it_geo_02-right prints ONE photograph (the Cadini di
+    # Misurina) and the detector emits it as 1202x81 sky strip + 1202x628 body,
+    # so a page with one picture looks like a page with two and the arm declines.
+    #
+    # The statistic is min(w/page_w, h/page_h) and NOT the area this file used to
+    # propose, because on the measured corpus area INVERTS the two populations:
+    # that 1202x81 strip covers 0.0167 of its page while a whole small printed
+    # figure — de_02-right's 231x175px pictogram — covers 0.0092. No area
+    # threshold can separate a strip from a picture smaller than it. On min(w,h)
+    # they order correctly: strip 0.0270, pictogram 0.0630.
+    #
+    # 0.04 sits in the middle of that gap (1.5x above the strip, 1.6x below the
+    # smallest whole figure). Measured effect of turning it on, over all 30
+    # subpages: exactly one subpage changes — it_geo_02-right gains the correct
+    # "Figura 1" pair — and zero wrong pairs appear. The 8 graded fixtures stay
+    # at 16/19, 0 wrong; every other rendered page is byte-identical.
+    #
+    # HONEST LIMITS. (1) The one gain is on a subpage with no block GT, so it is
+    # verified by reading the pixels, not by the metric. (2) The floor is a
+    # THINNESS test, not a fragment detector: it_geo_02-left's 1712x163px legend
+    # row is the same kind of fragment and survives at 0.04 (it changes nothing
+    # either way). (3) It does not remove anything from the DOCUMENT — a block
+    # below the floor keeps type=figure and Stage 08 still renders it as a
+    # picture. This changes a COUNT, not the page. (4) The opposite failure —
+    # several plates UNDER-segmented into one merged box, then paired to a single
+    # numbered caption — is untouched, and no size floor can touch it: a merged
+    # box is large. See docs/FIGURE_SEPARATION_SCOPE.md.
+    "sole_min_fig_frac": 0.04,
 }
 
 # Detector types eligible for promotion to CAPTION by the textual parser.
@@ -455,8 +504,24 @@ def _geometric_pairs(caps: list[BlockView], figs: list[BlockView], page_h: int,
     return pairs, why
 
 
+def _too_thin(v: BlockView, page_w: int, page_h: int, min_frac: float) -> bool:
+    """Is this figure block too degenerate to count as a figure on this page?
+
+    ``min(w/page_w, h/page_h)`` against ``sole_min_fig_frac`` — see that knob for
+    why the statistic is a MINIMUM DIMENSION and not an area. Note the direction
+    of ``group_figures``'s ``page_w`` inference when the caller does not pass one:
+    it under-estimates the width, which makes ``w/page_w`` LARGER, so a block is
+    more likely to survive and the arm is more likely to decline. The inference
+    error can therefore only cost a pair, never manufacture one.
+    """
+    if min_frac <= 0:
+        return False
+    return min(v.bbox.w / max(1, page_w), v.bbox.h / max(1, page_h)) < min_frac
+
+
 def _sole_figure_pair(caps: list[BlockView], figs: list[BlockView],
-                      all_figs: list[BlockView], numbered: frozenset[str]
+                      all_figs: list[BlockView], numbered: frozenset[str],
+                      page_w: int, page_h: int, min_frac: float
                       ) -> tuple[str, str] | None:
     """The uniqueness arm: pair when there is nothing else on the page to pair to.
 
@@ -470,8 +535,17 @@ def _sole_figure_pair(caps: list[BlockView], figs: list[BlockView],
     not about the printed page — see the module docstring for the two measured
     cases where those come apart in opposite directions.
 
+    Blocks below ``sole_min_fig_frac`` are dropped from BOTH lists before the
+    count, so an over-segmented strip can neither suppress the arm (by making a
+    one-photograph page look like a two-figure page) nor be handed a caption
+    itself. The floor is local to this arm on purpose: applying it to the
+    detector's output would change what arm 2 pairs to, segmentation recall and
+    the order metric, none of which this measured.
+
     Returns the (caption key, figure key) pair, or None to abstain.
     """
+    all_figs = [f for f in all_figs if not _too_thin(f, page_w, page_h, min_frac)]
+    figs = [f for f in figs if not _too_thin(f, page_w, page_h, min_frac)]
     if len(all_figs) != 1 or len(figs) != 1 or len(caps) != 1:
         return None
     cap = caps[0]
@@ -573,7 +647,8 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
     left_caps = [c for c in rest_caps if c.key not in g.pairs]
     claimed = set(g.pairs.values())
     left_figs = [f for f in rest_figs if f.key not in claimed]
-    sole = _sole_figure_pair(left_caps, left_figs, figs, frozenset(g.caption_numbers))
+    sole = _sole_figure_pair(left_caps, left_figs, figs, frozenset(g.caption_numbers),
+                             page_w, page_h, p["sole_min_fig_frac"])
     if sole is not None:
         cid, fid = sole
         g.pairs[cid] = fid

@@ -192,8 +192,17 @@ def test_solo_figure_and_caption_tolerate_a_larger_gap():
 
     # ...and the relaxation is scoped to that solo case: add a second figure and
     # the same caption falls back to the tight limit and abstains.
-    views2 = views + [_v("f2", "figure", 0, 20, 2071, 100)]   # far above, own candidate to nobody
+    views2 = views + [_v("f2", "figure", 0, 20, 2071, 400)]   # far above, own candidate to nobody
     assert FG.group_figures(views2, page_h=PAGE_H).pairs == {}
+
+    # The second figure has to be a FIGURE, though: at 2071x100 it is thinner
+    # than sole_min_fig_frac, so it stops counting toward "how many figures are
+    # on this page" and arm 3 pairs the caption anyway. That is the floor doing
+    # its job (an over-segmented strip is not a second figure), not arm 2's
+    # relaxation leaking — the provenance says which.
+    thin = FG.group_figures(views + [_v("f2", "figure", 0, 20, 2071, 100)],
+                            page_h=PAGE_H)
+    assert thin.pairs == {"c": "f"} and thin.pair_source["c"] == "sole_figure"
 
 
 def test_empty_caption_block_is_not_paired():
@@ -598,3 +607,51 @@ def test_sole_figure_pair_is_stamped_on_the_editable_block():
     out = FG.apply_to_blocks(blocks, g, page_id="page_002__right")
     assert out[1].pair_source is PairSource.SOLE_FIGURE
     assert out[1].figure_ref.block_id == 0
+
+
+# --------------------------------------------------------------------------
+# The thinness floor on what counts as a figure block (sole_min_fig_frac)
+# --------------------------------------------------------------------------
+
+
+def test_an_over_segmented_sky_strip_no_longer_suppresses_the_sole_figure_arm():
+    """it_geo_02-right's real geometry (census 2026-08-26): ONE printed
+    photograph — the Cadini di Misurina — that the detector emits as a 1202x81px
+    sky strip above the 1202x628px body. Two boxes made a one-picture page look
+    like a two-figure page, and the uniqueness arm declined."""
+    views = [_v("strip", "figure", 572, 270, 1202, 81),
+             _v("photo", "figure", 572, 385, 1202, 628),
+             _v("c", "caption", 85, 2163, 464, 655,
+                "In questa pagina: Figura 1 I Cadini di Misurina, costituiti")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=1941)
+    assert g.pairs == {"c": "photo"} and g.pair_source["c"] == "sole_figure"
+
+    off = FG.group_figures(views, page_h=PAGE_H, page_w=1941,
+                           params={"sole_min_fig_frac": 0.0})
+    assert off.pairs == {}
+
+
+def test_the_floor_does_not_hand_the_caption_to_the_thin_block_itself():
+    """Dropping a block from the uniqueness COUNT but leaving it pairable would
+    turn the guard into the wrong-pair machine it exists to prevent."""
+    views = [_v("strip", "figure", 572, 270, 1202, 81),
+             _v("c", "caption", 85, 2163, 464, 655, "Figura 1 I Cadini di Misurina")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=1941)
+    assert g.pairs == {}
+
+
+def test_a_small_but_whole_figure_still_counts_as_a_figure():
+    """The measured reason the floor is on min(w,h) and not on AREA: de_02-right's
+    231x175px pictogram is a WHOLE printed figure covering 0.0092 of its page —
+    LESS than the 1202x81px sky strip's 0.0167 — so area inverts the two
+    populations and no area threshold separates them. On min(w,h) the pictogram
+    (0.063) clears the floor and the strip (0.027) does not."""
+    views = [_v("pictogram", "figure", 617, 2400, 231, 175),
+             _v("photo", "figure", 617, 900, 1000, 600),
+             _v("c", "caption", 87, 2520, 466, 292, "Sopra: Figura 3 Il fossile")]
+    # The pictogram is out of the caption's column, so arm 2 cannot reach it
+    # either and only the uniqueness arm is under test here.
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2023)
+    assert g.pairs == {}
+    assert (231 * 175) / (2023 * PAGE_H) < (1202 * 81) / (1941 * PAGE_H)   # area inverts
+    assert min(231 / 2023, 175 / PAGE_H) > FG.DEFAULTS["sole_min_fig_frac"]

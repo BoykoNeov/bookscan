@@ -1,0 +1,1533 @@
+{
+ "what": "Minimum-size floor for figure_grouping's sole-figure arm: census of every figure block the production chain emits on the curated corpus, labelled real/noise by GT figure bbox, plus what each candidate floor changes.",
+ "population": {
+  "spreads": [
+   "bg_01",
+   "bg_02",
+   "bg_03",
+   "de_01",
+   "de_02",
+   "en_coins_01",
+   "en_coins_02",
+   "en_coins_03",
+   "it_geo_01",
+   "it_geo_02",
+   "it_geo_03",
+   "it_geo_04",
+   "it_geo_05",
+   "it_geo_06",
+   "it_geo_07"
+  ],
+  "missing": [],
+  "subpages": 30,
+  "figure_blocks": 50
+ },
+ "method": {
+  "path": "run_all 00-06 + stage07_assemble (production)",
+  "real_label": "IoU >= 0.2 with a GT figure bbox",
+  "gt_fixtures": [
+   "en_coins_01",
+   "en_coins_02",
+   "en_coins_03",
+   "it_geo_05",
+   "it_geo_06",
+   "it_geo_07"
+  ],
+  "edge_tol_px": 2
+ },
+ "separation": {
+  "min_dim_frac": {
+   "stat": "min_dim_frac",
+   "real": {
+    "n": 24,
+    "min": 0.074,
+    "max": 0.8801169590643275
+   },
+   "noise": {
+    "n": 0,
+    "values": []
+   },
+   "unlabelled": {
+    "n": 26,
+    "min": 0.020172910662824207,
+    "max": 0.4510086455331412
+   },
+   "gap": null
+  },
+  "area_frac": {
+   "stat": "area_frac",
+   "real": {
+    "n": 24,
+    "min": 0.0294735,
+    "max": 0.7797836257309941
+   },
+   "noise": {
+    "n": 0,
+    "values": []
+   },
+   "unlabelled": {
+    "n": 26,
+    "min": 0.00919338376560999,
+    "max": 0.37299326114167614
+   },
+   "gap": null
+  }
+ },
+ "figure_blocks": [
+  {
+   "image_id": "en_coins_01",
+   "subpage": "left",
+   "block_id": 1,
+   "x": 234,
+   "y": 277,
+   "w": 1114,
+   "h": 647,
+   "page_w": 2000,
+   "page_h": 3000,
+   "area_frac": 0.12012633333333333,
+   "min_dim_frac": 0.21566666666666667,
+   "aspect": 1.721792890262751,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F96",
+   "gt_iou": 0.99,
+   "label": "real"
+  },
+  {
+   "image_id": "en_coins_01",
+   "subpage": "left",
+   "block_id": 8,
+   "x": 157,
+   "y": 1742,
+   "w": 1150,
+   "h": 658,
+   "page_w": 2000,
+   "page_h": 3000,
+   "area_frac": 0.12611666666666665,
+   "min_dim_frac": 0.21933333333333332,
+   "aspect": 1.7477203647416413,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F97",
+   "gt_iou": 0.985,
+   "label": "real"
+  },
+  {
+   "image_id": "en_coins_01",
+   "subpage": "right",
+   "block_id": 3,
+   "x": 144,
+   "y": 485,
+   "w": 1210,
+   "h": 649,
+   "page_w": 2080,
+   "page_h": 3000,
+   "area_frac": 0.12584775641025642,
+   "min_dim_frac": 0.21633333333333332,
+   "aspect": 1.8644067796610169,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F98",
+   "gt_iou": 0.978,
+   "label": "real"
+  },
+  {
+   "image_id": "en_coins_01",
+   "subpage": "right",
+   "block_id": 9,
+   "x": 131,
+   "y": 2046,
+   "w": 1249,
+   "h": 675,
+   "page_w": 2080,
+   "page_h": 3000,
+   "area_frac": 0.13510817307692308,
+   "min_dim_frac": 0.225,
+   "aspect": 1.8503703703703704,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F99",
+   "gt_iou": 0.992,
+   "label": "real"
+  },
+  {
+   "image_id": "en_coins_02",
+   "subpage": "left",
+   "block_id": 8,
+   "x": 178,
+   "y": 1298,
+   "w": 1035,
+   "h": 651,
+   "page_w": 2034,
+   "page_h": 3000,
+   "area_frac": 0.11042035398230088,
+   "min_dim_frac": 0.217,
+   "aspect": 1.5898617511520738,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "en_coins_02",
+   "subpage": "right",
+   "block_id": 3,
+   "x": 12,
+   "y": 488,
+   "w": 1262,
+   "h": 617,
+   "page_w": 2046,
+   "page_h": 3000,
+   "area_frac": 0.12685793418051483,
+   "min_dim_frac": 0.20566666666666666,
+   "aspect": 2.0453808752025933,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F101",
+   "gt_iou": 0.987,
+   "label": "real"
+  },
+  {
+   "image_id": "en_coins_02",
+   "subpage": "right",
+   "block_id": 5,
+   "x": 12,
+   "y": 1155,
+   "w": 1262,
+   "h": 651,
+   "page_w": 2046,
+   "page_h": 3000,
+   "area_frac": 0.13384848484848486,
+   "min_dim_frac": 0.217,
+   "aspect": 1.9385560675883255,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F102",
+   "gt_iou": 0.984,
+   "label": "real"
+  },
+  {
+   "image_id": "en_coins_03",
+   "subpage": "left",
+   "block_id": 4,
+   "x": 180,
+   "y": 582,
+   "w": 1080,
+   "h": 662,
+   "page_w": 2064,
+   "page_h": 3000,
+   "area_frac": 0.11546511627906977,
+   "min_dim_frac": 0.22066666666666668,
+   "aspect": 1.6314199395770392,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "en_coins_03",
+   "subpage": "right",
+   "block_id": 4,
+   "x": 62,
+   "y": 592,
+   "w": 1196,
+   "h": 648,
+   "page_w": 2016,
+   "page_h": 3000,
+   "area_frac": 0.12814285714285714,
+   "min_dim_frac": 0.216,
+   "aspect": 1.845679012345679,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F104",
+   "gt_iou": 0.994,
+   "label": "real"
+  },
+  {
+   "image_id": "en_coins_03",
+   "subpage": "right",
+   "block_id": 6,
+   "x": 62,
+   "y": 1288,
+   "w": 1196,
+   "h": 627,
+   "page_w": 2016,
+   "page_h": 3000,
+   "area_frac": 0.12399007936507936,
+   "min_dim_frac": 0.209,
+   "aspect": 1.9074960127591707,
+   "touches_edge": false,
+   "n_routed_words": 6,
+   "routed_text_head": "CRCENT Sl Lok 7 lls3 »",
+   "gt_available": true,
+   "gt_match": "F105",
+   "gt_iou": 0.993,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_01",
+   "subpage": "left",
+   "block_id": 3,
+   "x": 256,
+   "y": 276,
+   "w": 1220,
+   "h": 1072,
+   "page_w": 2131,
+   "page_h": 3000,
+   "area_frac": 0.20457375254184265,
+   "min_dim_frac": 0.35733333333333334,
+   "aspect": 1.1380597014925373,
+   "touches_edge": false,
+   "n_routed_words": 24,
+   "routed_text_head": "MODELLO TEORICO DELLO SVILUPPO DELLE SCOGLIERE PRE- E POST-V",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_01",
+   "subpage": "right",
+   "block_id": 2,
+   "x": 6,
+   "y": 255,
+   "w": 1756,
+   "h": 910,
+   "page_w": 1949,
+   "page_h": 3000,
+   "area_frac": 0.27329570720027363,
+   "min_dim_frac": 0.30333333333333334,
+   "aspect": 1.9296703296703297,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_01",
+   "subpage": "right",
+   "block_id": 3,
+   "x": 6,
+   "y": 1206,
+   "w": 1756,
+   "h": 794,
+   "page_w": 1949,
+   "page_h": 3000,
+   "area_frac": 0.23845801265606295,
+   "min_dim_frac": 0.26466666666666666,
+   "aspect": 2.211586901763224,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_01",
+   "subpage": "right",
+   "block_id": 5,
+   "x": 6,
+   "y": 2039,
+   "w": 1756,
+   "h": 775,
+   "page_w": 1949,
+   "page_h": 3000,
+   "area_frac": 0.2327518385496836,
+   "min_dim_frac": 0.25833333333333336,
+   "aspect": 2.265806451612903,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_02",
+   "subpage": "left",
+   "block_id": 2,
+   "x": 269,
+   "y": 251,
+   "w": 1712,
+   "h": 427,
+   "page_w": 2139,
+   "page_h": 3000,
+   "area_frac": 0.1139199002649213,
+   "min_dim_frac": 0.14233333333333334,
+   "aspect": 4.009367681498829,
+   "touches_edge": false,
+   "n_routed_words": 1,
+   "routed_text_head": "PO",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_02",
+   "subpage": "left",
+   "block_id": 3,
+   "x": 269,
+   "y": 882,
+   "w": 1712,
+   "h": 163,
+   "page_w": 2139,
+   "page_h": 3000,
+   "area_frac": 0.04348698768895122,
+   "min_dim_frac": 0.05433333333333333,
+   "aspect": 10.503067484662576,
+   "touches_edge": false,
+   "n_routed_words": 35,
+   "routed_text_head": "della Val Gardena 9 laloclastiti ( = 3 Fm. a Bellerophon 10 ",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_02",
+   "subpage": "left",
+   "block_id": 6,
+   "x": 269,
+   "y": 1080,
+   "w": 1712,
+   "h": 1257,
+   "page_w": 2139,
+   "page_h": 3000,
+   "area_frac": 0.335356708742403,
+   "min_dim_frac": 0.419,
+   "aspect": 1.3619729514717582,
+   "touches_edge": false,
+   "n_routed_words": 19,
+   "routed_text_head": "IMEF: Fm. del Monte Fernazza - WEN: Fm. di Wengen O Ke AGORD",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_02",
+   "subpage": "right",
+   "block_id": 3,
+   "x": 572,
+   "y": 270,
+   "w": 1202,
+   "h": 81,
+   "page_w": 1941,
+   "page_h": 3000,
+   "area_frac": 0.016720247295208657,
+   "min_dim_frac": 0.027,
+   "aspect": 14.839506172839506,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_02",
+   "subpage": "right",
+   "block_id": 4,
+   "x": 572,
+   "y": 385,
+   "w": 1202,
+   "h": 628,
+   "page_w": 1941,
+   "page_h": 3000,
+   "area_frac": 0.1296335222393955,
+   "min_dim_frac": 0.20933333333333334,
+   "aspect": 1.914012738853503,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_03",
+   "subpage": "left",
+   "block_id": 2,
+   "x": 264,
+   "y": 279,
+   "w": 1662,
+   "h": 1062,
+   "page_w": 2122,
+   "page_h": 3000,
+   "area_frac": 0.2772610744580584,
+   "min_dim_frac": 0.354,
+   "aspect": 1.5649717514124293,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_03",
+   "subpage": "right",
+   "block_id": 2,
+   "x": 31,
+   "y": 275,
+   "w": 1688,
+   "h": 1084,
+   "page_w": 1958,
+   "page_h": 3000,
+   "area_frac": 0.3115069799114743,
+   "min_dim_frac": 0.36133333333333334,
+   "aspect": 1.5571955719557196,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_04",
+   "subpage": "left",
+   "block_id": 3,
+   "x": 236,
+   "y": 265,
+   "w": 1219,
+   "h": 1036,
+   "page_w": 1981,
+   "page_h": 3000,
+   "area_frac": 0.21249941107184925,
+   "min_dim_frac": 0.3453333333333333,
+   "aspect": 1.1766409266409266,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_04",
+   "subpage": "right",
+   "block_id": 2,
+   "x": 0,
+   "y": 268,
+   "w": 2071,
+   "h": 1025,
+   "page_w": 2099,
+   "page_h": 3000,
+   "area_frac": 0.33710894076544384,
+   "min_dim_frac": 0.3416666666666667,
+   "aspect": 2.020487804878049,
+   "touches_edge": true,
+   "n_routed_words": 5,
+   "routed_text_head": "“ia Po pi e ;",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "it_geo_05",
+   "subpage": "left",
+   "block_id": 5,
+   "x": 231,
+   "y": 331,
+   "w": 1806,
+   "h": 2658,
+   "page_w": 2052,
+   "page_h": 3000,
+   "area_frac": 0.7797836257309941,
+   "min_dim_frac": 0.8801169590643275,
+   "aspect": 1.4717607973421927,
+   "touches_edge": false,
+   "n_routed_words": 4,
+   "routed_text_head": "T IE BELLUNO LE",
+   "gt_available": true,
+   "gt_match": "F2",
+   "gt_iou": 1.0,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_05",
+   "subpage": "right",
+   "block_id": 2,
+   "x": 609,
+   "y": 285,
+   "w": 1140,
+   "h": 1065,
+   "page_w": 2028,
+   "page_h": 3000,
+   "area_frac": 0.19955621301775148,
+   "min_dim_frac": 0.355,
+   "aspect": 1.0704225352112675,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F3",
+   "gt_iou": 1.0,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_06",
+   "subpage": "left",
+   "block_id": 2,
+   "x": 212,
+   "y": 272,
+   "w": 1345,
+   "h": 777,
+   "page_w": 2129,
+   "page_h": 3000,
+   "area_frac": 0.16362376702677314,
+   "min_dim_frac": 0.259,
+   "aspect": 1.731016731016731,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F25",
+   "gt_iou": 0.974,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_06",
+   "subpage": "left",
+   "block_id": 3,
+   "x": 203,
+   "y": 1091,
+   "w": 1358,
+   "h": 835,
+   "page_w": 2129,
+   "page_h": 3000,
+   "area_frac": 0.17753718490684203,
+   "min_dim_frac": 0.2783333333333333,
+   "aspect": 1.6263473053892215,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F27",
+   "gt_iou": 0.928,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_06",
+   "subpage": "left",
+   "block_id": 4,
+   "x": 203,
+   "y": 1973,
+   "w": 1358,
+   "h": 836,
+   "page_w": 2129,
+   "page_h": 3000,
+   "area_frac": 0.17774980428996398,
+   "min_dim_frac": 0.2786666666666667,
+   "aspect": 1.624401913875598,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F28",
+   "gt_iou": 0.919,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_06",
+   "subpage": "left",
+   "block_id": 5,
+   "x": 1611,
+   "y": 253,
+   "w": 498,
+   "h": 622,
+   "page_w": 2129,
+   "page_h": 3000,
+   "area_frac": 0.04849788633161108,
+   "min_dim_frac": 0.20733333333333334,
+   "aspect": 1.248995983935743,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F26",
+   "gt_iou": 1.0,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_06",
+   "subpage": "right",
+   "block_id": 2,
+   "x": 154,
+   "y": 279,
+   "w": 1554,
+   "h": 1030,
+   "page_w": 1951,
+   "page_h": 3000,
+   "area_frac": 0.2734700153767299,
+   "min_dim_frac": 0.3433333333333333,
+   "aspect": 1.5087378640776699,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F29",
+   "gt_iou": 0.971,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_06",
+   "subpage": "right",
+   "block_id": 4,
+   "x": 640,
+   "y": 1341,
+   "w": 1068,
+   "h": 842,
+   "page_w": 1951,
+   "page_h": 3000,
+   "area_frac": 0.1536401845207586,
+   "min_dim_frac": 0.2806666666666667,
+   "aspect": 1.2684085510688836,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "F30",
+   "gt_iou": 0.908,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_07",
+   "subpage": "left",
+   "block_id": 9,
+   "x": 211,
+   "y": 1204,
+   "w": 829,
+   "h": 222,
+   "page_w": 2080,
+   "page_h": 3000,
+   "area_frac": 0.02949326923076923,
+   "min_dim_frac": 0.074,
+   "aspect": 3.734234234234234,
+   "touches_edge": false,
+   "n_routed_words": 5,
+   "routed_text_head": "Bacino di Belluno Piattaforma Friulana",
+   "gt_available": true,
+   "gt_match": "D2",
+   "gt_iou": 0.626,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_07",
+   "subpage": "left",
+   "block_id": 10,
+   "x": 211,
+   "y": 1482,
+   "w": 832,
+   "h": 380,
+   "page_w": 2080,
+   "page_h": 3000,
+   "area_frac": 0.050666666666666665,
+   "min_dim_frac": 0.12666666666666668,
+   "aspect": 2.1894736842105265,
+   "touches_edge": false,
+   "n_routed_words": 6,
+   "routed_text_head": "Schiara Valle del Piave Alpago Cansiglio",
+   "gt_available": true,
+   "gt_match": "D3",
+   "gt_iou": 0.72,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_07",
+   "subpage": "left",
+   "block_id": 15,
+   "x": 210,
+   "y": 1926,
+   "w": 831,
+   "h": 348,
+   "page_w": 2080,
+   "page_h": 3000,
+   "area_frac": 0.04634423076923077,
+   "min_dim_frac": 0.116,
+   "aspect": 2.3879310344827585,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "D4",
+   "gt_iou": 0.841,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_07",
+   "subpage": "left",
+   "block_id": 19,
+   "x": 211,
+   "y": 2377,
+   "w": 822,
+   "h": 368,
+   "page_w": 2080,
+   "page_h": 3000,
+   "area_frac": 0.04847692307692308,
+   "min_dim_frac": 0.12266666666666666,
+   "aspect": 2.233695652173913,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": true,
+   "gt_match": "D5",
+   "gt_iou": 0.928,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_07",
+   "subpage": "right",
+   "block_id": 2,
+   "x": 108,
+   "y": 258,
+   "w": 865,
+   "h": 467,
+   "page_w": 2000,
+   "page_h": 3000,
+   "area_frac": 0.06732583333333333,
+   "min_dim_frac": 0.15566666666666668,
+   "aspect": 1.8522483940042827,
+   "touches_edge": false,
+   "n_routed_words": 2,
+   "routed_text_head": "IA 7",
+   "gt_available": true,
+   "gt_match": "D6",
+   "gt_iou": 1.0,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_07",
+   "subpage": "right",
+   "block_id": 7,
+   "x": 91,
+   "y": 842,
+   "w": 876,
+   "h": 624,
+   "page_w": 2000,
+   "page_h": 3000,
+   "area_frac": 0.091104,
+   "min_dim_frac": 0.208,
+   "aspect": 1.4038461538461537,
+   "touches_edge": false,
+   "n_routed_words": 1,
+   "routed_text_head": "mare",
+   "gt_available": true,
+   "gt_match": "D7",
+   "gt_iou": 1.0,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_07",
+   "subpage": "right",
+   "block_id": 10,
+   "x": 114,
+   "y": 1537,
+   "w": 852,
+   "h": 742,
+   "page_w": 2000,
+   "page_h": 3000,
+   "area_frac": 0.105364,
+   "min_dim_frac": 0.24733333333333332,
+   "aspect": 1.1482479784366577,
+   "touches_edge": false,
+   "n_routed_words": 3,
+   "routed_text_head": "Livello del mare",
+   "gt_available": true,
+   "gt_match": "D8",
+   "gt_iou": 1.0,
+   "label": "real"
+  },
+  {
+   "image_id": "it_geo_07",
+   "subpage": "right",
+   "block_id": 13,
+   "x": 125,
+   "y": 2401,
+   "w": 441,
+   "h": 401,
+   "page_w": 2000,
+   "page_h": 3000,
+   "area_frac": 0.0294735,
+   "min_dim_frac": 0.13366666666666666,
+   "aspect": 1.0997506234413965,
+   "touches_edge": false,
+   "n_routed_words": 5,
+   "routed_text_head": "Asiago Vette Feltrine M.Grappa Schiara",
+   "gt_available": true,
+   "gt_match": "Dins",
+   "gt_iou": 1.0,
+   "label": "real"
+  },
+  {
+   "image_id": "de_01",
+   "subpage": "left",
+   "block_id": 0,
+   "x": 4,
+   "y": 15,
+   "w": 2055,
+   "h": 1103,
+   "page_w": 2063,
+   "page_h": 3000,
+   "area_frac": 0.3662409112942317,
+   "min_dim_frac": 0.36766666666666664,
+   "aspect": 1.8631006346328196,
+   "touches_edge": false,
+   "n_routed_words": 26,
+   "routed_text_head": "ar A J#e _ RE N De Latemargrupp® en a WE DET Fn N/A VE TE Bä",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_01",
+   "subpage": "left",
+   "block_id": 8,
+   "x": 595,
+   "y": 2035,
+   "w": 1451,
+   "h": 813,
+   "page_w": 2063,
+   "page_h": 3000,
+   "area_frac": 0.19060639844886088,
+   "min_dim_frac": 0.271,
+   "aspect": 1.7847478474784748,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_01",
+   "subpage": "right",
+   "block_id": 0,
+   "x": 39,
+   "y": 105,
+   "w": 1845,
+   "h": 1041,
+   "page_w": 2097,
+   "page_h": 3000,
+   "area_frac": 0.30530042918454936,
+   "min_dim_frac": 0.347,
+   "aspect": 1.7723342939481268,
+   "touches_edge": false,
+   "n_routed_words": 2,
+   "routed_text_head": "Schöner Gesteinswechsel",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_01",
+   "subpage": "right",
+   "block_id": 4,
+   "x": 77,
+   "y": 2019,
+   "w": 1495,
+   "h": 839,
+   "page_w": 2097,
+   "page_h": 3000,
+   "area_frac": 0.19938086154824353,
+   "min_dim_frac": 0.2796666666666667,
+   "aspect": 1.7818831942789035,
+   "touches_edge": false,
+   "n_routed_words": 3,
+   "routed_text_head": ";zschritt im Mictelceil",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_02",
+   "subpage": "left",
+   "block_id": 0,
+   "x": 2,
+   "y": 3,
+   "w": 1532,
+   "h": 944,
+   "page_w": 1556,
+   "page_h": 2776,
+   "area_frac": 0.3348125319484676,
+   "min_dim_frac": 0.3400576368876081,
+   "aspect": 1.6228813559322033,
+   "touches_edge": true,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_02",
+   "subpage": "left",
+   "block_id": 17,
+   "x": 813,
+   "y": 1821,
+   "w": 727,
+   "h": 801,
+   "page_w": 1556,
+   "page_h": 2776,
+   "area_frac": 0.13481489335694125,
+   "min_dim_frac": 0.28854466858789624,
+   "aspect": 1.1017881705639614,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_02",
+   "subpage": "right",
+   "block_id": 1,
+   "x": 53,
+   "y": 176,
+   "w": 1257,
+   "h": 56,
+   "page_w": 1584,
+   "page_h": 2776,
+   "area_frac": 0.016008427211597242,
+   "min_dim_frac": 0.020172910662824207,
+   "aspect": 22.446428571428573,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_02",
+   "subpage": "right",
+   "block_id": 2,
+   "x": 1345,
+   "y": 203,
+   "w": 233,
+   "h": 179,
+   "page_w": 1584,
+   "page_h": 2776,
+   "area_frac": 0.009484933994119872,
+   "min_dim_frac": 0.06448126801152737,
+   "aspect": 1.3016759776536313,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_02",
+   "subpage": "right",
+   "block_id": 3,
+   "x": 53,
+   "y": 296,
+   "w": 1257,
+   "h": 666,
+   "page_w": 1584,
+   "page_h": 2776,
+   "area_frac": 0.1903859379093529,
+   "min_dim_frac": 0.23991354466858789,
+   "aspect": 1.8873873873873874,
+   "touches_edge": false,
+   "n_routed_words": 1,
+   "routed_text_head": "ettersteig",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_02",
+   "subpage": "right",
+   "block_id": 5,
+   "x": 1346,
+   "y": 602,
+   "w": 231,
+   "h": 175,
+   "page_w": 1584,
+   "page_h": 2776,
+   "area_frac": 0.00919338376560999,
+   "min_dim_frac": 0.06304034582132564,
+   "aspect": 1.32,
+   "touches_edge": false,
+   "n_routed_words": 0,
+   "routed_text_head": "",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  },
+  {
+   "image_id": "de_02",
+   "subpage": "right",
+   "block_id": 11,
+   "x": 0,
+   "y": 1455,
+   "w": 1310,
+   "h": 1252,
+   "page_w": 1584,
+   "page_h": 2776,
+   "area_frac": 0.37299326114167614,
+   "min_dim_frac": 0.4510086455331412,
+   "aspect": 1.0463258785942493,
+   "touches_edge": true,
+   "n_routed_words": 20,
+   "routed_text_head": "Rotwand Klettersteig Westansicht Fensterl- turm Je S So SS (",
+   "gt_available": false,
+   "gt_match": null,
+   "gt_iou": 0.0,
+   "label": "unlabelled"
+  }
+ ],
+ "pairing_on_disk_at_census_time": {
+  "en_coins_01": {
+   "page_001__left": {
+    "n_figure_blocks": 2,
+    "pairs": {
+     "2": {
+      "figure": 1,
+      "source": "geometry",
+      "caption_number": 96
+     },
+     "9": {
+      "figure": 8,
+      "source": "geometry",
+      "caption_number": 97
+     }
+    }
+   },
+   "page_001__right": {
+    "n_figure_blocks": 2,
+    "pairs": {
+     "4": {
+      "figure": 3,
+      "source": "geometry",
+      "caption_number": 98
+     },
+     "10": {
+      "figure": 9,
+      "source": "geometry",
+      "caption_number": 99
+     }
+    }
+   }
+  },
+  "en_coins_02": {
+   "page_001__left": {
+    "n_figure_blocks": 1,
+    "pairs": {
+     "9": {
+      "figure": 8,
+      "source": "geometry",
+      "caption_number": 100
+     }
+    }
+   },
+   "page_001__right": {
+    "n_figure_blocks": 2,
+    "pairs": {
+     "4": {
+      "figure": 3,
+      "source": "geometry",
+      "caption_number": 101
+     },
+     "6": {
+      "figure": 5,
+      "source": "geometry",
+      "caption_number": 102
+     }
+    }
+   }
+  },
+  "en_coins_03": {
+   "page_001__left": {
+    "n_figure_blocks": 1,
+    "pairs": {
+     "5": {
+      "figure": 4,
+      "source": "geometry",
+      "caption_number": 103
+     }
+    }
+   },
+   "page_001__right": {
+    "n_figure_blocks": 2,
+    "pairs": {
+     "5": {
+      "figure": 4,
+      "source": "geometry",
+      "caption_number": 104
+     },
+     "7": {
+      "figure": 6,
+      "source": "geometry",
+      "caption_number": 105
+     }
+    }
+   }
+  },
+  "bg_01": {
+   "page_001__left": {
+    "n_figure_blocks": 0,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 0,
+    "pairs": {}
+   }
+  },
+  "bg_02": {
+   "page_001__left": {
+    "n_figure_blocks": 0,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 0,
+    "pairs": {}
+   }
+  },
+  "bg_03": {
+   "page_001__left": {
+    "n_figure_blocks": 0,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 0,
+    "pairs": {}
+   }
+  },
+  "it_geo_01": {
+   "page_001__left": {
+    "n_figure_blocks": 1,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 3,
+    "pairs": {
+     "4": {
+      "figure": 5,
+      "source": "geometry",
+      "caption_number": 5
+     }
+    }
+   }
+  },
+  "it_geo_02": {
+   "page_001__left": {
+    "n_figure_blocks": 3,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 2,
+    "pairs": {
+     "7": {
+      "figure": 4,
+      "source": "sole_figure",
+      "caption_number": 1
+     }
+    }
+   }
+  },
+  "it_geo_03": {
+   "page_001__left": {
+    "n_figure_blocks": 1,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 1,
+    "pairs": {}
+   }
+  },
+  "it_geo_04": {
+   "page_001__left": {
+    "n_figure_blocks": 1,
+    "pairs": {
+     "12": {
+      "figure": 3,
+      "source": "sole_figure",
+      "caption_number": 20
+     }
+    }
+   },
+   "page_001__right": {
+    "n_figure_blocks": 1,
+    "pairs": {
+     "3": {
+      "figure": 2,
+      "source": "geometry",
+      "caption_number": 21
+     }
+    }
+   }
+  },
+  "it_geo_05": {
+   "page_001__left": {
+    "n_figure_blocks": 1,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 1,
+    "pairs": {
+     "6": {
+      "figure": 2,
+      "source": "sole_figure",
+      "caption_number": 3
+     }
+    }
+   }
+  },
+  "it_geo_06": {
+   "page_001__left": {
+    "n_figure_blocks": 4,
+    "pairs": {
+     "6": {
+      "figure": 2,
+      "source": "number",
+      "caption_number": 25
+     },
+     "7": {
+      "figure": 5,
+      "source": "number",
+      "caption_number": 26
+     },
+     "8": {
+      "figure": 3,
+      "source": "number",
+      "caption_number": 27
+     },
+     "9": {
+      "figure": 4,
+      "source": "number",
+      "caption_number": 28
+     }
+    }
+   },
+   "page_001__right": {
+    "n_figure_blocks": 2,
+    "pairs": {
+     "3": {
+      "figure": 2,
+      "source": "number",
+      "caption_number": 29
+     }
+    }
+   }
+  },
+  "it_geo_07": {
+   "page_001__left": {
+    "n_figure_blocks": 4,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 4,
+    "pairs": {
+     "3": {
+      "figure": 2,
+      "source": "geometry",
+      "caption_number": null
+     }
+    }
+   }
+  },
+  "de_01": {
+   "page_001__left": {
+    "n_figure_blocks": 2,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 2,
+    "pairs": {}
+   }
+  },
+  "de_02": {
+   "page_001__left": {
+    "n_figure_blocks": 2,
+    "pairs": {}
+   },
+   "page_001__right": {
+    "n_figure_blocks": 5,
+    "pairs": {}
+   }
+  }
+ },
+ "sweep": [
+  {
+   "floor": 0.0,
+   "totals": {
+    "pairs": 20,
+    "by_sole_figure": 2
+   },
+   "changed_subpages": []
+  },
+  {
+   "floor": 0.02,
+   "totals": {
+    "pairs": 20,
+    "by_sole_figure": 2
+   },
+   "changed_subpages": []
+  },
+  {
+   "floor": 0.026,
+   "totals": {
+    "pairs": 20,
+    "by_sole_figure": 2
+   },
+   "changed_subpages": []
+  },
+  {
+   "floor": 0.04,
+   "totals": {
+    "pairs": 21,
+    "by_sole_figure": 3
+   },
+   "changed_subpages": [
+    {
+     "image_id": "it_geo_02",
+     "page_id": "page_001__right",
+     "before": {
+      "n_figure_blocks": 2,
+      "pairs": {}
+     },
+     "after": {
+      "n_figure_blocks": 2,
+      "pairs": {
+       "7": {
+        "figure": 4,
+        "source": "sole_figure",
+        "caption_number": 1
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "floor": 0.055,
+   "totals": {
+    "pairs": 21,
+    "by_sole_figure": 3
+   },
+   "changed_subpages": [
+    {
+     "image_id": "it_geo_02",
+     "page_id": "page_001__right",
+     "before": {
+      "n_figure_blocks": 2,
+      "pairs": {}
+     },
+     "after": {
+      "n_figure_blocks": 2,
+      "pairs": {
+       "7": {
+        "figure": 4,
+        "source": "sole_figure",
+        "caption_number": 1
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "floor": 0.065,
+   "totals": {
+    "pairs": 21,
+    "by_sole_figure": 3
+   },
+   "changed_subpages": [
+    {
+     "image_id": "it_geo_02",
+     "page_id": "page_001__right",
+     "before": {
+      "n_figure_blocks": 2,
+      "pairs": {}
+     },
+     "after": {
+      "n_figure_blocks": 2,
+      "pairs": {
+       "7": {
+        "figure": 4,
+        "source": "sole_figure",
+        "caption_number": 1
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "floor": 0.08,
+   "totals": {
+    "pairs": 21,
+    "by_sole_figure": 3
+   },
+   "changed_subpages": [
+    {
+     "image_id": "it_geo_02",
+     "page_id": "page_001__right",
+     "before": {
+      "n_figure_blocks": 2,
+      "pairs": {}
+     },
+     "after": {
+      "n_figure_blocks": 2,
+      "pairs": {
+       "7": {
+        "figure": 4,
+        "source": "sole_figure",
+        "caption_number": 1
+       }
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

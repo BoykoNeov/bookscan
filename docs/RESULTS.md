@@ -4945,3 +4945,125 @@ means the pairing decision falls back to the weakest rule there is. Here that ru
 happens to land on the correct figure (the 21px sliver sorts before the map, so the
 map is what precedes the caption), so the rendered output for `it_geo_05` is right
 on both pages — but by adjacency, not by anything this pass decided.
+
+## The sole-figure arm's missing size floor: the guard was for the wrong thing — 2026-08-26
+
+The arm added earlier today shipped with a hole named in its own docstring: it
+counts *figure blocks*, not printed figures, and *"a minimum-area floor on what
+counts as a figure block is the obvious guard and is deliberately NOT added here:
+nothing has measured where that floor would sit."* This measures it. The floor
+now exists — and almost nothing the previous row said about **why** it was needed
+survived contact with the measurement.
+
+### Three corrections, in order of how much they change
+
+**1. The block that motivated the guard is not a figure block.** The previous row
+reported that `it_geo_05`-left "prints one figure and the arm declines: a
+21x671px sliver figure block at the page edge counts as a second figure". It does
+not. Stage 04 emits **three** blocks on that subpage and none of them is the
+sliver (`04_layout/layout.json`: two headers and the 1806x2658 map). The sliver
+is an orphan junk-text region that Stage 05 assembles from unrouted words and
+that Stage 07's `unreadable_panel` pass re-types FIGURE — **after** the per-page
+loop has already called `group_figures`. It carries `type_promoted=True`, which
+is how the census tells the two apart. The pairing arm never saw it.
+
+**2. `it_geo_05`-left has exactly one thing wrong with it, and it is not this.**
+With the sliver out of the picture the subpage the arm sees is: one figure block
+(the map), one caption block (the one Stage 05 ejects from inside the map), and
+no printed number — because the ejection recovers the caption's 60 words *without*
+its header line, "In questa pagina: Figura 2". `caption_number` is None, so the
+arm's second requirement fails. **Recovering that number is sufficient to make
+the pair**; nothing else on that page is in the way. That is a small, separate,
+measurable follow-up, and it is now the only blocker there.
+
+**3. There is no detector-noise population at all.** The census
+(`tools/sole_floor_census.py`, all 15 curated spreads, 30 subpages, **50 figure
+blocks**, production path `run_all 00-06` + `stage07_assemble`) labels every
+figure block real/noise by IoU >= 0.2 against the GT figure bboxes that six
+fixtures carry. Noise: **zero**. Every figure block the arm counts on this corpus
+is real ink.
+
+### So what does break the count? Over-segmentation
+
+`it_geo_02`-right prints ONE photograph — the Cadini di Misurina — and the
+detector emits it as **two** boxes: a 1202x81px sky strip sitting on top of the
+1202x628px body. One picture, two figure blocks, and the uniqueness arm declines
+on a page where the answer is not in doubt. That is the real defect, and it is
+the mirror image of the under-segmentation this repo already has a scope document
+for.
+
+### The statistic the docstring proposed is measurably the wrong one
+
+The obvious floor is on AREA. On this corpus area **inverts** the two
+populations:
+
+| block | what it is | area frac | min(w,h) frac |
+|---|---|---|---|
+| `it_geo_02`-right 1202x81 | sky strip of one photograph | **0.0167** | 0.0270 |
+| `de_02`-right 231x175 | a WHOLE printed pictogram | **0.0092** | 0.0630 |
+
+A fragment can cover more of the page than a whole small figure does, so no area
+threshold orders them correctly. Minimum dimension does: 0.0270 against 0.0630.
+This is a measured inversion on real blocks, not an argument from principle.
+
+### The floor, and what it does
+
+`sole_min_fig_frac = 0.04` — a figure block thinner than 4% of the page in its
+narrower dimension does not count toward "this subpage holds exactly one figure".
+It sits in the middle of the empty gap between the strip (0.0270) and the
+smallest whole figure in the corpus (0.0630): 1.5x above one, 1.6x below the
+other. It is applied **inside `_sole_figure_pair` only** — it changes no
+detection, nothing arm 2 can pair to, no segmentation recall, no order metric.
+
+Swept over all 30 subpages by re-running Stage 07's real pairing pass with each
+floor injected (`docs/data/sole_floor_census_20260826.json`):
+
+| floor | pairs | by sole-figure | changed vs floor 0 | what falls below the floor |
+|---|---|---|---|---|
+| 0 (off) | 20 | 2 | — | — |
+| 0.02 | 20 | 2 | 0 | — |
+| 0.026 | 20 | 2 | 0 | `de_02`-right 1257x56 route banner |
+| **0.04 (shipped)** | **21** | **3** | **1** — `it_geo_02`-right gains "Figura 1" | + the 1202x81 sky strip |
+| 0.055 | 21 | 3 | 1 (same) | + `it_geo_02`-left 1712x163 legend row |
+| 0.065 | 21 | 3 | 1 (same) | + **two whole pictograms** (231x175, 233x179) |
+| 0.08 | 21 | 3 | 1 (same) | + a **GT-confirmed figure** (829x222) |
+
+**Exactly one subpage in thirty changes, and zero wrong pairs appear.** The eight
+block-order fixtures re-graded identically: 16/19 pairs, 0 wrong, per-fixture
+counts the same as the row above. The rendered HTML for `it_geo_05` is
+byte-identical with the floor off and on (`document.json` too) — checked, not
+assumed.
+
+**The change is visible in the deliverable, not just in the provenance field.**
+Re-rendering `it_geo_02` both ways: with the floor off, the "In questa pagina:
+Figura 1" caption comes out as a loose `<p class="caption">` standing on its own —
+Stage 08's adjacency fallback does not reach it, because the caption sits in the
+far-left column and the block before it in reading order is not the photograph.
+With the floor on it comes out inside a `<figure>` with its picture. This is one
+of the cases where abstaining really did leave the caption alone on the page.
+
+**Read the bottom two rows of that table carefully: they are a limit, not a
+reassurance.** At 0.065 the floor deletes two whole pictograms from the count and
+at 0.08 a ground-truth figure, and *nothing changes* — because neither subpage has
+an eligible printed-number caption for the arm to act on. So "no wrong pair even
+at 0.08" is not evidence that 0.08 is safe; it is evidence that this corpus cannot
+exercise the harm at all. 0.04 is placed by the block geometry, not by the sweep
+being flat.
+
+### Limits, stated
+
+* **The one gain is on an ungraded page.** `it_geo_02` has no block GT, so the
+  recovered pair was verified by looking at the pixels (one photograph, split).
+  The metric cannot see it either way.
+* **The floor is a thinness test, not a fragment detector.** `it_geo_02`-left's
+  1712x163px legend row is the same kind of fragment and survives at 0.04. It
+  changes nothing either way, which is why the floor was not pushed up to catch
+  it: the gap above it is 1.16x wide and that is not a place to put a threshold.
+* **It removes nothing from the document.** A block below the floor keeps
+  `type=figure`, so Stage 08 still renders the `it_geo_05` sliver as a picture
+  (its PNG header decodes to 21x671). This changes a COUNT, not a page.
+* **Under-segmentation is still unguarded and no size floor can guard it** — a
+  merged box is large. See `docs/FIGURE_SEPARATION_SCOPE.md`.
+* **N=1 for the benefit.** One page in the corpus has the over-segmented shape.
+
+Suite 477 green.

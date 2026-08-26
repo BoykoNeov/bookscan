@@ -5835,3 +5835,36 @@ nine decimals. Nothing in this file's tables changes.
   runs, every field, exact match) but it verifies the swap, not the OCR call.
 
 Suite **512 green** (was 511) — one added test, the identity guard above.
+
+### Addendum, same day: what "exactly one implementation" does and does not cover
+
+The row above was pushed before the repo was swept for other Tesseract call
+sites. Sweeping it afterwards (advisor) turns up several, so the claim needs its
+scope said out loud rather than inferred.
+
+It is true as written, for the three functions named: `grep -n "def _word_box\|
+def _center_in"` across `pipeline/ tools/ server/` returns exactly one hit each,
+in `pipeline/stage05_ocr.py`, and the only other `def ocr_*` in the repo is
+`tools/dewarp_ab.ocr_text`, which returns a joined string with no boxes and no
+`/scale` map-back — a different function, not a surviving copy.
+
+What the row must NOT be read as saying is that the 20px/2× upscale rule now
+lives in one place. It does not, and should not:
+
+* `tools/gate1_harness.py` writes the rule inline as bare literals
+  (`2.0 if 0 < med_h < 20 else 1.0`) and its docstring says why: *"This tool
+  stays INDEPENDENT of `pipeline/` so it remains a regression check whenever OCR
+  settings change (CLAUDE.md)."* An instrument that followed Stage 05's constants
+  would move whenever the thing it measures moves, which is the one thing a
+  regression check may not do. Its duplication is the feature.
+* `tools/dewarp_ab.py` repeats the same literals and pins itself to *Gate 1*, not
+  to Stage 05 — "exactly as the Gate 1 harness does, so absolute numbers stay
+  comparable to Gate 1."
+
+So the repo has **two** Tesseract instruments on purpose: the frozen Gate-1 one,
+and the pipeline's own, which the block-order and layout-WER harnesses now share
+with production instead of copying. The commit above collapsed a copy *within the
+second group*. It did not, and must not, merge the two groups. A test pinning
+`gate1_harness`'s literals to `UPSCALE_MEDIAN_PX` was considered and **rejected**
+for exactly this reason: it would assert a coupling the file forbids in writing.
+

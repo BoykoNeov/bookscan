@@ -28,7 +28,13 @@ Italian, German**.
 - [x] Gate 3: layout + reading order correct on complex pages — DONE
 - [x] Gate 4: end-to-end re-typeset PDF reads correctly — DONE
 - [ ] Gate 5: server + Android app — desktop FastAPI server DONE (see
-      `docs/plans/partitioned-questing-pillow.md`); Android app not started
+      `docs/plans/partitioned-questing-pillow.md`); Android app M1–M5 all BUILT
+      (see `docs/plans/android-guided-capture.md`) — scaffold+network client,
+      manual capture, hover auto-capture, multi-zoom close-ups, session UX.
+      The gate is still OPEN because **every milestone's on-device half is
+      unverified**: the unit-testable logic is tested, but nothing has run on a
+      real phone against a real book. That verification needs the physical
+      device and is the only thing left.
 
 ## Architecture: the stage contract (IMPORTANT)
 
@@ -161,8 +167,10 @@ bookscan/
   docs/data/             <- machine-readable inputs+outputs behind a RESULTS row
                             (committed so a result is auditable without temp/)
   pipeline/              <- stages + page_model.py + run_all.py
-  server/                <- FastAPI (built at Gate 5, empty until then)
-  app-android/           <- Kotlin app (built at Gate 5, empty until then)
+  server/                <- FastAPI upload/status/preview server (BUILT)
+  app-android/           <- Kotlin app, 3 Gradle modules (BUILT, unverified on
+                            a real device): app/ UI+VM, capture/ frame scoring
+                            + hover gate, network/ API client + retry
   testset/               <- fixed benchmark images + ground truth (NEVER edit
                             images; append-only). See testset/README.md
   jobs/                  <- runtime output, gitignored

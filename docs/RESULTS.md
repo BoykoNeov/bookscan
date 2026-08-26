@@ -4358,3 +4358,96 @@ downstream of Stage 01. No pipeline code changed: `partition_frames` is exactly
 as it was, deliberately. Evidence:
 `docs/data/anchor_choice_census_20260819.json`; re-run with
 `python -m tools.anchor_choice_census --json <path>`.
+
+## Anchor choice, downstream: the criterion is not the problem either — 2026-08-26
+
+`tools/anchor_downstream_census.py --json docs/data/anchor_downstream_census_20260826.json`
+
+The previous row closed "rank the anchor candidates inside the book box" as a
+no-op and left one thing standing: on three sets the incumbent selector (sharpest
+full-spread frame) keeps a photograph that OCRs measurably worse, so the
+**criterion** — variance of Laplacian, a focus measure, not a legibility measure
+— was named as the honest open question. This run says the criterion is not the
+problem either, and the reason is that the evidence against it was collected in
+the wrong place.
+
+**The instrument was the flaw.** That finding was Tesseract on the *raw upright
+frame* — the whole flat spread, room included, before the book crop, before the
+gutter cut, before Stage 03 flattens the page. Its own Limits paragraph says so.
+And the three disputed sets are exactly the ones where that matters:
+`skewset_de_01` and `skewset_it_01` are the multi-**view** fixture (deliberately
+oblique shots), in each the loser is the *sharper* frame, and what separates them
+is mean confidence — which is precisely the defect Stage 03 exists to remove. The
+third, `de_02`, is decided by a 669.9-vs-658.8 sharpness margin: **1.7 %**, a tie
+in the selector's own units rather than an error it committed.
+
+**Same question through the pipeline's own geometry.** Three arms per candidate —
+`flat` (whole frame), `split` (book crop + gutter cut, subpages summed), `dewarp`
+(the same subpages flattened first, UVDoc) — using `tools/dewarp_ab.py`'s
+`split_halves`/`dewarp_halves`, i.e. the functions Stages 02 and 03 run, and the
+*identical* Tesseract instrument as the flat census (config psm/oem, no upscale,
+words at conf ≥ 80 + mean conf). Only the geometry differs between arms. The
+`flat` arm reproduces `anchor_choice_census_20260819.json` frame-for-frame
+(`bg_taleb_01` 371/72.9, `de_01` 348/84.3, `de_02` 282/74.3, …), which is the
+self-check that the load path did not move under it.
+
+**Pre-registered before the run** (in the module docstring, committed in the same
+change): a set counts as an incumbent **error** only if a losing candidate leads
+on **both** statistics — more than **60** words at conf ≥ 80, *and* higher mean
+confidence. 60 is the reframing churn floor this instrument was already measured
+to have. `skewset_orient_02` (0 words on both frames) is degenerate and excluded
+from the verdict, measured and printed anyway.
+
+**Result — errors by arm, over the 9 non-degenerate sets that have a real choice:**
+
+| arm | incumbent errors | which |
+|---|---|---|
+| `flat` | 1/9 | `de_02` |
+| `split` | 2/9 | `skewset_de_01`, `skewset_it_01` |
+| `dewarp` | **0/9** | — |
+
+The disputed sets, as the challenger's margin (words / mean conf) against the
+incumbent's pick, arm by arm:
+
+| set | flat | split | dewarp |
+|---|---|---|---|
+| `de_02` | **+74 / +11.2** | +36 / −0.3 | −11 / +3.4 |
+| `skewset_it_01` | +59 / +13.6 | **+73 / +6.1** | **−55 / −1.7** |
+| `skewset_de_01` | +58 / +2.2 | **+87 / +6.9** | +22 / +1.4 |
+
+`skewset_it_01` reverses outright: the frame the selector keeps goes from 59
+words behind to 55 ahead once it is flattened, which is the predicted result if
+the flat penalty was obliquity rather than legibility. `de_02` decays to a
+3-word-per-hundred difference with the two statistics pointing opposite ways.
+`skewset_de_01` lands inside the floor from both directions.
+
+**Reported against the incumbent, not for it.** On 7 of the 9 sets the
+incumbent's pick also wins the dewarp arm outright. On the other two a loser
+leads on both statistics but below the pre-registered floor: `de_01` +43 / +8.4
+(the largest surviving disagreement in the corpus, and note it is **not** one of
+the three the flat census complained about — it appears only after dewarp) and
+`skewset_de_01` +22 / +1.4. So the honest claim is *no error survives at the
+stated bar*, not *the selector is perfect*.
+
+**Two things visible here that the flat census could not see.** Stage 02 fails to
+find a gutter on `bg_taleb_01_093629` (and on `skewset_orient_01_134655`) — a
+frame that breaks the split is a bad anchor whatever it scores, and in both cases
+the frame the selector *keeps* is the one that splits correctly. And splitting
+alone is not what fixes this: the `split` arm has **more** incumbent errors than
+the flat one. The flattening is doing the work.
+
+**Limits.** Nine sets, one photographer, one dewarper (UVDoc), and the label
+still stops at OCR of the dewarped subpages — layout, reading order and
+everything downstream of Stage 05 are outside it. The 60-word floor was measured
+on the *flat* instrument and applied to the dewarp arm; a learned dewarper's
+output plausibly varies at least as much under reframing, not less, so a floor
+that is too small would make errors *easier* to declare — and none were. Every
+candidate's Stage 00 rotation agrees within its set (no orientation confound).
+Running on the `skewset_*` pages spends no pre-registration: it merges no views,
+keys no GT and scores none of v1–v5, the same grounds on which that plan's own
+headroom triage read those frames.
+
+**No pipeline code changed.** `partition_frames` and `fullspread_area_frac` are
+imported and used exactly as they ship. Evidence:
+`docs/data/anchor_downstream_census_20260826.json`; re-run with
+`python -m tools.anchor_downstream_census --json <path>`.

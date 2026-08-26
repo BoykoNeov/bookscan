@@ -45,6 +45,14 @@ recorded in ``stitch_and_orientation_20260819.json``. Neither sharpness nor OCR
 is comparable across a 90-degree difference, so the whole OCR arm would have
 been noise.
 
+SUPERSEDED IN PART 2026-08-26. This tool's OCR arm scores the RAW FLAT FRAME,
+which is why its "the selector picks a worse photograph on three sets" did not
+survive contact with the pipeline's geometry: ``tools/anchor_downstream_census.py``
+re-runs the same instrument after the book crop, the gutter cut and Stage 03, and
+finds 0 of 9 incumbent errors at a pre-registered bar (flat 1, crop+split 2).
+Keep using this tool for the WINDOW question and the sharpness arms; do not cite
+its OCR arm as evidence about anchor quality. See ``docs/RESULTS.md`` 2026-08-26.
+
 Usage:
     python -m tools.anchor_choice_census [--json docs/data/<name>.json] [--no-ocr]
 """

@@ -109,6 +109,24 @@ answer is no:
 So the window is not where the problem is; the criterion is. ``partition_frames``
 is unchanged, deliberately.
 
+**And the criterion is not the problem either — measured 2026-08-26.** The
+sentence above stood on Tesseract run on the RAW FRAME, flat, before the book
+crop and before Stage 03 flattens the page, and two of the three sets it
+complained about are the multi-VIEW fixture, i.e. deliberately oblique shots
+whose confidence Stage 03 exists to restore (the third, ``de_02``, is a 1.7 %
+sharpness margin — a tie, not an error). ``tools/anchor_downstream_census.py``
+re-asks it through this pipeline's own geometry, same Tesseract settings, three
+arms (flat / crop+split / +dewarp), with the bar written down before the run: a
+loser must lead on BOTH statistics, by more than the 60-word reframing churn
+floor. Errors by arm over the 9 non-degenerate sets: flat 1, crop+split 2,
+**+dewarp 0**. ``skewset_it_01`` reverses outright (challenger +59 words flat ->
+-55 after dewarp). Splitting alone makes it WORSE; the flattening is what does
+the work. Reported against the incumbent too: on 2 of the 9 a loser still leads
+on both statistics below the floor, largest ``de_01`` +43 / +8.4 — which the flat
+census never flagged, so it appears only after dewarp. The honest claim is *no
+error survives at the stated bar*, not *the selector is perfect*. See
+``docs/RESULTS.md`` 2026-08-26. Do not re-open this by re-measuring flat frames.
+
 **Left unsolved, with the mechanism now identified.** The 6 close-ups that no
 setting registers (``en_01`` f01-f03, ``en_02`` f02-f04) are all oblique views of
 a strongly curved page — a cylinder seen near edge-on. A homography assumes a

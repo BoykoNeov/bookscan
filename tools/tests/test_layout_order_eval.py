@@ -11,7 +11,8 @@ from __future__ import annotations
 from pipeline import stage04_layout as S4
 from pipeline.page_model import BBox
 from tools.layout_order_eval import (
-    DetBlock, _bbox_iou, anchor_score, apply_param_overrides, grouping_eval,
+    DetBlock, _bbox_iou, anchor_precision, anchor_score, apply_param_overrides,
+    grouping_eval,
     kendall_tau, match_subpage, norm_tokens, order_with_figures,
 )
 
@@ -70,6 +71,54 @@ def test_match_figures_by_ro_rank_text_by_anchor():
     matched, misses = match_subpage(gt, det)
     assert matched == {"F1": 0, "P1": 1, "C1": 2}
     assert misses == []
+
+
+def test_short_anchor_does_not_steal_the_paragraph_that_mentions_it():
+    """en_coins_03-right, reduced: the heading anchor is the single word the body
+    paragraph also contains, so anchor RECALL ties at 1.0 on both blocks. Before
+    the precision tie-break the heading claimed the paragraph's block and P2 was
+    reported a segmentation miss with its text sitting in the document."""
+    gt = [
+        {"order": 0, "id": "H1", "type": "heading", "anchor": "Honduras"},
+        {"order": 1, "id": "P2", "type": "paragraph",
+         "anchor": "Despite their silver resources Honduras would not produce "
+                   "their own crown-sized silver type"},
+    ]
+    det = [
+        _db(0, 0, "heading", 0, 200, 240, 58, text="Honduras"),
+        _db(1, 1, "paragraph", 0, 2487, 1873, 136,
+            text="Despite their silver resources, Honduras would not produce "
+                 "their own crown-sized silver type until the late 19th century"),
+    ]
+    matched, misses = match_subpage(gt, det)
+    assert matched == {"H1": 0, "P2": 1}
+    assert misses == []
+
+
+def test_precision_tiebreak_never_rejects_a_low_precision_true_match():
+    """The tie-break must stay a TIE-break: a GT anchor is the first few words of
+    its block, so a correct match against a long paragraph has low precision. It
+    still wins, because its recall is higher than the rival's."""
+    gt = [{"order": 0, "id": "P1", "type": "paragraph",
+           "anchor": "il bacino di belluno si approfondisce"}]
+    det = [
+        # 6/6 anchor tokens but they are a sixth of the block -> precision ~0.17
+        _db(0, 0, "paragraph", 0, 0, 100, 50,
+            text="il bacino di belluno si approfondisce e vi si depongono "
+                 "sedimenti pelagici mentre la piattaforma di trento comincia "
+                 "lentamente a sprofondare sotto il livello del mare"),
+        # a short block made entirely of anchor tokens -> precision 1.0, recall 0.5
+        _db(1, 1, "caption", 0, 500, 100, 20, text="bacino belluno"),
+    ]
+    matched, _ = match_subpage(gt, det)
+    assert matched == {"P1": 0}
+
+
+def test_anchor_precision_is_the_other_direction_of_anchor_score():
+    assert anchor_precision("Honduras", "Honduras") == 1.0
+    assert anchor_precision("Honduras", "") == 0.0
+    # one anchor token out of four distinct block tokens
+    assert anchor_precision("Honduras", "silver Honduras crown type") == 0.25
 
 
 def test_match_reports_missing_figure_when_fewer_detected():

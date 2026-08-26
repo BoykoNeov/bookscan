@@ -5342,3 +5342,94 @@ which was the thing worth checking before Gate 5.
   `_word_box`, now inherited by the rescue.
 * **`total_words` has no consumer outside Stage 05.** Grepped: the only readers are
   Stage 05's own two progress lines, so the meaning change reaches nothing else.
+
+## The heading that ate the paragraph — 2026-08-26
+
+The same-day census of the corpus's six segmentation misses classified
+`en_coins_03` P2 as "the greedy matcher, not the detector … Not fixed here —
+recorded, because segmentation recall currently counts it". This closes it.
+
+### What was wrong
+
+`match_subpage` scores a GT block against a detected block with `anchor_score`,
+which is **recall of the anchor**: the fraction of the anchor's own tokens present
+in the block. Its denominator is the anchor's length, so a **one-token anchor
+scores a perfect 1.0 against every block on the page that contains that token**.
+
+`en_coins_03`-right's first GT block is the heading `H1`, and its anchor is the
+single word **`Honduras`** — the country the page is about. It ties at 1.0 against
+six of the twelve detected blocks: its own heading, the running header, both
+figure captions, and both body paragraphs. The greedy loop sorted candidates with
+`cand.sort(reverse=True)` over `(score, gt_id, det_idx)`, so among a six-way tie
+it took the **highest detected index** — block #10, the body paragraph `P2`.
+One-to-one assignment then left P2 with nothing, and the eval reported it as a
+segmentation miss although its text was in the document, in one block, correctly
+typed.
+
+The damage was not confined to the recall number. `H1` was then graded against a
+*paragraph* block, so its type counted wrong; and it sat at reading-order position
+10 instead of 1, which dragged the subpage's Kendall-tau from perfect to +0.429.
+One arbitrary tie-break moved three of the four headline figures on that subpage.
+
+### The fix: break ties with the other direction of the overlap
+
+`anchor_precision(anchor, block)` is the fraction of the **block's** distinct
+tokens the anchor accounts for. Candidates now sort by `(-recall, -precision,
+gt_id, det_idx)`. For `H1` that separates the six-way tie at once: its own heading
+block is precision 1.0 (the block is nothing but the anchor), the paragraph that
+merely mentions Honduras is 0.08.
+
+Precision is deliberately **only** a tie-break and never part of the accept test.
+GT anchors are the first 6–12 words of a block, so a correct match against a long
+paragraph has low precision *by construction* — used as a threshold it would
+reject exactly the matches this metric exists to make. Both halves are pinned by
+unit tests: the heading case, and a low-precision true match that must still beat
+a short high-precision rival on recall.
+
+The final tie-break is now stated (`gt_id`, then `det_idx`, both ascending)
+instead of falling out of a bare `reverse=True`, so the number cannot move on an
+unrelated re-run.
+
+### Measured: 14 graded subpages re-run, one moved
+
+Every fixture was graded before and after, with the matched sets diffed block by
+block (`base_*.json` / `fix_*.json`).
+
+| subpage | seg recall | type acc | tau | tau incl. figures |
+|---|---|---|---|---|
+| `en_coins_03`-right | 9/10 -> **10/10** | 5/9 -> **7/10** | +0.429 -> **+1.000** | +0.556 -> **+1.000** |
+| the other 13 | unchanged | unchanged | unchanged | unchanged |
+
+The other thirteen subpages produced **byte-identical matched sets**, so nothing
+was traded for this. Corpus segmentation recall **106/112 -> 107/112**; type
+accuracy **86/106 -> 88/107**. No caption<->figure pair changed anywhere.
+
+`H1` moved from det #10 to det #1 (its own heading block, now typed correctly) and
+`P2` from unmatched to det #10 (typed correctly) — the two type gains.
+
+### Greedy vs optimal, measured rather than assumed
+
+Greedy assignment can be beaten by a global one even with a good tie-break, so
+that was checked rather than argued: the same eval run was wrapped to compute, on
+the identical inputs, a `scipy.optimize.linear_sum_assignment` over the same
+eligibility rule (recall >= `MATCH_TAU`) maximizing total recall with precision as
+a secondary weight. **14 subpages compared, 0 disagreements.** Greed costs nothing
+on this corpus once the tie-break is specified, so the simpler code stays.
+
+### Limits, stated
+
+* **The fix is graded on the page that motivated it.** One subpage in fourteen has
+  a one-token anchor; the other thirteen prove only non-regression.
+* **A short anchor can still lose outright, not just on a tie.** If `H1`'s own
+  block had not been detected, `H1` would score 1.0 against P2's block while P2
+  scores 0.875 — that is not a tie, and precision never gets consulted. Fixing
+  *that* means changing the score itself, which would move every number in the
+  corpus; it is not done here and no case in the corpus exercises it.
+* **This changes the harness, not the pipeline.** No page renders differently. It
+  changes what the eval says was on the page.
+* **The larger harness gap is still open**: the eval stops after Stage 04 and
+  cannot see `caption_eject`, orphan-word rescue, or `block_reocr`, all of which
+  create blocks in Stage 05. Two of the six misses in that census are exactly
+  that, and closing it remains its own piece of work.
+
+Suite 496 green (was 493).

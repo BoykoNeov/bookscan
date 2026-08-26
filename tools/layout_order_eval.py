@@ -32,6 +32,9 @@ Method (per subpage — Stage 02 splits the spread, Stage 04 orders each half):
        * TEXT GT blocks (paragraph / caption / heading): by anchor-token
          overlap against the block's routed OCR text (greedy, highest score
          first, one detected block per GT block, threshold ``MATCH_TAU``).
+         Equal scores are broken by the OTHER direction of the overlap
+         (``anchor_precision``), so a short anchor cannot claim a long block it
+         barely explains ahead of the block that is actually made of it.
   3. SCORE per subpage:
        * segmentation recall = matched GT blocks / GT blocks (lists the misses);
        * type accuracy over matched blocks (detected type == GT type);
@@ -144,6 +147,31 @@ def anchor_score(anchor: str, block_text: str) -> float:
     return len(a & b) / len(a)
 
 
+def anchor_precision(anchor: str, block_text: str) -> float:
+    """Fraction of the BLOCK's (distinct) tokens the anchor accounts for — the
+    other direction of ``anchor_score``, used ONLY to break exact ties in it.
+
+    ``anchor_score`` is recall of the anchor, so its denominator is the anchor's
+    own token count: a ONE-TOKEN anchor scores a perfect 1.0 against every block
+    on the page that happens to contain that token. On ``en_coins_03``-right the
+    heading anchor ``"Honduras"`` scores 1.0 against six detected blocks — its own
+    heading, the running header, both captions, and both body paragraphs — and the
+    greedy loop below then handed it whichever the sort happened to reach first.
+    Precision separates them without touching the acceptance threshold: the
+    heading's own block is all anchor (1.0), the paragraph that merely mentions
+    Honduras is almost none of it (~0.05).
+
+    It is deliberately NOT part of the accept/reject test. GT anchors are the
+    first 6-12 words of a block, so a correct match against a long paragraph has
+    LOW precision by construction; used as a threshold it would reject the
+    matches the metric exists to make."""
+    b = set(norm_tokens(block_text))
+    if not b:
+        return 0.0
+    a = set(norm_tokens(anchor))
+    return len(a & b) / len(b)
+
+
 # --------------------------------------------------------------------------
 # Detected-block view (Stage 04 block + its routed OCR text + native order)
 # --------------------------------------------------------------------------
@@ -232,6 +260,13 @@ def match_subpage(gt_blocks: list[dict], det: list[DetBlock]
     bboxes existed) fall back to reading-order rank, unchanged. Text blocks match
     by greedy anchor-token overlap on the remaining detected blocks. Each detected
     block is claimed at most once.
+
+    Equal-recall ties are broken by ``anchor_precision`` (see there). Without
+    that, a one-token GT anchor ties at 1.0 against every block containing that
+    token and the sort order decided the winner — on ``en_coins_03``-right the
+    heading ``"Honduras"`` took the body paragraph P2's block, so P2 had nothing
+    left and was reported a segmentation MISS while its text sat in the document.
+    One-to-one assignment is kept: it is what makes a miss mean something.
     """
     matched: dict[str, int] = {}
     used: set[int] = set()
@@ -260,12 +295,15 @@ def match_subpage(gt_blocks: list[dict], det: list[DetBlock]
         matched[g["id"]] = d.idx
         used.add(d.idx)
 
-    # Text blocks (paragraph/caption/heading/...) by anchor overlap, greedy.
+    # Text blocks (paragraph/caption/heading/...) by anchor overlap, greedy —
+    # highest anchor RECALL first, ties broken by anchor PRECISION, then by a
+    # stated deterministic order (gt id, then detected index ascending).
     text_gt = [g for g in gt_blocks if g["type"] != "figure" and g.get("anchor")]
-    cand = [(anchor_score(g["anchor"], d.text), g["id"], d.idx)
+    cand = [(anchor_score(g["anchor"], d.text),
+             anchor_precision(g["anchor"], d.text), g["id"], d.idx)
             for g in text_gt for d in det if d.idx not in used]
-    cand.sort(reverse=True)
-    for score, gid, didx in cand:
+    cand.sort(key=lambda c: (-c[0], -c[1], c[2], c[3]))
+    for score, _prec, gid, didx in cand:
         if score < MATCH_TAU or gid in matched or didx in used:
             continue
         matched[gid] = didx

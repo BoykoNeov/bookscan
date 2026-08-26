@@ -1,0 +1,793 @@
+{
+ "generated": "2026-08-26",
+ "what": "tools/layout_order_eval match_subpage: anchor-recall ties now broken by anchor_precision. Before/after grade for every graded subpage.",
+ "subpages": [
+  {
+   "image": "de_01",
+   "subpage": "left.png",
+   "n_gt": 4,
+   "before": {
+    "matched": {
+     "T1": 0,
+     "F1": 5,
+     "P2": 4,
+     "P1": 3
+    },
+    "misses": [],
+    "type_ok": {
+     "T1": true,
+     "F1": true,
+     "P2": true,
+     "P1": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": null
+   },
+   "after": {
+    "matched": {
+     "T1": 0,
+     "F1": 5,
+     "P2": 4,
+     "P1": 3
+    },
+    "misses": [],
+    "type_ok": {
+     "T1": true,
+     "F1": true,
+     "P2": true,
+     "P1": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": null
+   },
+   "changed": false
+  },
+  {
+   "image": "de_01",
+   "subpage": "right.png",
+   "n_gt": 8,
+   "before": {
+    "matched": {
+     "F2": 0,
+     "F3": 6,
+     "R2": 2,
+     "H1": 4,
+     "E2": 7,
+     "E1": 5,
+     "R3": 3,
+     "R1": 1
+    },
+    "misses": [],
+    "type_ok": {
+     "F2": true,
+     "F3": true,
+     "R2": true,
+     "H1": true,
+     "E2": true,
+     "E1": true,
+     "R3": true,
+     "R1": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": null
+   },
+   "after": {
+    "matched": {
+     "F2": 0,
+     "F3": 6,
+     "H1": 4,
+     "E2": 7,
+     "R2": 2,
+     "E1": 5,
+     "R3": 3,
+     "R1": 1
+    },
+    "misses": [],
+    "type_ok": {
+     "F2": true,
+     "F3": true,
+     "H1": true,
+     "E2": true,
+     "R2": true,
+     "E1": true,
+     "R3": true,
+     "R1": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": null
+   },
+   "changed": false
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "left.png",
+   "n_gt": 12,
+   "before": {
+    "matched": {
+     "F96": 1,
+     "F97": 8,
+     "P3": 11,
+     "P2": 5,
+     "P1": 4,
+     "L1": 7,
+     "H1": 6,
+     "D2": 10,
+     "D1": 3,
+     "C97": 9,
+     "C96": 2
+    },
+    "misses": [
+     "FN1"
+    ],
+    "type_ok": {
+     "F96": true,
+     "F97": true,
+     "P3": true,
+     "P2": true,
+     "P1": true,
+     "L1": true,
+     "H1": false,
+     "D2": false,
+     "D1": false,
+     "C97": true,
+     "C96": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "after": {
+    "matched": {
+     "F96": 1,
+     "F97": 8,
+     "D1": 3,
+     "D2": 10,
+     "H1": 6,
+     "L1": 7,
+     "P2": 5,
+     "P3": 11,
+     "P1": 4,
+     "C97": 9,
+     "C96": 2
+    },
+    "misses": [
+     "FN1"
+    ],
+    "type_ok": {
+     "F96": true,
+     "F97": true,
+     "D1": false,
+     "D2": false,
+     "H1": false,
+     "L1": true,
+     "P2": true,
+     "P3": true,
+     "P1": true,
+     "C97": true,
+     "C96": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "changed": false
+  },
+  {
+   "image": "en_coins_01",
+   "subpage": "right.png",
+   "n_gt": 10,
+   "before": {
+    "matched": {
+     "F99": 9,
+     "F98": 3,
+     "P4": 6,
+     "L3": 8,
+     "D3": 5,
+     "C99": 10,
+     "L2": 2,
+     "C98": 4,
+     "H2": 1,
+     "H3": 7
+    },
+    "misses": [],
+    "type_ok": {
+     "F99": true,
+     "F98": true,
+     "P4": true,
+     "L3": true,
+     "D3": false,
+     "C99": true,
+     "L2": true,
+     "C98": true,
+     "H2": false,
+     "H3": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "after": {
+    "matched": {
+     "F99": 9,
+     "F98": 3,
+     "D3": 5,
+     "L3": 8,
+     "P4": 6,
+     "C99": 10,
+     "L2": 2,
+     "C98": 4,
+     "H2": 1,
+     "H3": 7
+    },
+    "misses": [],
+    "type_ok": {
+     "F99": true,
+     "F98": true,
+     "D3": false,
+     "L3": true,
+     "P4": true,
+     "C99": true,
+     "L2": true,
+     "C98": true,
+     "H2": false,
+     "H3": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "changed": false
+  },
+  {
+   "image": "en_coins_02",
+   "subpage": "right.png",
+   "n_gt": 8,
+   "before": {
+    "matched": {
+     "F101": 3,
+     "F102": 5,
+     "P1": 8,
+     "L1": 2,
+     "D1": 7,
+     "C102": 6,
+     "C101": 4,
+     "H1": 1
+    },
+    "misses": [],
+    "type_ok": {
+     "F101": true,
+     "F102": true,
+     "P1": true,
+     "L1": true,
+     "D1": false,
+     "C102": true,
+     "C101": true,
+     "H1": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "after": {
+    "matched": {
+     "F101": 3,
+     "F102": 5,
+     "D1": 7,
+     "L1": 2,
+     "P1": 8,
+     "C102": 6,
+     "C101": 4,
+     "H1": 1
+    },
+    "misses": [],
+    "type_ok": {
+     "F101": true,
+     "F102": true,
+     "D1": false,
+     "L1": true,
+     "P1": true,
+     "C102": true,
+     "C101": true,
+     "H1": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "changed": false
+  },
+  {
+   "image": "en_coins_03",
+   "subpage": "right.png",
+   "n_gt": 10,
+   "before": {
+    "matched": {
+     "F104": 4,
+     "F105": 6,
+     "L1": 3,
+     "H1": 10,
+     "D1": 8,
+     "C104": 5,
+     "P1": 9,
+     "C105": 7,
+     "H2": 2
+    },
+    "misses": [
+     "P2"
+    ],
+    "type_ok": {
+     "F104": true,
+     "F105": true,
+     "L1": true,
+     "H1": false,
+     "D1": false,
+     "C104": false,
+     "P1": true,
+     "C105": true,
+     "H2": false
+    },
+    "tau_layout": 0.42857142857142855,
+    "tau_all": 0.5555555555555556
+   },
+   "after": {
+    "matched": {
+     "F104": 4,
+     "F105": 6,
+     "C104": 5,
+     "D1": 8,
+     "H1": 1,
+     "L1": 3,
+     "P1": 9,
+     "C105": 7,
+     "P2": 10,
+     "H2": 2
+    },
+    "misses": [],
+    "type_ok": {
+     "F104": true,
+     "F105": true,
+     "C104": false,
+     "D1": false,
+     "H1": true,
+     "L1": true,
+     "P1": true,
+     "C105": true,
+     "P2": true,
+     "H2": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "changed": true
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "left.png",
+   "n_gt": 5,
+   "before": {
+    "matched": {
+     "B5": 0,
+     "B9": 1,
+     "B8": 9,
+     "B10": 2
+    },
+    "misses": [
+     "B6L"
+    ],
+    "type_ok": {
+     "B5": true,
+     "B9": true,
+     "B8": true,
+     "B10": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": null
+   },
+   "after": {
+    "matched": {
+     "B5": 0,
+     "B8": 9,
+     "B10": 2,
+     "B9": 1
+    },
+    "misses": [
+     "B6L"
+    ],
+    "type_ok": {
+     "B5": true,
+     "B8": true,
+     "B10": true,
+     "B9": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": null
+   },
+   "changed": false
+  },
+  {
+   "image": "it_geo_04",
+   "subpage": "right.png",
+   "n_gt": 4,
+   "before": {
+    "matched": {
+     "B6R": 2,
+     "B7": 3,
+     "B12": 7,
+     "B11": 4
+    },
+    "misses": [],
+    "type_ok": {
+     "B6R": true,
+     "B7": false,
+     "B12": true,
+     "B11": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": null
+   },
+   "after": {
+    "matched": {
+     "B6R": 2,
+     "B7": 3,
+     "B11": 4,
+     "B12": 7
+    },
+    "misses": [],
+    "type_ok": {
+     "B6R": true,
+     "B7": false,
+     "B11": true,
+     "B12": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": null
+   },
+   "changed": false
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "left.png",
+   "n_gt": 2,
+   "before": {
+    "matched": {
+     "F2": 2
+    },
+    "misses": [
+     "C2"
+    ],
+    "type_ok": {
+     "F2": true
+    },
+    "tau_layout": null,
+    "tau_all": null
+   },
+   "after": {
+    "matched": {
+     "F2": 2
+    },
+    "misses": [
+     "C2"
+    ],
+    "type_ok": {
+     "F2": true
+    },
+    "tau_layout": null,
+    "tau_all": null
+   },
+   "changed": false
+  },
+  {
+   "image": "it_geo_05",
+   "subpage": "right.png",
+   "n_gt": 5,
+   "before": {
+    "matched": {
+     "F3": 2,
+     "P3": 6,
+     "C3": 3,
+     "P2": 5,
+     "P1": 4
+    },
+    "misses": [],
+    "type_ok": {
+     "F3": true,
+     "P3": true,
+     "C3": true,
+     "P2": true,
+     "P1": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "after": {
+    "matched": {
+     "F3": 2,
+     "P3": 6,
+     "C3": 3,
+     "P2": 5,
+     "P1": 4
+    },
+    "misses": [],
+    "type_ok": {
+     "F3": true,
+     "P3": true,
+     "C3": true,
+     "P2": true,
+     "P1": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "changed": false
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "left.png",
+   "n_gt": 8,
+   "before": {
+    "matched": {
+     "F26": 5,
+     "F25": 2,
+     "F27": 3,
+     "F28": 4,
+     "C26": 7,
+     "C25": 6,
+     "C27": 8,
+     "C28": 9
+    },
+    "misses": [],
+    "type_ok": {
+     "F26": true,
+     "F25": true,
+     "F27": true,
+     "F28": true,
+     "C26": false,
+     "C25": false,
+     "C27": false,
+     "C28": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "after": {
+    "matched": {
+     "F26": 5,
+     "F25": 2,
+     "F27": 3,
+     "F28": 4,
+     "C25": 6,
+     "C26": 7,
+     "C27": 8,
+     "C28": 9
+    },
+    "misses": [],
+    "type_ok": {
+     "F26": true,
+     "F25": true,
+     "F27": true,
+     "F28": true,
+     "C25": false,
+     "C26": false,
+     "C27": false,
+     "C28": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "changed": false
+  },
+  {
+   "image": "it_geo_06",
+   "subpage": "right.png",
+   "n_gt": 6,
+   "before": {
+    "matched": {
+     "F29": 2,
+     "F30": 4,
+     "P2": 8,
+     "P1": 6,
+     "C30": 5,
+     "C29": 3
+    },
+    "misses": [],
+    "type_ok": {
+     "F29": true,
+     "F30": true,
+     "P2": true,
+     "P1": true,
+     "C30": false,
+     "C29": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "after": {
+    "matched": {
+     "F29": 2,
+     "F30": 4,
+     "P1": 6,
+     "C30": 5,
+     "P2": 8,
+     "C29": 3
+    },
+    "misses": [],
+    "type_ok": {
+     "F29": true,
+     "F30": true,
+     "P1": true,
+     "C30": false,
+     "P2": true,
+     "C29": false
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "changed": false
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "left.png",
+   "n_gt": 17,
+   "before": {
+    "matched": {
+     "D5": 16,
+     "D4": 12,
+     "D3": 7,
+     "D2": 6,
+     "T5mid": 18,
+     "T4right": 15,
+     "T4mid": 14,
+     "T3right": 11,
+     "T3mid": 9,
+     "T2mid": 8,
+     "T1right": 5,
+     "T1mid": 4,
+     "T2right": 10,
+     "C31": 1,
+     "TB": 3
+    },
+    "misses": [
+     "D1",
+     "T5right"
+    ],
+    "type_ok": {
+     "D5": true,
+     "D4": true,
+     "D3": true,
+     "D2": true,
+     "T5mid": true,
+     "T4right": true,
+     "T4mid": true,
+     "T3right": true,
+     "T3mid": true,
+     "T2mid": true,
+     "T1right": true,
+     "T1mid": true,
+     "T2right": true,
+     "C31": false,
+     "TB": true
+    },
+    "tau_layout": 0.9636363636363636,
+    "tau_all": 0.9428571428571428
+   },
+   "after": {
+    "matched": {
+     "D5": 16,
+     "D4": 12,
+     "D3": 7,
+     "D2": 6,
+     "T1mid": 4,
+     "T1right": 5,
+     "T2mid": 8,
+     "T3mid": 9,
+     "T3right": 11,
+     "T4mid": 14,
+     "T5mid": 18,
+     "T4right": 15,
+     "T2right": 10,
+     "C31": 1,
+     "TB": 3
+    },
+    "misses": [
+     "D1",
+     "T5right"
+    ],
+    "type_ok": {
+     "D5": true,
+     "D4": true,
+     "D3": true,
+     "D2": true,
+     "T1mid": true,
+     "T1right": true,
+     "T2mid": true,
+     "T3mid": true,
+     "T3right": true,
+     "T4mid": true,
+     "T5mid": true,
+     "T4right": true,
+     "T2right": true,
+     "C31": false,
+     "TB": true
+    },
+    "tau_layout": 0.9636363636363636,
+    "tau_all": 0.9428571428571428
+   },
+   "changed": false
+  },
+  {
+   "image": "it_geo_07",
+   "subpage": "right.png",
+   "n_gt": 13,
+   "before": {
+    "matched": {
+     "D6": 2,
+     "D7": 6,
+     "D8": 9,
+     "Dins": 12,
+     "T9a": 13,
+     "T8mid": 10,
+     "T6mid": 4,
+     "T7right": 8,
+     "T9c": 15,
+     "T6right": 5,
+     "T8right": 11,
+     "T7mid": 7,
+     "T9b": 14
+    },
+    "misses": [],
+    "type_ok": {
+     "D6": true,
+     "D7": true,
+     "D8": true,
+     "Dins": true,
+     "T9a": true,
+     "T8mid": true,
+     "T6mid": true,
+     "T7right": true,
+     "T9c": true,
+     "T6right": true,
+     "T8right": true,
+     "T7mid": true,
+     "T9b": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "after": {
+    "matched": {
+     "D6": 2,
+     "D7": 6,
+     "D8": 9,
+     "Dins": 12,
+     "T6mid": 4,
+     "T8mid": 10,
+     "T9a": 13,
+     "T7right": 8,
+     "T9c": 15,
+     "T6right": 5,
+     "T8right": 11,
+     "T7mid": 7,
+     "T9b": 14
+    },
+    "misses": [],
+    "type_ok": {
+     "D6": true,
+     "D7": true,
+     "D8": true,
+     "Dins": true,
+     "T6mid": true,
+     "T8mid": true,
+     "T9a": true,
+     "T7right": true,
+     "T9c": true,
+     "T6right": true,
+     "T8right": true,
+     "T7mid": true,
+     "T9b": true
+    },
+    "tau_layout": 1.0,
+    "tau_all": 1.0
+   },
+   "changed": false
+  }
+ ],
+ "optimal_assignment_check": {
+  "method": "scipy linear_sum_assignment over the same eligibility rule, maximizing total anchor recall with precision as secondary weight",
+  "subpages_compared": 14,
+  "disagreements": 0
+ }
+}

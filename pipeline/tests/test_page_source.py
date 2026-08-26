@@ -108,7 +108,26 @@ def test_cheap_criteria_are_not_offered_and_the_error_says_why():
 def test_bare_yaml_off_is_a_boolean_and_is_accepted():
     """``mode: off`` in YAML 1.1 arrives as False, not as the string 'off'."""
     assert PS.resolve_params({"per_page_source": {"mode": False}})["mode"] == "off"
-    assert PS.resolve_params({"per_page_source": {"mode": True}})["mode"] == "ocr"
+
+
+def test_bare_yaml_on_is_refused_rather_than_guessed():
+    """The bool has one obvious meaning going OFF and none going on. Guessing
+    'ocr' here would silently switch on a dewarp + Tesseract probe per spread."""
+    with pytest.raises(ValueError):
+        PS.resolve_params({"per_page_source": {"mode": True}})
+
+
+def test_the_documented_bar_and_the_recorded_bar_are_the_same_number():
+    """config.yaml, DEFAULTS and the artifact schema each name the churn floor;
+    they must not be able to drift apart."""
+    import yaml
+    assert PS.SelectionResult(mode="off", incumbent="a").min_word_gain == \
+        PS.DEFAULTS["min_word_gain"]
+    shipped = yaml.safe_load(
+        (Path(__file__).resolve().parents[2] / "config.yaml").read_text(
+            encoding="utf-8"))
+    assert shipped["per_page_source"]["min_word_gain"] == PS.DEFAULTS["min_word_gain"]
+    assert shipped["per_page_source"]["mode"] == "off", "must ship OFF"
 
 
 def test_the_shipped_default_is_off():

@@ -102,11 +102,14 @@ def resolve_params(cfg: dict) -> dict:
     params = dict(DEFAULTS)
     params.update(cfg.get("per_page_source", {}) or {})
     mode = params["mode"]
-    # YAML 1.1 reads a bare ``off`` as the boolean False (and ``on`` as True), so
-    # the most natural way to write this setting arrives here as a bool. Accept
-    # it rather than failing with a message about 'false' not being a mode.
-    if isinstance(mode, bool):
-        mode = "off" if mode is False else "ocr"
+    # YAML 1.1 reads a bare ``off`` as the boolean False, so the most natural way
+    # to write "leave it alone" arrives here as a bool with exactly one possible
+    # meaning — accept it rather than failing with a message about 'false' not
+    # being a mode. ``on`` (True) is NOT accepted: nobody writes it meaning "the
+    # OCR criterion", and guessing wrong in that direction silently switches on a
+    # dewarp-and-Tesseract probe per spread. It falls through to the error below.
+    if mode is False:
+        mode = "off"
     mode = str(mode).lower()
     if mode not in MODES:
         raise ValueError(

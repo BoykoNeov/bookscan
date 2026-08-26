@@ -4736,3 +4736,11 @@ correctly when the bar allows it — it has NOT been shown to improve any output
 because at the shipped bar it changes nothing on this corpus. Suite 464 green.
 Evidence for both arms of the end-to-end run (shipped bar, and the lowered bar
 that exercises the swap): `docs/data/perpage_source_e2e_20260826.json`.
+
+**Activation, both documented entry points.** `run_all` passes the whole config
+through to Stage 02, so setting `per_page_source.mode: ocr` in `config.yaml`
+fires on the full-pipeline command as well as on `stage02_split` alone; both now
+also take a one-run `--per-page-source` override. Note that `mode: on` is
+REFUSED rather than read as `ocr` — YAML turns a bare `off` into a boolean with
+exactly one possible meaning (accepted), but guessing the other direction would
+silently switch on a ~9 s dewarp-and-OCR probe per spread.

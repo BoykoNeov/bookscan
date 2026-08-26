@@ -53,6 +53,7 @@ from typing import Callable
 from pydantic import BaseModel, Field
 
 from pipeline.page_model import StageMeta
+from pipeline import page_source as PS
 from pipeline import stage00_ingest as S0
 from pipeline import stage01_fuse as S1
 from pipeline import stage02_split as S2
@@ -181,6 +182,10 @@ def main(argv: list[str] | None = None) -> int:
                      help="Stage 06 uncertainty mode; default from config")
     ap.add_argument("--lang", default=None, help="Stage 05 OCR language override")
     ap.add_argument("--config", type=Path, default=REPO_ROOT / "config.yaml")
+    ap.add_argument("--per-page-source", choices=list(PS.MODES), default=None,
+                     help="override per_page_source.mode for Stage 02 (see "
+                          "pipeline/page_source.py). Default comes from "
+                          "config.yaml, where it is off.")
     ap.add_argument("--debug", action="store_true")
     args = ap.parse_args(argv)
 
@@ -193,6 +198,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2  # unreachable — ap.error() exits, but satisfies type checkers
 
     cfg = S4.load_config(args.config)
+    # Config-file activation already reaches Stage 02 (the whole cfg is passed
+    # through), so this only adds the same one-run override stage02_split's own
+    # CLI has — otherwise the two documented entry points would disagree.
+    if args.per_page_source is not None:
+        cfg = {**cfg, "per_page_source": {**(cfg.get("per_page_source") or {}),
+                                          "mode": args.per_page_source}}
     result = run_page(page_dir, cfg, src=args.input, lang=args.lang,
                        mode=args.mode, debug=args.debug)
 

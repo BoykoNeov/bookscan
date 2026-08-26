@@ -608,5 +608,303 @@ def test_e2e_pairing_to_a_taken_figure_is_flagged_not_silently_dropped(job: Path
             browser.close()
 
 
+# --------------------------------------------------------------------------
+# Structure edits — reorder + split + undo
+#
+# The browser owns the edit logic (it is the edit surface), so these are mostly DOM
+# e2e tests. Three things are checked at the Python layer instead, because they are
+# server-side invariants a browser test cannot prove: that a split-shaped block —
+# one the pipeline never proposed, so it has NO ``*_auto`` provenance to diverge
+# from — validates, and that assemble's clobber-detection still sees it as work
+# worth protecting. That block is the one shape where ``normalize_edits`` cannot
+# infer ``structure_edited``, so the editor sets it explicitly; if that ever
+# regressed, a re-assemble would silently discard every split the user made.
+# --------------------------------------------------------------------------
+
+
+def _split_shaped_block() -> Block:
+    """The tail half a split produces: fresh id above every existing one, no
+    ``type_auto``/``order_auto``, ``structure_edited`` set by hand."""
+    return Block(
+        id=4, type=BlockType.PARAGRAPH, bbox={"x": 70, "y": 40, "w": 55, "h": 18},
+        reading_order=2, type_auto=None, order_auto=None, structure_edited=True,
+        words=[Word(text="wrold", text_ocr="wrold",
+                    bbox={"x": 70, "y": 40, "w": 55, "h": 18}, conf=41.0,
+                    decision=WordDecision.FLAG, line_id=1, block_id=4)],
+    )
+
+
+def test_split_shaped_block_survives_normalize(job: Path):
+    doc = ED.load_document(job)
+    doc.pages[0].blocks.append(_split_shaped_block())
+    ED.normalize_edits(doc)
+    nb = doc.pages[0].blocks[-1]
+    assert nb.structure_edited is True          # not cleared by the divergence check
+    assert nb.type_auto is None and nb.order_auto is None   # provenance stays absent
+
+
+def test_split_shaped_block_reads_as_edited(job: Path):
+    """A page whose ONLY human work is a split must block a silent re-assemble."""
+    doc = ED.load_document(job)
+    assert ED._document_has_edits(doc) is False   # pristine to begin with
+    doc.pages[0].blocks.append(_split_shaped_block())
+    assert ED._document_has_edits(doc) is True
+
+
+def test_http_put_persists_a_split_shaped_block(job: Path):
+    doc = ED.load_document(job)
+    doc.pages[0].blocks.append(_split_shaped_block())
+    with _Server(job) as srv:
+        req = urllib.request.Request(
+            srv.url("/api/document"), data=doc.model_dump_json().encode("utf-8"),
+            headers={"Content-Type": "application/json"}, method="PUT")
+        body = json.loads(urllib.request.urlopen(req).read())
+    assert body["ok"] is True and body["has_edits"] is True
+    nb = ED.load_document(job).pages[0].blocks[-1]
+    assert nb.id == 4 and nb.structure_edited is True and nb.type_auto is None
+
+
+def _blocklist_state(pg) -> list:
+    """(block id, reading_order) in the order the block list shows them."""
+    return [tuple(x) for x in pg.evaluate(
+        "() => [...page().blocks].sort((a,b)=>a.reading_order-b.reading_order)"
+        "        .map(b=>[b.id, b.reading_order])")]
+
+
+@pytest.mark.e2e
+def test_e2e_reorder_block_keeps_ids_and_pairing(job: Path):
+    """Alt+Down moves the selected block one slot later. The result must be a dense
+    0..n-1 permutation, block IDS must be untouched (``figure_ref`` is a pointer to
+    one — renumbering would silently dangle it), and the caption must still resolve
+    to its figure after the move."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            assert _blocklist_state(pg) == [(0, 0), (1, 1), (2, 2), (3, 3)]
+            pg.query_selector_all("#blocklist .blockrow")[0].click()   # block 0
+            pg.keyboard.press("Alt+ArrowDown")
+            assert _blocklist_state(pg) == [(1, 0), (0, 1), (2, 2), (3, 3)]
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+        finally:
+            browser.close()
+
+    blocks = {b.id: b for b in ED.load_document(job).pages[0].blocks}
+    assert sorted(blocks) == [0, 1, 2, 3]                        # no id was reassigned
+    assert blocks[1].reading_order == 0 and blocks[0].reading_order == 1
+    assert sorted(b.reading_order for b in blocks.values()) == [0, 1, 2, 3]  # dense
+    assert blocks[3].figure_ref is not None and blocks[3].figure_ref.block_id == 2
+    assert blocks[0].structure_edited is True   # its order diverged from order_auto
+    # The blocks the move did NOT pass keep their exact number, so nothing outside
+    # the travelled span was silently marked as reviewed.
+    assert blocks[2].reading_order == 2 and blocks[3].reading_order == 3
+
+
+@pytest.mark.e2e
+def test_e2e_drag_row_reorders(job: Path):
+    """The HTML5 drag handlers themselves, driven with a synthetic DataTransfer:
+    drop block 0 onto the BOTTOM half of the last row -> it lands last."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            pg.evaluate("""() => {
+              const rows = document.querySelectorAll('#blocklist .blockrow');
+              const dt = new DataTransfer();
+              rows[0].dispatchEvent(new DragEvent('dragstart',
+                {bubbles:true, dataTransfer:dt}));
+              const last = rows[rows.length-1], r = last.getBoundingClientRect();
+              const opts = {bubbles:true, dataTransfer:dt,
+                            clientY: r.top + r.height*0.9};   // bottom half -> drop AFTER
+              last.dispatchEvent(new DragEvent('dragover', opts));
+              last.dispatchEvent(new DragEvent('drop', opts));
+            }""")
+            assert _blocklist_state(pg) == [(1, 0), (2, 1), (3, 2), (0, 3)]
+        finally:
+            browser.close()
+
+
+@pytest.mark.e2e
+def test_e2e_split_block_via_dom(job: Path):
+    """Select the 2nd word of the two-word paragraph, split there, and assert the
+    tail became its own block with a FRESH id, both halves carry only their own
+    words, and the whole thing survives a save."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#ovWords .wbox")
+            pg.query_selector_all("#ovWords .wbox")[2].click()   # "wrold", word 1 of block 1
+            btn = pg.wait_for_selector("#inspector button:has-text('Split here')")
+            assert "wrold" in btn.text_content()
+            btn.click()
+            assert _blocklist_state(pg) == [(0, 0), (1, 1), (4, 2), (2, 3), (3, 4)]
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+        finally:
+            browser.close()
+
+    blocks = {b.id: b for b in ED.load_document(job).pages[0].blocks}
+    assert sorted(blocks) == [0, 1, 2, 3, 4]
+    assert [w.text for w in blocks[1].words] == ["hello"]
+    assert [w.text for w in blocks[4].words] == ["wrold"]
+    assert blocks[4].words[0].block_id == 4          # word re-homed to its new block
+    assert blocks[4].type is BlockType.PARAGRAPH     # same type as the block it left
+    assert blocks[4].type_auto is None and blocks[4].order_auto is None
+    assert blocks[4].structure_edited and blocks[1].structure_edited
+    assert blocks[4].figure_ref is None              # pairing state stays with the head
+    assert blocks[3].figure_ref.block_id == 2        # the real pair is untouched
+    # both halves shrink to the geometry of the words they actually own
+    assert blocks[1].bbox.w == 50 and blocks[4].bbox.x == 70
+
+
+@pytest.mark.e2e
+def test_e2e_split_refuses_a_figure_and_a_translated_block(job: Path):
+    """Splitting is offered only where it would change the output: a figure renders
+    from pixels, and a block-level text override supersedes the words entirely."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            # a figure carries no words at all -> no split control is even built
+            pg.query_selector_all("#blocklist .blockrow")[2].click()
+            assert "Split here" not in pg.text_content("#inspector")
+            # give the paragraph a translation, then re-select its 2nd word
+            pg.query_selector_all("#ovWords .wbox")[2].click()
+            ta = pg.wait_for_selector("#inspector textarea")
+            ta.fill("hallo welt")
+            ta.dispatch_event("input")
+            pg.query_selector_all("#ovWords .wbox")[2].click()
+            body = pg.text_content("#inspector")
+            assert "Split here" not in body
+            assert "block-level text override" in body and "clear it first" in body
+        finally:
+            browser.close()
+
+
+@pytest.mark.e2e
+def test_e2e_undo_reverts_word_edit_split_and_reorder(job: Path):
+    """One undo stack over all three kinds of change, popped newest-first."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            assert pg.query_selector("#undo").is_disabled()   # nothing to undo yet
+
+            pg.query_selector_all("#ovWords .wbox")[2].click()   # "wrold"
+            inp = pg.wait_for_selector("#inspector .card input")
+            inp.fill("world")
+            inp.dispatch_event("input")
+            pg.query_selector_all("#ovWords .wbox")[2].click()
+            pg.wait_for_selector("#inspector button:has-text('Split here')")
+            pg.click("#inspector button:has-text('Split here')")
+            pg.query_selector_all("#blocklist .blockrow")[0].click()
+            pg.keyboard.press("Alt+ArrowDown")
+            assert _blocklist_state(pg) == [(1, 0), (0, 1), (4, 2), (2, 3), (3, 4)]
+
+            pg.click("#undo")                                  # undo the reorder
+            assert _blocklist_state(pg) == [(0, 0), (1, 1), (4, 2), (2, 3), (3, 4)]
+            pg.click("#undo")                                  # undo the split
+            assert _blocklist_state(pg) == [(0, 0), (1, 1), (2, 2), (3, 3)]
+            assert pg.evaluate(
+                "() => page().blocks.find(b=>b.id===1).words.map(w=>w.text)"
+            ) == ["hello", "world"]
+            pg.click("#undo")                                  # undo the word edit
+            assert pg.evaluate(
+                "() => page().blocks.find(b=>b.id===1).words.map(w=>w.text)"
+            ) == ["hello", "wrold"]
+            # the edit flag rides in the snapshot, so it comes back off too
+            assert pg.evaluate(
+                "() => page().blocks.find(b=>b.id===1).words[1].edited") is False
+            assert pg.query_selector("#undo").is_disabled()
+            # undoing leaves the in-memory doc ahead of disk on purpose
+            assert "unsaved" in pg.text_content("#status")
+        finally:
+            browser.close()
+
+
+@pytest.mark.e2e
+def test_e2e_undo_after_save_needs_a_second_save(job: Path):
+    """Undo is an in-memory stack, not a server rollback: after Save, undoing does
+    NOT touch disk until the user saves again."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#ovWords .wbox")
+            pg.query_selector_all("#ovWords .wbox")[2].click()
+            inp = pg.wait_for_selector("#inspector .card input")
+            inp.fill("world")
+            inp.dispatch_event("input")
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+            assert ED.load_document(job).pages[0].blocks[1].words[1].text == "world"
+            pg.click("#undo")
+            assert pg.evaluate(
+                "() => page().blocks.find(b=>b.id===1).words[1].text") == "wrold"
+            # disk still holds the saved edit — undo did not roll the server back
+            assert ED.load_document(job).pages[0].blocks[1].words[1].text == "world"
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+        finally:
+            browser.close()
+
+    w = ED.load_document(job).pages[0].blocks[1].words[1]
+    # normalize_edits only ever SETS a flag from a divergence, so a restored snapshot
+    # whose text matches text_ocr again is written back un-flagged rather than stuck.
+    assert w.text == "wrold" and w.edited is False and w.flag_visible is True
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))

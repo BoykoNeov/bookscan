@@ -84,6 +84,10 @@
   .blockrow.sel { border-color:var(--accent); background:rgba(90,169,255,.08); }
   .blockrow .ord { font-variant-numeric:tabular-nums; color:var(--muted); width:2em; }
   .blockrow .ty { font-size:12px; color:var(--muted); }
+  .blockrow .grip { color:var(--muted); cursor:grab; user-select:none; letter-spacing:-2px; }
+  .blockrow.dragging { opacity:.45; }
+  .blockrow.dropbefore { box-shadow:0 -2px 0 var(--accent); }
+  .blockrow.dropafter  { box-shadow:0  2px 0 var(--accent); }
   .wordchip { display:inline-block; margin:2px; padding:2px 6px; border-radius:5px;
               border:1px solid var(--line); cursor:pointer; background:var(--panel); }
   .wordchip.flag { border-color:var(--flag); } .wordchip.patch { border-color:var(--patch); }
@@ -107,6 +111,7 @@
   <span id="pagelabel" class="small">—</span>
   <button id="next">▶</button>
   <span style="width:12px"></span>
+  <button id="undo" title="Undo (Ctrl+Z) — session-only, not a server rollback" disabled>↶ Undo</button>
   <button id="save" class="primary">Save</button>
   <button id="render">Preview ▶</button>
   <span id="status" class="muted"></span>
@@ -150,7 +155,7 @@
 <script>
 const BLOCK_TYPES = ["title","paragraph","heading","list","table","figure",
   "caption","footnote","header","page_number","other"];
-const state = { doc:null, pageIndex:0, selBlock:null, selWord:null, dirty:false };
+const state = { doc:null, pageIndex:0, selBlock:null, selWord:null, dirty:false, undo:[] };
 
 const $ = s => document.querySelector(s);
 const el = (t, cls, txt) => { const e=document.createElement(t);
@@ -159,6 +164,66 @@ function page(){ return state.doc.pages[state.pageIndex]; }
 function setStatus(msg, kind){ const s=$("#status"); s.textContent=msg;
   s.style.color = kind==="err" ? "var(--patch)" : kind==="ok" ? "var(--edited)" : "var(--muted)"; }
 function markDirty(){ state.dirty=true; setStatus("unsaved changes"); }
+
+// ---- undo (in-memory, session-only) ------------------------------------------
+// A snapshot is the CURRENT PAGE's blocks + the document settings, deep-copied via
+// JSON. Page-scoped on purpose: every structural action here (retype, renumber,
+// drag, split, pair) is page-local, and snapshotting a whole book on each keystroke
+// would cost more than the feature is worth.
+//
+// HONEST LIMIT, stated in the button's tooltip too: this is an in-memory stack, not
+// a server rollback. It disappears on reload, and it does not un-write a Save that
+// already happened — undo restores the in-memory state (edit flags included, since
+// they live in the snapshotted blocks) and you must Save again for disk to agree.
+// That the flags round-trip at all is what makes this safe: server-side
+// `normalize_edits` only ever SETS flags from a divergence, so a restored snapshot
+// whose text matches text_ocr again is written back un-flagged rather than staying
+// stuck as "edited".
+const UNDO_LIMIT = 60;
+const UNDO_COALESCE_MS = 1500;
+
+function snapshot(){
+  return { pageIndex: state.pageIndex,
+           blocks: JSON.stringify(page().blocks),
+           settings: JSON.stringify(state.doc.settings) };
+}
+
+// Call BEFORE mutating. `key` coalesces a run of keystrokes in ONE field into a
+// single undo step: while the same key stays on top of the stack and the user has
+// not paused, the pre-edit snapshot already there is the one we want to keep.
+function pushUndo(label, key){
+  const top = state.undo[state.undo.length-1];
+  const now = performance.now();
+  if(key && top && top.key===key && (now - top.t) < UNDO_COALESCE_MS){
+    top.t = now; return;
+  }
+  const snap = snapshot();
+  snap.label = label; snap.key = key || null; snap.t = now;
+  state.undo.push(snap);
+  if(state.undo.length > UNDO_LIMIT) state.undo.shift();
+  refreshUndo();
+}
+
+function undo(){
+  const s = state.undo.pop();
+  if(!s) return;
+  state.pageIndex = s.pageIndex;
+  state.doc.pages[s.pageIndex].blocks = JSON.parse(s.blocks);
+  state.doc.settings = JSON.parse(s.settings);
+  state.selWord = null;
+  if(state.selBlock!=null && !findBlock(state.selBlock)) state.selBlock = null;
+  state.dirty = true;
+  renderAll(); refreshUndo();
+  setStatus("undid: " + (s.label || "change") + " — unsaved");
+}
+
+function refreshUndo(){
+  const b = $("#undo"); if(!b) return;
+  const top = state.undo[state.undo.length-1];
+  b.disabled = !top;
+  b.title = top ? `Undo "${top.label}" (Ctrl+Z) — session-only, not a server rollback`
+                : "Nothing to undo";
+}
 
 // ---- word helpers (mirror page_model.Word.flag_visible) ----
 function isEdited(w){ return w.edited || (w.text_ocr!=null && w.text!==w.text_ocr); }
@@ -176,9 +241,11 @@ function orderNeedsReview(blk){
   return true;
 }
 function pageBlocksNeedingReview(){ return page().blocks.filter(orderNeedsReview); }
-function confirmOrder(blk, on){ blk.order_confirmed=!!on; markDirty();
+function confirmOrder(blk, on){ pushUndo(on?"confirm order":"undo confirm order");
+  blk.order_confirmed=!!on; markDirty();
   renderPage(); renderBlockList(); renderInspector(); }
-function confirmAllOnPage(){ for(const blk of page().blocks){ if(orderNeedsReview(blk)) blk.order_confirmed=true; }
+function confirmAllOnPage(){ pushUndo("confirm order on every block");
+  for(const blk of page().blocks){ if(orderNeedsReview(blk)) blk.order_confirmed=true; }
   markDirty(); renderPage(); renderBlockList(); renderInspector(); }
 
 // ---- caption<->figure pairing helpers (mirror page_model.Block.figure_ref / PairSource) ----
@@ -234,9 +301,114 @@ function partnerId(blk){                          // block to highlight alongsid
   return null;
 }
 function setPair(blk, figId){
+  pushUndo(figId==null ? "unpair caption" : "pair caption to figure");
   blk.figure_ref = (figId==null) ? null : { page_id: page().page_id, block_id: figId };
   blk.pair_source = "user";
   markDirty(); renderPage(); renderBlockList(); renderInspector();
+}
+
+// ---- structure edits: reorder + split -----------------------------------------
+// Two rules hold for BOTH, and they are the reason this is not just array surgery:
+//
+// 1. BLOCK IDS ARE NEVER REASSIGNED. `figure_ref` is a {page_id, block_id} pointer
+//    (page_model.BlockRef) and the PUT endpoint validates the document's SHAPE, not
+//    its referential integrity — a dangling ref would save silently and the caption
+//    would quietly stop floating with its figure. Reordering therefore rewrites
+//    `reading_order` only, and a split ALLOCATES a fresh id above every id on the
+//    page rather than renumbering anything.
+//
+// 2. REORDERING IS A DENSE 0..n-1 PERMUTATION. `reading_order` is only ever used as
+//    a sort key (stage08_render sorts the page by it), so duplicates and gaps sort
+//    ambiguously. Writing back the full permutation also keeps the side effect on
+//    review markers as small as it can be: after moving one block within an already
+//    dense page, every block OUTSIDE the span it travelled keeps the exact number it
+//    had, so its "needs review" marker survives untouched. The blocks INSIDE the span
+//    are precisely the ones the user dragged the block past — a real pairwise ruling
+//    on their order — and their marker clearing is the honest outcome, not a bug.
+//    (If a page was left non-dense by hand-typed numbers, the first reorder
+//    normalizes it and can clear more markers than it moved. Undo covers that.)
+
+function applyOrder(seq){ seq.forEach((b,i)=>{ b.reading_order = i; }); }
+function orderedBlocks(){ return [...page().blocks].sort((a,b)=>a.reading_order-b.reading_order); }
+
+// Move the block with `id` so it lands at position `toIndex` of the CURRENT ordered
+// sequence (an insertion index in 0..n, i.e. "before the block currently at toIndex").
+function moveBlock(id, toIndex){
+  const seq = orderedBlocks();
+  const from = seq.findIndex(b=>b.id===id);
+  if(from < 0) return;
+  let to = Math.max(0, Math.min(seq.length, toIndex));
+  if(to > from) to--;                       // the removal shifts everything after it
+  if(to === from) return;                   // dropped where it already was
+  pushUndo("move block");
+  const [moved] = seq.splice(from, 1);
+  seq.splice(to, 0, moved);
+  applyOrder(seq);
+  markDirty(); renderPage(); renderBlockList(); renderInspector();
+}
+
+function nudgeBlock(id, delta){
+  const seq = orderedBlocks();
+  const at = seq.findIndex(b=>b.id===id);
+  if(at < 0) return;
+  // moveBlock takes an insertion index into the UNCHANGED sequence, so stepping one
+  // slot down means inserting at at+2 (past the neighbour), not at+1.
+  moveBlock(id, delta < 0 ? at - 1 : at + 2);
+}
+
+// A block can be split only where doing so is meaningful AND lossless.
+function splitBlocked(blk){
+  if(blk.type === "figure")
+    return "a figure renders from its cropped pixels, not its words — splitting it would change nothing in the output";
+  if(blk.text != null)
+    return "this block has a block-level text override (a translation), which supersedes the words — clear it first, or the split would not show in the output";
+  if(!blk.words || blk.words.length < 2) return "needs at least two words to split";
+  return null;
+}
+
+function unionBox(words){
+  const x0=Math.min(...words.map(w=>w.bbox.x)), y0=Math.min(...words.map(w=>w.bbox.y));
+  const x1=Math.max(...words.map(w=>w.bbox.x+w.bbox.w)), y1=Math.max(...words.map(w=>w.bbox.y+w.bbox.h));
+  return { x:x0, y:y0, w:x1-x0, h:y1-y0 };
+}
+
+// Split `blk` so that word index `wi` starts a NEW block placed immediately after it.
+function splitBlock(blk, wi){
+  if(splitBlocked(blk)) return;
+  if(wi <= 0 || wi >= blk.words.length) return;
+  pushUndo("split block");
+  const p = page();
+  const head = blk.words.slice(0, wi), tail = blk.words.slice(wi);
+  const newId = 1 + p.blocks.reduce((m,b)=>Math.max(m, b.id), -1);   // never reuse an id
+  const nb = {
+    id: newId, type: blk.type, bbox: unionBox(tail),
+    reading_order: blk.reading_order,          // real value assigned by applyOrder below
+    words: tail.map(w=>Object.assign({}, w, { block_id: newId })),
+    // No automatic provenance exists for a block the pipeline never proposed, so both
+    // *_auto stay null — which is exactly why `structure_edited` has to be set by hand
+    // here: server-side normalize_edits infers the flag from a type/order DIVERGENCE
+    // against *_auto, and with no auto value there is nothing to diverge from. Without
+    // the flag, assemble's clobber-detection would not see the split as work worth
+    // protecting and a later re-assemble would silently discard it.
+    type_auto: null, order_auto: null,
+    structure_edited: true, order_confirmed: false, text: null,
+    // Pairing state belongs to the ORIGINAL block: a figure holds one caption, so the
+    // tail must not walk away with a second claim on the same figure.
+    caption_number: null, figure_number: null, figure_ref: null,
+    pair_source: null, type_promoted: false,
+  };
+  // Both halves get the geometry of the words they actually own — the bbox is what
+  // masks text out of an overlapping figure crop, so leaving the head at its old full
+  // extent would keep masking pixels it no longer covers.
+  blk.words = head;
+  blk.bbox = unionBox(head);
+  blk.structure_edited = true;
+
+  const seq = orderedBlocks();
+  seq.splice(seq.findIndex(b=>b.id===blk.id) + 1, 0, nb);
+  p.blocks.push(nb);
+  applyOrder(seq);
+  markDirty(); selectBlock(newId);
 }
 
 // ---- load ----
@@ -248,7 +420,7 @@ async function load(){
   renderAll(); setStatus("loaded", "ok");
 }
 
-function renderAll(){ renderPage(); renderInspector(); renderBlockList(); renderSettings(); }
+function renderAll(){ renderPage(); renderInspector(); renderBlockList(); renderSettings(); refreshUndo(); }
 
 // ---- page image + overlays ----
 function renderPage(){
@@ -324,7 +496,8 @@ function wordEditor(blk, wi){
   const f1 = el("div","field");
   f1.appendChild(el("label","small muted","text (edit here)"));
   const inp = el("input"); inp.value=w.text;
-  inp.oninput = () => { w.text=inp.value; markDirty(); drawOverlays(); refreshWordBadges(); };
+  inp.oninput = () => { pushUndo("edit word text", `w:${blk.id}:${wi}`);
+    w.text=inp.value; markDirty(); drawOverlays(); refreshWordBadges(); };
   f1.appendChild(inp); c.appendChild(f1);
 
   const f2 = el("div","field");
@@ -339,7 +512,8 @@ function wordEditor(blk, wi){
   }
   const rev = el("button",null,"Revert to OCR");
   rev.style.marginTop="8px";
-  rev.onclick = () => { if(w.text_ocr!=null){ w.text=w.text_ocr; w.edited=false; }
+  rev.onclick = () => { pushUndo("revert word to OCR");
+    if(w.text_ocr!=null){ w.text=w.text_ocr; w.edited=false; }
     markDirty(); renderInspector(); drawOverlays(); };
   c.appendChild(rev);
   return c;
@@ -370,7 +544,8 @@ function blockEditor(blk){
   f1.appendChild(el("label","small muted","type"));
   const sel = el("select");
   BLOCK_TYPES.forEach(t=>{ const o=el("option",null,t); o.value=t; if(t===blk.type)o.selected=true; sel.appendChild(o); });
-  sel.onchange = () => { blk.type=sel.value; markDirty(); drawOverlays(); renderBlockList(); renderInspector(); };
+  sel.onchange = () => { pushUndo("change block type");
+    blk.type=sel.value; markDirty(); drawOverlays(); renderBlockList(); renderInspector(); };
   f1.appendChild(sel);
   if(blk.type_auto!=null && blk.type_auto!==blk.type)
     f1.appendChild(el("div","small muted",`auto: ${blk.type_auto}`));
@@ -379,7 +554,8 @@ function blockEditor(blk){
   const f2 = el("div","field");
   f2.appendChild(el("label","small muted","reading order"));
   const ord = el("input"); ord.type="number"; ord.step="1"; ord.value=blk.reading_order;
-  ord.onchange = () => { blk.reading_order=parseInt(ord.value||"0",10); markDirty();
+  ord.onchange = () => { pushUndo("renumber block");
+    blk.reading_order=parseInt(ord.value||"0",10); markDirty();
     drawOverlays(); renderBlockList(); };
   f2.appendChild(ord);
   if(blk.order_auto!=null && blk.order_auto!==blk.reading_order)
@@ -409,7 +585,8 @@ function blockEditor(blk){
   f3.appendChild(el("label","small muted","translation / block-level text override (supersedes words when set)"));
   const ta = el("textarea"); ta.rows=3; ta.value = blk.text==null ? "" : blk.text;
   ta.placeholder = "leave empty to render the words above";
-  ta.oninput = () => { blk.text = ta.value==="" ? null : ta.value; markDirty(); };
+  ta.oninput = () => { pushUndo("edit block text override", `bt:${blk.id}`);
+    blk.text = ta.value==="" ? null : ta.value; markDirty(); };
   f3.appendChild(ta); c.appendChild(f3);
 
   if(blk.words && blk.words.length){
@@ -419,8 +596,36 @@ function blockEditor(blk){
       if(state.selWord===wi) chip.classList.add("sel");
       chip.onclick=()=>selectWord(blk.id,wi); wrap.appendChild(chip); });
     c.appendChild(wrap);
+    c.appendChild(splitField(blk));
   }
   return c;
+}
+
+// ---- split control ----
+// The split point is the SELECTED WORD: everything from it onward moves into a new
+// block placed right after this one. Anchoring on the selection rather than on an
+// index box means the user picks the boundary by clicking the word they can see.
+function splitField(blk){
+  const f = el("div","field"); f.style.marginTop="10px";
+  const why = splitBlocked(blk);
+  if(why){ f.appendChild(el("div","small muted","split unavailable — " + why)); return f; }
+  const wi = state.selWord;
+  if(wi==null || wi<=0){
+    f.appendChild(el("div","small muted",
+      "to split: click the word that should START the second block (any word but the first)."));
+    return f;
+  }
+  const w = blk.words[wi];
+  const btn = el("button", null, `Split here — "${w && w.text ? w.text : "·"}" starts a new block`);
+  btn.onclick = ()=>splitBlock(blk, wi);
+  f.appendChild(btn);
+  f.appendChild(el("div","small muted",
+    `${blk.words.length - wi} of ${blk.words.length} words move to a new block of the same type,`
+    + " directly after this one in reading order."
+    + (orderMode()==="review"
+       ? " In review mode this renumbers every later block, which clears their order-review marker."
+       : "")));
+  return f;
 }
 
 // ---- caption<->figure pairing control ----
@@ -527,9 +732,34 @@ function renderBlockList(){
       + "(no figure, or the figure went to another caption)"));
     host.appendChild(bar);
   }
+  host.appendChild(el("div","small muted",
+    "drag a row (or select a block and press Alt+↑ / Alt+↓) to change reading order"
+    + (orderMode()==="review"
+       ? " — moving a block past another renumbers those it passes, which counts as ruling on their order"
+       : "")));
   const blocks=[...page().blocks].sort((a,b)=>a.reading_order-b.reading_order);
-  for(const blk of blocks){
+  blocks.forEach((blk, idx)=>{
     const row=el("div","blockrow"+(state.selBlock===blk.id?" sel":""));
+    row.draggable = true;
+    row.dataset.idx = String(idx);
+    // HTML5 DnD: dragstart carries the block ID (not the row index) so the drop is
+    // resolved against live data even if a re-render reshuffles the DOM mid-drag.
+    row.ondragstart = (e)=>{ e.dataTransfer.setData("text/plain", String(blk.id));
+      e.dataTransfer.effectAllowed="move"; row.classList.add("dragging"); };
+    row.ondragend = ()=>{ row.classList.remove("dragging"); clearDropMarks(); };
+    row.ondragover = (e)=>{ e.preventDefault(); e.dataTransfer.dropEffect="move";
+      const r=row.getBoundingClientRect();
+      const after = (e.clientY - r.top) > r.height/2;
+      clearDropMarks();
+      row.classList.add(after ? "dropafter" : "dropbefore");
+      row.dataset.after = after ? "1" : "0"; };
+    row.ondragleave = ()=>{ row.classList.remove("dropbefore","dropafter"); };
+    row.ondrop = (e)=>{ e.preventDefault();
+      const id = parseInt(e.dataTransfer.getData("text/plain"), 10);
+      const after = row.dataset.after === "1";
+      clearDropMarks();
+      if(!Number.isNaN(id)) moveBlock(id, idx + (after ? 1 : 0)); };
+    row.appendChild(el("span","grip","⋮⋮"));
     row.appendChild(el("span","ord", String(blk.reading_order)));
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
     const t=el("span","grow", blk.type + (fig?` → #${fig.id}${captionClaimLost(blk)?" ⚠":""}`:"")
@@ -540,7 +770,11 @@ function renderBlockList(){
     if(blk.structure_edited) row.appendChild(el("span","ty","*"));
     row.onclick=()=>selectBlock(blk.id);
     host.appendChild(row);
-  }
+  });
+}
+
+function clearDropMarks(){
+  document.querySelectorAll(".blockrow").forEach(r=>r.classList.remove("dropbefore","dropafter"));
 }
 
 // ---- settings ----
@@ -551,12 +785,13 @@ function renderSettings(){
 
   const mode=el("select"); ["flag","best_guess","patch"].forEach(m=>{const o=el("option",null,m);o.value=m;
     if(m===s.uncertainty_mode)o.selected=true; mode.appendChild(o);});
-  mode.onchange=()=>{ s.uncertainty_mode=mode.value; markDirty(); };
+  mode.onchange=()=>{ pushUndo("change uncertainty mode"); s.uncertainty_mode=mode.value; markDirty(); };
   mk("uncertainty mode", mode);
 
   const omode=el("select"); ["auto","review"].forEach(m=>{const o=el("option",null,m);o.value=m;
     if(m===(s.order_mode||"auto"))o.selected=true; omode.appendChild(o);});
-  omode.onchange=()=>{ s.order_mode=omode.value; markDirty(); renderPage(); renderBlockList(); renderInspector(); };
+  omode.onchange=()=>{ pushUndo("change reading-order mode"); s.order_mode=omode.value; markDirty();
+    renderPage(); renderBlockList(); renderInspector(); };
   mk("reading-order mode", omode);
   host.appendChild(el("div","small muted",
     "review: mark every block's reading order for confirm/correct before reconstruction. "
@@ -564,19 +799,20 @@ function renderSettings(){
     + "repair or detach it (unpaired captions are marked on every page)."));
 
   const src=el("input"); src.value=s.source_language||"";
-  src.onchange=()=>{ s.source_language=src.value; markDirty(); };
+  src.onchange=()=>{ pushUndo("change source language"); s.source_language=src.value; markDirty(); };
   mk("source language", src);
 
   const tgt=el("input"); tgt.value=s.target_language||""; tgt.placeholder="(none — set when translating)";
-  tgt.onchange=()=>{ s.target_language = tgt.value==="" ? null : tgt.value; markDirty(); };
+  tgt.onchange=()=>{ pushUndo("change target language");
+    s.target_language = tgt.value==="" ? null : tgt.value; markDirty(); };
   mk("target language", tgt);
 
   const cbWrap=el("div");
   const rh=el("input"); rh.type="checkbox"; rh.checked=s.strip_running_headers;
-  rh.onchange=()=>{ s.strip_running_headers=rh.checked; markDirty(); };
+  rh.onchange=()=>{ pushUndo("toggle strip running headers"); s.strip_running_headers=rh.checked; markDirty(); };
   const l1=el("label","toggle small"); l1.appendChild(rh); l1.appendChild(el("span",null," strip running headers"));
   const pn=el("input"); pn.type="checkbox"; pn.checked=s.strip_page_numbers;
-  pn.onchange=()=>{ s.strip_page_numbers=pn.checked; markDirty(); };
+  pn.onchange=()=>{ pushUndo("toggle strip page numbers"); s.strip_page_numbers=pn.checked; markDirty(); };
   const l2=el("label","toggle small"); l2.appendChild(pn); l2.appendChild(el("span",null," strip page numbers"));
   cbWrap.appendChild(l1); cbWrap.appendChild(el("div",null,"")); cbWrap.appendChild(l2);
   mk("stripping", cbWrap);
@@ -607,6 +843,7 @@ async function renderPreview(){
 $("#prev").onclick=()=>{ if(state.pageIndex>0){ state.pageIndex--; state.selBlock=state.selWord=null; renderAll(); } };
 $("#next").onclick=()=>{ if(state.pageIndex<state.doc.pages.length-1){ state.pageIndex++; state.selBlock=state.selWord=null; renderAll(); } };
 $("#save").onclick=save;
+$("#undo").onclick=undo;
 $("#render").onclick=()=>{ showTab("preview"); renderPreview(); };
 $("#refreshPreview").onclick=renderPreview;
 $("#showWords").onchange=drawOverlays;
@@ -619,6 +856,18 @@ function showTab(name){
 }
 window.addEventListener("keydown", e=>{
   if((e.ctrlKey||e.metaKey) && e.key==="s"){ e.preventDefault(); save(); }
+  // Ctrl/Cmd+Z: let a focused text field keep its own native undo; ours is for the
+  // document model, and stealing the shortcut mid-typing would be the wrong one.
+  if((e.ctrlKey||e.metaKey) && (e.key==="z"||e.key==="Z") && !e.shiftKey){
+    const t=e.target, tag=t && t.tagName;
+    if(tag==="INPUT" || tag==="TEXTAREA") return;
+    e.preventDefault(); undo();
+  }
+  // Alt+Up/Down moves the selected block — the keyboard route to the same reorder,
+  // for users (and headless tests) that cannot perform an HTML5 drag.
+  if(e.altKey && (e.key==="ArrowUp"||e.key==="ArrowDown") && state.selBlock!=null){
+    e.preventDefault(); nudgeBlock(state.selBlock, e.key==="ArrowUp" ? -1 : +1);
+  }
 });
 window.addEventListener("beforeunload", e=>{ if(state.dirty){ e.preventDefault(); e.returnValue=""; } });
 

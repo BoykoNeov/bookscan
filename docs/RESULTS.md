@@ -4480,3 +4480,123 @@ headroom triage read those frames.
 imported and used exactly as they ship. Evidence:
 `docs/data/anchor_downstream_census_20260826.json`; re-run with
 `python -m tools.anchor_downstream_census --json <path>`.
+
+## Per-page frame selection: the two sides really do disagree, and nothing available can act on it — 2026-08-26
+
+Both halves of the anchor question are closed (RESULTS 2026-08-19 and the row
+above). What they left open, and named as the bigger lever, is **per-page frame
+selection**: today one photograph becomes both pages of a spread — Stage 01
+elects the sharpest full-spread frame and Stage 02 cuts *that* frame in two — so
+a capture that holds the left page flat and lets the right one curl into shadow
+has no way to contribute only its good half. `tools/perpage_choice_probe.py`
+asks whether choosing a different photograph per page is worth building, through
+this pipeline's own geometry (book crop → gutter split → Stage 03 dewarp) and
+with the census's Tesseract instrument, per side. Pre-registration is in the
+tool's docstring, written before the run.
+
+**1. It is a real operation, not a no-op.** On **3 of 7** scored sets the frame
+that wins the left page is not the frame that wins the right one (`bg_taleb_01`,
+`de_02`, `skewset_de_01`); on 3 the same frame wins both; on 1 (`zoomset_en_02`)
+a side is a dead tie — 142 words each — and is counted with neither. This is
+where the book-box census died (on 6 of 10 sets the crop abstained on every
+candidate, so any windowing variant was a no-op *by construction*) and this
+question survives that test: the sides genuinely disagree about which photograph
+they prefer.
+
+**2. And nothing clears the bar. 0 of 7.** The pre-registered rule is the
+census's: a challenger must beat the incumbent's frame on BOTH statistics —
+words at conf ≥ 80 by more than the 60-word reframing-churn floor, and mean
+confidence — applied **per side**, unchanged. A side holds about half a spread's
+words, so that floor is deliberately *stricter* here; halving it would have been
+inventing a number.
+
+| set | side | best challenger | Δ words | Δ mean conf |
+|---|---|---|---|---|
+| `skewset_de_01` | left | `…_134828` | **+37** | +11.8 |
+| `de_02` | left | `de_02_092054` | +22 | +1.1 |
+| `bg_taleb_01` | left | `…_093636` | +14 | **−2.3** (fails on conf) |
+| `zoomset_en_02` | right | `…_f00` | 0 (tie) | +10.0 |
+
+The largest thing on the table is +37 words on one page of one set. Summed over
+every set, choosing each page's best frame **with the answer key in hand** buys
+about **+73 words out of ~4,400** — 1.7 % — and that is an oracle, not a
+selector.
+
+**3. No cheap rule gets near even the oracle.** Three statistics a Stage 02
+selector could actually decide on were logged per side per candidate, on the flat
+half and on the dewarped half, and scored against the OCR winner over the 15
+side races that have an unambiguous one. **Chance is 6.8**, not zero:
+
+| statistic | agrees with OCR |
+|---|---|
+| ink density (flat) | 11 / 15 |
+| variance of Laplacian (dewarped) | 10 / 15 |
+| variance of Laplacian (flat) — *the incumbent's own criterion* | 9 / 15 |
+| median glyph height (dewarped) | 8 / 15 |
+| median glyph height (flat) | 7 / 15 |
+
+Eleven of fifteen against an expectation of 6.8 demonstrates nothing at this
+corpus size. And the failure is not spread evenly — **the two best statistics
+both pick the wrong frame on the race with the most to win.** On
+`skewset_de_01`'s left page (+37 words, +11.8 confidence) the *loser* is the
+sharper image (608 vs 568) and the inkier one (0.097 vs 0.092); only median glyph
+height gets it right, and glyph height is the worst-ranked proxy overall, at
+chance. A selector built on any of these would not have collected the +37.
+
+**4. The close-up arm is closed on coverage, as predicted, but now with the
+number.** A close-up can only be a page source if it covers a page. Bar stated in
+advance: ≥ 0.98 of the page's box. Measured over all 11 real close-ups, using
+Stage 01's own registration at shipped parameters: **0 eligible.** Six never
+register at all (oblique views of a curved page — a homography cannot fit them),
+and the five that do cover **0.80, 0.64, 0.64, 0.54, 0.48** of the best page they
+touch. So `zoomset_de_02_f02`, the frame Stage 01's docstring calls "essentially
+the right page alone", covers 64 % of that page. The standing lead — *a close-up
+is sometimes a better photograph of the page than the anchor is* — remains true
+about the pixels and is dead as a feature, for want of a candidate that contains
+a whole page.
+
+**The one case that shows what the feature would be for.** `skewset_de_01` is
+two oblique views of the same spread, and they trade sides cleanly: one reads
+173/62 words on left/right, the other 136/105. Best single frame: 241. Per-page
+oracle: 278. That is exactly the shape the feature exists to exploit, it is the
+multi-view capture mode, and it is one set.
+
+**A harness fidelity correction, found by the self-check.** This probe follows the
+shipped stage and widens the cut to `pinch_margin_frac` when the gutter comes
+from the Layer-2 spine-pinch cue; `tools/dewarp_ab.split_halves`, which the
+downstream census used, always cuts with the narrower `margin_frac`. Every frame
+whose gutter came from the ink cue reproduces the census exactly (that is the
+self-check working); every pinch frame reads higher here. The consequence for the
+row above: `de_01`'s "+43 words / +8.4 confidence, the largest surviving
+disagreement in the corpus" is **+10 / +0.8** once the split uses the margin the
+pipeline actually applies. The direction is unchanged and the census's verdict
+(no incumbent error at the stated bar) is unchanged — but the size of the one
+lead it reported is mostly an artefact of a harness cutting narrower than the
+stage. `de_01` was quarantined from this row's headline in advance for exactly
+the reason the census gave (its disagreement is a Stage 03 dewarp instability,
+not an anchor-selection signal); its numbers are measured and printed.
+
+**What this does not say.** It does not say the sides never differ — they differ
+on 3 of 7. It says that on this corpus no per-page difference is large enough to
+clear a floor this instrument has been measured to need, and that none of the
+cheap criteria a Stage 02 selector could use ranks frames the way OCR does. One
+criterion certainly *would* reach the oracle: OCR each candidate's dewarped side
+and keep the better one. That is the metric itself, so it cannot lose — at the
+cost of a dewarp and an OCR pass per candidate per side (roughly two to three
+times Stage 03 + a probe Tesseract run per spread), to collect ~1.7 %.
+
+**Limits.** Seven scored sets, one photographer, one dewarper, and 15 decided
+side races — small enough that 11/15 and 6.8 are the same number. The label stops
+at Tesseract on the dewarped subpages: layout, reading order and everything below
+Stage 05 are outside it. Three cheap statistics were tried, not the space of
+them. `de_01` is quarantined and `skewset_orient_02` degenerate (0 words on both
+frames), both measured and printed. Running on the `skewset_*` pages spends no
+pre-registration: nothing here merges views, keys GT or scores v1–v5.
+
+**No pipeline code changed.** `partition_frames`, `find_book`, `detect_gutter`,
+`cut_pages` and Stage 03 are imported and run as they ship, and the OCR
+instrument is imported from the downstream census rather than copied. Evidence:
+`docs/data/perpage_choice_probe_20260826.json`; re-run with
+`python -m tools.perpage_choice_probe --json <path>`, or re-derive the verdicts
+from the stored measurement without touching a pixel with
+`python -m tools.perpage_choice_probe --rescore <path>`.

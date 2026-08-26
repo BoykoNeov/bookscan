@@ -169,10 +169,17 @@ class PairSource(str, Enum):
     Kept as data rather than recomputed at render time so the editor can later
     surface a geometric guess for review while leaving a number-keyed pair
     alone (the number is printed in the book; the geometry is inferred).
+
+    ``SOLE_FIGURE`` is the weakest-evidence arm and is deliberately distinguishable
+    from ``GEOMETRY``: it consults no proximity at all, pairing only because the
+    subpage prints exactly one figure and exactly one block that declares itself in
+    print to be a figure caption. A reviewer who wants to re-check the inferred
+    pairs should treat it as at least as review-worthy as ``GEOMETRY``.
     """
 
     NUMBER = "number"      # printed caption number == printed figure corner label
     GEOMETRY = "geometry"  # guarded proximity rule (see pipeline/figure_grouping.py)
+    SOLE_FIGURE = "sole_figure"  # only figure + only printed caption on the subpage
     USER = "user"          # set/corrected by a human in the editor
 
 

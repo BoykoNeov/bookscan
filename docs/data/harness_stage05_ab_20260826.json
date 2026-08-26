@@ -1,0 +1,4548 @@
+{
+ "what": "tools/layout_order_eval before/after: does the eval grade the block set that ships?",
+ "date": "2026-08-26",
+ "tesseract": "5.4.0.20240606",
+ "before_arm": "--no-stage05 (Stage 04 blocks alone, the pre-2026-08-26 eval)",
+ "after_arm": "default (Stage 04 + Stage 05: attach_words orphan rescue, caption_eject, block_reocr)",
+ "images": {
+  "de_01": {
+   "before": {
+    "image_id": "de_01",
+    "stage05": false,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 4,
+      "matched": {
+       "T1": 0,
+       "F1": 5,
+       "P2": 4,
+       "P1": 3
+      },
+      "match_bbox": {
+       "T1": [
+        0,
+        17,
+        2023,
+        1109
+       ],
+       "F1": [
+        617,
+        2057,
+        1402,
+        796
+       ],
+       "P2": [
+        638,
+        1812,
+        1383,
+        191
+       ],
+       "P1": [
+        609,
+        1158,
+        1413,
+        625
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "T1": true,
+       "F1": true,
+       "P2": true,
+       "P1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 2,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 0,
+       "n_blocks": 2,
+       "seq_gt": [
+        "P1",
+        "P2"
+       ],
+       "seq_det": [
+        "P1",
+        "P2"
+       ],
+       "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 7,
+      "n_header_det": 1,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+       "T1": true,
+       "F1": true,
+       "P2": true,
+       "P1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "det2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": []
+     },
+     {
+      "name": "right.png",
+      "n_gt": 8,
+      "matched": {
+       "F2": 0,
+       "F3": 6,
+       "H1": 4,
+       "E2": 7,
+       "R2": 2,
+       "E1": 5,
+       "R3": 3,
+       "R1": 1
+      },
+      "match_bbox": {
+       "F2": [
+        28,
+        148,
+        1801,
+        1029
+       ],
+       "F3": [
+        47,
+        2030,
+        1492,
+        834
+       ],
+       "H1": [
+        1563,
+        1201,
+        254,
+        44
+       ],
+       "E2": [
+        1579,
+        2216,
+        247,
+        474
+       ],
+       "R2": [
+        106,
+        1501,
+        1431,
+        200
+       ],
+       "E1": [
+        1574,
+        1246,
+        262,
+        956
+       ],
+       "R3": [
+        99,
+        1704,
+        1443,
+        319
+       ],
+       "R1": [
+        118,
+        1211,
+        1417,
+        285
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "F2": true,
+       "F3": true,
+       "H1": true,
+       "E2": true,
+       "R2": true,
+       "E1": true,
+       "R3": true,
+       "R1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 6,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 0,
+       "n_blocks": 6,
+       "seq_gt": [
+        "R1",
+        "R2",
+        "R3",
+        "H1",
+        "E1",
+        "E2"
+       ],
+       "seq_det": [
+        "R1",
+        "R2",
+        "R3",
+        "H1",
+        "E1",
+        "E2"
+       ],
+       "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 8,
+      "n_header_det": 0,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+       "F2": true,
+       "F3": true,
+       "H1": true,
+       "E2": true,
+       "R2": true,
+       "E1": true,
+       "R3": true,
+       "R1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [],
+      "groups": []
+     }
+    ]
+   },
+   "after": {
+    "image_id": "de_01",
+    "stage05": true,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 4,
+      "matched": {
+       "T1": 0,
+       "F1": 7,
+       "P1": 3,
+       "P2": 5
+      },
+      "match_bbox": {
+       "T1": [
+        0,
+        17,
+        2023,
+        1109
+       ],
+       "F1": [
+        617,
+        2057,
+        1402,
+        796
+       ],
+       "P1": [
+        609,
+        1158,
+        1413,
+        625
+       ],
+       "P2": [
+        638,
+        1812,
+        1383,
+        191
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 2,
+       "n_orphan_blocks": 2,
+       "n_ejected": 0,
+       "n_rescued": 2,
+       "eject_notes": [],
+       "rescue_notes": [
+        "other #1: 10w@35.6 -> 60w@63.3",
+        "paragraph #3: 134w@74.0 -> 141w@93.2"
+       ]
+      },
+      "misses": [],
+      "type_ok": {
+       "T1": true,
+       "F1": true,
+       "P1": true,
+       "P2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 2,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 0,
+       "n_blocks": 2,
+       "seq_gt": [
+        "P1",
+        "P2"
+       ],
+       "seq_det": [
+        "P1",
+        "P2"
+       ],
+       "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 9,
+      "n_header_det": 1,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+       "T1": true,
+       "F1": true,
+       "P1": true,
+       "P2": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "det2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": []
+     },
+     {
+      "name": "right.png",
+      "n_gt": 8,
+      "matched": {
+       "F2": 0,
+       "F3": 6,
+       "H1": 4,
+       "E2": 7,
+       "R2": 2,
+       "E1": 5,
+       "R3": 3,
+       "R1": 1
+      },
+      "match_bbox": {
+       "F2": [
+        28,
+        148,
+        1801,
+        1029
+       ],
+       "F3": [
+        47,
+        2030,
+        1492,
+        834
+       ],
+       "H1": [
+        1563,
+        1201,
+        254,
+        44
+       ],
+       "E2": [
+        1579,
+        2216,
+        247,
+        474
+       ],
+       "R2": [
+        106,
+        1501,
+        1431,
+        200
+       ],
+       "E1": [
+        1574,
+        1246,
+        262,
+        956
+       ],
+       "R3": [
+        99,
+        1704,
+        1443,
+        319
+       ],
+       "R1": [
+        118,
+        1211,
+        1417,
+        285
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 0,
+       "n_orphan_blocks": 0,
+       "n_ejected": 0,
+       "n_rescued": 0,
+       "eject_notes": [],
+       "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+       "F2": true,
+       "F3": true,
+       "H1": true,
+       "E2": true,
+       "R2": true,
+       "E1": true,
+       "R3": true,
+       "R1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 6,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 0,
+       "n_blocks": 6,
+       "seq_gt": [
+        "R1",
+        "R2",
+        "R3",
+        "H1",
+        "E1",
+        "E2"
+       ],
+       "seq_det": [
+        "R1",
+        "R2",
+        "R3",
+        "H1",
+        "E1",
+        "E2"
+       ],
+       "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 8,
+      "n_header_det": 0,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+       "F2": true,
+       "F3": true,
+       "H1": true,
+       "E2": true,
+       "R2": true,
+       "E1": true,
+       "R3": true,
+       "R1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [],
+      "groups": []
+     }
+    ]
+   }
+  },
+  "en_coins_01": {
+   "before": {
+    "image_id": "en_coins_01",
+    "stage05": false,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 12,
+      "matched": {
+       "F96": 1,
+       "F97": 8,
+       "D1": 3,
+       "D2": 10,
+       "H1": 6,
+       "L1": 7,
+       "P2": 5,
+       "P3": 11,
+       "P1": 4,
+       "C97": 9,
+       "C96": 2
+      },
+      "match_bbox": {
+       "F96": [
+        234,
+        277,
+        1114,
+        647
+       ],
+       "F97": [
+        157,
+        1742,
+        1150,
+        658
+       ],
+       "D1": [
+        243,
+        923,
+        186,
+        48
+       ],
+       "D2": [
+        165,
+        2418,
+        201,
+        47
+       ],
+       "H1": [
+        168,
+        1502,
+        677,
+        47
+       ],
+       "L1": [
+        213,
+        1577,
+        1594,
+        144
+       ],
+       "P2": [
+        164,
+        1344,
+        1821,
+        142
+       ],
+       "P3": [
+        91,
+        2492,
+        1854,
+        183
+       ],
+       "P1": [
+        170,
+        1008,
+        1819,
+        317
+       ],
+       "C97": [
+        1324,
+        2070,
+        603,
+        322
+       ],
+       "C96": [
+        1360,
+        795,
+        573,
+        125
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [
+       "FN1"
+      ],
+      "type_ok": {
+       "F96": true,
+       "F97": true,
+       "D1": false,
+       "D2": false,
+       "H1": false,
+       "L1": true,
+       "P2": true,
+       "P3": true,
+       "P1": true,
+       "C97": true,
+       "C96": true
+      },
+      "seg_recall": 0.9166666666666666,
+      "type_acc": 0.7272727272727273,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 9,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 11,
+       "seq_gt": [
+        "F96",
+        "C96",
+        "D1",
+        "P1",
+        "P2",
+        "H1",
+        "L1",
+        "F97",
+        "C97",
+        "D2",
+        "P3"
+       ],
+       "seq_det": [
+        "F96",
+        "C96",
+        "D1",
+        "P1",
+        "P2",
+        "H1",
+        "L1",
+        "F97",
+        "C97",
+        "D2",
+        "P3"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 13,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F96": true,
+       "F97": true,
+       "D1": false,
+       "D2": false,
+       "H1": false,
+       "L1": true,
+       "P2": true,
+       "P3": true,
+       "P1": true,
+       "C97": true,
+       "C96": true
+      },
+      "caption_typed_parser": {
+       "C96": true,
+       "C97": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "D2": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+      },
+      "pairs_detail": [
+       {
+        "caption": "C96",
+        "figure": "F96",
+        "caption_text": "Fig. 96. 1786-NG Guatemala Portrait Light Reales, Charles 11",
+        "source": "geometry",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C97",
+        "figure": "F97",
+        "caption_text": "Fig. 97. 1805-NG Guatemala Portrait ISight Reales, Charles I",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C96",
+        "figure": "F96",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       },
+       {
+        "caption": "C97",
+        "figure": "F97",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 10,
+      "matched": {
+       "F99": 9,
+       "F98": 3,
+       "D3": 5,
+       "L3": 8,
+       "P4": 6,
+       "C99": 10,
+       "L2": 2,
+       "C98": 4,
+       "H2": 1,
+       "H3": 7
+      },
+      "match_bbox": {
+       "F99": [
+        131,
+        2046,
+        1249,
+        675
+       ],
+       "F98": [
+        144,
+        485,
+        1210,
+        649
+       ],
+       "D3": [
+        172,
+        1145,
+        204,
+        49
+       ],
+       "L3": [
+        149,
+        1824,
+        1839,
+        202
+       ],
+       "P4": [
+        94,
+        1228,
+        1933,
+        506
+       ],
+       "C99": [
+        1416,
+        2593,
+        581,
+        129
+       ],
+       "L2": [
+        168,
+        327,
+        1678,
+        135
+       ],
+       "C98": [
+        1380,
+        1003,
+        603,
+        124
+       ],
+       "H2": [
+        99,
+        248,
+        789,
+        53
+       ],
+       "H3": [
+        88,
+        1743,
+        645,
+        57
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "F99": true,
+       "F98": true,
+       "D3": false,
+       "L3": true,
+       "P4": true,
+       "C99": true,
+       "L2": true,
+       "C98": true,
+       "H2": false,
+       "H3": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.7,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 8,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 10,
+       "seq_gt": [
+        "H2",
+        "L2",
+        "F98",
+        "C98",
+        "D3",
+        "P4",
+        "H3",
+        "L3",
+        "F99",
+        "C99"
+       ],
+       "seq_det": [
+        "H2",
+        "L2",
+        "F98",
+        "C98",
+        "D3",
+        "P4",
+        "H3",
+        "L3",
+        "F99",
+        "C99"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 12,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F99": true,
+       "F98": true,
+       "D3": false,
+       "L3": true,
+       "P4": true,
+       "C99": true,
+       "L2": true,
+       "C98": true,
+       "H2": false,
+       "H3": false
+      },
+      "caption_typed_parser": {
+       "C98": true,
+       "C99": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "D3": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+      },
+      "pairs_detail": [
+       {
+        "caption": "C98",
+        "figure": "F98",
+        "caption_text": "Fig. 98. 1819-NG Guatemala Portrait Fight Reales, Ferdinand ",
+        "source": "geometry",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C99",
+        "figure": "F99",
+        "caption_text": "Fig. 99. (1841) Guatemala Type LV Republic Counterstamp, Per",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C98",
+        "figure": "F98",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       },
+       {
+        "caption": "C99",
+        "figure": "F99",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     }
+    ]
+   },
+   "after": {
+    "image_id": "en_coins_01",
+    "stage05": true,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 12,
+      "matched": {
+       "F96": 1,
+       "F97": 8,
+       "D1": 3,
+       "D2": 10,
+       "H1": 6,
+       "FN1": 12,
+       "L1": 7,
+       "P2": 5,
+       "P3": 11,
+       "P1": 4,
+       "C97": 9,
+       "C96": 2
+      },
+      "match_bbox": {
+       "F96": [
+        234,
+        277,
+        1114,
+        647
+       ],
+       "F97": [
+        157,
+        1742,
+        1150,
+        658
+       ],
+       "D1": [
+        243,
+        923,
+        186,
+        48
+       ],
+       "D2": [
+        165,
+        2418,
+        201,
+        47
+       ],
+       "H1": [
+        168,
+        1502,
+        677,
+        47
+       ],
+       "FN1": [
+        102,
+        2704,
+        723,
+        31
+       ],
+       "L1": [
+        213,
+        1577,
+        1594,
+        144
+       ],
+       "P2": [
+        164,
+        1344,
+        1821,
+        142
+       ],
+       "P3": [
+        91,
+        2492,
+        1854,
+        183
+       ],
+       "P1": [
+        170,
+        1008,
+        1819,
+        317
+       ],
+       "C97": [
+        1324,
+        2070,
+        603,
+        322
+       ],
+       "C96": [
+        1360,
+        795,
+        573,
+        125
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 8,
+       "n_orphan_blocks": 1,
+       "n_ejected": 0,
+       "n_rescued": 0,
+       "eject_notes": [],
+       "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+       "F96": true,
+       "F97": true,
+       "D1": false,
+       "D2": false,
+       "H1": false,
+       "FN1": false,
+       "L1": true,
+       "P2": true,
+       "P3": true,
+       "P1": true,
+       "C97": true,
+       "C96": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.6666666666666666,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 10,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 12,
+       "seq_gt": [
+        "F96",
+        "C96",
+        "D1",
+        "P1",
+        "P2",
+        "H1",
+        "L1",
+        "F97",
+        "C97",
+        "D2",
+        "P3",
+        "FN1"
+       ],
+       "seq_det": [
+        "F96",
+        "C96",
+        "D1",
+        "P1",
+        "P2",
+        "H1",
+        "L1",
+        "F97",
+        "C97",
+        "D2",
+        "P3",
+        "FN1"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 14,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F96": true,
+       "F97": true,
+       "D1": false,
+       "D2": false,
+       "H1": false,
+       "FN1": false,
+       "L1": true,
+       "P2": true,
+       "P3": true,
+       "P1": true,
+       "C97": true,
+       "C96": true
+      },
+      "caption_typed_parser": {
+       "C96": true,
+       "C97": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "D2": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+      },
+      "pairs_detail": [
+       {
+        "caption": "C96",
+        "figure": "F96",
+        "caption_text": "Fig. 96. 1786-NG Guatemala Portrait Light Reales, Charles 11",
+        "source": "geometry",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C97",
+        "figure": "F97",
+        "caption_text": "Fig. 97. 1805-NG Guatemala Portrait ISight Reales, Charles I",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C96",
+        "figure": "F96",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       },
+       {
+        "caption": "C97",
+        "figure": "F97",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 10,
+      "matched": {
+       "F99": 9,
+       "F98": 3,
+       "D3": 5,
+       "L3": 8,
+       "P4": 6,
+       "C99": 10,
+       "L2": 2,
+       "C98": 4,
+       "H2": 1,
+       "H3": 7
+      },
+      "match_bbox": {
+       "F99": [
+        131,
+        2046,
+        1249,
+        675
+       ],
+       "F98": [
+        144,
+        485,
+        1210,
+        649
+       ],
+       "D3": [
+        172,
+        1145,
+        204,
+        49
+       ],
+       "L3": [
+        149,
+        1824,
+        1839,
+        202
+       ],
+       "P4": [
+        94,
+        1228,
+        1933,
+        506
+       ],
+       "C99": [
+        1416,
+        2593,
+        581,
+        129
+       ],
+       "L2": [
+        168,
+        327,
+        1678,
+        135
+       ],
+       "C98": [
+        1380,
+        1003,
+        603,
+        124
+       ],
+       "H2": [
+        99,
+        248,
+        789,
+        53
+       ],
+       "H3": [
+        88,
+        1743,
+        645,
+        57
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 0,
+       "n_orphan_blocks": 0,
+       "n_ejected": 0,
+       "n_rescued": 2,
+       "eject_notes": [],
+       "rescue_notes": [
+        "paragraph #2: 34w@81.0 -> 36w@82.5",
+        "page_number #11: 0w@0.0 -> 1w@96.1"
+       ]
+      },
+      "misses": [],
+      "type_ok": {
+       "F99": true,
+       "F98": true,
+       "D3": false,
+       "L3": true,
+       "P4": true,
+       "C99": true,
+       "L2": true,
+       "C98": true,
+       "H2": false,
+       "H3": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.7,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 8,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 10,
+       "seq_gt": [
+        "H2",
+        "L2",
+        "F98",
+        "C98",
+        "D3",
+        "P4",
+        "H3",
+        "L3",
+        "F99",
+        "C99"
+       ],
+       "seq_det": [
+        "H2",
+        "L2",
+        "F98",
+        "C98",
+        "D3",
+        "P4",
+        "H3",
+        "L3",
+        "F99",
+        "C99"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 12,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F99": true,
+       "F98": true,
+       "D3": false,
+       "L3": true,
+       "P4": true,
+       "C99": true,
+       "L2": true,
+       "C98": true,
+       "H2": false,
+       "H3": false
+      },
+      "caption_typed_parser": {
+       "C98": true,
+       "C99": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "D3": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+      },
+      "pairs_detail": [
+       {
+        "caption": "C98",
+        "figure": "F98",
+        "caption_text": "Fig. 98. 1819-NG Guatemala Portrait Fight Reales, Ferdinand ",
+        "source": "geometry",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C99",
+        "figure": "F99",
+        "caption_text": "Fig. 99. (1841) Guatemala Type LV Republic Counterstamp, Per",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C98",
+        "figure": "F98",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       },
+       {
+        "caption": "C99",
+        "figure": "F99",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "en_coins_02": {
+   "before": {
+    "image_id": "en_coins_02",
+    "stage05": false,
+    "subpages": [
+     {
+      "name": "right.png",
+      "n_gt": 8,
+      "matched": {
+       "F101": 3,
+       "F102": 5,
+       "D1": 7,
+       "L1": 2,
+       "P1": 8,
+       "C102": 6,
+       "C101": 4,
+       "H1": 1
+      },
+      "match_bbox": {
+       "F101": [
+        12,
+        488,
+        1262,
+        617
+       ],
+       "F102": [
+        12,
+        1155,
+        1262,
+        651
+       ],
+       "D1": [
+        62,
+        1846,
+        232,
+        51
+       ],
+       "L1": [
+        55,
+        314,
+        607,
+        144
+       ],
+       "P1": [
+        2,
+        1920,
+        1968,
+        370
+       ],
+       "C102": [
+        1310,
+        1721,
+        594,
+        86
+       ],
+       "C101": [
+        1285,
+        903,
+        594,
+        201
+       ],
+       "H1": [
+        0,
+        240,
+        236,
+        50
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "F101": true,
+       "F102": true,
+       "D1": false,
+       "L1": true,
+       "P1": true,
+       "C102": true,
+       "C101": true,
+       "H1": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.75,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 6,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 8,
+       "seq_gt": [
+        "H1",
+        "L1",
+        "F101",
+        "C101",
+        "F102",
+        "C102",
+        "D1",
+        "P1"
+       ],
+       "seq_det": [
+        "H1",
+        "L1",
+        "F101",
+        "C101",
+        "F102",
+        "C102",
+        "D1",
+        "P1"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 10,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F101": true,
+       "F102": true,
+       "D1": false,
+       "L1": true,
+       "P1": true,
+       "C102": true,
+       "C101": true,
+       "H1": false
+      },
+      "caption_typed_parser": {
+       "C101": true,
+       "C102": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "D1": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+      },
+      "pairs_detail": [
+       {
+        "caption": "C101",
+        "figure": "F101",
+        "caption_text": "Fig. 101. 1894 Guatemala Peso (KM# 210). Huntsinger Collecti",
+        "source": "geometry",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C102",
+        "figure": "F102",
+        "caption_text": "Fig. 102. 1895 Guatemala Peso (KM# 210; Du: plicate of Type ",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C101",
+        "figure": "F101",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       },
+       {
+        "caption": "C102",
+        "figure": "F102",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     }
+    ]
+   },
+   "after": {
+    "image_id": "en_coins_02",
+    "stage05": true,
+    "subpages": [
+     {
+      "name": "right.png",
+      "n_gt": 8,
+      "matched": {
+       "F101": 3,
+       "F102": 5,
+       "D1": 7,
+       "L1": 2,
+       "P1": 8,
+       "C102": 6,
+       "C101": 4,
+       "H1": 1
+      },
+      "match_bbox": {
+       "F101": [
+        12,
+        488,
+        1262,
+        617
+       ],
+       "F102": [
+        12,
+        1155,
+        1262,
+        651
+       ],
+       "D1": [
+        62,
+        1846,
+        232,
+        51
+       ],
+       "L1": [
+        55,
+        314,
+        607,
+        144
+       ],
+       "P1": [
+        2,
+        1920,
+        1968,
+        370
+       ],
+       "C102": [
+        1310,
+        1721,
+        594,
+        86
+       ],
+       "C101": [
+        1285,
+        903,
+        594,
+        201
+       ],
+       "H1": [
+        0,
+        240,
+        236,
+        50
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 0,
+       "n_orphan_blocks": 0,
+       "n_ejected": 0,
+       "n_rescued": 1,
+       "eject_notes": [],
+       "rescue_notes": [
+        "paragraph #8: 149w@92.0 -> 150w@93.0"
+       ]
+      },
+      "misses": [],
+      "type_ok": {
+       "F101": true,
+       "F102": true,
+       "D1": false,
+       "L1": true,
+       "P1": true,
+       "C102": true,
+       "C101": true,
+       "H1": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.75,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 6,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 8,
+       "seq_gt": [
+        "H1",
+        "L1",
+        "F101",
+        "C101",
+        "F102",
+        "C102",
+        "D1",
+        "P1"
+       ],
+       "seq_det": [
+        "H1",
+        "L1",
+        "F101",
+        "C101",
+        "F102",
+        "C102",
+        "D1",
+        "P1"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 10,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F101": true,
+       "F102": true,
+       "D1": false,
+       "L1": true,
+       "P1": true,
+       "C102": true,
+       "C101": true,
+       "H1": false
+      },
+      "caption_typed_parser": {
+       "C101": true,
+       "C102": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "D1": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+      },
+      "pairs_detail": [
+       {
+        "caption": "C101",
+        "figure": "F101",
+        "caption_text": "Fig. 101. 1894 Guatemala Peso (KM# 210). Huntsinger Collecti",
+        "source": "geometry",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C102",
+        "figure": "F102",
+        "caption_text": "Fig. 102. 1895 Guatemala Peso (KM# 210; Du: plicate of Type ",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C101",
+        "figure": "F101",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       },
+       {
+        "caption": "C102",
+        "figure": "F102",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "en_coins_03": {
+   "before": {
+    "image_id": "en_coins_03",
+    "stage05": false,
+    "subpages": [
+     {
+      "name": "right.png",
+      "n_gt": 10,
+      "matched": {
+       "F104": 4,
+       "F105": 6,
+       "C104": 5,
+       "D1": 8,
+       "H1": 1,
+       "L1": 3,
+       "P1": 9,
+       "C105": 7,
+       "P2": 10,
+       "H2": 2
+      },
+      "match_bbox": {
+       "F104": [
+        62,
+        592,
+        1196,
+        648
+       ],
+       "F105": [
+        62,
+        1288,
+        1196,
+        627
+       ],
+       "C104": [
+        1269,
+        1163,
+        574,
+        86
+       ],
+       "D1": [
+        77,
+        1933,
+        250,
+        53
+       ],
+       "H1": [
+        23,
+        230,
+        240,
+        58
+       ],
+       "L1": [
+        98,
+        398,
+        1285,
+        151
+       ],
+       "P1": [
+        0,
+        2018,
+        1889,
+        438
+       ],
+       "C105": [
+        1275,
+        1851,
+        575,
+        83
+       ],
+       "P2": [
+        5,
+        2487,
+        1873,
+        136
+       ],
+       "H2": [
+        22,
+        312,
+        250,
+        56
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "F104": true,
+       "F105": true,
+       "C104": false,
+       "D1": false,
+       "H1": true,
+       "L1": true,
+       "P1": true,
+       "C105": true,
+       "P2": true,
+       "H2": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.7,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 8,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 10,
+       "seq_gt": [
+        "H1",
+        "H2",
+        "L1",
+        "F104",
+        "C104",
+        "F105",
+        "C105",
+        "D1",
+        "P1",
+        "P2"
+       ],
+       "seq_det": [
+        "H1",
+        "H2",
+        "L1",
+        "F104",
+        "C104",
+        "F105",
+        "C105",
+        "D1",
+        "P1",
+        "P2"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 12,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F104": true,
+       "F105": true,
+       "C104": true,
+       "D1": false,
+       "H1": true,
+       "L1": true,
+       "P1": true,
+       "C105": true,
+       "P2": true,
+       "H2": false
+      },
+      "caption_typed_parser": {
+       "C104": true,
+       "C105": true
+      },
+      "n_promoted": 1,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "C104",
+        "figure": "F104",
+        "caption_text": "Fig. 104. 1890 Honduras Peso (KM# 52). Hun- tsinger Collecti",
+        "source": "geometry",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C105",
+        "figure": "F105",
+        "caption_text": "Fig. 105. 1892/0 Honduras Peso (KM# 52; Du- plicate of Type ",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C104",
+        "figure": "F104",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C105",
+        "figure": "F105",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     }
+    ]
+   },
+   "after": {
+    "image_id": "en_coins_03",
+    "stage05": true,
+    "subpages": [
+     {
+      "name": "right.png",
+      "n_gt": 10,
+      "matched": {
+       "F104": 4,
+       "F105": 6,
+       "C104": 5,
+       "D1": 8,
+       "H1": 1,
+       "H2": 2,
+       "L1": 3,
+       "P1": 9,
+       "C105": 7,
+       "P2": 10
+      },
+      "match_bbox": {
+       "F104": [
+        62,
+        592,
+        1196,
+        648
+       ],
+       "F105": [
+        62,
+        1288,
+        1196,
+        627
+       ],
+       "C104": [
+        1269,
+        1163,
+        574,
+        86
+       ],
+       "D1": [
+        77,
+        1933,
+        250,
+        53
+       ],
+       "H1": [
+        23,
+        230,
+        240,
+        58
+       ],
+       "H2": [
+        22,
+        312,
+        250,
+        56
+       ],
+       "L1": [
+        98,
+        398,
+        1285,
+        151
+       ],
+       "P1": [
+        0,
+        2018,
+        1889,
+        438
+       ],
+       "C105": [
+        1275,
+        1851,
+        575,
+        83
+       ],
+       "P2": [
+        5,
+        2487,
+        1873,
+        136
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 0,
+       "n_orphan_blocks": 0,
+       "n_ejected": 0,
+       "n_rescued": 1,
+       "eject_notes": [],
+       "rescue_notes": [
+        "paragraph #2: 2w@92.7 -> 3w@94.1"
+       ]
+      },
+      "misses": [],
+      "type_ok": {
+       "F104": true,
+       "F105": true,
+       "C104": false,
+       "D1": false,
+       "H1": true,
+       "H2": false,
+       "L1": true,
+       "P1": true,
+       "C105": true,
+       "P2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.7,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 8,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 10,
+       "seq_gt": [
+        "H1",
+        "H2",
+        "L1",
+        "F104",
+        "C104",
+        "F105",
+        "C105",
+        "D1",
+        "P1",
+        "P2"
+       ],
+       "seq_det": [
+        "H1",
+        "H2",
+        "L1",
+        "F104",
+        "C104",
+        "F105",
+        "C105",
+        "D1",
+        "P1",
+        "P2"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 12,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F104": true,
+       "F105": true,
+       "C104": true,
+       "D1": false,
+       "H1": true,
+       "H2": false,
+       "L1": true,
+       "P1": true,
+       "C105": true,
+       "P2": true
+      },
+      "caption_typed_parser": {
+       "C104": true,
+       "C105": true
+      },
+      "n_promoted": 1,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "C104",
+        "figure": "F104",
+        "caption_text": "Fig. 104. 1890 Honduras Peso (KM# 52). Hun- tsinger Collecti",
+        "source": "geometry",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C105",
+        "figure": "F105",
+        "caption_text": "Fig. 105. 1892/0 Honduras Peso (KM# 52; Du- plicate of Type ",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C104",
+        "figure": "F104",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C105",
+        "figure": "F105",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "it_geo_04": {
+   "before": {
+    "image_id": "it_geo_04",
+    "stage05": false,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 5,
+      "matched": {
+       "B5": 0,
+       "B6L": 1,
+       "B8": 10,
+       "B10": 3,
+       "B9": 2
+      },
+      "match_bbox": {
+       "B5": [
+        236,
+        265,
+        1219,
+        1036
+       ],
+       "B6L": [
+        1501,
+        205,
+        480,
+        1081
+       ],
+       "B8": [
+        1438,
+        2452,
+        454,
+        365
+       ],
+       "B10": [
+        844,
+        1336,
+        599,
+        170
+       ],
+       "B9": [
+        203,
+        1333,
+        600,
+        548
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "B5": true,
+       "B6L": true,
+       "B8": true,
+       "B10": true,
+       "B9": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 3,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 0,
+       "n_blocks": 3,
+       "seq_gt": [
+        "B9",
+        "B10",
+        "B8"
+       ],
+       "seq_det": [
+        "B9",
+        "B10",
+        "B8"
+       ],
+       "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 11,
+      "n_header_det": 0,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "B5": true,
+       "B6L": true,
+       "B8": true,
+       "B10": true,
+       "B9": true
+      },
+      "caption_typed_parser": {
+       "B8": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "B8": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+       {
+        "caption": "B8",
+        "figure": "B5",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 4,
+      "matched": {
+       "B6R": 2,
+       "B7": 3,
+       "B11": 4,
+       "B12": 7
+      },
+      "match_bbox": {
+       "B6R": [
+        0,
+        268,
+        2071,
+        1025
+       ],
+       "B7": [
+        203,
+        1870,
+        430,
+        940
+       ],
+       "B11": [
+        680,
+        1330,
+        588,
+        586
+       ],
+       "B12": [
+        1301,
+        1337,
+        588,
+        747
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "B6R": true,
+       "B7": false,
+       "B11": true,
+       "B12": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.75,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 3,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 0,
+       "n_blocks": 3,
+       "seq_gt": [
+        "B7",
+        "B11",
+        "B12"
+       ],
+       "seq_det": [
+        "B7",
+        "B11",
+        "B12"
+       ],
+       "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 9,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "B6R": true,
+       "B7": true,
+       "B11": true,
+       "B12": true
+      },
+      "caption_typed_parser": {
+       "B7": true
+      },
+      "n_promoted": 1,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 1,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "B7",
+        "figure": "B6R",
+        "caption_text": "Sopra: Figura 21 Ampia veduta dei monti a nord del Passo Fal",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "B7",
+        "figure": "B6R",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 1,
+        "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated); caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       }
+      ]
+     }
+    ]
+   },
+   "after": {
+    "image_id": "it_geo_04",
+    "stage05": true,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 5,
+      "matched": {
+       "B5": 3,
+       "B6L": 4,
+       "B8": 13,
+       "B10": 6,
+       "B9": 5
+      },
+      "match_bbox": {
+       "B5": [
+        236,
+        265,
+        1219,
+        1036
+       ],
+       "B6L": [
+        1501,
+        205,
+        480,
+        1081
+       ],
+       "B8": [
+        1438,
+        2452,
+        454,
+        365
+       ],
+       "B10": [
+        844,
+        1336,
+        599,
+        170
+       ],
+       "B9": [
+        203,
+        1333,
+        600,
+        548
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 5,
+       "n_orphan_blocks": 3,
+       "n_ejected": 0,
+       "n_rescued": 0,
+       "eject_notes": [],
+       "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+       "B5": true,
+       "B6L": true,
+       "B8": true,
+       "B10": true,
+       "B9": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 3,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 0,
+       "n_blocks": 3,
+       "seq_gt": [
+        "B9",
+        "B10",
+        "B8"
+       ],
+       "seq_det": [
+        "B9",
+        "B10",
+        "B8"
+       ],
+       "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 14,
+      "n_header_det": 0,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "B5": true,
+       "B6L": true,
+       "B8": true,
+       "B10": true,
+       "B9": true
+      },
+      "caption_typed_parser": {
+       "B8": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "B8": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+       {
+        "caption": "B8",
+        "figure": "B5",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 4,
+      "matched": {
+       "B6R": 2,
+       "B7": 3,
+       "B11": 4,
+       "B12": 7
+      },
+      "match_bbox": {
+       "B6R": [
+        0,
+        268,
+        2071,
+        1025
+       ],
+       "B7": [
+        203,
+        1870,
+        430,
+        940
+       ],
+       "B11": [
+        680,
+        1330,
+        588,
+        586
+       ],
+       "B12": [
+        1301,
+        1337,
+        588,
+        747
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 0,
+       "n_orphan_blocks": 0,
+       "n_ejected": 0,
+       "n_rescued": 1,
+       "eject_notes": [],
+       "rescue_notes": [
+        "header #1: 0w@0.0 -> 1w@96.5"
+       ]
+      },
+      "misses": [],
+      "type_ok": {
+       "B6R": true,
+       "B7": false,
+       "B11": true,
+       "B12": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.75,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 3,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 0,
+       "n_blocks": 3,
+       "seq_gt": [
+        "B7",
+        "B11",
+        "B12"
+       ],
+       "seq_det": [
+        "B7",
+        "B11",
+        "B12"
+       ],
+       "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 9,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "B6R": true,
+       "B7": true,
+       "B11": true,
+       "B12": true
+      },
+      "caption_typed_parser": {
+       "B7": true
+      },
+      "n_promoted": 1,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 1,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "B7",
+        "figure": "B6R",
+        "caption_text": "Sopra: Figura 21 Ampia veduta dei monti a nord del Passo Fal",
+        "source": "geometry",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "B7",
+        "figure": "B6R",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 1,
+        "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated); caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "it_geo_05": {
+   "before": {
+    "image_id": "it_geo_05",
+    "stage05": false,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 2,
+      "matched": {
+       "F2": 2
+      },
+      "match_bbox": {
+       "F2": [
+        231,
+        331,
+        1806,
+        2658
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [
+       "C2"
+      ],
+      "type_ok": {
+       "F2": true
+      },
+      "seg_recall": 0.5,
+      "type_acc": 1.0,
+      "tau_layout": null,
+      "tau_native": null,
+      "n_native": 0,
+      "order_all": {
+       "tau": null,
+       "n_fig_graded": 1,
+       "n_blocks": 1,
+       "seq_gt": [
+        "F2"
+       ],
+       "seq_det": [
+        "F2"
+       ],
+       "note": "<2 matched blocks to order"
+      },
+      "n_det_blocks": 3,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F2": true
+      },
+      "caption_typed_parser": {
+       "C2": false
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [],
+      "groups": [
+       {
+        "caption": "C2",
+        "figure": "F2",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 1,
+        "reason": "caption or figure block not matched on this subpage"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 5,
+      "matched": {
+       "F3": 2,
+       "P3": 6,
+       "C3": 3,
+       "P2": 5,
+       "P1": 4
+      },
+      "match_bbox": {
+       "F3": [
+        609,
+        285,
+        1140,
+        1065
+       ],
+       "P3": [
+        609,
+        2410,
+        1135,
+        396
+       ],
+       "C3": [
+        87,
+        2520,
+        466,
+        292
+       ],
+       "P2": [
+        602,
+        1925,
+        1139,
+        481
+       ],
+       "P1": [
+        600,
+        1389,
+        1141,
+        534
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "F3": true,
+       "P3": true,
+       "C3": true,
+       "P2": true,
+       "P1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 1,
+       "n_blocks": 5,
+       "seq_gt": [
+        "F3",
+        "C3",
+        "P1",
+        "P2",
+        "P3"
+       ],
+       "seq_det": [
+        "F3",
+        "C3",
+        "P1",
+        "P2",
+        "P3"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 7,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F3": true,
+       "P3": true,
+       "C3": true,
+       "P2": true,
+       "P1": true
+      },
+      "caption_typed_parser": {
+       "C3": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 1,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "C3",
+        "figure": "F3",
+        "caption_text": "Sopra: Figura 3 ; A possile di Ellipsactinia, un idrozoo che",
+        "source": "sole_figure",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C3",
+        "figure": "F3",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 1,
+        "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+       }
+      ]
+     }
+    ]
+   },
+   "after": {
+    "image_id": "it_geo_05",
+    "stage05": true,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 2,
+      "matched": {
+       "F2": 5,
+       "C2": 6
+      },
+      "match_bbox": {
+       "F2": [
+        231,
+        331,
+        1806,
+        2658
+       ],
+       "C2": [
+        259,
+        2108,
+        365,
+        691
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 17,
+       "n_orphan_blocks": 3,
+       "n_ejected": 1,
+       "n_rescued": 1,
+       "eject_notes": [
+        "ejected caption (Figura 2) printed inside figure 231,331 1806x2658: 60 words at 259,2189 365x610"
+       ],
+       "rescue_notes": [
+        "caption #6: 60w@91.7 -> 66w@92.6"
+       ]
+      },
+      "misses": [],
+      "type_ok": {
+       "F2": true,
+       "C2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": null,
+      "tau_native": null,
+      "n_native": 1,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 1,
+       "n_blocks": 2,
+       "seq_gt": [
+        "F2",
+        "C2"
+       ],
+       "seq_det": [
+        "F2",
+        "C2"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 7,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F2": true,
+       "C2": true
+      },
+      "caption_typed_parser": {
+       "C2": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 1,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "C2",
+        "figure": "F2",
+        "caption_text": "In questa pagina: Figura 2 La geografia nei dintorni della p",
+        "source": "sole_figure",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C2",
+        "figure": "F2",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 1,
+        "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 5,
+      "matched": {
+       "F3": 2,
+       "P3": 9,
+       "C3": 6,
+       "P2": 8,
+       "P1": 7
+      },
+      "match_bbox": {
+       "F3": [
+        609,
+        285,
+        1140,
+        1065
+       ],
+       "P3": [
+        609,
+        2410,
+        1135,
+        396
+       ],
+       "C3": [
+        87,
+        2520,
+        466,
+        292
+       ],
+       "P2": [
+        602,
+        1925,
+        1139,
+        481
+       ],
+       "P1": [
+        600,
+        1389,
+        1141,
+        534
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 4,
+       "n_orphan_blocks": 3,
+       "n_ejected": 0,
+       "n_rescued": 0,
+       "eject_notes": [],
+       "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+       "F3": true,
+       "P3": true,
+       "C3": true,
+       "P2": true,
+       "P1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 1,
+       "n_blocks": 5,
+       "seq_gt": [
+        "F3",
+        "C3",
+        "P1",
+        "P2",
+        "P3"
+       ],
+       "seq_det": [
+        "F3",
+        "C3",
+        "P1",
+        "P2",
+        "P3"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 10,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F3": true,
+       "P3": true,
+       "C3": true,
+       "P2": true,
+       "P1": true
+      },
+      "caption_typed_parser": {
+       "C3": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 1,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "C3",
+        "figure": "F3",
+        "caption_text": "Sopra: Figura 3 ; A possile di Ellipsactinia, un idrozoo che",
+        "source": "sole_figure",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C3",
+        "figure": "F3",
+        "caption_typed_ok": true,
+        "nearest_ok": true,
+        "n_figures": 1,
+        "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "it_geo_06": {
+   "before": {
+    "image_id": "it_geo_06",
+    "stage05": false,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 8,
+      "matched": {
+       "F26": 5,
+       "F25": 2,
+       "F27": 3,
+       "F28": 4,
+       "C25": 6,
+       "C26": 7,
+       "C27": 8,
+       "C28": 9
+      },
+      "match_bbox": {
+       "F26": [
+        1611,
+        253,
+        498,
+        622
+       ],
+       "F25": [
+        212,
+        272,
+        1345,
+        777
+       ],
+       "F27": [
+        203,
+        1091,
+        1358,
+        835
+       ],
+       "F28": [
+        203,
+        1973,
+        1358,
+        836
+       ],
+       "C25": [
+        1608,
+        1267,
+        459,
+        181
+       ],
+       "C26": [
+        1604,
+        1480,
+        467,
+        631
+       ],
+       "C27": [
+        1605,
+        2139,
+        442,
+        218
+       ],
+       "C28": [
+        1595,
+        2398,
+        441,
+        429
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "F26": true,
+       "F25": true,
+       "F27": true,
+       "F28": true,
+       "C25": false,
+       "C26": false,
+       "C27": false,
+       "C28": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.5,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 4,
+       "n_blocks": 8,
+       "seq_gt": [
+        "F25",
+        "F27",
+        "F28",
+        "F26",
+        "C25",
+        "C26",
+        "C27",
+        "C28"
+       ],
+       "seq_det": [
+        "F25",
+        "F27",
+        "F28",
+        "F26",
+        "C25",
+        "C26",
+        "C27",
+        "C28"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 10,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F26": true,
+       "F25": true,
+       "F27": true,
+       "F28": true,
+       "C25": true,
+       "C26": true,
+       "C27": true,
+       "C28": true
+      },
+      "caption_typed_parser": {
+       "C25": true,
+       "C26": true,
+       "C27": true,
+       "C28": true
+      },
+      "n_promoted": 4,
+      "n_fig_numbers": 4,
+      "n_pairs_by_number": 4,
+      "n_pairs_gt": 4,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "C25",
+        "figure": "F25",
+        "caption_text": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo ",
+        "source": "number",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C26",
+        "figure": "F26",
+        "caption_text": "Figura 26 CSR Fossili della Maiolica rinvenuti sul Monte Gra",
+        "source": "number",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C27",
+        "figure": "F27",
+        "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+        "source": "number",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C28",
+        "figure": "F28",
+        "caption_text": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella loc",
+        "source": "number",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C25",
+        "figure": "F25",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 4,
+        "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C26",
+        "figure": "F26",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 4,
+        "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C27",
+        "figure": "F27",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 4,
+        "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C28",
+        "figure": "F28",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 4,
+        "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 6,
+      "matched": {
+       "F29": 2,
+       "F30": 4,
+       "P1": 6,
+       "C30": 5,
+       "P2": 8,
+       "C29": 3
+      },
+      "match_bbox": {
+       "F29": [
+        154,
+        279,
+        1554,
+        1030
+       ],
+       "F30": [
+        640,
+        1341,
+        1068,
+        842
+       ],
+       "P1": [
+        636,
+        2221,
+        529,
+        252
+       ],
+       "C30": [
+        154,
+        2239,
+        439,
+        581
+       ],
+       "P2": [
+        1193,
+        2225,
+        519,
+        465
+       ],
+       "C29": [
+        156,
+        1487,
+        440,
+        720
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "F29": true,
+       "F30": true,
+       "P1": true,
+       "C30": false,
+       "P2": true,
+       "C29": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.6666666666666666,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 6,
+       "seq_gt": [
+        "F29",
+        "C29",
+        "F30",
+        "C30",
+        "P1",
+        "P2"
+       ],
+       "seq_det": [
+        "F29",
+        "C29",
+        "F30",
+        "C30",
+        "P1",
+        "P2"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 9,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F29": true,
+       "F30": true,
+       "P1": true,
+       "C30": true,
+       "P2": true,
+       "C29": true
+      },
+      "caption_typed_parser": {
+       "C29": true,
+       "C30": true
+      },
+      "n_promoted": 2,
+      "n_fig_numbers": 1,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "C30": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering"
+      },
+      "pairs_detail": [
+       {
+        "caption": "C29",
+        "figure": "F29",
+        "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+        "source": "number",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C29",
+        "figure": "F29",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 2,
+        "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C30",
+        "figure": "F30",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       }
+      ]
+     }
+    ]
+   },
+   "after": {
+    "image_id": "it_geo_06",
+    "stage05": true,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 8,
+      "matched": {
+       "F26": 5,
+       "F25": 2,
+       "F27": 3,
+       "F28": 4,
+       "C25": 6,
+       "C26": 7,
+       "C27": 8,
+       "C28": 9
+      },
+      "match_bbox": {
+       "F26": [
+        1611,
+        253,
+        498,
+        622
+       ],
+       "F25": [
+        212,
+        272,
+        1345,
+        777
+       ],
+       "F27": [
+        203,
+        1091,
+        1358,
+        835
+       ],
+       "F28": [
+        203,
+        1973,
+        1358,
+        836
+       ],
+       "C25": [
+        1608,
+        1267,
+        459,
+        181
+       ],
+       "C26": [
+        1604,
+        1480,
+        467,
+        631
+       ],
+       "C27": [
+        1605,
+        2139,
+        442,
+        218
+       ],
+       "C28": [
+        1595,
+        2398,
+        441,
+        429
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 0,
+       "n_orphan_blocks": 0,
+       "n_ejected": 0,
+       "n_rescued": 1,
+       "eject_notes": [],
+       "rescue_notes": [
+        "header #0: 7w@33.2 -> 22w@70.7"
+       ]
+      },
+      "misses": [],
+      "type_ok": {
+       "F26": true,
+       "F25": true,
+       "F27": true,
+       "F28": true,
+       "C25": false,
+       "C26": false,
+       "C27": false,
+       "C28": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.5,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 4,
+       "n_blocks": 8,
+       "seq_gt": [
+        "F25",
+        "F27",
+        "F28",
+        "F26",
+        "C25",
+        "C26",
+        "C27",
+        "C28"
+       ],
+       "seq_det": [
+        "F25",
+        "F27",
+        "F28",
+        "F26",
+        "C25",
+        "C26",
+        "C27",
+        "C28"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 10,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F26": true,
+       "F25": true,
+       "F27": true,
+       "F28": true,
+       "C25": true,
+       "C26": true,
+       "C27": true,
+       "C28": true
+      },
+      "caption_typed_parser": {
+       "C25": true,
+       "C26": true,
+       "C27": true,
+       "C28": true
+      },
+      "n_promoted": 4,
+      "n_fig_numbers": 4,
+      "n_pairs_by_number": 4,
+      "n_pairs_gt": 4,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "C25",
+        "figure": "F25",
+        "caption_text": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo ",
+        "source": "number",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C26",
+        "figure": "F26",
+        "caption_text": "Figura 26 CSR Fossili della Maiolica rinvenuti sul Monte Gra",
+        "source": "number",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C27",
+        "figure": "F27",
+        "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+        "source": "number",
+        "verdict": "ok"
+       },
+       {
+        "caption": "C28",
+        "figure": "F28",
+        "caption_text": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella loc",
+        "source": "number",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C25",
+        "figure": "F25",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 4,
+        "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C26",
+        "figure": "F26",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 4,
+        "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C27",
+        "figure": "F27",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 4,
+        "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C28",
+        "figure": "F28",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 4,
+        "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 6,
+      "matched": {
+       "F29": 2,
+       "F30": 4,
+       "P1": 6,
+       "C30": 5,
+       "P2": 8,
+       "C29": 3
+      },
+      "match_bbox": {
+       "F29": [
+        154,
+        279,
+        1554,
+        1030
+       ],
+       "F30": [
+        640,
+        1341,
+        1068,
+        842
+       ],
+       "P1": [
+        636,
+        2221,
+        529,
+        252
+       ],
+       "C30": [
+        154,
+        2239,
+        439,
+        581
+       ],
+       "P2": [
+        1193,
+        2225,
+        519,
+        465
+       ],
+       "C29": [
+        156,
+        1487,
+        440,
+        720
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 0,
+       "n_orphan_blocks": 0,
+       "n_ejected": 0,
+       "n_rescued": 0,
+       "eject_notes": [],
+       "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+       "F29": true,
+       "F30": true,
+       "P1": true,
+       "C30": false,
+       "P2": true,
+       "C29": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.6666666666666666,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 2,
+       "n_blocks": 6,
+       "seq_gt": [
+        "F29",
+        "C29",
+        "F30",
+        "C30",
+        "P1",
+        "P2"
+       ],
+       "seq_det": [
+        "F29",
+        "C29",
+        "F30",
+        "C30",
+        "P1",
+        "P2"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 9,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "F29": true,
+       "F30": true,
+       "P1": true,
+       "C30": true,
+       "P2": true,
+       "C29": true
+      },
+      "caption_typed_parser": {
+       "C29": true,
+       "C30": true
+      },
+      "n_promoted": 2,
+      "n_fig_numbers": 1,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+       "C30": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering"
+      },
+      "pairs_detail": [
+       {
+        "caption": "C29",
+        "figure": "F29",
+        "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+        "source": "number",
+        "verdict": "ok"
+       }
+      ],
+      "groups": [
+       {
+        "caption": "C29",
+        "figure": "F29",
+        "caption_typed_ok": false,
+        "nearest_ok": false,
+        "n_figures": 2,
+        "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       },
+       {
+        "caption": "C30",
+        "figure": "F30",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 2,
+        "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "it_geo_07": {
+   "before": {
+    "image_id": "it_geo_07",
+    "stage05": false,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 17,
+      "matched": {
+       "D5": 17,
+       "D4": 13,
+       "D3": 8,
+       "D2": 7,
+       "D1": 4,
+       "T1mid": 5,
+       "T1right": 6,
+       "T2mid": 9,
+       "T3mid": 10,
+       "T3right": 12,
+       "T4mid": 15,
+       "T5mid": 19,
+       "T4right": 16,
+       "T2right": 11,
+       "C31": 1,
+       "TB": 3
+      },
+      "match_bbox": {
+       "D5": [
+        211,
+        2377,
+        822,
+        368
+       ],
+       "D4": [
+        210,
+        1926,
+        831,
+        348
+       ],
+       "D3": [
+        211,
+        1482,
+        832,
+        380
+       ],
+       "D2": [
+        211,
+        1204,
+        829,
+        222
+       ],
+       "D1": [
+        213,
+        1001,
+        828,
+        144
+       ],
+       "T1mid": [
+        1076,
+        1016,
+        388,
+        115
+       ],
+       "T1right": [
+        1548,
+        1018,
+        414,
+        114
+       ],
+       "T2mid": [
+        1076,
+        1225,
+        394,
+        222
+       ],
+       "T3mid": [
+        1078,
+        1591,
+        379,
+        223
+       ],
+       "T3right": [
+        1550,
+        1601,
+        493,
+        158
+       ],
+       "T4mid": [
+        1078,
+        1984,
+        385,
+        329
+       ],
+       "T5mid": [
+        1067,
+        2438,
+        399,
+        355
+       ],
+       "T4right": [
+        1541,
+        2002,
+        478,
+        330
+       ],
+       "T2right": [
+        1547,
+        1228,
+        480,
+        226
+       ],
+       "C31": [
+        206,
+        291,
+        352,
+        429
+       ],
+       "TB": [
+        1073,
+        261,
+        951,
+        678
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [
+       "T5right"
+      ],
+      "type_ok": {
+       "D5": true,
+       "D4": true,
+       "D3": true,
+       "D2": true,
+       "D1": true,
+       "T1mid": true,
+       "T1right": true,
+       "T2mid": true,
+       "T3mid": true,
+       "T3right": true,
+       "T4mid": true,
+       "T5mid": true,
+       "T4right": true,
+       "T2right": true,
+       "C31": false,
+       "TB": true
+      },
+      "seg_recall": 0.9411764705882353,
+      "type_acc": 0.9375,
+      "tau_layout": 0.9636363636363636,
+      "tau_native": 0.45454545454545453,
+      "n_native": 11,
+      "order_all": {
+       "tau": 0.95,
+       "n_fig_graded": 5,
+       "n_blocks": 16,
+       "seq_gt": [
+        "C31",
+        "TB",
+        "D1",
+        "T1mid",
+        "T1right",
+        "D2",
+        "T2mid",
+        "T2right",
+        "D3",
+        "T3mid",
+        "T3right",
+        "D4",
+        "T4mid",
+        "T4right",
+        "D5",
+        "T5mid"
+       ],
+       "seq_det": [
+        "C31",
+        "TB",
+        "D1",
+        "T1mid",
+        "T1right",
+        "D2",
+        "D3",
+        "T2mid",
+        "T3mid",
+        "T2right",
+        "T3right",
+        "D4",
+        "T4mid",
+        "T4right",
+        "D5",
+        "T5mid"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 21,
+      "n_header_det": 1,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "D5": true,
+       "D4": true,
+       "D3": true,
+       "D2": true,
+       "D1": true,
+       "T1mid": true,
+       "T1right": true,
+       "T2mid": true,
+       "T3mid": true,
+       "T3right": true,
+       "T4mid": true,
+       "T5mid": true,
+       "T4right": true,
+       "T2right": true,
+       "C31": true,
+       "TB": true
+      },
+      "caption_typed_parser": {
+       "C31": true
+      },
+      "n_promoted": 1,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 2,
+      "abstain_reasons": {
+       "det14": "caption block carries no text",
+       "C31": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+       {
+        "caption": "C31",
+        "figure": "D1",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 5,
+        "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 13,
+      "matched": {
+       "D6": 2,
+       "D7": 6,
+       "D8": 9,
+       "Dins": 12,
+       "T6mid": 4,
+       "T8mid": 10,
+       "T9a": 13,
+       "T7right": 8,
+       "T9c": 15,
+       "T6right": 5,
+       "T8right": 11,
+       "T7mid": 7,
+       "T9b": 14
+      },
+      "match_bbox": {
+       "D6": [
+        108,
+        258,
+        865,
+        467
+       ],
+       "D7": [
+        91,
+        842,
+        876,
+        624
+       ],
+       "D8": [
+        114,
+        1537,
+        852,
+        742
+       ],
+       "Dins": [
+        125,
+        2401,
+        441,
+        401
+       ],
+       "T6mid": [
+        1001,
+        302,
+        312,
+        428
+       ],
+       "T8mid": [
+        994,
+        1553,
+        345,
+        610
+       ],
+       "T9a": [
+        604,
+        2403,
+        349,
+        401
+       ],
+       "T7right": [
+        1372,
+        859,
+        301,
+        396
+       ],
+       "T9c": [
+        1376,
+        2410,
+        330,
+        324
+       ],
+       "T6right": [
+        1367,
+        303,
+        357,
+        331
+       ],
+       "T8right": [
+        1373,
+        1558,
+        323,
+        538
+       ],
+       "T7mid": [
+        1000,
+        850,
+        326,
+        646
+       ],
+       "T9b": [
+        997,
+        2406,
+        346,
+        396
+       ]
+      },
+      "stage05_detail": {},
+      "misses": [],
+      "type_ok": {
+       "D6": true,
+       "D7": true,
+       "D8": true,
+       "Dins": true,
+       "T6mid": true,
+       "T8mid": true,
+       "T9a": true,
+       "T7right": true,
+       "T9c": true,
+       "T6right": true,
+       "T8right": true,
+       "T7mid": true,
+       "T9b": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 0.3333333333333333,
+      "n_native": 9,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 4,
+       "n_blocks": 13,
+       "seq_gt": [
+        "D6",
+        "T6mid",
+        "T6right",
+        "D7",
+        "T7mid",
+        "T7right",
+        "D8",
+        "T8mid",
+        "T8right",
+        "Dins",
+        "T9a",
+        "T9b",
+        "T9c"
+       ],
+       "seq_det": [
+        "D6",
+        "T6mid",
+        "T6right",
+        "D7",
+        "T7mid",
+        "T7right",
+        "D8",
+        "T8mid",
+        "T8right",
+        "Dins",
+        "T9a",
+        "T9b",
+        "T9c"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 16,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "D6": true,
+       "D7": true,
+       "D8": true,
+       "Dins": true,
+       "T6mid": true,
+       "T8mid": true,
+       "T9a": true,
+       "T7right": true,
+       "T9c": true,
+       "T6right": true,
+       "T8right": true,
+       "T7mid": true,
+       "T9b": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 1,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "det3",
+        "figure": "D6",
+        "caption_text": "Riem pPimento del Bacino di Belluno: fondale omogeneo dal Ca",
+        "source": "geometry",
+        "verdict": "ungraded"
+       }
+      ],
+      "groups": []
+     }
+    ]
+   },
+   "after": {
+    "image_id": "it_geo_07",
+    "stage05": true,
+    "subpages": [
+     {
+      "name": "left.png",
+      "n_gt": 17,
+      "matched": {
+       "D5": 19,
+       "D4": 15,
+       "D3": 10,
+       "D2": 9,
+       "D1": 6,
+       "T1mid": 7,
+       "T1right": 8,
+       "T2mid": 11,
+       "T3mid": 12,
+       "T3right": 14,
+       "T4mid": 17,
+       "T5mid": 21,
+       "T4right": 18,
+       "T2right": 13,
+       "C31": 1,
+       "T5right": 22,
+       "TB": 5
+      },
+      "match_bbox": {
+       "D5": [
+        211,
+        2377,
+        822,
+        368
+       ],
+       "D4": [
+        210,
+        1926,
+        831,
+        348
+       ],
+       "D3": [
+        211,
+        1482,
+        832,
+        380
+       ],
+       "D2": [
+        211,
+        1204,
+        829,
+        222
+       ],
+       "D1": [
+        213,
+        1001,
+        828,
+        144
+       ],
+       "T1mid": [
+        1076,
+        1016,
+        388,
+        115
+       ],
+       "T1right": [
+        1548,
+        1018,
+        414,
+        114
+       ],
+       "T2mid": [
+        1076,
+        1225,
+        394,
+        222
+       ],
+       "T3mid": [
+        1078,
+        1591,
+        379,
+        223
+       ],
+       "T3right": [
+        1550,
+        1601,
+        493,
+        158
+       ],
+       "T4mid": [
+        1078,
+        1984,
+        385,
+        329
+       ],
+       "T5mid": [
+        1067,
+        2438,
+        399,
+        355
+       ],
+       "T4right": [
+        1541,
+        2002,
+        478,
+        330
+       ],
+       "T2right": [
+        1547,
+        1228,
+        480,
+        226
+       ],
+       "C31": [
+        206,
+        291,
+        352,
+        429
+       ],
+       "T5right": [
+        1527,
+        2464,
+        501,
+        223
+       ],
+       "TB": [
+        1073,
+        261,
+        951,
+        678
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 9,
+       "n_orphan_blocks": 2,
+       "n_ejected": 0,
+       "n_rescued": 3,
+       "eject_notes": [],
+       "rescue_notes": [
+        "header #0: 25w@64.4 -> 29w@65.9",
+        "caption #16: 0w@0.0 -> 5w@96.3",
+        "paragraph #22: 8w@77.5 -> 21w@90.1"
+       ]
+      },
+      "misses": [],
+      "type_ok": {
+       "D5": true,
+       "D4": true,
+       "D3": true,
+       "D2": true,
+       "D1": true,
+       "T1mid": true,
+       "T1right": true,
+       "T2mid": true,
+       "T3mid": true,
+       "T3right": true,
+       "T4mid": true,
+       "T5mid": true,
+       "T4right": true,
+       "T2right": true,
+       "C31": false,
+       "T5right": true,
+       "TB": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.9411764705882353,
+      "tau_layout": 0.9696969696969697,
+      "tau_native": 0.5454545454545454,
+      "n_native": 12,
+      "order_all": {
+       "tau": 0.9558823529411765,
+       "n_fig_graded": 5,
+       "n_blocks": 17,
+       "seq_gt": [
+        "C31",
+        "TB",
+        "D1",
+        "T1mid",
+        "T1right",
+        "D2",
+        "T2mid",
+        "T2right",
+        "D3",
+        "T3mid",
+        "T3right",
+        "D4",
+        "T4mid",
+        "T4right",
+        "D5",
+        "T5mid",
+        "T5right"
+       ],
+       "seq_det": [
+        "C31",
+        "TB",
+        "D1",
+        "T1mid",
+        "T1right",
+        "D2",
+        "D3",
+        "T2mid",
+        "T3mid",
+        "T2right",
+        "T3right",
+        "D4",
+        "T4mid",
+        "T4right",
+        "D5",
+        "T5mid",
+        "T5right"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 23,
+      "n_header_det": 1,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "D5": true,
+       "D4": true,
+       "D3": true,
+       "D2": true,
+       "D1": true,
+       "T1mid": true,
+       "T1right": true,
+       "T2mid": true,
+       "T3mid": true,
+       "T3right": true,
+       "T4mid": true,
+       "T5mid": true,
+       "T4right": true,
+       "T2right": true,
+       "C31": true,
+       "T5right": true,
+       "TB": true
+      },
+      "caption_typed_parser": {
+       "C31": true
+      },
+      "n_promoted": 1,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 2,
+      "abstain_reasons": {
+       "det16": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+       "C31": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+       {
+        "caption": "C31",
+        "figure": "D1",
+        "caption_typed_ok": false,
+        "nearest_ok": true,
+        "n_figures": 5,
+        "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+       }
+      ]
+     },
+     {
+      "name": "right.png",
+      "n_gt": 13,
+      "matched": {
+       "D6": 2,
+       "D7": 7,
+       "D8": 10,
+       "Dins": 13,
+       "T6mid": 4,
+       "T8mid": 11,
+       "T9a": 14,
+       "T7right": 9,
+       "T9c": 16,
+       "T6right": 5,
+       "T8right": 12,
+       "T7mid": 8,
+       "T9b": 15
+      },
+      "match_bbox": {
+       "D6": [
+        108,
+        258,
+        865,
+        467
+       ],
+       "D7": [
+        91,
+        842,
+        876,
+        624
+       ],
+       "D8": [
+        114,
+        1537,
+        852,
+        742
+       ],
+       "Dins": [
+        125,
+        2401,
+        441,
+        401
+       ],
+       "T6mid": [
+        1001,
+        302,
+        312,
+        428
+       ],
+       "T8mid": [
+        994,
+        1553,
+        345,
+        610
+       ],
+       "T9a": [
+        604,
+        2403,
+        349,
+        401
+       ],
+       "T7right": [
+        1372,
+        859,
+        301,
+        396
+       ],
+       "T9c": [
+        1376,
+        2410,
+        330,
+        324
+       ],
+       "T6right": [
+        1367,
+        303,
+        357,
+        331
+       ],
+       "T8right": [
+        1373,
+        1558,
+        323,
+        538
+       ],
+       "T7mid": [
+        1000,
+        850,
+        326,
+        646
+       ],
+       "T9b": [
+        997,
+        2406,
+        346,
+        396
+       ]
+      },
+      "stage05_detail": {
+       "orphan_words": 5,
+       "n_orphan_blocks": 2,
+       "n_ejected": 0,
+       "n_rescued": 0,
+       "eject_notes": [],
+       "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+       "D6": true,
+       "D7": true,
+       "D8": true,
+       "Dins": true,
+       "T6mid": true,
+       "T8mid": true,
+       "T9a": true,
+       "T7right": true,
+       "T9c": true,
+       "T6right": true,
+       "T8right": true,
+       "T7mid": true,
+       "T9b": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 0.3333333333333333,
+      "n_native": 9,
+      "order_all": {
+       "tau": 1.0,
+       "n_fig_graded": 4,
+       "n_blocks": 13,
+       "seq_gt": [
+        "D6",
+        "T6mid",
+        "T6right",
+        "D7",
+        "T7mid",
+        "T7right",
+        "D8",
+        "T8mid",
+        "T8right",
+        "Dins",
+        "T9a",
+        "T9b",
+        "T9c"
+       ],
+       "seq_det": [
+        "D6",
+        "T6mid",
+        "T6right",
+        "D7",
+        "T7mid",
+        "T7right",
+        "D8",
+        "T8mid",
+        "T8right",
+        "Dins",
+        "T9a",
+        "T9b",
+        "T9c"
+       ],
+       "note": ""
+      },
+      "n_det_blocks": 18,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+       "D6": true,
+       "D7": true,
+       "D8": true,
+       "Dins": true,
+       "T6mid": true,
+       "T8mid": true,
+       "T9a": true,
+       "T7right": true,
+       "T9c": true,
+       "T6right": true,
+       "T8right": true,
+       "T7mid": true,
+       "T9b": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 1,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+       {
+        "caption": "det3",
+        "figure": "D6",
+        "caption_text": "Riem pPimento del Bacino di Belluno: fondale omogeneo dal Ca",
+        "source": "geometry",
+        "verdict": "ungraded"
+       }
+      ],
+      "groups": []
+     }
+    ]
+   }
+  }
+ }
+}

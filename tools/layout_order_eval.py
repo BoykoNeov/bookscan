@@ -1,5 +1,5 @@
-"""Gate 3 block-order eval — grade Stage 04 reading order + caption/figure
-grouping against a BLOCK-ORDER ground truth (``gt/<id>.blocks.json``).
+"""Gate 3 block-order eval — grade the SHIPPED block set (Stage 04 + Stage 05)
+against a BLOCK-ORDER ground truth (``gt/<id>.blocks.json``).
 
 This is the sequence-order + grouping metric the Gate-3 headline was blocked on.
 Unlike ``tools/layout_ab.py`` (which measures WER of reordered words, and so can
@@ -12,11 +12,26 @@ Grading follows the owner's priority (encoded in the GT ``primary_invariants``):
 segmentation and type and caption<->figure grouping OUTRANK exact linear order.
 So the report leads with those and treats Kendall-tau as secondary.
 
+WHICH BLOCK SET (the 2026-08-26 change). This tool used to stop after Stage 04.
+Three mechanisms that CREATE or REWRITE blocks run later, in Stage 05 —
+orphan-word rescue (``attach_words``), caption ejection (``caption_eject``) and
+the starved-block re-read (``block_reocr``) — so a GT block graded a segmentation
+MISS here could already be present in the shipped ``document.json`` (measured:
+two of the corpus's six misses were exactly that). It now runs those three passes
+(``stage05_blocks``), so every number grades what ships. ``--no-stage05``
+restores the old arm for reproducing pre-2026-08-26 rows; it does NOT grade the
+deliverable. Two reading notes for the shipped arm: ``reading_order`` is Stage
+05's (an orphan re-ranks the whole set through the same XY-Cut), so the tau
+column is the SHIPPED order and is not comparable to an older row; and an
+orphan-rescued block is typed ``other`` by construction, so recovering one raises
+segmentation recall and LOWERS type accuracy.
+
 Method (per subpage — Stage 02 splits the spread, Stage 04 orders each half):
   1. split -> dewarp (auto/UVDoc) -> Stage 04 layout, exactly the Gate-2/3 path
      (reuses tools.dewarp_ab + tools.layout_ab helpers), so numbers stay
-     comparable. OCR each half ONCE and route each word to the smallest block
-     whose box contains its center (same routing as layout_ab).
+     comparable. OCR each half ONCE, then run Stage 05's three block passes and
+     grade the blocks they leave behind (``--no-stage05``: route each word to the
+     smallest block whose box contains its center, same routing as layout_ab).
   2. MATCH each GT block to a detected block:
        * FIGURE GT blocks: by BBOX-OVERLAP when the GT figure carries a bbox
          (each GT figure claims the detected figure it overlaps most, global
@@ -71,6 +86,8 @@ through into ``document.json`` — that end of the chain is still a by-hand chec
 
 Usage:
     python -m tools.layout_order_eval --image it_geo_04 [--report docs/RESULTS.md]
+    # the pre-2026-08-26 arm (Stage 04's blocks alone, NOT the deliverable):
+    python -m tools.layout_order_eval --image it_geo_04 --no-stage05
     python -m tools.layout_order_eval --image it_geo_04 --json-out out.json
     # A/B a layout knob (types are coerced from stage04_layout.DEFAULTS):
     python -m tools.layout_order_eval --image it_geo_06 --set fig_vsplit=false
@@ -99,7 +116,10 @@ from tools.dewarp_ab import split_halves, dewarp_halves, lang_code
 from tools.layout_ab import ocr_words, _word_box, _center_in
 from pipeline import stage04_layout as S4
 from pipeline import figure_grouping as FG
-from pipeline.page_model import BBox
+from pipeline import block_reocr as BR
+from pipeline import caption_eject as CE
+from pipeline import stage05_ocr as S5
+from pipeline.page_model import BBox, Block
 
 # Fraction of a GT anchor's tokens that must be present in a detected block's
 # routed OCR text to accept the match. Anchors are 6-12 distinctive first-words;
@@ -488,6 +508,14 @@ class SubpageGrade:
     n_abstained: int = 0              # captions deliberately left unpaired
     abstain_reasons: dict[str, str] = field(default_factory=dict)
     pairs_detail: list[dict] = field(default_factory=list)  # every emitted pair + verdict
+    # --- Which BLOCK SET was graded (see stage05_blocks) ----------------------
+    stage05_on: bool = True            # False = Stage 04's blocks alone (old arm)
+    stage05: dict = field(default_factory=dict)   # orphan/eject/rescue counts
+    # gt_id -> the matched block's bbox. Detected INDICES shift between the two
+    # arms (Stage 05 adds blocks), so a before/after diff on indices cannot tell
+    # "still matched, different block" from "matched the same block". The bbox
+    # can: it is stable for a block neither pass touched.
+    match_bbox: dict[str, list[int]] = field(default_factory=dict)
 
     @property
     def seg_recall(self) -> float:
@@ -503,6 +531,10 @@ class SubpageGrade:
 class ImageGrade:
     image_id: str
     subpages: list[SubpageGrade] = field(default_factory=list)
+
+    @property
+    def stage05_on(self) -> bool:
+        return all(s.stage05_on for s in self.subpages) if self.subpages else True
 
 
 # --------------------------------------------------------------------------
@@ -530,6 +562,101 @@ def _route_words(pl: "S4.PageLayout", words: list, scale: float) -> list[DetBloc
             det[best].native_ranks.append(wi)
     for i, d in enumerate(det):
         d.text = " ".join(texts[i])
+    return det
+
+
+def stage05_blocks(pl: "S4.PageLayout", img: np.ndarray, twords: list,
+                   scale: float, cfg: dict, binary: str, lang: str, p: dict
+                   ) -> tuple[list[Block], dict]:
+    """Run Stage 05's three block-CREATING passes, in production order.
+
+    This is the whole point of the ``--stage05`` arm. The eval used to stop after
+    Stage 04, but three mechanisms that create or rewrite blocks run later, in
+    Stage 05, before anything reaches ``document.json``:
+
+      * **orphan-word rescue** (``attach_words``) — words inside no detected box
+        are grouped by their TSV paragraph into synthetic blocks, and the whole
+        set is re-ranked by the same XY-Cut Stage 04 uses;
+      * **caption ejection** (``caption_eject``) — a caption printed INSIDE a
+        figure box is moved out into its own CAPTION block;
+      * **starved-block re-read** (``block_reocr``) — a block the page pass
+        under-read is re-read from its own crop and replaced when the re-read
+        wins on word count AND its own confidence.
+
+    None of the three was visible here, so a GT block this eval called a
+    segmentation MISS could already be in the shipped document (measured
+    2026-08-26: two of six were). The calls below are the same functions
+    ``stage05_ocr.run`` makes, in the same order, with the same params.
+    """
+    h, w = img.shape[:2]
+    tessdata = resolve_tessdata_dir(cfg)
+    oem = int((cfg.get("tesseract", {}) or {}).get("oem", 1))
+
+    ordered, n_orphan = S5.attach_words(twords, pl.blocks, scale, w, h, p)
+    n_after_attach = len(ordered)
+    ordered, eject_notes = CE.eject_inline_captions(
+        ordered, img, binary, tessdata, lang, p, w, h)
+    ordered, rescues, n_dropped, n_added = BR.rescue_starved_blocks(
+        ordered, img, binary, tessdata, lang, oem, scale,
+        next_line_id=1 + max((wd.line_id for b in ordered for wd in b.words),
+                             default=-1),
+        p=(cfg.get("block_reocr", {}) or {}))
+
+    # Production's word-conservation invariant, replicated VERBATIM. It is the
+    # cheapest available proof that the three passes above are wired the way
+    # stage05_ocr wires them and not merely approximately: if this eval ever
+    # drifts from production here, every number it prints is measured on a block
+    # set that does not ship, which is the exact defect this arm exists to fix.
+    attached = sum(len(b.words) for b in ordered)
+    expect = len(twords) - n_dropped + n_added
+    if attached != expect:
+        raise AssertionError(
+            f"word conservation violated on {pl.name}: attached {attached} != "
+            f"recognized {len(twords)} - rescue-dropped {n_dropped} + "
+            f"rescue-added {n_added} = {expect}")
+
+    return ordered, {
+        "orphan_words": n_orphan,
+        "n_orphan_blocks": n_after_attach - len(pl.blocks),
+        "n_ejected": len(eject_notes),
+        "n_rescued": len(rescues),
+        "eject_notes": list(eject_notes),
+        "rescue_notes": [f"{r.block_type} #{r.block_id}: {r.n_before}w@"
+                         f"{r.conf_before} -> {r.n_after}w@{r.conf_after}"
+                         for r in rescues],
+    }
+
+
+def det_from_blocks(blocks: list[Block], twords: list, scale: float
+                    ) -> list[DetBlock]:
+    """Build the DetBlock view from Stage 05's FINAL blocks.
+
+    ``text`` is what the block actually carries after Stage 05 — so an ejected
+    caption, an orphan-rescued block and a re-read paragraph are each graded on
+    the words that reach ``document.json``, not on a page-pass routing of them.
+
+    ``native_ranks`` deliberately stay the PAGE-PASS TSV indices, routed into
+    these boxes by the same smallest-containing-box rule as before. The native
+    arm asks "what order did Tesseract's own page pass imply for this region" —
+    a question about the page pass, not about which words the block ended up
+    owning — so a rescued block's replacement words must not answer it.
+    """
+    det = [DetBlock(idx=i, ro=b.reading_order, btype=b.type.value, bbox=b.bbox,
+                    text=" ".join(w.text for w in b.words if w.text.strip()),
+                    native_ranks=[])
+           for i, b in enumerate(blocks)]
+    for wi, tw in enumerate(twords):
+        if not tw.text.strip():
+            continue
+        wb = _word_box(tw, scale)
+        best, area = None, None
+        for i, b in enumerate(blocks):
+            if _center_in(b.bbox, wb):
+                a = b.bbox.w * b.bbox.h
+                if area is None or a < area:
+                    best, area = i, a
+        if best is not None:
+            det[best].native_ranks.append(wi)
     return det
 
 
@@ -569,7 +696,8 @@ def apply_param_overrides(p: dict, sets: list[str]) -> dict:
 
 
 def grade_image(image_id: str, testset: Path, cfg: dict, binary: str,
-                param_sets: list[str] | None = None) -> tuple[ImageGrade, dict]:
+                param_sets: list[str] | None = None, stage05: bool = True
+                ) -> tuple[ImageGrade, dict]:
     gt_path = testset / "gt" / f"{image_id}.blocks.json"
     gt = json.loads(gt_path.read_text(encoding="utf-8"))
     if gt.get("gt_type") != "block_reading_order":
@@ -597,7 +725,19 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str,
             words, scale = ocr_words(binary, cfg, img, lang)
             pl = S4.layout_page(img, cfg, p, warns, det_model)
             pl.name = name
-            det = _route_words(pl, words, scale)
+            # The graded block set. With Stage 05 on this is what SHIPS; with it
+            # off it is Stage 04 alone, reproducing rows written before
+            # 2026-08-26. (`ocr_words` here is byte-identical to production's
+            # `stage05_ocr.ocr_subpage` — same oem/psm, same 20px/2x upscale
+            # probe — but is deliberately NOT swapped for it in this change, so
+            # the two arms differ in the three passes and nothing else.)
+            if stage05:
+                blocks5, s5info = stage05_blocks(pl, img, words, scale, cfg,
+                                                 binary, lang, p)
+                det = det_from_blocks(blocks5, words, scale)
+            else:
+                s5info = {}
+                det = _route_words(pl, words, scale)
 
             gt_blocks = gsub["reading_order"]
             matched, misses = match_subpage(gt_blocks, det)
@@ -691,6 +831,10 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str,
 
             n_header = sum(1 for d in det if d.btype in ("header", "page_number"))
             grade.subpages.append(SubpageGrade(
+                stage05_on=stage05, stage05=s5info,
+                match_bbox={gid: [det[di].bbox.x, det[di].bbox.y,
+                                  det[di].bbox.w, det[di].bbox.h]
+                            for gid, di in matched.items()},
                 name=name, n_gt=len(gt_blocks), matched=matched, misses=misses,
                 type_ok=type_ok, tau_layout=tau_layout, tau_native=tau_native,
                 n_native=len(nat), order_all=order_all,
@@ -722,11 +866,40 @@ def _tau_str(t: float | None) -> str:
     return "n/a" if t is None else f"{t:+.2f}"
 
 
+def _block_set_note(stage05_on: bool) -> str:
+    """The one line a pasted table cannot do without: WHICH block set was graded.
+
+    RESULTS.md is append-only and its rows get read side by side across dates, so
+    a row measured on the shipped block set and a row measured on Stage 04 alone
+    must not be silently comparable \u2014 they are different quantities.
+    """
+    if stage05_on:
+        return (
+            "**Block set graded: Stage 04 + Stage 05 (what SHIPS).** Orphan-word "
+            "rescue, caption ejection and the starved-block re-read all create or "
+            "rewrite blocks after Stage 04, so every number below is measured on "
+            "the block set that reaches `document.json`. Two things to read it "
+            "with: (a) `reading_order` is Stage 05's \u2014 an orphan re-ranks the "
+            "whole set through the same XY-Cut \u2014 so the tau column is the "
+            "SHIPPED order, not Stage 04's, and is NOT comparable to a "
+            "pre-2026-08-26 row; (b) an orphan-rescued block is typed `other` by "
+            "construction, so recovering one raises seg recall and LOWERS type "
+            "accuracy. `--no-stage05` reproduces the old arm.")
+    return (
+        "**Block set graded: Stage 04 alone (`--no-stage05`).** Reproduces rows "
+        "written before 2026-08-26. This does NOT grade the deliverable: "
+        "orphan-word rescue, caption ejection and the starved-block re-read run "
+        "later, in Stage 05, and each creates or rewrites blocks \u2014 so a "
+        "`miss` below may well be present in `document.json`.")
+
+
 def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
     L: list[str] = []
     L.append(f"\n## Gate 3 block-order eval — {run_date}, tesseract {tver}, "
              f"image={grade.image_id}\n")
-    L.append("Stage 04 block structure graded DIRECTLY against the per-subpage "
+    L.append(_block_set_note(grade.stage05_on))
+    L.append("")
+    L.append("Block structure graded DIRECTLY against the per-subpage "
              f"block-order GT (`gt/{grade.image_id}.blocks.json`): segmentation, type, "
              "caption<->figure grouping, and linear order. Owner priority: "
              "segmentation/type/grouping OUTRANK exact order (tau is secondary). "
@@ -734,11 +907,14 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
              "and Tesseract-native arms, so the two arms compare the same block set); "
              "figures match by GT-bbox overlap. **tau+figures** is a third, "
              "Stage-04-only number over text PLUS the bbox-matched (position-honest) "
-             "figures — rank-matched figures are excluded as circular, so `figs=0` "
-             "prints `n/a`, never a passing score. It grades Stage 04's per-subpage "
-             "order, not Stage 07's carrying of it into `document.json`. "
+             "figures \u2014 rank-matched figures are excluded as circular, so "
+             "`figs=0` prints `n/a`, never a passing score. It grades the "
+             + ("per-subpage order Stage 05 leaves behind"
+                if grade.stage05_on else "per-subpage order Stage 04 proposes")
+             + ", not Stage 07's carrying of it into `document.json`. "
              "Split+dewarp = UVDoc auto (Gate-2 path). N=1 spread — read the rows.\n")
-    L.append("| subpage | seg recall | type acc | tau (Stage04) | tau (Tess-native) | "
+    tau_col = "tau (shipped order)" if grade.stage05_on else "tau (Stage04)"
+    L.append(f"| subpage | seg recall | type acc | {tau_col} | tau (Tess-native) | "
              "tau+figures | grouping | det blocks | misses |")
     L.append("|---|---|---|---|---|---|---|---|---|")
     for s in grade.subpages:
@@ -776,6 +952,26 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
              f"but only {discriminated}/{len(all_groups)} on a subpage with >=2 "
              f"figures (the rest are single-figure: association POSSIBLE, not "
              f"discriminated).")
+
+    # --- What Stage 05 did to the graded block set ----------------------------
+    if grade.stage05_on:
+        L.append("")
+        L.append("**Stage 05's contribution to the graded set** \u2014 the blocks "
+                 "the old arm could not see. An `orphan` block is built from words "
+                 "inside no detected box (typed `other` by construction); an "
+                 "`eject` moves a caption printed inside a figure out into its own "
+                 "CAPTION block; a `re-read` replaces a starved block's words with "
+                 "a read of that block's own crop.")
+        for sg in grade.subpages:
+            d = sg.stage05
+            L.append(f"- `{sg.name}`: {d.get('n_orphan_blocks', 0)} orphan block(s) "
+                     f"from {d.get('orphan_words', 0)} orphan words, "
+                     f"{d.get('n_ejected', 0)} caption ejection(s), "
+                     f"{d.get('n_rescued', 0)} starved block(s) re-read.")
+            for note in d.get("rescue_notes", []):
+                L.append(f"  - re-read {note}")
+            for note in d.get("eject_notes", []):
+                L.append(f"  - eject {note}")
 
     # --- Figure-inclusive order detail -----------------------------------------
     gradeable = [s for s in grade.subpages if s.order_all.gradeable]
@@ -844,8 +1040,10 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
 def grade_to_json(grade: ImageGrade) -> dict:
     return {
         "image_id": grade.image_id,
+        "stage05": grade.stage05_on,
         "subpages": [{
             "name": s.name, "n_gt": s.n_gt, "matched": s.matched,
+            "match_bbox": s.match_bbox, "stage05_detail": s.stage05,
             "misses": s.misses, "type_ok": s.type_ok,
             "seg_recall": s.seg_recall, "type_acc": s.type_acc,
             "tau_layout": s.tau_layout, "tau_native": s.tau_native,
@@ -888,6 +1086,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--report", type=Path, default=None,
                     help="append a dated section to this file (e.g. docs/RESULTS.md)")
     ap.add_argument("--json-out", type=Path, default=None)
+    ap.add_argument("--no-stage05", dest="stage05", action="store_false",
+                    help="grade Stage 04's blocks ALONE, the pre-2026-08-26 arm: "
+                         "skip orphan-word rescue, caption ejection and the "
+                         "starved-block re-read. Reproduces older RESULTS rows; "
+                         "does NOT grade the deliverable.")
+    ap.set_defaults(stage05=True)
     ap.add_argument("--set", dest="sets", action="append", default=[],
                     metavar="KEY=VALUE",
                     help="override a stage04_layout layout knob for this run "
@@ -910,7 +1114,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"tesseract: {binary} (v{tver})")
 
     try:
-        grade, extra = grade_image(args.image, args.testset, cfg, binary, args.sets)
+        grade, extra = grade_image(args.image, args.testset, cfg, binary,
+                                   args.sets, stage05=args.stage05)
     except ValueError as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 2

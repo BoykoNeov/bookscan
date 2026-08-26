@@ -180,11 +180,15 @@ bookscan/
   binary path comes from `config.yaml`.
 - When debugging a bad page, inspect `jobs/<id>/<page>/debug/` overlays FIRST
   before reading code.
-- **`tools/layout_order_eval` grades Stage 04, not the shipped text.** Three
-  mechanisms that create or rewrite blocks run later, in Stage 05 — orphan-word
-  rescue, `caption_eject`, `block_reocr` — so a block the eval calls a
-  segmentation "miss" may well be in `ocr.json`. Check `05_ocr/ocr.json` before
-  believing a miss (measured 2026-08-26; two of six were exactly this).
+- **`tools/layout_order_eval` grades the SHIPPED block set (Stage 04 + Stage 05).**
+  It runs the three later block-creating passes itself — orphan-word rescue,
+  `caption_eject`, `block_reocr` — so a "miss" is a real absence from the
+  document, not a stage boundary. (Closed 2026-08-26; before that the eval
+  stopped after Stage 04 and understated segmentation recall by 3 of 112.)
+  `--no-stage05` reproduces pre-2026-08-26 rows and does NOT grade the
+  deliverable. **Never compare a row from one arm against a row from the other**:
+  the tau column especially is a different quantity, because an orphan block
+  re-ranks the whole set through XY-Cut before anything ships.
 - GPU: assume a single consumer NVIDIA card; load models lazily per stage,
   release VRAM when a stage CLI exits.
 - Accuracy numbers reported by `tools/` scripts go into `docs/RESULTS.md`

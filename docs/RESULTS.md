@@ -5601,3 +5601,144 @@ words; block 22: 8 -> 21), unaffected by the added figure.
 Suite 503 green (was 496) — the seven added tests are `covered_fraction`, the
 five rescue gates, and the text-set-population regression test. Re-run green
 with `fig_rescue` on by default.
+
+## The harness measures the stage it stops at — closing that — 2026-08-26
+
+`tools/layout_order_eval` stopped after Stage 04. Three mechanisms that CREATE or
+REWRITE blocks run after it, in Stage 05, before anything reaches
+`document.json`: orphan-word rescue (`attach_words`), caption ejection
+(`caption_eject`, shipped 2026-08-10) and the starved-block re-read
+(`block_reocr`, shipped 2026-08-26 above). So every figure the eval printed —
+segmentation recall, type accuracy, tau, caption↔figure pairing — was measured on
+a block set several mechanisms younger than the one that ships, and a block the
+eval called a **miss** could already be in the deliverable. Two of the corpus's
+six misses were exactly that ("The words that were on the page and not in the
+document", above), and the repo carried a hand-written convention telling every
+session to go open `05_ocr/ocr.json` before believing a miss — a workaround for a
+broken measuring tape.
+
+The eval now runs those three passes itself (`stage05_blocks`), in production
+order, calling the same functions `stage05_ocr.run` calls, and grades the blocks
+they leave behind. `--no-stage05` keeps the old arm for reproducing older rows.
+
+**Wiring check first, numbers second.** The eval replicates production's
+word-conservation assert verbatim (`attached == recognized − rescue-dropped +
+rescue-added`) after the three passes. It is the cheapest available proof that
+they are wired the way production wires them and not merely approximately: it
+held on all 14 subpages. Nothing below would have been worth reading if it had
+not.
+
+### Before / after, 8 fixtures, 14 subpages
+
+Both arms in `docs/data/harness_stage05_ab_20260826.json`.
+
+| | Stage 04 alone (`--no-stage05`) | Stage 04 + 05 (**ships**) |
+|---|---|---|
+| segmentation recall | 109/112 (97%) | **112/112 (100%)** |
+| type accuracy (detector) | 90/109 (83%) | 92/112 (82%) |
+| type accuracy (parser arm) | 99/109 (91%) | 101/112 (90%) |
+| caption↔figure pairs correct | 15/19 | **16/19** |
+| pairs WRONG | 0 | **0** |
+
+Per subpage, the blocks Stage 05 contributed to the graded set:
+
+| subpage | seg before→after | det blocks | orphan | eject | re-read |
+|---|---|---|---|---|---|
+| `de_01`-left | 4/4 → 4/4 | 7→9 | 2 | 0 | 2 |
+| `de_01`-right | 8/8 → 8/8 | 8→8 | 0 | 0 | 0 |
+| `en_coins_01`-left | 11/12 → **12/12** | 13→14 | 1 | 0 | 0 |
+| `en_coins_01`-right | 10/10 → 10/10 | 12→12 | 0 | 0 | 2 |
+| `en_coins_02`-right | 8/8 → 8/8 | 10→10 | 0 | 0 | 1 |
+| `en_coins_03`-right | 10/10 → 10/10 | 12→12 | 0 | 0 | 1 |
+| `it_geo_04`-left | 5/5 → 5/5 | 11→14 | 3 | 0 | 0 |
+| `it_geo_04`-right | 4/4 → 4/4 | 9→9 | 0 | 0 | 1 |
+| `it_geo_05`-left | 1/2 → **2/2** | 3→7 | 3 | 1 | 1 |
+| `it_geo_05`-right | 5/5 → 5/5 | 7→10 | 3 | 0 | 0 |
+| `it_geo_06`-left | 8/8 → 8/8 | 10→10 | 0 | 0 | 1 |
+| `it_geo_06`-right | 6/6 → 6/6 | 9→9 | 0 | 0 | 0 |
+| `it_geo_07`-left | 16/17 → **17/17** | 21→23 | 2 | 0 | 3 |
+| `it_geo_07`-right | 13/13 → 13/13 | 16→18 | 2 | 0 | 0 |
+
+### The diff has three categories, not two
+
+`match_subpage` is greedy and one-to-one, and this change adds small text-bearing
+blocks to every subpage — precisely the surface of the heading-ate-the-paragraph
+defect fixed two commits ago. So the diff is on **match identity** (the matched
+block's bbox, which is stable across arms; detected *indices* shift), not on the
+matched count:
+
+* **gained** (unmatched → matched): **3**
+* **lost** (matched → unmatched): **0**
+* **moved** (same GT block, DIFFERENT detected block): **0**
+* **type verdict flips on already-matched blocks**: **0**
+
+The three gained are the three the earlier row predicted, and the mechanism
+behind each is the one it named:
+
+| GT block | recovered by | typed right? |
+|---|---|---|
+| `en_coins_01`-left FN1 (footnote) | orphan-word rescue | **no** — `other` |
+| `it_geo_05`-left C2 (caption) | caption ejection | yes |
+| `it_geo_07`-left T5right (paragraph) | starved-block re-read | yes |
+
+**`it_geo_05`-left C2 also brings its pair with it.** Recovered as a real caption
+block, it pairs to its map through the production grouping pass: 15/19 → 16/19
+GT pairs, still **0 wrong**. That pair has been in the shipped `document.json`
+since 2026-08-26 and no harness number could see it until now.
+
+### What got WORSE, and why it is not a regression
+
+**Type accuracy falls as a rate**, 83% → 82% (and 91% → 90% on the parser arm),
+while rising as a count, 90 → 92. Both moves come from the same block:
+`en_coins_01` FN1 is the corpus's only ground-truth `footnote`, and orphan-word
+rescue emits synthetic blocks typed `other` **by construction** — it groups words
+that landed inside no detected box, and it has no type to assign them. So
+recovering it adds one to the denominator and nothing to the numerator.
+
+That is the honest shape of this change: a block the pipeline genuinely ships,
+whose type it genuinely gets wrong, was previously counted in neither column. The
+old 83% was not better — it was measured over 109 blocks while the pipeline
+shipped 112.
+
+### Order: the column is a different quantity now
+
+`attach_words` re-ranks real + synthetic blocks through the same XY-Cut Stage 04
+uses whenever there are orphans, and renumbers gaplessly. So on the 6 subpages
+with orphans the tau column no longer reports Stage 04's proposed order but the
+order that ships. The report header and the column label both say so, and
+`--no-stage05` is documented as not comparable — RESULTS.md is append-only and
+its tables get read side by side.
+
+Measured, the two happen to almost coincide: 12 of 14 subpages are +1.00 in both
+arms. `it_geo_07`-left rises +0.964 → +0.970 (text) and +0.950 → +0.956
+(text+figures) because T5right joins the graded set in the right place, and
+`it_geo_05`-left goes from ungradeable to **+1.00** on `tau+figures` — with C2
+recovered it finally has two blocks to order.
+
+### Limits, stated
+
+* **Segmentation recall is now at its ceiling on this corpus** (112/112). That is
+  a real result, but it means this metric can no longer show an improvement here
+  and can only ever go down — the next segmentation claim needs a harder fixture,
+  not another run of this one.
+* **The three gains were predicted, so they are a confirmation, not a discovery.**
+  Two were named in the row above; the third is `block_reocr`'s own headline case.
+  What is new is that the harness can now see them — and that nothing ELSE moved,
+  which was not known.
+* **One arm, one corpus.** The 0-lost/0-moved result says the greedy matcher
+  survived adding ~1.5 blocks per subpage on THESE pages. A book with denser
+  orphan text could still let a synthetic `other` block steal a paragraph's match.
+* **This measures block structure, not text quality.** A rescued block that
+  matches its GT anchor still counts as matched however garbled the rest of it is;
+  word-level accuracy is `tools/gate1_harness`'s question, not this one.
+* **The eval's OCR call was deliberately NOT unified with production's.**
+  `tools.layout_ab.ocr_words` and `stage05_ocr.ocr_subpage` are byte-identical
+  today (same oem/psm, same 20px/2× upscale probe), but swapping them would have
+  perturbed the *before* arm too, on a commit whose whole value is a clean
+  comparison of one thing. The duplication is noted, not fixed here.
+
+Suite 509 green (was 503) — six added tests pin the new view: text comes from the
+block's final words, `native_ranks` stay the page pass's TSV order, the
+smallest-containing-box rule and the upscale division are unchanged, an
+orphan-rescued block is matchable but typed `other`, and each arm names itself in
+its own report.

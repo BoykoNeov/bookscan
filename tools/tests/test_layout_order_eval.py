@@ -9,10 +9,11 @@ Run: ``python -m pytest tools/tests/test_layout_order_eval.py`` or directly.
 from __future__ import annotations
 
 from pipeline import stage04_layout as S4
-from pipeline.page_model import BBox
+from pipeline.page_model import BBox, Block, BlockType, Word
+from tools import ocr_metrics as M
 from tools.layout_order_eval import (
-    DetBlock, _bbox_iou, anchor_precision, anchor_score, apply_param_overrides,
-    grouping_eval,
+    DetBlock, _bbox_iou, _block_set_note, anchor_precision, anchor_score,
+    apply_param_overrides, det_from_blocks, grouping_eval,
     kendall_tau, match_subpage, norm_tokens, order_with_figures,
 )
 
@@ -477,3 +478,98 @@ if __name__ == "__main__":
     import sys
     import pytest
     sys.exit(pytest.main([__file__, "-v"]))
+
+
+# --- the graded block set: Stage 05's blocks, not Stage 04's --------------
+#
+# These pin the view-building half of the 2026-08-26 change (the OCR half is
+# exercised by actually running the tool; see docs/RESULTS.md). What matters
+# here is WHICH words each number is computed from: the block's own final words
+# for text, and the page pass's TSV order for the native-order arm.
+
+
+def _tw(text, left, top, w=40, h=20, block_num=1, par_num=1, line_num=1,
+        word_num=1):
+    return M.TWord(text=text, conf=90.0, left=left, top=top, width=w, height=h,
+                   block_num=block_num, par_num=par_num, line_num=line_num,
+                   word_num=word_num)
+
+
+def _blk(bid, btype, x, y, w, h, words=()):
+    return Block(id=bid, type=btype, bbox=BBox(x=x, y=y, w=w, h=h),
+                 reading_order=bid,
+                 words=[Word(text=t, bbox=BBox(x=x + 1, y=y + 1, w=10, h=10),
+                             conf=90.0, engine="tesseract", line_id=0,
+                             block_id=bid, decision=None) for t in words])
+
+
+def test_det_text_comes_from_the_blocks_final_words_not_the_page_pass():
+    """A re-read block ships the words block_reocr put in it. Grading it on a
+    page-pass routing instead is exactly the blind spot this arm closes: the
+    starved read is what the OLD arm saw, the rescued read is what ships."""
+    blocks = [_blk(0, BlockType.PARAGRAPH, 0, 0, 500, 200,
+                   words=["rescued", "twenty", "one", "words"])]
+    # The page pass starved this region: it recognized two garbled words there.
+    twords = [_tw("rcscucd", 10, 10), _tw("wOrds", 60, 10)]
+    det = det_from_blocks(blocks, twords, scale=1.0)
+    assert det[0].text == "rescued twenty one words"
+    assert "rcscucd" not in det[0].text
+
+
+def test_native_ranks_stay_the_page_pass_tsv_order():
+    """The Tesseract-native order arm asks what the PAGE PASS implied for a
+    region. A rescued block's replacement words must not answer that question --
+    otherwise the 'did Stage 04 improve on Tesseract' comparison silently starts
+    grading Stage 05 against itself."""
+    blocks = [_blk(0, BlockType.PARAGRAPH, 0, 0, 100, 100, words=["a", "b"]),
+              _blk(1, BlockType.PARAGRAPH, 0, 200, 100, 100, words=["c"])]
+    # TSV order deliberately disagrees with geometry: word 0 lands in the LOWER
+    # block, words 1-2 in the upper one.
+    twords = [_tw("x", 10, 210), _tw("y", 10, 10), _tw("z", 40, 10)]
+    det = det_from_blocks(blocks, twords, scale=1.0)
+    assert det[0].native_ranks == [1, 2]
+    assert det[1].native_ranks == [0]
+    assert det[0].native_key == 2 and det[1].native_key == 0
+
+
+def test_det_from_blocks_routes_by_smallest_containing_box():
+    """Same rule as the old arm -- a word inside a figure AND inside the caption
+    nested in it belongs to the caption."""
+    blocks = [_blk(0, BlockType.FIGURE, 0, 0, 400, 400),
+              _blk(1, BlockType.CAPTION, 100, 300, 200, 60, words=["Figura", "7"])]
+    det = det_from_blocks(blocks, [_tw("Figura", 110, 310)], scale=1.0)
+    assert det[0].native_ranks == [] and det[1].native_ranks == [0]
+
+
+def test_det_from_blocks_honours_the_upscale_factor():
+    """Word boxes come back in OCR-image coords; blocks live at 1x. Getting this
+    division wrong routes every word to the wrong block on an upscaled page."""
+    blocks = [_blk(0, BlockType.PARAGRAPH, 0, 0, 100, 100)]
+    # At scale 2 the word's box (300,300) maps back to (150,150): OUTSIDE.
+    assert det_from_blocks(blocks, [_tw("w", 300, 300)], scale=2.0)[0].native_ranks == []
+    # ...while (100,100) maps back to (50,50): inside.
+    assert det_from_blocks(blocks, [_tw("w", 100, 100)], scale=2.0)[0].native_ranks == [0]
+
+
+def test_orphan_rescued_block_is_matchable_but_typed_other():
+    """The recall/type trade, pinned. An orphan-rescued block carries the right
+    words -- so a GT block the old arm scored a MISS now matches -- but Stage 05
+    types it `other`, so the same recovery costs a point of type accuracy. A
+    reader must not see that drop as a regression."""
+    gt = [{"id": "FN1", "type": "footnote", "order": 1,
+           "anchor": "Reproduced by permission of the Trustees"}]
+    orphan = _blk(0, BlockType.OTHER, 0, 900, 600, 60,
+                  words="Reproduced by permission of the Trustees".split())
+    det = det_from_blocks([orphan], [], scale=1.0)
+    matched, misses = match_subpage(gt, det)
+    assert matched == {"FN1": 0} and misses == []
+    assert det[0].btype == "other" != gt[0]["type"]
+
+
+def test_block_set_note_names_the_arm_in_both_directions():
+    """RESULTS.md is append-only and its tables get read side by side. A row
+    measured on the shipped block set and one measured on Stage 04 alone are
+    different quantities, so each must say so in the row itself."""
+    shipped, old = _block_set_note(True), _block_set_note(False)
+    assert "what SHIPS" in shipped and "--no-stage05" in shipped
+    assert "Stage 04 alone" in old and "does NOT grade the deliverable" in old

@@ -121,10 +121,15 @@ loser must lead on BOTH statistics, by more than the 60-word reframing churn
 floor. Errors by arm over the 9 non-degenerate sets: flat 1, crop+split 2,
 **+dewarp 0**. ``skewset_it_01`` reverses outright (challenger +59 words flat ->
 -55 after dewarp). Splitting alone makes it WORSE; the flattening is what does
-the work. Reported against the incumbent too: on 2 of the 9 a loser still leads
-on both statistics below the floor, largest ``de_01`` +43 / +8.4 — which the flat
-census never flagged, so it appears only after dewarp. The honest claim is *no
-error survives at the stated bar*, not *the selector is perfect*. See
+the work. Read the SIGN REVERSALS, not the counts: ``skewset_it_01`` and
+``de_02`` are the two the previous row called solid and both change direction
+once flat, which no choice of floor can undo. Reported against the incumbent too:
+on 2 of the 9 a loser still leads on both statistics below the floor, largest
+``de_01`` +43 / +8.4 — and that one is a STAGE 03 defect, not a Stage 01 one: the
+dewarper gains +58 and +104 words on that set's two losers and loses 18 words /
+12.7 conf on the winner, the only frame in the corpus dewarp makes worse. The
+honest claim is *no error survives at the stated bar*, not *the selector is
+perfect*. See
 ``docs/RESULTS.md`` 2026-08-26. Do not re-open this by re-measuring flat frames.
 
 **Left unsolved, with the mechanism now identified.** The 6 close-ups that no

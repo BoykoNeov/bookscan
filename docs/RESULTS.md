@@ -4415,19 +4415,48 @@ incumbent's pick, arm by arm:
 | `skewset_it_01` | +59 / +13.6 | **+73 / +6.1** | **−55 / −1.7** |
 | `skewset_de_01` | +58 / +2.2 | **+87 / +6.9** | +22 / +1.4 |
 
-`skewset_it_01` reverses outright: the frame the selector keeps goes from 59
-words behind to 55 ahead once it is flattened, which is the predicted result if
-the flat penalty was obliquity rather than legibility. `de_02` decays to a
-3-word-per-hundred difference with the two statistics pointing opposite ways.
-`skewset_de_01` lands inside the floor from both directions.
+**The two sign reversals are the claim, not the table.** `skewset_it_01` and
+`de_02` are the two sets the previous row called solid — *"both statistics say so
+by a wide margin"* — and both **change direction** once the pages are flat.
+`skewset_it_01`: the frame the selector keeps goes from 59 words behind to 55
+ahead, exactly the predicted result if the flat penalty was obliquity rather than
+legibility. `de_02`: +74 becomes −11, with the two statistics now pointing
+opposite ways. A reversal does not care where the floor sits; the error counts
+do, so read the reversals first. `skewset_de_01` lands inside the floor from both
+directions.
+
+**Why this row's flat arm says 1 and the previous row said 3.** That is the
+floor, not the geometry: the previous census took a bare max with nothing under
+it, and `skewset_de_01` (+58) and `skewset_it_01` (+59) sit one and two words
+below the 60 declared here. On that same bare-max rule the sequence over these
+nine sets is **flat 3 → crop+split 5 → dewarp 2**, so the shape of the result is
+the same under either rule and the arms remain comparable to each other. Note the
+bar is deliberately asymmetric — a 60-word floor on one statistic, any positive
+value on the other — which makes errors *easier* to declare, so a null under it
+is the conservative reading.
 
 **Reported against the incumbent, not for it.** On 7 of the 9 sets the
 incumbent's pick also wins the dewarp arm outright. On the other two a loser
 leads on both statistics but below the pre-registered floor: `de_01` +43 / +8.4
-(the largest surviving disagreement in the corpus, and note it is **not** one of
-the three the flat census complained about — it appears only after dewarp) and
-`skewset_de_01` +22 / +1.4. So the honest claim is *no error survives at the
-stated bar*, not *the selector is perfect*.
+(the largest surviving disagreement in the corpus) and `skewset_de_01`
++22 / +1.4. So the honest claim is *no error survives at the stated bar*, not
+*the selector is perfect*.
+
+**And `de_01` is not an anchor-selection signal — it is UVDoc having a bad day on
+one frame.** Nothing about that set changes upstream; what changes is what the
+dewarper does to each candidate:
+
+| `de_01` candidate | flat | crop+split | +dewarp |
+|---|---|---|---|
+| `de_01` (the pick) | 348 / 84.3 | 346 / 85.9 | **328 / 73.2** |
+| `de_01_091921` | 308 / 82.0 | 313 / 83.6 | 371 / 81.6 |
+| `de_01_091915` | 274 / 87.5 | 233 / 88.4 | 337 / 79.0 |
+
+The dewarper gains +58 and +104 words on the two losers and **loses 18 words and
+12.7 confidence** on the winner — the only frame in the corpus that dewarp makes
+worse. That is the whole of the +43. It is a per-frame dewarp instability worth
+its own look (Stage 03, not Stage 01); chasing it with a better anchor criterion
+would be aiming at the wrong stage.
 
 **Two things visible here that the flat census could not see.** Stage 02 fails to
 find a gutter on `bg_taleb_01_093629` (and on `skewset_orient_01_134655`) — a

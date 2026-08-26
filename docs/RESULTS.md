@@ -4733,7 +4733,7 @@ thing that ships and the thing that was measured cannot drift apart.
 **Limits.** Unchanged from the row above, plus: the selection criterion has been
 verified to run, to reproduce the measured left/right trade, and to swap pixels
 correctly when the bar allows it — it has NOT been shown to improve any output,
-because at the shipped bar it changes nothing on this corpus. Suite 464 green.
+because at the shipped bar it changes nothing on this corpus. Suite 466 green.
 Evidence for both arms of the end-to-end run (shipped bar, and the lowered bar
 that exercises the swap): `docs/data/perpage_source_e2e_20260826.json`.
 

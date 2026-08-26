@@ -77,6 +77,28 @@ THE PAIRING POLICY (two arms, number first, geometry guarded):
        it than the real caption is — so without this guard the pass emits
        "Description:" as the plate's caption while the real caption abstains.
 
+3. **Sole figure, sole printed caption (no geometry at all).** Measured
+   2026-08-26 on the two remaining pairing misses in the corpus — ``it_geo_04``'s
+   "A lato: Figura 20" and ``it_geo_05``'s "Sopra: Figura 3". Both books set the
+   caption in a side column far from its plate: column overlap 0.04 and **0.00**,
+   vertical gap 0.38 and 0.39 of the page height. Proximity carries no
+   information on that layout, and the distances involved are the same ones the
+   ``it_geo_06`` trap is built out of, so **loosening arm 2's limits would buy
+   these two pairs by re-opening the wrong-photo failure it exists to prevent.**
+
+   What IS present is uniqueness. So this arm fires only when the subpage prints
+   **exactly one figure**, that figure is still unpaired, and **exactly one**
+   eligible caption remains — and that caption carries a printed figure number.
+   Two independent signals again, neither of them a distance: the block declares
+   itself a caption *in print*, and there is no other figure on the page it could
+   be describing. It runs LAST, so a caption arm 2 can already place keeps its
+   proximity-backed provenance and nothing that pairs today changes.
+
+   Honest limit, and the shape of the only way it can be wrong: a spread whose
+   single figure on one page belongs to the FACING page's caption while this
+   page's caption describes the figure over there. Nothing in this corpus does
+   that; the arm would mispair it, and no available signal would catch it.
+
 **The success bar is ZERO WRONG PAIRS, not N pairs** — the same invariant
 ``figure_label`` already holds for its digit reads. A caption printed under the
 wrong photo is worse output than a caption rendered on its own, so every rule
@@ -177,6 +199,10 @@ class Grouping:
     @property
     def n_by_geometry(self) -> int:
         return sum(1 for s in self.pair_source.values() if s == "geometry")
+
+    @property
+    def n_by_sole_figure(self) -> int:
+        return sum(1 for s in self.pair_source.values() if s == "sole_figure")
 
 
 # --------------------------------------------------------------------------
@@ -408,6 +434,33 @@ def _geometric_pairs(caps: list[BlockView], figs: list[BlockView], page_h: int,
     return pairs, why
 
 
+def _sole_figure_pair(caps: list[BlockView], figs: list[BlockView],
+                      all_figs: list[BlockView], numbered: frozenset[str]
+                      ) -> tuple[str, str] | None:
+    """The uniqueness arm: pair when there is nothing else on the page to pair to.
+
+    Deliberately geometry-free — see arm 3 in the module docstring for why the
+    distances on this layout are not usable, and why loosening arm 2 instead would
+    re-open the ``it_geo_06`` wrong-photo trap.
+
+    ``all_figs`` is every figure block on the subpage, not just the unpaired ones:
+    the claim being made is "this page prints ONE figure", and a page that printed
+    two and had one already claimed is not that page.
+
+    Returns the (caption key, figure key) pair, or None to abstain.
+    """
+    if len(all_figs) != 1 or len(figs) != 1 or len(caps) != 1:
+        return None
+    cap = caps[0]
+    if cap.key not in numbered:
+        # No printed "Figura NN" header. Uniqueness alone is one signal, and one
+        # signal is what de_01's icon sidebar would clear — it is the only block
+        # of its kind beside the only photo on its half of the spread, and it is
+        # not a caption. The print requirement is the second signal.
+        return None
+    return cap.key, figs[0].key
+
+
 def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
                   page_bgr: np.ndarray | None = None, tess_bin: str | None = None,
                   params: dict | None = None, page_w: int | None = None) -> Grouping:
@@ -491,6 +544,19 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
     for cid, fid in geo_pairs.items():
         g.pairs[cid] = fid
         g.pair_source[cid] = "geometry"
+
+    # --- arm 3: sole figure + sole printed caption (last, so arm 2 keeps
+    # everything it can already place and no existing pair changes provenance) ---
+    left_caps = [c for c in rest_caps if c.key not in g.pairs]
+    claimed = set(g.pairs.values())
+    left_figs = [f for f in rest_figs if f.key not in claimed]
+    sole = _sole_figure_pair(left_caps, left_figs, figs, frozenset(g.caption_numbers))
+    if sole is not None:
+        cid, fid = sole
+        g.pairs[cid] = fid
+        g.pair_source[cid] = "sole_figure"
+        geo_why.pop(cid, None)
+
     g.abstained = {**held, **geo_why}
     return g
 

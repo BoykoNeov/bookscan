@@ -239,6 +239,7 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
     panels: list[np.ndarray] = []
     n_blocks = n_words = n_patches = 0
     n_promoted = n_fig_numbers = n_pairs_number = n_pairs_geom = n_abstained = 0
+    n_pairs_sole = 0
 
     # Corner-label OCR (figure_grouping's number arm) needs Tesseract; without it
     # the arm degrades to routed text and geometry still runs, so a missing binary
@@ -300,6 +301,7 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                 n_fig_numbers += len(g.figure_numbers)
                 n_pairs_number += g.n_by_number
                 n_pairs_geom += g.n_by_geometry
+                n_pairs_sole += g.n_by_sole_figure
                 n_abstained += len(g.abstained)
 
             blocks = [_enrich_block(blk, patch_map) for blk in grouped]
@@ -379,6 +381,7 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             "figure_numbers_read": n_fig_numbers,
             "pairs_by_number": n_pairs_number,
             "pairs_by_geometry": n_pairs_geom,
+            "pairs_by_sole_figure": n_pairs_sole,
             "captions_abstained": n_abstained,
             # unreadable pictogram panels re-typed FIGURE so Stage 08 renders the
             # PIXELS instead of OCR noise. Adaptive: the cutoff is a fraction of

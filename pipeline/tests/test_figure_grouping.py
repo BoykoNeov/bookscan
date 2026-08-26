@@ -320,13 +320,23 @@ def test_side_set_declines_a_block_that_carries_no_printed_number():
 def test_side_set_does_not_reach_a_detached_gutter_caption_column():
     """it_geo_05-right in miniature: the caption is a gutter-side column 1170px
     from its figure. Numbered, y-overlapping — and still far outside the side-set
-    gap limit, which is what keeps this rule from claiming the whole page."""
+    gap limit, which is what keeps this rule from claiming the whole page.
+
+    The DECOY second figure is load-bearing and was added 2026-08-26: with only
+    one figure on the page this layout is now claimed by the uniqueness arm (arm
+    3), and correctly so — the real it_geo_05-right GT pairs C3 to F3. A second
+    figure removes the uniqueness, so what is left to reject the pair is the
+    side-set gap limit alone, which is what this test is for. The solo version
+    lives in ``test_sole_figure_pairs_a_side_column_caption_arm_2_cannot_reach``.
+    """
     views = [
         _v("f3", "figure", 100, 800, 700, 900),
+        _v("fdecoy", "figure", 100, 2000, 700, 500),
         _v("c3", "caption", 1970, 900, 400, 700, "Figura 3 Il fossile"),
     ]
     g = FG.group_figures(views, page_h=PAGE_H, page_w=2028)
     assert g.pairs == {}
+    assert "column" in g.abstained["c3"]
 
 
 # --------------------------------------------------------------------------
@@ -479,3 +489,112 @@ def test_resolve_params_ignores_unknown_and_coerces_known(bad):
     p = FG.resolve_params(bad)
     assert set(p) == set(FG.DEFAULTS)
     assert all(isinstance(v, float) for v in p.values())
+
+
+# --------------------------------------------------------------------------
+# Arm 3 — sole figure + sole printed caption (no geometry at all)
+# --------------------------------------------------------------------------
+#
+# Coordinates below are the REAL ones the probe read off the two pairing misses
+# this arm was built for (2026-08-26, dewarped subpage pixels):
+#
+#   it_geo_05-right  2028x3000  F3 x610..  y..1350   C3 [87,2520,466,292]
+#                    column overlap 0.00, vertical gap 0.390 of page height
+#   it_geo_04-left   1981x3000  B5 ends y1300        B8 [1438,2452,454,365]
+#                    column overlap 0.04, vertical gap 0.384 of page height
+#
+# Both are far outside arm 2's limits in BOTH shapes, which is the point: the
+# distances are not usable on this layout, so uniqueness has to carry the pair.
+
+
+def test_sole_figure_pairs_a_side_column_caption_arm_2_cannot_reach():
+    """it_geo_05-right: 'Sopra: Figura 3' sits 1170px below and 57px left of the
+    only figure on the page. Column overlap 0.00 — arm 2 abstains by design."""
+    views = [_v("f", "figure", 610, 300, 1300, 1050),
+             _v("c", "caption", 87, 2520, 466, 292,
+                "Sopra: Figura 3 Il fossile di Ellipsactinia, un idrozoo")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2028)
+
+    assert FG._x_overlap_frac(views[1].bbox, views[0].bbox) == 0.0
+    assert g.pairs == {"c": "f"}
+    assert g.pair_source["c"] == "sole_figure"
+    assert "c" not in g.abstained
+
+
+def test_sole_figure_pairs_the_a_lato_caption_too():
+    """it_geo_04-left: 'A lato: Figura 20', column overlap 0.04, gap 0.38H."""
+    views = [_v("f", "figure", 300, 260, 1400, 1040),
+             _v("c", "caption", 1438, 2452, 454, 365,
+                "A lato: Figura 20 La piattaforma cassiana del Nuvolau")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=1981)
+    assert g.pairs == {"c": "f"} and g.pair_source["c"] == "sole_figure"
+    assert g.n_by_sole_figure == 1 and g.n_by_geometry == 0
+
+
+def test_sole_figure_declines_without_a_printed_caption_number():
+    """de_01's icon sidebar, the case the metric CANNOT catch: that GT scopes the
+    panel out, so a mispair there would score 'ungraded', not 'wrong'. Uniqueness
+    alone would claim it — the print requirement is what refuses, so it is pinned
+    here as an assertion rather than left to the eval.
+
+    Real coordinates: the Gehzeiten panel [351,2603,238,227] has y-overlap 1.00
+    and a 28px gap to the page photo, i.e. it clears every proximity test there
+    is. It carries no 'Figura NN' header, and that is the whole defence."""
+    views = [_v("f", "figure", 617, 2400, 1000, 600),
+             _v("c", "caption", 351, 2603, 238, 227,
+                "Gehzeiten/Time Bergst.- Gamsstll.Sch.: 1 Std, Laner")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2023, lang="deu")
+    assert g.pairs == {}
+    assert g.caption_numbers == {}
+    assert "c" in g.abstained
+
+
+def test_sole_figure_declines_when_the_page_prints_two_figures():
+    """Uniqueness is the evidence, so two figures means there is none. Neither
+    figure is reachable by arm 2 here (column overlap 0.00 to both)."""
+    views = [_v("f1", "figure", 610, 300, 1300, 500),
+             _v("f2", "figure", 610, 900, 1300, 450),
+             _v("c", "caption", 87, 2520, 466, 292, "Sopra: Figura 3 Il fossile")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2028)
+    assert g.pairs == {}
+    assert "c" in g.abstained
+
+
+def test_sole_figure_declines_when_two_captions_compete_for_the_one_figure():
+    views = [_v("f", "figure", 610, 300, 1300, 1050),
+             _v("c1", "caption", 87, 2520, 466, 292, "Sopra: Figura 3 Il fossile"),
+             _v("c2", "caption", 87, 2100, 466, 292, "A lato: Figura 4 La cresta")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2028)
+    assert g.pairs == {}
+
+
+def test_sole_figure_does_not_overrule_a_recovered_figure_number():
+    """The numbering-regime guard runs first and holds the caption, so arm 3 never
+    sees it: on a page that DOES print figure numbers, a caption whose number
+    found no partner abstains rather than being handed the only figure."""
+    views = [_v("f", "figure", 610, 300, 1300, 1050, text="5"),
+             _v("c", "caption", 87, 2520, 466, 292, "Sopra: Figura 3 Il fossile")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2028)
+    assert g.figure_numbers == {"f": 5}
+    assert g.pairs == {}
+    assert "printed caption number 3" in g.abstained["c"]
+
+
+def test_geometry_keeps_its_provenance_when_it_can_reach_the_figure():
+    """Arm 3 runs LAST. A solo page arm 2 can already place must be unchanged —
+    this is what keeps the existing fixture reports non-regressive."""
+    views = [_v("f", "figure", 300, 300, 1300, 1000),
+             _v("c", "caption", 320, 1360, 1260, 200, "Sopra: Figura 21 Il panorama")]
+    g = FG.group_figures(views, page_h=PAGE_H, page_w=2028)
+    assert g.pairs == {"c": "f"}
+    assert g.pair_source["c"] == "geometry"
+    assert g.n_by_sole_figure == 0
+
+
+def test_sole_figure_pair_is_stamped_on_the_editable_block():
+    blocks = [_blk(0, "figure", 610, 300, 1300, 1050),
+              _blk(1, "caption", 87, 2520, 466, 292, text="Sopra: Figura 3 Il fossile")]
+    g = FG.group_figures(FG.views_from_blocks(blocks), page_h=PAGE_H, page_w=2028)
+    out = FG.apply_to_blocks(blocks, g, page_id="page_002__right")
+    assert out[1].pair_source is PairSource.SOLE_FIGURE
+    assert out[1].figure_ref.block_id == 0

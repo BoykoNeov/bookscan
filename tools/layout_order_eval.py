@@ -446,6 +446,7 @@ class SubpageGrade:
     n_pairs_gt: int = 0               # GT pairs on this subpage (denominator)
     n_pairs_wrong: int = 0            # emitted pairs contradicting the GT — the bar is 0
     n_pairs_geometry: int = 0         # of the emitted pairs, how many came from geometry
+    n_pairs_sole: int = 0             # ...and how many from the sole-figure arm
     n_abstained: int = 0              # captions deliberately left unpaired
     abstain_reasons: dict[str, str] = field(default_factory=dict)
     pairs_detail: list[dict] = field(default_factory=list)  # every emitted pair + verdict
@@ -662,7 +663,8 @@ def grade_image(image_id: str, testset: Path, cfg: dict, binary: str,
                 n_fig_numbers=len(gr.figure_numbers),
                 n_pairs_by_number=pairs_ok, n_pairs_gt=len(sub_pairs),
                 n_pairs_wrong=pairs_wrong, pairs_detail=pairs_detail,
-                n_pairs_geometry=gr.n_by_geometry, n_abstained=len(gr.abstained),
+                n_pairs_geometry=gr.n_by_geometry, n_pairs_sole=gr.n_by_sole_figure,
+                n_abstained=len(gr.abstained),
                 abstain_reasons={det_to_gt.get(int(k), f"det{k}"): v
                                  for k, v in gr.abstained.items()},
             ))
@@ -766,6 +768,7 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
     pairs_gt = sum(s.n_pairs_gt for s in grade.subpages)
     pairs_wrong = sum(s.n_pairs_wrong for s in grade.subpages)
     pairs_geom = sum(s.n_pairs_geometry for s in grade.subpages)
+    pairs_sole = sum(s.n_pairs_sole for s in grade.subpages)
     abstained = sum(s.n_abstained for s in grade.subpages)
     L.append("")
     L.append("**Caption↔figure grouping** (`pipeline.figure_grouping` — the SAME pass "
@@ -776,7 +779,9 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
              "in-photo corner label, read from PIXELS by `pipeline.figure_label`), "
              "**guarded geometry second** (column overlap + gap limit + mutual-nearest + "
              "unambiguous, and suppressed entirely for a numbered caption on a subpage "
-             "that prints figure numbers). Everything else ABSTAINS — the bar is **zero "
+             "that prints figure numbers), and **sole-figure last** (no geometry at all: "
+             "the subpage prints exactly one figure and exactly one block declaring "
+             "itself its caption in print). Everything else ABSTAINS — the bar is **zero "
              "wrong pairs**, because a caption printed under the wrong photo is worse "
              "output than a caption standing alone.")
     L.append(f"- **Caption typing:** detector {typed}/{len(all_groups)} vs "
@@ -786,8 +791,9 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
              f"**parser {typ_p}/{typ_p_tot}**.")
     L.append(f"- **Pairing:** figure corner labels recovered from pixels = {fig_nums}; "
              f"**{pairs_by_num}/{pairs_gt} GT pairs recovered, {pairs_wrong} WRONG** "
-             f"({pairs_geom} of the emitted pairs came from the geometry arm, the rest "
-             f"from the printed number); {abstained} captions abstained. "
+             f"({pairs_geom} of the emitted pairs came from the geometry arm, "
+             f"{pairs_sole} from the sole-figure arm, the rest from the printed number); "
+             f"{abstained} captions abstained. "
              f"Figures are matched to the GT's overlay bboxes by IoU overlap, which is "
              f"independent of the recovered number — so a wrong read is still caught "
              f"(the check is not circular).")
@@ -818,6 +824,7 @@ def grade_to_json(grade: ImageGrade) -> dict:
             "n_promoted": s.n_promoted, "n_fig_numbers": s.n_fig_numbers,
             "n_pairs_by_number": s.n_pairs_by_number, "n_pairs_gt": s.n_pairs_gt,
             "n_pairs_wrong": s.n_pairs_wrong, "n_pairs_geometry": s.n_pairs_geometry,
+            "n_pairs_sole": s.n_pairs_sole,
             "n_abstained": s.n_abstained, "abstain_reasons": s.abstain_reasons,
             "pairs_detail": s.pairs_detail,
             "groups": [{

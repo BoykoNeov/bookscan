@@ -1,0 +1,655 @@
+{
+  "what": "Caption<->figure pairing: the sole-figure arm (pipeline/figure_grouping.py arm 3). Before/after over every block-order fixture, plus the geometry the two recovered captions actually sit at.",
+  "date": "2026-08-26",
+  "eval": "tools/layout_order_eval.py (production figure_grouping, real pixels)",
+  "fixtures": {
+    "it_geo_04": {
+      "before": {
+        "correct": 1,
+        "wrong": 0,
+        "abstained": 1
+      },
+      "after": {
+        "correct": 2,
+        "wrong": 0,
+        "abstained": 0,
+        "by_geometry": 1,
+        "by_sole_figure": 1
+      },
+      "gt_pairs": 2,
+      "every_other_graded_field_identical_to_before": false,
+      "abstain_reasons_after": {
+        "left.png": {},
+        "right.png": {}
+      },
+      "geometry_seen_by_the_pass": []
+    },
+    "it_geo_05": {
+      "before": {
+        "correct": 0,
+        "wrong": 0,
+        "abstained": 1
+      },
+      "after": {
+        "correct": 1,
+        "wrong": 0,
+        "abstained": 0,
+        "by_geometry": 0,
+        "by_sole_figure": 1
+      },
+      "gt_pairs": 2,
+      "every_other_graded_field_identical_to_before": false,
+      "abstain_reasons_after": {
+        "left.png": {},
+        "right.png": {}
+      },
+      "geometry_seen_by_the_pass": []
+    },
+    "it_geo_06": {
+      "before": {
+        "correct": 5,
+        "wrong": 0,
+        "abstained": 1
+      },
+      "after": {
+        "correct": 5,
+        "wrong": 0,
+        "abstained": 1,
+        "by_geometry": 0,
+        "by_sole_figure": 0
+      },
+      "gt_pairs": 6,
+      "every_other_graded_field_identical_to_before": true,
+      "abstain_reasons_after": {
+        "left.png": {},
+        "right.png": {
+          "C30": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering"
+        }
+      },
+      "geometry_seen_by_the_pass": [
+        {
+          "subpage": "right.png",
+          "page_w": 1951,
+          "page_h": 3000,
+          "n_figures": 2,
+          "abstained": [
+            {
+              "caption": "C30",
+              "caption_text": "A lato: Figura 30 La Maiolica è una roccia geliva che tipicamente si sgretola >r",
+              "cbbox": [
+                154,
+                2239,
+                439,
+                581
+              ],
+              "has_number": true,
+              "number": 30,
+              "why": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering",
+              "candidates": [
+                {
+                  "figure": "F29",
+                  "fbbox": [
+                    154,
+                    279,
+                    1554,
+                    1030
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 930.0,
+                  "v_gap_frac_h": 0.31,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "F30",
+                  "fbbox": [
+                    640,
+                    1341,
+                    1068,
+                    842
+                  ],
+                  "x_overlap_frac": 0.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 56.0,
+                  "v_gap_frac_h": 0.0187,
+                  "h_gap_px": 47.0,
+                  "h_gap_frac_w": 0.0241,
+                  "nest_frac": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "it_geo_07": {
+      "before": {
+        "correct": 0,
+        "wrong": 0,
+        "abstained": 2
+      },
+      "after": {
+        "correct": 0,
+        "wrong": 0,
+        "abstained": 2,
+        "by_geometry": 1,
+        "by_sole_figure": 0
+      },
+      "gt_pairs": 1,
+      "every_other_graded_field_identical_to_before": true,
+      "abstain_reasons_after": {
+        "left.png": {
+          "det13": "caption block carries no text",
+          "C31": "no figure shares this caption's column within the gap limit"
+        },
+        "right.png": {}
+      },
+      "geometry_seen_by_the_pass": [
+        {
+          "subpage": "left.png",
+          "page_w": 2080,
+          "page_h": 3000,
+          "n_figures": 4,
+          "abstained": [
+            {
+              "caption": "det13",
+              "caption_text": "",
+              "cbbox": [
+                214,
+                2286,
+                460,
+                34
+              ],
+              "has_number": false,
+              "number": null,
+              "why": "caption block carries no text",
+              "candidates": [
+                {
+                  "figure": "D2",
+                  "fbbox": [
+                    211,
+                    1204,
+                    829,
+                    222
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 860.0,
+                  "v_gap_frac_h": 0.2867,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "D3",
+                  "fbbox": [
+                    211,
+                    1482,
+                    832,
+                    380
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 424.0,
+                  "v_gap_frac_h": 0.1413,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "D4",
+                  "fbbox": [
+                    210,
+                    1926,
+                    831,
+                    348
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 12.0,
+                  "v_gap_frac_h": 0.004,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "D5",
+                  "fbbox": [
+                    211,
+                    2377,
+                    822,
+                    368
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 57.0,
+                  "v_gap_frac_h": 0.019,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                }
+              ]
+            },
+            {
+              "caption": "C31",
+              "caption_text": "In queste pagine: Figura 3 Schema evolutivo del Bacino di Belluno in rapporto al",
+              "cbbox": [
+                206,
+                291,
+                352,
+                429
+              ],
+              "has_number": true,
+              "number": 3,
+              "why": "no figure shares this caption's column within the gap limit",
+              "candidates": [
+                {
+                  "figure": "D2",
+                  "fbbox": [
+                    211,
+                    1204,
+                    829,
+                    222
+                  ],
+                  "x_overlap_frac": 0.986,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 484.0,
+                  "v_gap_frac_h": 0.1613,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "D3",
+                  "fbbox": [
+                    211,
+                    1482,
+                    832,
+                    380
+                  ],
+                  "x_overlap_frac": 0.986,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 762.0,
+                  "v_gap_frac_h": 0.254,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "D4",
+                  "fbbox": [
+                    210,
+                    1926,
+                    831,
+                    348
+                  ],
+                  "x_overlap_frac": 0.989,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 1206.0,
+                  "v_gap_frac_h": 0.402,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "D5",
+                  "fbbox": [
+                    211,
+                    2377,
+                    822,
+                    368
+                  ],
+                  "x_overlap_frac": 0.986,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 1657.0,
+                  "v_gap_frac_h": 0.5523,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "de_01": {
+      "before": {
+        "correct": 0,
+        "wrong": 0,
+        "abstained": 1
+      },
+      "after": {
+        "correct": 0,
+        "wrong": 0,
+        "abstained": 1,
+        "by_geometry": 0,
+        "by_sole_figure": 0
+      },
+      "gt_pairs": 0,
+      "every_other_graded_field_identical_to_before": true,
+      "abstain_reasons_after": {
+        "left.png": {
+          "det2": "no figure shares this caption's column within the gap limit"
+        },
+        "right.png": {}
+      },
+      "geometry_seen_by_the_pass": [
+        {
+          "subpage": "left.png",
+          "page_w": 2023,
+          "page_h": 3000,
+          "n_figures": 2,
+          "abstained": [
+            {
+              "caption": "det2",
+              "caption_text": "Sn © Gehzeiten/Time Bergst.- Gamsstll.Sch.: IXStd, „Laner - Gamsstll.Sch.: 2 Std",
+              "cbbox": [
+                351,
+                2603,
+                238,
+                227
+              ],
+              "has_number": false,
+              "number": null,
+              "why": "no figure shares this caption's column within the gap limit",
+              "candidates": [
+                {
+                  "figure": "T1",
+                  "fbbox": [
+                    0,
+                    17,
+                    2023,
+                    1109
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 1477.0,
+                  "v_gap_frac_h": 0.4923,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "F1",
+                  "fbbox": [
+                    617,
+                    2057,
+                    1402,
+                    796
+                  ],
+                  "x_overlap_frac": 0.0,
+                  "y_overlap_frac": 1.0,
+                  "v_gap_px": 0.0,
+                  "v_gap_frac_h": 0.0,
+                  "h_gap_px": 28.0,
+                  "h_gap_frac_w": 0.0138,
+                  "nest_frac": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "en_coins_01": {
+      "before": {
+        "correct": 4,
+        "wrong": 0,
+        "abstained": 2
+      },
+      "after": {
+        "correct": 4,
+        "wrong": 0,
+        "abstained": 2,
+        "by_geometry": 4,
+        "by_sole_figure": 0
+      },
+      "gt_pairs": 4,
+      "every_other_graded_field_identical_to_before": true,
+      "abstain_reasons_after": {
+        "left.png": {
+          "D2": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+        },
+        "right.png": {
+          "D3": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+        }
+      },
+      "geometry_seen_by_the_pass": [
+        {
+          "subpage": "left.png",
+          "page_w": 2000,
+          "page_h": 3000,
+          "n_figures": 2,
+          "abstained": [
+            {
+              "caption": "D2",
+              "caption_text": "Description:",
+              "cbbox": [
+                165,
+                2418,
+                201,
+                47
+              ],
+              "has_number": false,
+              "number": null,
+              "why": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+              "candidates": [
+                {
+                  "figure": "F96",
+                  "fbbox": [
+                    234,
+                    277,
+                    1114,
+                    647
+                  ],
+                  "x_overlap_frac": 0.657,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 1494.0,
+                  "v_gap_frac_h": 0.498,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "F97",
+                  "fbbox": [
+                    157,
+                    1742,
+                    1150,
+                    658
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 18.0,
+                  "v_gap_frac_h": 0.006,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "subpage": "right.png",
+          "page_w": 2080,
+          "page_h": 3000,
+          "n_figures": 2,
+          "abstained": [
+            {
+              "caption": "D3",
+              "caption_text": "Description:",
+              "cbbox": [
+                172,
+                1145,
+                204,
+                49
+              ],
+              "has_number": false,
+              "number": null,
+              "why": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+              "candidates": [
+                {
+                  "figure": "F98",
+                  "fbbox": [
+                    144,
+                    485,
+                    1210,
+                    649
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 11.0,
+                  "v_gap_frac_h": 0.0037,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "F99",
+                  "fbbox": [
+                    131,
+                    2046,
+                    1249,
+                    675
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 852.0,
+                  "v_gap_frac_h": 0.284,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "en_coins_02": {
+      "before": {
+        "correct": 2,
+        "wrong": 0,
+        "abstained": 1
+      },
+      "after": {
+        "correct": 2,
+        "wrong": 0,
+        "abstained": 1,
+        "by_geometry": 2,
+        "by_sole_figure": 0
+      },
+      "gt_pairs": 2,
+      "every_other_graded_field_identical_to_before": true,
+      "abstain_reasons_after": {
+        "right.png": {
+          "D1": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+        }
+      },
+      "geometry_seen_by_the_pass": [
+        {
+          "subpage": "right.png",
+          "page_w": 2046,
+          "page_h": 3000,
+          "n_figures": 2,
+          "abstained": [
+            {
+              "caption": "D1",
+              "caption_text": "Description:",
+              "cbbox": [
+                62,
+                1846,
+                232,
+                51
+              ],
+              "has_number": false,
+              "number": null,
+              "why": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+              "candidates": [
+                {
+                  "figure": "F101",
+                  "fbbox": [
+                    12,
+                    488,
+                    1262,
+                    617
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 741.0,
+                  "v_gap_frac_h": 0.247,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                },
+                {
+                  "figure": "F102",
+                  "fbbox": [
+                    12,
+                    1155,
+                    1262,
+                    651
+                  ],
+                  "x_overlap_frac": 1.0,
+                  "y_overlap_frac": 0.0,
+                  "v_gap_px": 40.0,
+                  "v_gap_frac_h": 0.0133,
+                  "h_gap_px": 0.0,
+                  "h_gap_frac_w": 0.0,
+                  "nest_frac": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "en_coins_03": {
+      "before": {
+        "correct": 2,
+        "wrong": 0,
+        "abstained": 0
+      },
+      "after": {
+        "correct": 2,
+        "wrong": 0,
+        "abstained": 0,
+        "by_geometry": 2,
+        "by_sole_figure": 0
+      },
+      "gt_pairs": 2,
+      "every_other_graded_field_identical_to_before": true,
+      "abstain_reasons_after": {
+        "right.png": {}
+      },
+      "geometry_seen_by_the_pass": []
+    }
+  },
+  "classification_of_the_five_pre_existing_misses": {
+    "it_geo_04 B8": "PAIRING - recovered by arm 3",
+    "it_geo_05 C3": "PAIRING - recovered by arm 3",
+    "it_geo_05 C2": "SEGMENTATION - caption swallowed by the figure box; Stage 05 caption_eject does recover the BLOCK in production (verified below), but the pair is still not made; see the RESULTS row for why that was left alone",
+    "it_geo_06 C30": "CLOSED - its figure's corner label is a measured recognizer ceiling",
+    "it_geo_07 C31": "SEGMENTATION - its GT partner D1 is not detected at all (seg miss)"
+  },
+  "params": {
+    "geom_min_overlap_frac": 0.5,
+    "geom_max_gap_frac": 0.08,
+    "geom_ambiguity_ratio": 1.6,
+    "geom_gap_floor_frac": 0.01,
+    "geom_max_nest_frac": 0.5,
+    "geom_solo_max_gap_frac": 0.25,
+    "side_min_yov_frac": 0.5,
+    "side_max_gap_frac": 0.05,
+    "fig_number_window": 3.0
+  },
+  "production_path_it_geo_05": {
+    "command": "python -m pipeline.run_all --job solecheck --input testset/it_geo_05.jpg --lang ita && python -m pipeline.stage07_assemble jobs/solecheck/",
+    "page_001__right": "captions=1 paired=1 (sole_figure) unpaired=0 -> block id6 'Sopra: Figura 3' carries caption_number=3, figure_ref=block 2, pair_source=sole_figure",
+    "page_001__left": "Stage 05 DID eject the swallowed caption ('ejected caption (Figura 2) printed inside figure 231,331 1806x2658: 60 words'), so a caption block exists — but it stays unpaired: the detector emits TWO figure blocks on that subpage (so the uniqueness arm declines) and the ejected block's words do not include the re-OCR'd 'Figura 2' header, so it carries no printed number."
+  }
+}

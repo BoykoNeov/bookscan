@@ -4744,3 +4744,145 @@ also take a one-run `--per-page-source` override. Note that `mode: on` is
 REFUSED rather than read as `ocr` — YAML turns a bare `off` into a boolean with
 exactly one possible meaning (accepted), but guessing the other direction would
 silently switch on a ~9 s dewarp-and-OCR probe per spread.
+
+## The two captions that were really pairing failures — an arm that looks at no distance at all — 2026-08-26
+
+Five caption↔figure pairs in the corpus were missing. **Two of them were pairing
+failures.** The other three were something else, and saying so is half the result:
+
+| missing pair | why it is missing | whose problem |
+|---|---|---|
+| `it_geo_05` C2 | the caption is printed *inside* the map, so the detector emits no caption block | segmentation |
+| `it_geo_06` C30 | its figure's printed corner label cannot be read | closed 2026-08-10 as a measured recognizer ceiling |
+| `it_geo_07` C31 | its ground-truth partner D1 **is not detected at all** | segmentation |
+| **`it_geo_04` B8** | "A lato: Figura 20" | **pairing** |
+| **`it_geo_05` C3** | "Sopra: Figura 3" | **pairing** |
+
+Reported as "5 misses" this looks like a pairing pass that recovers 74% of the
+pairs. Three of the five are cases where the pairing pass is handed no block to
+pair, or a number no recognizer can read. It was owed two.
+
+### Why loosening the proximity rule was the wrong lever
+
+The probe (`M:\claud_projects\temp\bookscan_grouping`, dumped into
+`docs/data/figure_grouping_sole_20260826.json`) read the geometry the pass
+actually saw on real pixels:
+
+| case | figures on the subpage | column overlap | vertical gap | sideways gap |
+|---|---|---|---|---|
+| `it_geo_04`-left B8 → B5 | 1 | 0.04 | **0.384** of page height | 0 |
+| `it_geo_05`-right C3 → F3 | 1 | **0.00** | **0.390** of page height | 0.028 of page width |
+
+Arm 2 wants a column overlap of 0.50 and a gap of 0.08 (0.25 on a solo page), or —
+for the side-set shape — a vertical overlap of 0.50. **Both cases fail every one
+of those in both shapes, and not marginally.** This book sets its captions in a
+narrow side column, often most of a page away from the plate they describe: the
+distance between a caption and its own figure is simply not smaller than the
+distance to somebody else's. Widening the limits far enough to reach these two
+would take them past the separations the `it_geo_06` trap is built out of — the
+caption stack whose order does not track figure position — so the pairs would be
+bought by re-opening the exact wrong-photo failure the guards exist to prevent.
+
+### What is actually present is uniqueness
+
+Both subpages print **one figure** and **one block that says in print it is that
+figure's caption**. So a third arm pairs them on that alone, consulting no
+geometry whatsoever: exactly one figure block on the subpage, still unpaired;
+exactly one eligible caption left; and that caption carries a parsed `Figura NN`
+header. Two independent signals again, neither of them a distance.
+
+It runs **last**, after the geometry arm. That is not cosmetic: a caption arm 2
+can already place keeps its proximity-backed provenance, and every pair that
+existed before this change still comes from the arm it came from before.
+
+`PairSource` gained `sole_figure` in its own commit rather than filing these
+under `geometry` — telling a reviewer the pass measured a distance it never
+looked at would be a lie in the provenance field, which exists precisely so the
+editor can re-check the weaker inferences.
+
+### Measured — every block-order fixture, production code path
+
+| fixture | correct | **WRONG** | abstained | arms (number/geometry/sole) | change |
+|---|---|---|---|---|---|
+| **it_geo_04** | **2/2** | **0** | 0 | 0/1/**1** | was 1/2 |
+| **it_geo_05** | **1/2** | **0** | 0 | 0/0/**1** | was 0/2 |
+| it_geo_06 | 5/6 | 0 | 1 | 5/0/0 | unchanged |
+| it_geo_07 | 0/1 | 0 | 2 | 0/1/0 | unchanged |
+| de_01 | 0/0 | 0 | 1 | 0/0/0 | unchanged |
+| en_coins_01 | 4/4 | 0 | 2 | 0/4/0 | unchanged |
+| en_coins_02 | 2/2 | 0 | 1 | 0/2/0 | unchanged |
+| en_coins_03 | 2/2 | 0 | 0 | 0/2/0 | unchanged |
+| **total** | **16/19** | **0** | **7** | 5/10/**2** | was 14/19, 9 abstained |
+
+**Non-regression is field-by-field identical, not "similar".** Every graded field
+of all eight fixtures was diffed against a baseline captured before the change —
+every match, miss, type verdict, tau, pair and abstain reason. Six fixtures are
+identical outright; on the two that moved, the *other* subpage is identical too
+and the only changed fields are the two new pairs and the two abstentions they
+replace. `it_geo_05` still shows 1/2 because its second pair is the segmentation
+case in the table above.
+
+### The guard the metric cannot enforce, pinned as an assertion instead
+
+A wrong pair on `de_01`'s icon sidebar would score **ungraded, not wrong** — that
+ground truth scopes the panel out — so "0 wrong" is no evidence at all that this
+arm is safe there. And the sidebar is the case uniqueness alone would claim: it is
+the only block of its kind beside the only photo on its half of the spread, with a
+vertical overlap of 1.00 and a 28px gap. What refuses it is the print
+requirement — it carries no `Figura NN` header. That refusal is now a unit test
+with the real coordinates in it, not something left to a metric that cannot see it.
+
+Checked while writing that test: the unreadable-panel pass (which re-types the
+sidebar as a picture) runs **after** grouping in Stage 07, so the panel really does
+still reach the pairing pass as a caption-eligible block. The print requirement is
+load-bearing today, not a historical artefact.
+
+### One existing test reversed, deliberately
+
+`test_side_set_does_not_reach_a_detached_gutter_caption_column` was written as
+"`it_geo_05`-right in miniature" and asserted **no pair** — which was the right
+answer when abstaining was the only safe one, and is the wrong answer now, since
+the real fixture's ground truth pairs C3 to F3. Its purpose (the side-set rule must
+not reach across a page) is still needed, so it keeps its assertion and gains a
+**decoy second figure** that removes the uniqueness, leaving the gap limit as the
+only thing that can reject the pair. The solo version is a separate test.
+
+### Verified on the production path, not only in the eval
+
+`run_all` 00→06 then `stage07_assemble` on `it_geo_05`: the right subpage reports
+`captions=1 paired=1 (sole_figure)`, and `document.json` block 6 carries
+`caption_number=3`, `figure_ref` → block 2, `pair_source=sole_figure`.
+
+### Honest limits
+
+* **The way this arm can be wrong has a name, and nothing in this corpus has that
+  shape:** a spread whose single figure on one page belongs to the *facing* page's
+  caption, while this page's caption describes the figure over there. The arm would
+  mispair it and no available signal would catch it. Real books do print "A lato"
+  captions that point across the gutter — this corpus's two do not.
+* **N=2.** The arm fires on exactly two subpages in the whole corpus. Both are the
+  same Italian series, which is also the only book here that sets captions in a
+  side column. It has not been shown to do anything on a second book.
+* **It does nothing for a book that prints no caption numbers**, the same price the
+  side-set shape already pays.
+* **`it_geo_05` C2 was left unclosed on purpose, and here is what stands in the
+  way.** Stage 05's caption ejection *does* recover the block in production (the
+  run logs `ejected caption (Figura 2) printed inside figure ...: 60 words`), so
+  the pair is closer than the "segmentation miss" label suggests. Two things stop
+  it: that subpage carries **two** figure blocks, so uniqueness does not apply; and
+  the ejected block's words do not include the re-OCR'd `Figura 2` header (that
+  header is evidence only, never added as words), so it carries no printed number.
+  The obvious fix — pair a caption to the figure it was *ejected from* — was
+  considered and **not taken**: this module's `_nest_frac` rule exists because of a
+  measured case where a figure box swallowed a *neighbouring* column's caption, and
+  it records containment as an ABSTAIN signal, never an attachment signal. Turning
+  containment into the strongest attachment signal would contradict that finding,
+  and needs evidence that the ejection gate's strictness (1 acceptance in 50 figure
+  blocks) makes containment trustworthy — evidence nobody has gathered. It is an
+  open lead with a stated blocker, not an oversight.
+
+Suite **474 green** (was 466): +8 in `test_figure_grouping.py` covering both real
+layouts, the `de_01` refusal, the two-figure and two-caption declines, the
+numbering-regime precedence, the geometry-keeps-its-provenance ordering, and the
+stamp on the editable block. Evidence:
+`docs/data/figure_grouping_sole_20260826.json`.

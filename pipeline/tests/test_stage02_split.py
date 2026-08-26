@@ -146,13 +146,20 @@ def test_single_page_emits_one_subpage():
 # --------------------------------------------------------------------------
 # The coordinate contract (book-boundary crop, v0.3.0)
 #
-# split.json documents every box and column in ORIGINAL spread pixels. Once
-# Stage 02 may cut from a CROP of the anchor, that promise stops being free: an
-# unadded offset would still produce plausible-looking pages, and the error
-# would only surface much later as patch-mode word crops pulling the wrong
-# pixels out of the full-resolution page. So assert it directly — rebuild each
-# subpage from the untouched anchor using ONLY the box written to split.json,
-# and require it to equal the PNG the stage wrote.
+# split.json documents every box and column in the pixel coordinates of the
+# frame that supplied the page. Once Stage 02 may cut from a CROP of the anchor,
+# that promise stops being free: an unadded offset would still produce
+# plausible-looking pages, and the error would only surface much later as
+# patch-mode word crops pulling the wrong pixels out of the full-resolution
+# page. So assert it directly — rebuild each subpage from the untouched SOURCE
+# image using ONLY the box written to split.json, and require it to equal the
+# PNG the stage wrote.
+#
+# The rebuild reads ``page["source"]`` rather than assuming ``anchor.png``. That
+# is not pedantry: with per-page frame selection on, two photographs of one
+# spread are similar enough that cropping the wrong one would still LOOK right
+# and this assertion would pass while being meaningless. See
+# test_mixed_source_boxes_address_their_own_frame below.
 # --------------------------------------------------------------------------
 
 
@@ -193,9 +200,11 @@ def _boxes_are_original_coordinates(spread: np.ndarray) -> dict:
         assert manifest["height"] == spread.shape[0]
         for page in manifest["pages"]:
             box = page["box"]
+            assert page["source"] == "01_fuse/anchor.png"
+            source = cv2.imread(str(page_dir / page["source"]), cv2.IMREAD_COLOR)
             written = cv2.imread(str(page_dir / "02_split" / page["name"]),
                                  cv2.IMREAD_COLOR)
-            rebuilt = spread[box["y"]:box["y"] + box["h"],
+            rebuilt = source[box["y"]:box["y"] + box["h"],
                              box["x"]:box["x"] + box["w"]]
             assert written.shape == rebuilt.shape, (
                 f"{page['name']}: box {box} describes {rebuilt.shape}, "
@@ -242,6 +251,83 @@ def test_crop_decision_is_recorded_for_a_human():
         assert any("book-boundary crop NOT applied" in w
                    for w in meta["warnings"])
         assert (page_dir / "debug" / "02_split.png").exists()
+
+
+# --------------------------------------------------------------------------
+# Per-page frame selection (v0.4.0): the two sides may come from DIFFERENT
+# photographs. The box contract then only means anything together with the
+# source it names — and a wrong source is the one error two photos of the same
+# spread are guaranteed to hide, because the pixels look almost the same.
+# The selector's own decision needs Tesseract, so it is stubbed here: what is
+# under test is the plumbing that carries a chosen frame's pixels, box and
+# geometry into split.json, not the choice.
+# --------------------------------------------------------------------------
+
+
+def test_mixed_source_boxes_address_their_own_frame():
+    from pipeline import page_source as PS
+    from pipeline import stage02_split as S2
+
+    anchor = np.dstack([_two_page_spread(w=2000, h=1500, gutter=1000)] * 3)
+    # A second photograph of the same spread: different framing (so the boxes
+    # differ) and a colour cast (so cropping the WRONG frame is detectable).
+    other = np.dstack([_two_page_spread(w=2000, h=1500, gutter=1120)] * 3)
+    other[:, :, 2] = np.clip(other[:, :, 2].astype(np.int16) - 60, 0, 255)
+
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = Path(td) / "page_001"
+        (page_dir / "01_fuse").mkdir(parents=True)
+        (page_dir / "00_ingest").mkdir(parents=True)
+        cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), anchor)
+        cv2.imwrite(str(page_dir / "00_ingest" / "frame_01.png"), other)
+
+        cand = PS.Candidate("frame_01.png", other, {})
+        assert cand.gutter_x is not None
+
+        real_select = PS.select
+
+        def fake_select(pd, cfg, params, img, warnings):
+            warnings.append("per_page_source: right.png taken from frame_01.png")
+            return PS.SelectionResult(mode="ocr", incumbent="frame_00.png",
+                                      changed_any=True), {"right.png": cand}
+
+        S2.PS.select = fake_select
+        try:
+            result = run(page_dir, {"per_page_source": {"mode": "ocr"}})
+        finally:
+            S2.PS.select = real_select
+
+        manifest = json.loads(
+            (page_dir / "02_split" / "split.json").read_text(encoding="utf-8"))
+        by_name = {p["name"]: p for p in manifest["pages"]}
+        assert by_name["left.png"]["source"] == "01_fuse/anchor.png"
+        assert by_name["right.png"]["source"] == "00_ingest/frame_01.png"
+
+        for page in manifest["pages"]:
+            box = page["box"]
+            src = cv2.imread(str(page_dir / page["source"]), cv2.IMREAD_COLOR)
+            written = cv2.imread(str(page_dir / "02_split" / page["name"]),
+                                 cv2.IMREAD_COLOR)
+            rebuilt = src[box["y"]:box["y"] + box["h"],
+                          box["x"]:box["x"] + box["w"]]
+            assert np.array_equal(written, rebuilt), (
+                f"{page['name']}: box does not address the pixels written")
+
+        # ...and the assertion above has teeth: the same box on the ANCHOR is a
+        # different picture, which is exactly the silent failure being guarded.
+        rbox = by_name["right.png"]["box"]
+        from_anchor = anchor[rbox["y"]:rbox["y"] + rbox["h"],
+                             rbox["x"]:rbox["x"] + rbox["w"]]
+        written = cv2.imread(str(page_dir / "02_split" / "right.png"),
+                             cv2.IMREAD_COLOR)
+        assert not np.array_equal(written, from_anchor)
+
+        # The swapped side carries its OWN geometry, not the anchor's.
+        assert by_name["right.png"]["gutter_x"] == cand.gutter_x
+        assert by_name["left.png"]["gutter_x"] == result.gutter_x
+        assert by_name["right.png"]["gutter_x"] != result.gutter_x
+        # And a human can see the other frame's cut, not just be told about it.
+        assert (page_dir / "debug" / "02_split_source_frame_01.png").exists()
 
 
 def _run() -> int:

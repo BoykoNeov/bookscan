@@ -1,0 +1,185 @@
+{
+  "what": "Stage 02 v0.4.0 per-page frame selection, end-to-end on real pixels.",
+  "fixture": "testset/skewset_de_01_134824.jpg + _134828.jpg, through Stage 00 ingest -> Stage 01 fuse -> Stage 02",
+  "arms": {
+    "shipped_bar": {
+      "min_word_gain": 60,
+      "per_page_source": {
+        "mode": "ocr",
+        "incumbent": "frame_00.png",
+        "considered": [
+          "frame_01.png"
+        ],
+        "ineligible": [],
+        "sides": [
+          {
+            "name": "left.png",
+            "source": "frame_00.png",
+            "changed": false,
+            "reason": "no challenger clears the bar; best challenger frame_01.png +29 words / +10.9 conf",
+            "scores": [
+              {
+                "frame": "frame_00.png",
+                "words_ge_80": 144,
+                "mean_conf": 81.0,
+                "n_words": 182,
+                "dewarp_method": "uvdoc"
+              },
+              {
+                "frame": "frame_01.png",
+                "words_ge_80": 173,
+                "mean_conf": 91.9,
+                "n_words": 179,
+                "dewarp_method": "uvdoc"
+              }
+            ]
+          },
+          {
+            "name": "right.png",
+            "source": "frame_00.png",
+            "changed": false,
+            "reason": "no challenger clears the bar; best challenger frame_01.png -36 words / -5.9 conf",
+            "scores": [
+              {
+                "frame": "frame_00.png",
+                "words_ge_80": 95,
+                "mean_conf": 69.3,
+                "n_words": 180,
+                "dewarp_method": "uvdoc"
+              },
+              {
+                "frame": "frame_01.png",
+                "words_ge_80": 59,
+                "mean_conf": 63.4,
+                "n_words": 124,
+                "dewarp_method": "uvdoc"
+              }
+            ]
+          }
+        ],
+        "min_word_gain": 60,
+        "require_conf_gain": true,
+        "probe_ms": 9651.1,
+        "changed_any": false,
+        "note": ""
+      },
+      "pages": [
+        {
+          "name": "left.png",
+          "source": "01_fuse/anchor.png",
+          "gutter_x": 2115,
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 2155,
+            "h": 3000
+          }
+        },
+        {
+          "name": "right.png",
+          "source": "01_fuse/anchor.png",
+          "gutter_x": 2115,
+          "box": {
+            "x": 2075,
+            "y": 0,
+            "w": 1925,
+            "h": 3000
+          }
+        }
+      ]
+    },
+    "lowered_bar_to_exercise_the_swap": {
+      "min_word_gain": 20,
+      "why": "the shipped bar is inert on this corpus by design; lowering it is how the swap path was exercised on real pixels rather than only on a stub",
+      "per_page_source": {
+        "mode": "ocr",
+        "incumbent": "frame_00.png",
+        "considered": [
+          "frame_01.png"
+        ],
+        "ineligible": [],
+        "sides": [
+          {
+            "name": "left.png",
+            "source": "frame_01.png",
+            "changed": true,
+            "reason": "+29 words at conf>=80 (floor 20) and +10.9 mean conf over the anchor",
+            "scores": [
+              {
+                "frame": "frame_00.png",
+                "words_ge_80": 144,
+                "mean_conf": 81.0,
+                "n_words": 182,
+                "dewarp_method": "uvdoc"
+              },
+              {
+                "frame": "frame_01.png",
+                "words_ge_80": 173,
+                "mean_conf": 91.9,
+                "n_words": 179,
+                "dewarp_method": "uvdoc"
+              }
+            ]
+          },
+          {
+            "name": "right.png",
+            "source": "frame_00.png",
+            "changed": false,
+            "reason": "no challenger clears the bar; best challenger frame_01.png -36 words / -5.9 conf",
+            "scores": [
+              {
+                "frame": "frame_00.png",
+                "words_ge_80": 95,
+                "mean_conf": 69.3,
+                "n_words": 180,
+                "dewarp_method": "uvdoc"
+              },
+              {
+                "frame": "frame_01.png",
+                "words_ge_80": 59,
+                "mean_conf": 63.4,
+                "n_words": 124,
+                "dewarp_method": "uvdoc"
+              }
+            ]
+          }
+        ],
+        "min_word_gain": 20,
+        "require_conf_gain": true,
+        "probe_ms": 10462.5,
+        "changed_any": true,
+        "note": ""
+      },
+      "pages": [
+        {
+          "name": "left.png",
+          "source": "00_ingest/frame_01.png",
+          "gutter_x": 2056,
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 2136,
+            "h": 3000
+          }
+        },
+        {
+          "name": "right.png",
+          "source": "01_fuse/anchor.png",
+          "gutter_x": 2115,
+          "box": {
+            "x": 2075,
+            "y": 0,
+            "w": 1925,
+            "h": 3000
+          }
+        }
+      ]
+    }
+  },
+  "verified": [
+    "each written PNG equals its source frame cropped at its own box (checked on both arms)",
+    "a swapped side carries its own gutter_x (2056) and book_crop, not the anchor's (2115)",
+    "debug/02_split_source_frame_01.png written for the frame that supplied a page",
+    "Stage 03 dewarp runs unchanged on the mixed-source split"
+  ]
+}

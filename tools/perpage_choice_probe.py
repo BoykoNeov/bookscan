@@ -121,6 +121,7 @@ import yaml
 
 from pipeline import book_boundary as BB
 from pipeline import stage01_fuse as S1
+from pipeline import page_source as PS
 from pipeline import stage02_split as S2
 from pipeline.stage00_ingest import sharpness
 from pipeline.stage01_fuse import DEFAULTS as FUSE_DEFAULTS, partition_frames
@@ -156,24 +157,14 @@ def split_with_boxes(bgr: np.ndarray, cfg: dict):
     would use for that detector layer. Returns
     ``(pieces, gutter_x, book, method)`` where ``pieces`` is
     ``[(name, img, box_in_original_frame_coords), ...]`` in reading order.
-    """
-    p = S2.resolve_params(cfg)
-    book = BB.find_book(bgr, BB.resolve_params(cfg))
-    ex0, ey0, ex1, ey1 = book.emit
-    sx0, sy0, sx1, sy1 = book.search
-    gray = cv2.cvtColor(bgr[sy0:sy1, sx0:sx1], cv2.COLOR_BGR2GRAY)
-    gutter_local, diag = S2.detect_gutter(gray, p)
-    gutter_x = None if gutter_local is None else gutter_local + sx0
 
-    method = diag["method"]
-    margin_frac = (p["pinch_margin_frac"] if method == "pinch" else p["margin_frac"])
-    emit = bgr[ey0:ey1, ex0:ex1]
-    margin = int(emit.shape[1] * margin_frac)
-    pieces = S2.cut_pages(emit, None if gutter_x is None else gutter_x - ex0, margin)
-    # Boxes back into ORIGINAL frame coordinates, exactly as the stage does.
-    out = [(name, img, (box.x + ex0, box.y + ey0, box.w, box.h))
-           for name, img, box in pieces]
-    return out, gutter_x, book, method
+    Since the selector shipped (``pipeline/page_source.py``), this delegates to
+    the production geometry rather than restating it, so the probe cannot drift
+    away from the thing it licensed. The measured numbers are unchanged: that
+    function is this function's former body, moved.
+    """
+    pieces, gutter_x, book, method, _diag = PS.split_geometry(bgr, cfg)
+    return pieces, gutter_x, book, method
 
 
 # --------------------------------------------------------------------------

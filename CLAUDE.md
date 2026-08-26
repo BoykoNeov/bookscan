@@ -59,6 +59,21 @@ baking a PDF). Stage 07 `assemble` builds it from the whole job; Stage 08
 upstream re-runs (self-containment). Assemble won't clobber an edited document
 without `--force`. See `docs/GATE4_SPEC.md`.
 
+**Per-page frame-source exception (Stage 02, opt-in and OFF by default).** Item 2
+says a stage reads only the previous stage's artifacts. Per-page frame selection
+(`pipeline/page_source.py`, config `per_page_source.mode: ocr`) lets `left.png`
+and `right.png` be cut from **different** full-spread photographs, so it needs
+the gutter (Stage 02) *and* the candidate pixels (Stage 00) at once. With the
+mode on — and only then — Stage 02 reads those frames back out of `00_ingest/`,
+named by `01_fuse/fuse.json`'s `fullspread_frames`. The rule's purpose is
+preserved: `00_ingest` is upstream, is never written, and the speculative
+dewarp+OCR probe that decides is entirely in memory and writes no artifacts.
+Consequence for the schema: `SubPage.box` is in the coordinates of the frame
+named by the new `SubPage.source` — with the mode off that is always
+`01_fuse/anchor.png` and the old "ORIGINAL spread coordinates" wording holds
+verbatim. Default is off for a **measured** reason, not caution (RESULTS
+2026-08-26); do not turn it on without reading that row.
+
 ### Job folder layout
 
 ```
@@ -85,7 +100,7 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
 |---|---|---|---|
 | 00 | `stage00_ingest` | RAW/JPEG → normalized RGB, EXIF, per-page folder | Pillow, rawpy |
 | 01 | `stage01_fuse` | multi-zoom stitch onto anchor frame; pick sharpest frame | OpenCV (features + homography, ECC refine) |
-| 02 | `stage02_split` | book-boundary crop (`book_boundary.py`) → gutter detection → left/right pages | OpenCV (projection profile, GrabCut) |
+| 02 | `stage02_split` | book-boundary crop (`book_boundary.py`) → gutter detection → left/right pages; optional per-page frame source (`page_source.py`, off by default) | OpenCV (projection profile, GrabCut) |
 | 03 | `stage03_dewarp` | flatten page curvature | UVDoc (default), DocTr++ (partial crops) |
 | 04 | `stage04_layout` | block detection + reading order | DocLayout-YOLO + XY-Cut++ |
 | 05 | `stage05_ocr` | word-level text + bbox + confidence | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |

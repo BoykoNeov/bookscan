@@ -25,6 +25,17 @@ the middle of the whitespace with a small overlap margin: losing text is the
 only real failure; carrying a sliver of the other page's margin is harmless
 (dewarp/layout re-crop downstream).
 
+**Per-page frame selection (v0.4.0, opt-in, OFF by default).** Normally one
+photograph becomes both pages: this stage cuts ``anchor.png`` in two. With
+``per_page_source.mode: ocr`` in config.yaml (or ``--per-page-source ocr``) the
+left and right pages may instead be cut from DIFFERENT full-spread photographs
+of the same spread — whichever reads better on that side once flattened. The
+machinery, the measured reason the default is off, and the documented CLAUDE.md
+exception it needs (this stage then reads the candidate frames back out of
+``00_ingest/``, named by ``01_fuse/fuse.json``) all live in
+``pipeline/page_source.py``. When it is off, nothing extra runs and the output
+is byte-identical to v0.3.0's.
+
 Known v1 limitations (recorded in meta.warnings): a single VERTICAL cut assumes
 a near-vertical gutter; strong tilt/curvature is Stage 03's (dewarp) job. The
 ``single.png`` branch is untested — the current testset is all two-page spreads.
@@ -46,10 +57,11 @@ import yaml
 from pydantic import BaseModel, Field
 
 from pipeline import book_boundary as BB
+from pipeline import page_source as PS
 from pipeline.page_model import BBox, StageMeta
 
 STAGE = "stage02_split"
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -99,10 +111,25 @@ DEFAULTS = {
 
 
 class SubPage(BaseModel):
-    """One page carved out of the spread, with its crop box in spread coords."""
+    """One page carved out of the spread, with its crop box in spread coords.
+
+    ``source`` names the PHOTOGRAPH these pixels came from, and ``box`` is in
+    that photograph's coordinates. With per-page frame selection off (the
+    default) every subpage says ``01_fuse/anchor.png`` and this is the
+    long-standing "ORIGINAL spread coordinates" contract verbatim. With it on
+    (``per_page_source.mode: ocr``) the two sides may come from different
+    frames, so "the original spread" is no longer a single image and the box is
+    only meaningful together with ``source`` — asserted in test_stage02_split.
+    """
 
     name: str            # left.png | right.png | single.png
-    box: BBox            # crop rectangle in ORIGINAL spread pixel coordinates
+    box: BBox            # crop rectangle in ``source``'s pixel coordinates
+    source: str = "01_fuse/anchor.png"   # page-dir-relative path to those pixels
+    # Per-side geometry. Identical to the top-level fields unless this side was
+    # cut from a different frame, in which case the top-level numbers describe
+    # the anchor and these describe the frame that actually supplied the page.
+    gutter_x: int | None = None
+    book_crop: BBox | None = None
 
 
 class SplitResult(BaseModel):
@@ -131,6 +158,13 @@ class SplitResult(BaseModel):
     book_crop_reason: str = ""
     book_crop: BBox | None = None    # pixels emitted as the page(s)
     book_search: BBox | None = None  # region the gutter search was restricted to
+    # --- per-page frame selection (pipeline/page_source.py, v0.4.0) ----------
+    # None when the option is off (the default) — which is the shipped state and
+    # the measured one: RESULTS 2026-08-26 found the two sides do prefer
+    # different photographs on 3 of 7 sets but nothing clears the bar. When on,
+    # this records every candidate's reading of every side and why each side's
+    # source was kept or swapped.
+    per_page_source: PS.SelectionResult | None = None
 
 
 # --------------------------------------------------------------------------
@@ -394,6 +428,9 @@ def draw_overlay_full(image: np.ndarray, book: "BB.BookBoundary",
 def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     t0 = time.perf_counter()
     params = resolve_params(cfg)
+    # Resolved BEFORE any work so a typo in the mode fails immediately rather
+    # than after a dewarp-and-OCR probe has already run.
+    ps_params = PS.resolve_params(cfg)
     warnings: list[str] = []
 
     src = page_dir / "01_fuse" / "anchor.png"
@@ -488,6 +525,36 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     gutter_in_emit = None if gutter_x is None else gutter_x - ex0
     pieces = cut_pages(emit_img, gutter_in_emit, margin)
 
+    # --- per-page frame selection (opt-in) ----------------------------------
+    # Everything above is the anchor's own cut and is what ships by default. If
+    # the option is on, a side may instead be taken from a DIFFERENT full-spread
+    # photograph of this spread — one that reads better on that side once
+    # flattened. See pipeline/page_source.py for why the default is off and why
+    # the only criterion is OCR. The anchor's numbers stay in the top-level
+    # fields either way; a swapped side carries its own geometry.
+    anchor_box = BBox(x=ex0, y=ey0, w=ex1 - ex0, h=ey1 - ey0)
+    emitted = [(name, img, BBox(x=box.x + ex0, y=box.y + ey0, w=box.w, h=box.h),
+                "01_fuse/anchor.png", gutter_x, anchor_box)
+               for name, img, box in pieces]
+    selection: PS.SelectionResult | None = None
+    chosen: dict = {}
+    if ps_params["mode"] != "off":
+        selection, chosen = PS.select(page_dir, cfg, ps_params, image, warnings)
+        swapped = []
+        for entry in emitted:
+            name = entry[0]
+            cand = chosen.get(name)
+            if cand is None:
+                swapped.append(entry)
+                continue
+            img, box = cand.pieces[name]
+            bx0, by0, bx1, by1 = cand.book.emit
+            swapped.append((name, img,
+                            BBox(x=box[0], y=box[1], w=box[2], h=box[3]),
+                            f"00_ingest/{cand.name}", cand.gutter_x,
+                            BBox(x=bx0, y=by0, w=bx1 - bx0, h=by1 - by0)))
+        emitted = swapped
+
     # Write artifacts.
     out_dir = page_dir / "02_split"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -498,15 +565,14 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     for stale in ("left.png", "right.png", "single.png"):
         (out_dir / stale).unlink(missing_ok=True)
     subpages: list[SubPage] = []
-    for name, img, box in pieces:
+    for name, img, box, source, side_gutter, side_crop in emitted:
         cv2.imwrite(str(out_dir / name), img)
         # cut_pages works in the emitted crop's frame; SubPage.box is documented
-        # as ORIGINAL spread coordinates, so put the crop offset back. This is
-        # the one place a silent error would propagate all the way to patch-mode
-        # word crops, so it is asserted in the tests.
-        subpages.append(SubPage(name=name,
-                                box=BBox(x=box.x + ex0, y=box.y + ey0,
-                                         w=box.w, h=box.h)))
+        # as coordinates of ``source``, so the crop offset is already added back
+        # above. This is the one place a silent error would propagate all the way
+        # to patch-mode word crops, so it is asserted in the tests.
+        subpages.append(SubPage(name=name, box=box, source=source,
+                                gutter_x=side_gutter, book_crop=side_crop))
 
     result = SplitResult(
         source="01_fuse/anchor.png", width=w, height=h,
@@ -518,8 +584,9 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
         pinch_x=int(diag["pinch_x"]) + sx0,
         shadow_x=int(diag["shadow_x"]) + sx0, corroborated=bool(diag["corroborated"]),
         book_crop_applied=book.applied, book_crop_reason=book.reason,
-        book_crop=BBox(x=ex0, y=ey0, w=ex1 - ex0, h=ey1 - ey0),
+        book_crop=anchor_box,
         book_search=BBox(x=sx0, y=sy0, w=sx1 - sx0, h=sy1 - sy0),
+        per_page_source=selection,
     )
     (out_dir / "split.json").write_text(
         result.model_dump_json(indent=2), encoding="utf-8"
@@ -529,6 +596,20 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     debug_dir = page_dir / "debug"
     debug_dir.mkdir(parents=True, exist_ok=True)
     overlay = draw_overlay_full(image, book, gutter_x, diag)
+    if any(sp.source != "01_fuse/anchor.png" for sp in subpages):
+        # Say on the anchor's own overlay which sides it did NOT supply, and
+        # write that frame's overlay too — otherwise a bad cut on the frame that
+        # actually supplied a page would be invisible, which is exactly the
+        # failure the per-stage overlay exists to make obvious.
+        cv2.putText(overlay, "per-page sources: " + "  ".join(
+            f"{sp.name}<-{Path(sp.source).name}" for sp in subpages),
+            (30, 130), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (0, 200, 255), 3)
+        for name in sorted({sp.source for sp in subpages
+                            if sp.source != "01_fuse/anchor.png"}):
+            cand = chosen[next(sp.name for sp in subpages if sp.source == name)]
+            cv2.imwrite(
+                str(debug_dir / f"02_split_source_{Path(name).stem}.png"),
+                draw_overlay_full(cand.image, cand.book, cand.gutter_x, cand.diag))
     cv2.imwrite(str(debug_dir / "02_split.png"), overlay)
     if debug:
         # extra intermediates: raw + smoothed column profile as CSV
@@ -538,7 +619,8 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     meta = StageMeta(
         stage=STAGE, version=VERSION,
         params={**{k: params[k] for k in DEFAULTS},
-                "book_crop": {k: bb_params[k] for k in BB.DEFAULTS}},
+                "book_crop": {k: bb_params[k] for k in BB.DEFAULTS},
+                "per_page_source": {k: ps_params[k] for k in PS.DEFAULTS}},
         timings_ms={"book_boundary": round(book_ms, 1),
                     "detect": round(detect_ms, 1), "total": round(total_ms, 1)},
         warnings=warnings + [
@@ -563,13 +645,23 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("page_dir", type=Path,
                     help="page folder, e.g. jobs/<job>/<page_NNN>/")
     ap.add_argument("--config", type=Path, default=REPO_ROOT / "config.yaml")
+    ap.add_argument("--per-page-source", choices=list(PS.MODES), default=None,
+                    help="override per_page_source.mode: 'ocr' lets each page "
+                         "come from a different full-spread frame (costs a "
+                         "dewarp + Tesseract pass per candidate per side). "
+                         "Default comes from config.yaml (off).")
     ap.add_argument("--debug", action="store_true",
                     help="also dump column profile CSV")
     args = ap.parse_args(argv)
 
     cfg = load_config(args.config)
+    if args.per_page_source is not None:
+        cfg = {**cfg, "per_page_source": {**(cfg.get("per_page_source") or {}),
+                                          "mode": args.per_page_source}}
     result = run(args.page_dir, cfg, debug=args.debug)
-    names = ", ".join(p.name for p in result.pages)
+    names = ", ".join(
+        p.name if p.source == "01_fuse/anchor.png"
+        else f"{p.name}<-{Path(p.source).name}" for p in result.pages)
     if result.gutter_x is not None and result.method == "pinch":
         print(f"{args.page_dir}: gutter x={result.gutter_x} via PINCH "
               f"(depth={result.pinch_depth}, corrob={result.corroborated}; "

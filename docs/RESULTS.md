@@ -4627,3 +4627,112 @@ instrument is imported from the downstream census rather than copied. Evidence:
 `python -m tools.perpage_choice_probe --json <path>`, or re-derive the verdicts
 from the stored measurement without touching a pixel with
 `python -m tools.perpage_choice_probe --rescore <path>`.
+
+## Per-page frame selection SHIPPED as an option, off by default — 2026-08-26
+
+The row above measured per-page frame selection and found it null: the two sides
+really do prefer different photographs (3 of 7 sets), nothing clears the bar
+(0 of 7), and no cheap statistic ranks frames the way OCR does (best 11 of 15
+side races against 6.8 by coin flip, and wrong on the one race with headroom).
+The recommendation was to stop; the owner's call was to build it as an option.
+This row records what was built, what was deliberately NOT built, and what it
+does on real pixels.
+
+**What ships.** `pipeline/page_source.py` + Stage 02 v0.4.0. With
+`per_page_source.mode: ocr` (config.yaml, or `--per-page-source ocr`), `left.png`
+and `right.png` may be cut from **different** full-spread photographs of the same
+spread. Candidates are Stage 01's `fullspread_frames`; each is cut by the shipped
+Stage 02 geometry on its own; each side's candidates are then dewarped (Stage 03,
+in memory) and OCR'd, and the side is taken from whichever frame reads best. The
+default is `off`, which runs nothing extra and leaves Stage 02's output
+byte-identical to v0.3.0's.
+
+**One criterion, and no sharpness knob — because of the measurement, not despite
+it.** The row above scored five cheap statistics a Stage 02 selector could decide
+on. None is a result at n=15, and on `skewset_de_01`'s left page — the one race
+with real headroom — the *loser* is both the sharper image (608 vs 568) and the
+inkier one. Offering `mode: sharp` would therefore be shipping a selector
+measured to pick the wrong photograph on the only case worth winning. `resolve_params`
+rejects it by name with that reason. The only criterion offered is the metric
+itself (dewarp + OCR each candidate's side), which cannot lose because it IS what
+the bar is written in, and costs a dewarp + a Tesseract pass per candidate per
+side. That cost is why the default is off.
+
+**The bar is a validity boundary, not conservatism.** `min_word_gain` defaults to
+60 — the reframing-churn floor (RESULTS 2026-08-19), the measured amount this
+instrument's word count moves when the framing changes at all. Below it a
+word-count difference is not measuring anything, so a lower default would be
+choosing between photographs on noise. A challenger must also read at higher mean
+confidence, so "more words" cannot be bought with junk. Applied **per side**,
+unrescaled, for the reason the probe gave: halving it would be inventing a number.
+
+**On real pixels, end to end.** `skewset_de_01` (the two oblique frames that trade
+sides — the shape the feature exists for) through Stage 00 → 01 → 02 with the mode
+on, then Stage 03:
+
+| side | anchor `frame_00` | challenger `frame_01` | decision |
+|---|---|---|---|
+| left | 144 words @conf≥80, mean 81.0 | **173**, mean **91.9** | keep anchor (+29 < 60) |
+| right | **95**, mean **69.3** | 59, mean 63.4 | keep anchor (−36) |
+
+So the trade is reproduced by the shipped selector — the challenger is the better
+left page and the worse right page — and at the shipped bar **nothing swaps**.
+That is the honest expectation, not a validation: an inert option that costs 8.8 s
+of probe per spread is not the same virtue as an inert gate that costs nothing.
+(The margin here is +29 where the probe measured +37 on the same set. Same
+direction, same winner; the difference is the ingest path — the probe reads the
+raw upright JPEGs, the stage reads Stage 00's normalized PNGs.)
+
+Dropping `min_word_gain` to 20 on that same page makes it fire, which is how the
+swap path was exercised on real pixels rather than only on a stub: `left.png` then
+comes from `frame_01.png`, carries **its own** gutter (2056, not the anchor's
+2115) and its own book crop, and its `box` addresses `frame_01.png`'s pixels
+exactly. Stage 03 runs on the mixed output unchanged.
+
+**The schema cost, which is smaller than the earlier framing suggested.**
+`SubPage` gains `source` (the photograph these pixels came from, page-dir
+relative), plus per-side `gutter_x` / `book_crop`. `SubPage.box` is now documented
+as coordinates *of `source`* — with the mode off that is always
+`01_fuse/anchor.png` and the old "ORIGINAL spread coordinates" wording holds
+verbatim. `SubPage` lives in `stage02_split.py`, not `page_model.py`, so this is a
+stage-local change and does not touch the shared schema. Nothing below Stage 02
+needed changing: Stage 03 reads the manifest for `name` only.
+
+**The one silent-failure path, closed.** `test_stage02_split.py` rebuilt each
+subpage from `anchor.png` using only `box`. Once two sides can come from different
+frames that assertion would crop the *wrong* image and still pass, because two
+photographs of one spread look nearly the same. It now rebuilds from
+`page["source"]`, and a new test cuts a mixed spread and requires both that each
+box addresses its own frame AND that the same box on the anchor is a *different*
+picture — so the assertion has teeth.
+
+**The stage-boundary exception, written down.** With the mode on, Stage 02 reads
+the candidate frames out of `00_ingest/` (named by `01_fuse/fuse.json`), which
+CLAUDE.md's "reads ONLY the previous stage's artifacts" does not cover. The rule's
+purpose holds: `00_ingest` is upstream, is never written here, and the speculative
+dewarp+OCR is entirely in memory and writes no artifacts. The alternative — Stage
+01 duplicating every candidate into `01_fuse/` — costs ~100 MB of 12 Mpx PNG per
+spread to avoid a read that is already safe. Recorded in CLAUDE.md beside the
+editable-document exception.
+
+**Every no-op path names itself.** A selector that silently does nothing is
+indistinguishable from a broken one, so `split.json`'s `per_page_source` block
+carries every candidate's reading of every side, the margin of the race that was
+lost, and a `note` saying which no-op path was taken (single-page anchor, only one
+frame, no eligible challenger, Tesseract missing, candidates dropped by
+`max_candidates`) — each also as a `meta.warnings` line. A candidate that does not
+split confidently is excluded with a reason, carrying the probe's pre-registered
+eligibility rule into production. Close-ups are not candidates at all: measured
+page coverage 0.80 / 0.64 / 0.64 / 0.54 / 0.48 against a 0.98 bar.
+
+**Also, the probe no longer restates the geometry it licensed.**
+`tools/perpage_choice_probe.split_with_boxes` now delegates to
+`page_source.split_geometry` — that function is its former body, moved — so the
+thing that ships and the thing that was measured cannot drift apart.
+
+**Limits.** Unchanged from the row above, plus: the selection criterion has been
+verified to run, to reproduce the measured left/right trade, and to swap pixels
+correctly when the bar allows it — it has NOT been shown to improve any output,
+because at the shipped bar it changes nothing on this corpus. Suite 464 green.
+Evidence for both arms of the end-to-end run (shipped bar, and the lowered bar
+that exercises the swap): `docs/data/perpage_source_e2e_20260826.json`.

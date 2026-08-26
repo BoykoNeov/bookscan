@@ -75,6 +75,33 @@ ingest:
   min_osd_conf: 2.0
   min_osd_conf_180: 5.0
 
+# --- Per-page frame selection (Stage 02, opt-in) ---
+# Normally ONE photograph becomes both pages of a spread. Turn this on and the
+# left page may be cut from frame A while the right comes from frame B —
+# whichever reads better on that side once flattened. See pipeline/page_source.py.
+#
+# OFF by default for a MEASURED reason (RESULTS 2026-08-26): the two sides do
+# prefer different photographs on 3 of 7 sets, but nothing clears the bar, and
+# every cheap way of choosing is at chance (best 11 of 15 side races against 6.8
+# by coin flip) — and picks the WRONG frame on the one race with real headroom.
+# So the only criterion offered is the metric itself: dewarp each candidate's
+# side and OCR it. That cannot lose, and it costs a Stage 03 dewarp plus a
+# Tesseract pass per candidate per side. Sharpness/ink modes are deliberately
+# not offered.
+per_page_source:
+  # NOTE: quoted — bare `off` is a YAML boolean (False), not the string.
+  mode: "off"            # off | ocr
+  # The reframing-churn floor (RESULTS 2026-08-19): how much this instrument's
+  # word count moves when the framing changes at all. A validity boundary, not a
+  # safety margin — below it a word-count difference is not measuring anything.
+  # At this default the option changes nothing on the committed corpus; it is
+  # built for multi-view capture, where two oblique frames trade sides.
+  min_word_gain: 60
+  require_conf_gain: true   # a challenger must also read at higher mean confidence
+  dewarp_method: auto       # probe dewarp arm: auto | uvdoc | classical
+  max_candidates: 4         # cost guard: full-spread frames scored per spread
+  lang: null                # null -> languages.default
+
 # --- Second-opinion engines (never the sole text/confidence source) ---
 engines:
   easyocr:

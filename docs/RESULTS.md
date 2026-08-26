@@ -5286,3 +5286,59 @@ placed there would break on the first page that starves a denser block. Not adde
   real one, and it is closed.
 
 Suite 493 green (was 477).
+
+### Addendum, same day — three things the checks above did not cover
+
+**The headline metric is recall-only, and the row above read as if it were not.**
+`anchor_score` is `|anchor ∩ block| / |anchor|` — the denominator is the *anchor's*
+tokens, so adding tokens to a block can never lower it. "4 up / 0 down" therefore
+proves no rescue destroyed text a GT anchor names; it is blind by construction to
+junk a rescue *adds*, and to the 11 rescues on blocks carrying no GT anchor at all.
+
+The missing half, measured as a set difference over the same files: across the 15
+rescued blocks, **60 normalized tokens are present before and absent after; 33 of
+them are 3+ characters.** Read one by one they are overwhelmingly the *garbled forms
+the re-read repaired* — `acino`→`Bacino`, `cont`+`esto`→`contesto`, `ikm`→`KM`,
+`licat`→`Licato`, `chap`→`Chopmarked`, `chaopmarked`→`Chopmarked`, `peg`→`Peso`,
+`chir`→`China and`. The clearest single case, `en_coins_03`-left #5:
+
+    before: ... Dala (IKM# 7). Licat Collection. Ex-F. M. Rose. Fig. 79, Chap;
+            Coins — A History ... IF Chopmarks by I. M. Rose. Photography b Todd
+            Pollock, reprinted with permission Michael Chou.
+    after:  ... Dala (KM# 7). Licato Collection. Ex-I. M. Rose. Fig. 79, Chopmarked
+            Coins — A History ... Fig. 133, Chopmarks by F. M. Rose. Photography by:
+            Todd Pollock, reprinted with permission from Michae...
+
+**Two genuine regressions inside net-better blocks, named rather than netted out:**
+that caption swaps the two initials (`Ex-F. M. Rose` / `by I. M. Rose` becomes
+`Ex-I.` / `by F.`), and the `en_coins_03`-left header trades `Chaopmarked`→`Chopmarked`
+for `Hawai'i`→`Hawai 't`. The header is stripped by default; the caption is not, and
+it is the honest price of this rule. Nothing similar appears in the paragraph
+rescues, where every lost token is a fragment of a word the re-read spells whole.
+
+**Pairing was verified on all eight fixtures, not two.** Three rescues land on
+`caption` blocks, and the repo's bar is zero wrong pairs — which the eval cannot
+check here, because its pairing arm runs on Stage-04 text this change does not
+touch. So Stage 06 → Stage 07 `--force` was re-run on every fixture and the pair
+sets diffed field by field: **identical on seven, and on `it_geo_05` exactly the one
+new C2 → F2 pair**. In particular `en_coins_03`, whose captions print two numbers
+each (`Fig. 103 ... Fig. 79 ...`) and whose pairing rides on the caption-numbering
+guard, is unchanged at 3 pairs from the same arm — even though its #5 caption text
+moved substantially.
+
+**Cyrillic is now exercised.** All eight GT fixtures are `ita`/`deu`/`eng`, so the
+pass had never touched a Bulgarian page. Run over `bg_01`/`bg_02`/`bg_03` (33
+blocks): **2 rescues, both small, both upward** — a footnote block 17→18 words
+(72.9→74.5), reading `!) Вж. за това най-автентични подробности в съчинението ми
+"Гръцките жестокости", София 1913 год.`, and a page-number header 1→2 (32.7→50.0).
+`bg_02` and `bg_03` fire nothing. The empty-block arm did not run wild on Cyrillic,
+which was the thing worth checking before Gate 5.
+
+**Two limits to add to the list above:**
+
+* **The `/scale` map-back on rescued boxes is unit-test-only on real pixels.** All 16
+  graded subpages ran at `scale=1.0`, so the divide-by-2 branch has never been
+  exercised on real small-text pixels — the same caveat Stage 05 already carries for
+  `_word_box`, now inherited by the rescue.
+* **`total_words` has no consumer outside Stage 05.** Grepped: the only readers are
+  Stage 05's own two progress lines, so the meaning change reaches nothing else.

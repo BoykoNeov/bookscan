@@ -4181,5 +4181,54 @@
     ]
    }
   ]
+ },
+ "addendum_same_day": {
+  "precision_probe": {
+   "what": "tokens present in a rescued block BEFORE and absent AFTER (normalized); the recall metric cannot see these",
+   "tokens_lost": 60,
+   "of_which_3plus_chars": 33,
+   "note": "overwhelmingly the garbled forms the re-read repaired; two genuine regressions named in RESULTS (en_coins_03 caption initials, en_coins_03 header Hawai'i)"
+  },
+  "pairing_all_eight": {
+   "what": "Stage 06 -> Stage 07 --force re-run on every fixture, pair sets diffed",
+   "identical_fixtures": 7,
+   "changed": "it_geo_05: one new pair C2 -> F2 (sole_figure)",
+   "wrong_pairs_introduced": 0
+  },
+  "cyrillic": {
+   "corpus": "bg_01/bg_02/bg_03 (no block-order GT)",
+   "blocks": 33,
+   "rescues": 2,
+   "detail": [
+    {
+     "job": "floor_bg_01",
+     "page": "left.png",
+     "block": 4,
+     "before": [
+      17,
+      72.9
+     ],
+     "after": [
+      18,
+      74.5
+     ]
+    },
+    {
+     "job": "floor_bg_01",
+     "page": "right.png",
+     "block": 1,
+     "before": [
+      1,
+      32.7
+     ],
+     "after": [
+      2,
+      50.0
+     ]
+    }
+   ]
+  },
+  "scale_limit": "all 16 graded subpages ran at scale=1.0, so the /scale map-back on rescued boxes is unit-test-only on real pixels",
+  "total_words_consumers": "none outside stage05_ocr.py (two progress lines)"
  }
 }

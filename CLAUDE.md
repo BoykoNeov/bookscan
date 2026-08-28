@@ -27,14 +27,20 @@ Italian, German**.
 - [x] Gate 2: fusion + split + dewarp improve OCR accuracy — DONE
 - [x] Gate 3: layout + reading order correct on complex pages — DONE
 - [x] Gate 4: end-to-end re-typeset PDF reads correctly — DONE
-- [ ] Gate 5: server + Android app — desktop FastAPI server DONE (see
-      `docs/plans/partitioned-questing-pillow.md`); Android app M1–M5 all BUILT
-      (see `docs/plans/android-guided-capture.md`) — scaffold+network client,
-      manual capture, hover auto-capture, multi-zoom close-ups, session UX.
-      The gate is still OPEN because **every milestone's on-device half is
-      unverified**: the unit-testable logic is tested, but nothing has run on a
-      real phone against a real book. That verification needs the physical
-      device and is the only thing left.
+- [x] Gate 5: server + Android app — desktop FastAPI server DONE (see
+      `docs/plans/partitioned-questing-pillow.md`); Android app M1–M5 BUILT and
+      **VERIFIED ON A REAL PHONE 2026-08-28** (see
+      `docs/plans/android-guided-capture.md` and RESULTS 2026-08-28): job
+      list/resume, 7/7 stage progress, manual capture → upload → all seven
+      stages, an 18-image page, upload retry over a dropped link, server killed
+      mid-page and recovered, and the uncertainty mode chosen on the phone.
+      **Auto-capture was demoted to an opt-in toggle** by that session — armed
+      on a real spread it delivered one still, not the measured four — so
+      manual capture is the flow.
+      **Known open defect, not an app one:** neither real capture split into
+      pages. `pipeline/book_boundary.py` returns the whole frame on a pale
+      background, so the crop abstains and Stage 02's ink cue picks a white
+      channel *inside* a page. Fix not attempted (13+ non-regression fixtures).
 
 ## Architecture: the stage contract (IMPORTANT)
 

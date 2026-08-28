@@ -99,5 +99,35 @@
       }
     },
     "conclusion": "page and background are not separable by this rule on this capture: the page is dim (V 0.534 < 0.55) and the sofa is pale and desaturated, so the book box grows to the whole frame and the 83% abstain gate reads a detection failure as tight framing"
+  },
+  "resilience": {
+    "upload_retry_over_dropped_wifi": {
+      "branch": "clean retry",
+      "pages_created": 1,
+      "files_in_page": 2,
+      "exit_code": 0,
+      "note": "the accepted duplicate-page failure (response lost after the server processed it) did NOT fire; one observation"
+    },
+    "server_killed_mid_page": [
+      {
+        "page": "page_002",
+        "state_when_killed": "running",
+        "exit_code_when_killed": null,
+        "re_enqueued_at": "2026-08-28T09:56:49+00:00",
+        "final": "done exit 0"
+      },
+      {
+        "page": "page_003",
+        "state_when_killed": "running",
+        "exit_code_when_killed": null,
+        "re_enqueued_at": "2026-08-28T09:59:26+00:00",
+        "final": "done exit 0"
+      }
+    ],
+    "caveats": [
+      "worker.json is overwritten by the recovering run, so a finished page carries no trace of the interruption",
+      "a second server on the same jobs root reconciles BEFORE the port-bind check, re-enqueuing pages the first is running, then exits Errno 10048",
+      "first attempt reported success while killing nothing: a UTF-8 BOM in the PID file made taskkill say \"process ?39452 not found\" non-fatally"
+    ]
   }
 }

@@ -6211,3 +6211,48 @@ patch.
 figure — it came from an image containing both pages because the split was
 wrong. It is **not** comparable to `zoomset_de_02`'s per-page 293/385, and it
 is not evidence that OCR improved.
+
+### Addendum, same day: the two resilience checks that had never been run
+
+Goal 4 of `docs/DEVICE_SESSION.md` was the only completely untouched goal.
+Both halves now pass.
+
+**Upload over a dropped link — took the CLEAN branch.** Wi-Fi switched off on
+the phone, upload tapped, Wi-Fi restored ~15 s later. The spread arrived as
+**one** page holding **both** files, `exit 0`. The outcome that matters is
+*which* branch fired, not that it worked: the known-and-accepted failure —
+a response lost *after* the server already processed the request, which
+retries into a genuine duplicate page — did **not** occur. One observation, so
+this says the good path works, not that the duplicate path is unreachable.
+
+**Server killed mid-page — reconcile rescues it.** Killed on *state*, never on
+a timer: `reconcile.py` deliberately never re-enqueues a `failed` page, so
+hitting the wrong moment would test nothing. Run twice, same result both
+times:
+
+| | page_002 | page_003 |
+|---|---|---|
+| state when killed | `running`, `exit_code: null` | `running`, `exit_code: null` |
+| what the tree kill took | server + child pipeline pid | server + 2 children |
+| re-enqueued after restart | 09:56:49 | 09:59:26 |
+| final | `done`, exit 0 | `done`, exit 0 |
+
+Two notes recorded rather than discovered later:
+
+* **`worker.json` is overwritten by the recovering run**, so a completed page
+  carries no trace of having been interrupted. The recovery is only visible
+  live, or by noticing `started_at` is later than the upload. Fine today;
+  worth knowing before anyone tries to audit a restart after the fact.
+* **A second server launched against the same jobs root runs its startup
+  reconciliation BEFORE the port-bind check.** Observed accidentally: the
+  duplicate process re-enqueued a page the first server was actively running,
+  then exited with `[Errno 10048]`. Harmless in this instance, but an
+  accidental double-launch can duplicate work on an in-flight page. Not fixed.
+
+And one methodological scar, since it nearly published a false pass: the first
+run of this test reported success while **killing nothing**. PowerShell's
+`Out-File -Encoding utf8` writes a BOM, the BOM rode along in the PID string,
+and `taskkill` answered `The process "?39452" not found` — which the script
+did not treat as fatal. The page then completed under the *original* server
+and the state timeline looked exactly like a recovery. Read the PID with
+`utf-8-sig`, and check that the process is actually gone.

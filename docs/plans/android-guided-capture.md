@@ -288,10 +288,26 @@ a device, same caveat as M2-M4.
 
 ## Verification summary
 
-| Milestone | CI-able | Manual-only |
-|---|---|---|
-| M1 | JSON parsing unit tests | Real upload against running server |
-| M2 | — | Capture → pipeline E2E on a real spread |
-| M3 | Sharpness/stability scoring unit tests | Auto-trigger UX |
-| M4 | — | Capture → Stage 01 fuse validation (+ likely pipeline fixes) |
-| M5 | Retry/backoff unit tests | Job list / progress UX |
+| Milestone | CI-able | Manual-only | On device |
+|---|---|---|---|
+| M1 | JSON parsing unit tests | Real upload against running server | **DONE** 2026-08-19 |
+| M2 | — | Capture → pipeline E2E on a real spread | **DONE** 2026-08-19, again 2026-08-28 |
+| M3 | Sharpness/stability scoring unit tests | Auto-trigger UX | **DONE 2026-08-28 — and it FAILED**, see below |
+| M4 | — | Capture → Stage 01 fuse validation (+ likely pipeline fixes) | **DONE**; 18-image page ran clean, pipeline bug found (RESULTS 2026-08-28) |
+| M5 | Retry/backoff unit tests | Job list / progress UX | **DONE** 2026-08-28: resume, 7/7 progress, retry over a dropped link |
+
+**M3's on-device answer was negative, and the milestone is superseded.** Armed
+over a real spread the burst delivered **one** still, not the four the
+2026-08-19 hysteresis fix was measured to give — and the replay behind that
+four was blind by construction, because calibration logging suspends capture,
+so the fitting data holds no frame from just after a shutter fires. Manual
+capture is now the default flow and auto-capture is an opt-in toggle (owner's
+call, 2026-08-28). The review screen gained "Add full shot" so several
+whole-spread photographs go up together, which is what Stage 01's anchor
+choice actually wanted from a burst.
+
+**The remaining blocker for a usable scan is not in this app.** Neither real
+capture split into pages: `pipeline/book_boundary.py` returns the whole frame
+on a pale background, so the crop abstains and the spine finder is left
+searching a page whose emptiest column is not its gutter. See RESULTS
+2026-08-28.

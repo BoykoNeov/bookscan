@@ -84,11 +84,19 @@ def test_a_backwards_drag_is_still_a_box():
         assert r["ok"] and r["box"] == [400, 300, 1600, 1200]
 
 
-def test_a_drag_outside_the_frame_is_clamped_not_rejected():
+def test_a_drag_over_the_whole_frame_is_not_recorded_as_a_crop():
+    """It crops nothing, so nothing may claim it did.
+
+    Clamping a wild drag to the frame is right; calling the result an applied
+    crop is the same overstatement the abstain gate was fixed for on the same
+    day. The operator is told now, and no file is written.
+    """
     with tempfile.TemporaryDirectory() as td:
         page = _job(Path(td)) / "page_001"
         r = BE.save_user_box(page, [-500, -400, 9000, 9000])
-        assert r["ok"] and r["box"] == [0, 0, 2000, 1500]
+        assert not r["ok"]
+        assert "nothing to crop away" in r["error"]
+        assert not (page / S2.USER_BOX_FILE).exists()
 
 
 def test_a_stray_click_is_refused_before_it_reaches_the_pipeline():

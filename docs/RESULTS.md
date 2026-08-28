@@ -6689,7 +6689,12 @@ carries a human's confidence, so:
 * deleting the file restores the detector byte-for-byte;
 * `split.json` gains `book_crop_source` (`detector` | `operator` |
   `operator-refused`), because `book_crop_applied: false` alone cannot tell a
-  refused operator box from a page nobody ever drew on.
+  refused operator box from a page nobody ever drew on;
+* a box covering the **whole frame** is a third outcome, not a crop: it is
+  kept as the operator's answer (`book_crop_source: operator`) but reported
+  `applied: false` with *"there is nothing to crop away"*, and the editor
+  says so before writing anything. Recording it as an applied crop would be
+  the same overstatement the abstain gate was fixed for earlier the same day.
 
 The re-split button runs **Stage 02 only** — draw, re-split, look at the overlay.
 Stages 03–06 stay a separate explicit run.

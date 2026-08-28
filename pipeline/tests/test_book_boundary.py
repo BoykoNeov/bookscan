@@ -181,6 +181,22 @@ def test_an_undersized_drag_still_contains_the_book():
         "a 5 % undersized drag clipped the book — the outward pad is not working")
 
 
+def test_a_whole_frame_operator_box_is_accepted_but_claims_no_crop():
+    """Three outcomes, not two: applied, rejected, and "your answer is no crop".
+
+    The last one must not report ``applied`` (nothing was cut) and must not set
+    ``user_box_rejected`` either, or the caller would throw the human's answer
+    away and print the detector's reasoning instead.
+    """
+    img, _ = _cluttered_frame()
+    bb = BB.user_box(img, (0, 0, img.shape[1], img.shape[0]))
+    assert not bb.applied
+    assert "nothing to crop away" in bb.reason
+    assert bb.emit == (0, 0, img.shape[1], img.shape[0])
+    assert not bb.diag.get("user_box_rejected")
+    assert bb.diag["emit_source"] == "operator"
+
+
 def test_operator_box_refuses_nonsense_rather_than_cropping_to_it():
     img, _ = _cluttered_frame()
     assert not BB.user_box(img, (5, 5, 5, 5)).applied

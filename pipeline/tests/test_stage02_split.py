@@ -429,6 +429,21 @@ def test_a_box_drawn_on_another_frame_is_refused_not_applied():
         assert any("REFUSED" in w and "re-run" in w for w in meta["warnings"])
 
 
+def test_a_whole_frame_box_stays_the_operators_answer():
+    """A box that crops nothing must not silently become the detector's page."""
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = Path(td) / "page_001"
+        (page_dir / "01_fuse").mkdir(parents=True)
+        cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), spread)
+        _write_user_box(page_dir, (0, 0, 2000, 1500))
+        r = run(page_dir, {})
+        assert r.book_crop_source == "operator", (
+            "the human acted on this page; the record must say so")
+        assert r.book_crop_applied is False, "nothing was cropped"
+        assert "nothing to crop away" in r.book_crop_reason
+
+
 def test_a_corrupt_box_file_never_stops_a_page():
     """The operator's convenience tool must not be able to break processing."""
     spread = _cluttered_spread()

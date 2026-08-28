@@ -696,9 +696,14 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
             book = BB.find_book(image, bb_params)
         else:
             book = BB.user_box(image, tuple(user.box), bb_params)
-            crop_source = "operator" if book.applied else "operator-refused"
-            if not book.applied:
+            crop_source = "operator"
+            if book.diag.get("user_box_rejected"):
+                # Unusable box -> detect instead. A box that merely crops nothing
+                # is NOT this case: it is the human's answer and it stands, so
+                # the artifacts keep saying "operator" rather than reporting the
+                # detector's reasoning for a page a person acted on.
                 warnings.append(f"operator book box REFUSED: {book.reason}")
+                crop_source = "operator-refused"
                 book = BB.find_book(image, bb_params)
     else:
         book = BB.find_book(image, bb_params)

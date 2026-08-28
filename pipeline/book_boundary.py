@@ -366,7 +366,12 @@ def user_box(image: np.ndarray, drawn: Box, p: dict | None = None
     SEARCH; nothing is bought by cropping to it exactly.
 
     Refuses a box that is degenerate or outside the frame; the caller then falls
-    back to detection rather than cropping to nonsense.
+    back to detection rather than cropping to nonsense. A box that covers the
+    whole frame is a third case: it is accepted but reported as ``applied =
+    False``, because it crops nothing and saying otherwise would be the same
+    overstatement the area gate above was fixed for. ``diag`` carries
+    ``user_box_rejected`` on the refusals only, so a caller can tell "fall back
+    to detection" from "the human's answer was no crop".
     """
     p = dict(DEFAULTS) if p is None else p
     h, w = image.shape[:2]
@@ -393,6 +398,20 @@ def user_box(image: np.ndarray, drawn: Box, p: dict | None = None
     sbox = _pad_box((x0, y0, x1, y1), float(p["search_pad"]), w, h)
     ebox = _union(_pad_box((x0, y0, x1, y1), float(p["emit_pad"]), w, h), sbox)
     ex0, ey0, ex1, ey1 = ebox
+    if (ex0, ey0, ex1, ey1) == full and sbox == full:
+        # Reporting discipline, same as the area gate's: a box that reaches the
+        # frame on every side once padded cuts nothing, and recording it as an
+        # APPLIED crop would claim something that did not happen. Note this is
+        # NOT the rejection path — no ``user_box_rejected`` flag — so the caller
+        # keeps the operator's answer instead of falling back to the detector
+        # and reporting the detector's reason for a page a human acted on.
+        return BookBoundary(
+            applied=False, emit=full, search=full,
+            reason=f"the box you drew, {(x0, y0, x1, y1)}, covers the whole "
+                   f"{w}x{h} frame once padded {float(p['search_pad']):.0%} "
+                   f"outward - there is nothing to crop away",
+            diag={"user_box": [x0, y0, x1, y1], "emit_source": "operator",
+                  "emit_area_frac": 1.0, "search_area_frac": 1.0})
     return BookBoundary(
         applied=True, emit=ebox, search=sbox,
         reason=f"using the book box an operator drew: {(x0, y0, x1, y1)}, "

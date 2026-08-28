@@ -141,6 +141,9 @@ def save_user_box(page_dir: Path, box: list[int]) -> dict:
     # letting them find out from a warning buried in meta.json.
     probe = BB.user_box(img, (x0, y0, x1, y1), BB.resolve_params({}))
     if not probe.applied:
+        # Covers both "unusable" and "crops nothing" — neither is worth writing,
+        # and the operator gets the sentence now instead of finding it in
+        # meta.json later.
         return {"ok": False, "error": probe.reason}
     (page_dir / S2.USER_BOX_FILE).write_text(
         rec.model_dump_json(indent=2), encoding="utf-8")

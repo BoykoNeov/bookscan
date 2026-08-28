@@ -15,6 +15,7 @@ import cv2
 import numpy as np
 
 from pipeline import book_boundary as BB
+from pipeline import stage02_split as S2mod
 from pipeline.stage02_split import DEFAULTS, cut_pages, detect_gutter, run
 
 
@@ -358,6 +359,86 @@ def test_crop_decision_is_recorded_for_a_human():
         assert any("book-boundary crop NOT applied" in w
                    for w in meta["warnings"])
         assert (page_dir / "debug" / "02_split.png").exists()
+
+
+# --------------------------------------------------------------------------
+# The operator's book box (v0.5.0). It is USER INPUT living at the page-dir
+# root, not a stage artifact — a documented exception to the stage contract —
+# and it is trusted, so the checks on it have to be real.
+# --------------------------------------------------------------------------
+
+
+def _write_user_box(page_dir: Path, box, frame_size=None, frame=None) -> None:
+    import json as _json
+    (page_dir / "book_box.json").write_text(_json.dumps({
+        "box": list(box),
+        "frame": frame or "01_fuse/anchor.png",
+        "frame_size": list(frame_size or (2000, 1500)),
+    }), encoding="utf-8")
+
+
+def test_no_operator_box_means_nothing_changes():
+    """The absent case must be indistinguishable from before the feature."""
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = Path(td) / "page_001"
+        (page_dir / "01_fuse").mkdir(parents=True)
+        cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), spread)
+        assert S2mod.load_user_box(page_dir) is None
+        r = run(page_dir, {})
+        assert r.book_crop_source == "detector"
+
+
+def test_operator_box_is_used_and_boxes_stay_original_coordinates():
+    """The one error that would surface only at patch-mode word crops."""
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = Path(td) / "page_001"
+        (page_dir / "01_fuse").mkdir(parents=True)
+        cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), spread)
+        _write_user_box(page_dir, (400, 300, 1600, 1200))
+        result = run(page_dir, {})
+        assert result.book_crop_source == "operator"
+        assert result.book_crop_applied is True
+        manifest = json.loads(
+            (page_dir / "02_split" / "split.json").read_text(encoding="utf-8"))
+        for page in manifest["pages"]:
+            box = page["box"]
+            src = cv2.imread(str(page_dir / page["source"]), cv2.IMREAD_COLOR)
+            written = cv2.imread(str(page_dir / "02_split" / page["name"]),
+                                 cv2.IMREAD_COLOR)
+            rebuilt = src[box["y"]:box["y"] + box["h"], box["x"]:box["x"] + box["w"]]
+            assert np.array_equal(written, rebuilt), (
+                f"{page['name']}: the operator-box crop offset was not added back")
+
+
+def test_a_box_drawn_on_another_frame_is_refused_not_applied():
+    """A stale box is a wrong crop carrying a human's full confidence."""
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = Path(td) / "page_001"
+        (page_dir / "01_fuse").mkdir(parents=True)
+        cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), spread)
+        clean = run(page_dir, {})
+        _write_user_box(page_dir, (400, 300, 1600, 1200), frame_size=(999, 888))
+        stale = run(page_dir, {})
+        assert stale.book_crop_source == "operator-refused"
+        assert (stale.gutter_x, stale.book_crop) == (clean.gutter_x, clean.book_crop)
+        meta = json.loads(
+            (page_dir / "02_split" / "meta.json").read_text(encoding="utf-8"))
+        assert any("REFUSED" in w and "re-run" in w for w in meta["warnings"])
+
+
+def test_a_corrupt_box_file_never_stops_a_page():
+    """The operator's convenience tool must not be able to break processing."""
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = Path(td) / "page_001"
+        (page_dir / "01_fuse").mkdir(parents=True)
+        cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), spread)
+        (page_dir / "book_box.json").write_text("{not json", encoding="utf-8")
+        r = run(page_dir, {})
+        assert r.book_crop_source == "detector" and r.pages
 
 
 # --------------------------------------------------------------------------

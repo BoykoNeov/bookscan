@@ -147,6 +147,48 @@ def test_only_the_area_gate_needs_the_caveat():
     assert "too small" in speck.reason and speck.evidence == ""
 
 
+def test_operator_box_is_padded_outward_not_used_as_drawn():
+    """The padding is the whole safety property, so assert it directly.
+
+    Measured 2026-08-28 on the eight labelled spreads: cropping to the box
+    exactly loses 1.95 % of the book on a 1 % undersized drag and 9.73 % on a
+    5 % one, while padding it loses 0.00 % at every perturbation up to 5 %.
+    Losing text is the one failure this stage treats as real, and a hand-drawn
+    box is exactly where a small error is expected.
+    """
+    img, _ = _cluttered_frame()
+    drawn = (400, 300, 1600, 1200)
+    bb = BB.user_box(img, drawn)
+    assert bb.applied, bb.reason
+    ex0, ey0, ex1, ey1 = bb.emit
+    assert ex0 < drawn[0] and ey0 < drawn[1]
+    assert ex1 > drawn[2] and ey1 > drawn[3]
+    # emit can never be tighter than search — the same invariant find_book has
+    sx0, sy0, sx1, sy1 = bb.search
+    assert ex0 <= sx0 and ey0 <= sy0 and ex1 >= sx1 and ey1 >= sy1
+    assert bb.diag["user_box"] == list(drawn)
+    assert bb.diag["emit_source"] == "operator"
+
+
+def test_an_undersized_drag_still_contains_the_book():
+    """Simulate a sloppy mouse: shrink the true book box 5 % and draw THAT."""
+    img, (x0, y0, x1, y1) = _cluttered_frame()
+    dx, dy = int((x1 - x0) * 0.025), int((y1 - y0) * 0.025)
+    bb = BB.user_box(img, (x0 + dx, y0 + dy, x1 - dx, y1 - dy))
+    assert bb.applied, bb.reason
+    ex0, ey0, ex1, ey1 = bb.emit
+    assert ex0 <= x0 and ey0 <= y0 and ex1 >= x1 and ey1 >= y1, (
+        "a 5 % undersized drag clipped the book — the outward pad is not working")
+
+
+def test_operator_box_refuses_nonsense_rather_than_cropping_to_it():
+    img, _ = _cluttered_frame()
+    assert not BB.user_box(img, (5, 5, 5, 5)).applied
+    assert not BB.user_box(img, (-90, -90, -10, -10)).applied
+    speck = BB.user_box(img, (900, 700, 1000, 780))
+    assert not speck.applied and "too small" in speck.reason
+
+
 def test_disabled_by_config_is_a_clean_no_op():
     img, _ = _cluttered_frame()
     p = BB.resolve_params({"book_crop": {"enabled": False}})

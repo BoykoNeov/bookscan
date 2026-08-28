@@ -1,0 +1,2296 @@
+{
+  "date": "2026-08-28",
+  "what": "A9-desktop: the operator draws the book box, on the computer rather than the phone (owner's call). tools/book_box_editor writes <page_dir>/book_box.json; pipeline/book_boundary.user_box pads it; Stage 02 checks its provenance and cuts the padded box.",
+  "why_this_and_not_more_detection": "docs/data/a10_background_first_20260828.json: eight families of cue measured, none separates 'the book fills the frame' from 'the mask merged the book with the room'. A9 is the option the plan ranks as having a guaranteed ceiling, and Phase 1 made the detector's 'I did not find the book' honest, which is the moment to ask a human.",
+  "acceptance": {
+    "split_eval": "19/21, exit 1, worst clipping 0.0% - unchanged, no book_box.json in testset/",
+    "test_suite": "569 passed (was 554; +15 for the operator box and the editor)",
+    "absent_case": "no book_box.json => book_crop_source 'detector' and byte-identical behaviour, asserted in tests"
+  },
+  "does_it_work": {
+    "method": "Feed the eight hand-read boxes in gt/book_box.json as if an operator had drawn them. Those were read with ruler overlays off the committed pixels, which is what a careful drag approximates.",
+    "result": "8 of 8 spreads split correctly, INCLUDING both frames that fail today",
+    "paleset_01": {
+      "gutter": 1699,
+      "want": 1680,
+      "tol": 200,
+      "today_without_a_box": 2741
+    },
+    "paleset_02": {
+      "gutter": 1749,
+      "want": 1778,
+      "tol": 200,
+      "today_without_a_box": null
+    },
+    "per_fixture": {
+      "de_01": {
+        "drawn_box": [
+          400,
+          170,
+          3490,
+          2810
+        ],
+        "gutter": null,
+        "want": 2000,
+        "tol": 200,
+        "hit": false,
+        "method": "none",
+        "ratio": 0.78,
+        "pinch_depth": 0.123,
+        "pinch_applicable": false
+      },
+      "de_02": {
+        "drawn_box": [
+          360,
+          90,
+          3640,
+          2960
+        ],
+        "gutter": 2061,
+        "want": 2040,
+        "tol": 200,
+        "hit": true,
+        "method": "pinch",
+        "ratio": 0.574,
+        "pinch_depth": 0.193,
+        "pinch_applicable": true
+      },
+      "paleset_01": {
+        "drawn_box": [
+          0,
+          400,
+          3050,
+          2760
+        ],
+        "gutter": 1701,
+        "want": 1680,
+        "tol": 200,
+        "hit": true,
+        "method": "ink",
+        "ratio": 0.439,
+        "pinch_depth": 0.17,
+        "pinch_applicable": false
+      },
+      "paleset_02": {
+        "drawn_box": [
+          340,
+          495,
+          3150,
+          2430
+        ],
+        "gutter": 1754,
+        "want": 1778,
+        "tol": 200,
+        "hit": true,
+        "method": "ink",
+        "ratio": 0.316,
+        "pinch_depth": 0.029,
+        "pinch_applicable": false
+      },
+      "zoomset_de_01": {
+        "drawn_box": [
+          330,
+          400,
+          2860,
+          2530
+        ],
+        "gutter": 1690,
+        "want": 1675,
+        "tol": 200,
+        "hit": true,
+        "method": "ink",
+        "ratio": 0.528,
+        "pinch_depth": 0.14,
+        "pinch_applicable": false
+      },
+      "zoomset_de_02": {
+        "drawn_box": [
+          300,
+          480,
+          2880,
+          2510
+        ],
+        "gutter": 1622,
+        "want": 1631,
+        "tol": 200,
+        "hit": true,
+        "method": "ink",
+        "ratio": 0.029,
+        "pinch_depth": 0.192,
+        "pinch_applicable": false
+      },
+      "zoomset_en_01": {
+        "drawn_box": [
+          640,
+          420,
+          2350,
+          2570
+        ],
+        "gutter": 1629,
+        "want": 1615,
+        "tol": 200,
+        "hit": true,
+        "method": "ink",
+        "ratio": 0.047,
+        "pinch_depth": 0.021,
+        "pinch_applicable": false
+      },
+      "zoomset_en_02": {
+        "drawn_box": [
+          620,
+          560,
+          2620,
+          2750
+        ],
+        "gutter": 1630,
+        "want": 1660,
+        "tol": 200,
+        "hit": true,
+        "method": "ink",
+        "ratio": 0.144,
+        "pinch_depth": 0.118,
+        "pinch_applicable": true
+      }
+    }
+  },
+  "why_the_drawn_box_is_padded_not_used_as_drawn": {
+    "question": "gt/book_box.json fed in straight makes 'clips 0.00%' true by construction. What does a real DRAG produce? A 4080px frame shown ~1000px wide is ~4 image px per screen px.",
+    "emit_equals_drawn_box_exactly": {
+      "clip_at_1pct_undersized": 1.95,
+      "clip_at_2pct": 3.92,
+      "clip_at_3pct": 5.9,
+      "clip_at_5pct": 9.73,
+      "verdict": "loses text on any realistic drag"
+    },
+    "emit_equals_drawn_box_padded_by_search_pad_0_08": {
+      "clip_at_every_perturbation_to_5pct": 0.0,
+      "gutters": "8/8 at every step",
+      "text_loss_starts_at": "~14% undersized",
+      "verdict": "SHIPPED - and it is what find_book's own _union(emit, search) produces anyway"
+    },
+    "per_fixture": {
+      "tight": {
+        "de_01": {
+          "shrink_0pct": {
+            "drawn": [
+              400,
+              170,
+              3490,
+              2810
+            ],
+            "emit": [
+              400,
+              170,
+              3490,
+              2810
+            ],
+            "gutter": 1991,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              415,
+              183,
+              3475,
+              2797
+            ],
+            "emit": [
+              415,
+              183,
+              3475,
+              2797
+            ],
+            "gutter": 1992,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 1.946,
+            "method": "pinch"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              430,
+              196,
+              3460,
+              2784
+            ],
+            "emit": [
+              430,
+              196,
+              3460,
+              2784
+            ],
+            "gutter": 1993,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 3.873,
+            "method": "pinch"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              446,
+              209,
+              3444,
+              2771
+            ],
+            "emit": [
+              446,
+              209,
+              3444,
+              2771
+            ],
+            "gutter": 1993,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 5.844,
+            "method": "pinch"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              477,
+              236,
+              3413,
+              2744
+            ],
+            "emit": [
+              477,
+              236,
+              3413,
+              2744
+            ],
+            "gutter": 1995,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 9.735,
+            "method": "pinch"
+          }
+        },
+        "de_02": {
+          "shrink_0pct": {
+            "drawn": [
+              360,
+              90,
+              3640,
+              2960
+            ],
+            "emit": [
+              360,
+              90,
+              3640,
+              2960
+            ],
+            "gutter": 2039,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              376,
+              104,
+              3624,
+              2946
+            ],
+            "emit": [
+              376,
+              104,
+              3624,
+              2946
+            ],
+            "gutter": 2040,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 1.942,
+            "method": "pinch"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              392,
+              118,
+              3608,
+              2932
+            ],
+            "emit": [
+              392,
+              118,
+              3608,
+              2932
+            ],
+            "gutter": 2040,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 3.864,
+            "method": "pinch"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              409,
+              133,
+              3591,
+              2917
+            ],
+            "emit": [
+              409,
+              133,
+              3591,
+              2917
+            ],
+            "gutter": 2041,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 5.895,
+            "method": "pinch"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              442,
+              161,
+              3558,
+              2889
+            ],
+            "emit": [
+              442,
+              161,
+              3558,
+              2889
+            ],
+            "gutter": 2043,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 9.7,
+            "method": "pinch"
+          }
+        },
+        "paleset_01": {
+          "shrink_0pct": {
+            "drawn": [
+              0,
+              400,
+              3050,
+              2760
+            ],
+            "emit": [
+              0,
+              400,
+              3050,
+              2760
+            ],
+            "gutter": 1699,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              15,
+              411,
+              3035,
+              2749
+            ],
+            "emit": [
+              15,
+              411,
+              3035,
+              2749
+            ],
+            "gutter": 1699,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 1.907,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              30,
+              423,
+              3020,
+              2737
+            ],
+            "emit": [
+              30,
+              423,
+              3020,
+              2737
+            ],
+            "gutter": 1699,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 3.878,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              45,
+              435,
+              3005,
+              2725
+            ],
+            "emit": [
+              45,
+              435,
+              3005,
+              2725
+            ],
+            "gutter": 1700,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 5.829,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              76,
+              459,
+              2974,
+              2701
+            ],
+            "emit": [
+              76,
+              459,
+              2974,
+              2701
+            ],
+            "gutter": 1700,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 9.734,
+            "method": "ink"
+          }
+        },
+        "paleset_02": {
+          "shrink_0pct": {
+            "drawn": [
+              340,
+              495,
+              3150,
+              2430
+            ],
+            "emit": [
+              340,
+              495,
+              3150,
+              2430
+            ],
+            "gutter": 1749,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              354,
+              504,
+              3136,
+              2421
+            ],
+            "emit": [
+              354,
+              504,
+              3136,
+              2421
+            ],
+            "gutter": 1750,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 1.917,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              368,
+              514,
+              3122,
+              2411
+            ],
+            "emit": [
+              368,
+              514,
+              3122,
+              2411
+            ],
+            "gutter": 1750,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 3.918,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              382,
+              524,
+              3108,
+              2401
+            ],
+            "emit": [
+              382,
+              524,
+              3108,
+              2401
+            ],
+            "gutter": 1750,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 5.897,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              410,
+              543,
+              3080,
+              2382
+            ],
+            "emit": [
+              410,
+              543,
+              3080,
+              2382
+            ],
+            "gutter": 1750,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 9.696,
+            "method": "ink"
+          }
+        },
+        "zoomset_de_01": {
+          "shrink_0pct": {
+            "drawn": [
+              330,
+              400,
+              2860,
+              2530
+            ],
+            "emit": [
+              330,
+              400,
+              2860,
+              2530
+            ],
+            "gutter": 1691,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              342,
+              410,
+              2848,
+              2520
+            ],
+            "emit": [
+              342,
+              410,
+              2848,
+              2520
+            ],
+            "gutter": 1692,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 1.879,
+            "method": "pinch"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              355,
+              421,
+              2835,
+              2509
+            ],
+            "emit": [
+              355,
+              421,
+              2835,
+              2509
+            ],
+            "gutter": 1691,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 3.909,
+            "method": "pinch"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              367,
+              431,
+              2823,
+              2499
+            ],
+            "emit": [
+              367,
+              431,
+              2823,
+              2499
+            ],
+            "gutter": 1690,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 5.751,
+            "method": "pinch"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              393,
+              453,
+              2797,
+              2477
+            ],
+            "emit": [
+              393,
+              453,
+              2797,
+              2477
+            ],
+            "gutter": 1689,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 9.709,
+            "method": "pinch"
+          }
+        },
+        "zoomset_de_02": {
+          "shrink_0pct": {
+            "drawn": [
+              300,
+              480,
+              2880,
+              2510
+            ],
+            "emit": [
+              300,
+              480,
+              2880,
+              2510
+            ],
+            "gutter": 1626,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              312,
+              490,
+              2868,
+              2500
+            ],
+            "emit": [
+              312,
+              490,
+              2868,
+              2500
+            ],
+            "gutter": 1626,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 1.906,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              325,
+              500,
+              2855,
+              2490
+            ],
+            "emit": [
+              325,
+              500,
+              2855,
+              2490
+            ],
+            "gutter": 1626,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 3.87,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              338,
+              510,
+              2842,
+              2480
+            ],
+            "emit": [
+              338,
+              510,
+              2842,
+              2480
+            ],
+            "gutter": 1626,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 5.814,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              364,
+              530,
+              2816,
+              2460
+            ],
+            "emit": [
+              364,
+              530,
+              2816,
+              2460
+            ],
+            "gutter": 1625,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 9.643,
+            "method": "ink"
+          }
+        },
+        "zoomset_en_01": {
+          "shrink_0pct": {
+            "drawn": [
+              640,
+              420,
+              2350,
+              2570
+            ],
+            "emit": [
+              640,
+              420,
+              2350,
+              2570
+            ],
+            "gutter": 1595,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              648,
+              430,
+              2342,
+              2560
+            ],
+            "emit": [
+              648,
+              430,
+              2342,
+              2560
+            ],
+            "gutter": 1595,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 1.857,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              657,
+              441,
+              2333,
+              2549
+            ],
+            "emit": [
+              657,
+              441,
+              2333,
+              2549
+            ],
+            "gutter": 1628,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 3.903,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              665,
+              452,
+              2325,
+              2538
+            ],
+            "emit": [
+              665,
+              452,
+              2325,
+              2538
+            ],
+            "gutter": 1628,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 5.814,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              682,
+              473,
+              2308,
+              2517
+            ],
+            "emit": [
+              682,
+              473,
+              2308,
+              2517
+            ],
+            "gutter": 1594,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 9.6,
+            "method": "ink"
+          }
+        },
+        "zoomset_en_02": {
+          "shrink_0pct": {
+            "drawn": [
+              620,
+              560,
+              2620,
+              2750
+            ],
+            "emit": [
+              620,
+              560,
+              2620,
+              2750
+            ],
+            "gutter": 1628,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              630,
+              570,
+              2610,
+              2740
+            ],
+            "emit": [
+              630,
+              570,
+              2610,
+              2740
+            ],
+            "gutter": 1629,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 1.904,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              640,
+              581,
+              2600,
+              2729
+            ],
+            "emit": [
+              640,
+              581,
+              2600,
+              2729
+            ],
+            "gutter": 1629,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 3.879,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              650,
+              592,
+              2590,
+              2718
+            ],
+            "emit": [
+              650,
+              592,
+              2590,
+              2718
+            ],
+            "gutter": 1629,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 5.835,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              670,
+              614,
+              2570,
+              2696
+            ],
+            "emit": [
+              670,
+              614,
+              2570,
+              2696
+            ],
+            "gutter": 1630,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 9.685,
+            "method": "ink"
+          }
+        }
+      },
+      "_summary": {
+        "tight": {
+          "worst_clip_pct": {
+            "0": 0.0,
+            "1": 1.946,
+            "2": 3.918,
+            "3": 5.897,
+            "5": 9.735
+          },
+          "gutter_fails": {
+            "0": [],
+            "1": [],
+            "2": [],
+            "3": [],
+            "5": []
+          }
+        },
+        "padded": {
+          "worst_clip_pct": {
+            "0": 0.0,
+            "1": 0.0,
+            "2": 0.0,
+            "3": 0.0,
+            "5": 0.0
+          },
+          "gutter_fails": {
+            "0": [],
+            "1": [],
+            "2": [],
+            "3": [],
+            "5": []
+          }
+        }
+      },
+      "padded": {
+        "de_01": {
+          "shrink_0pct": {
+            "drawn": [
+              400,
+              170,
+              3490,
+              2810
+            ],
+            "emit": [
+              152,
+              0,
+              3737,
+              3000
+            ],
+            "gutter": 1991,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              415,
+              183,
+              3475,
+              2797
+            ],
+            "emit": [
+              170,
+              0,
+              3719,
+              3000
+            ],
+            "gutter": 1992,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              430,
+              196,
+              3460,
+              2784
+            ],
+            "emit": [
+              187,
+              0,
+              3702,
+              2991
+            ],
+            "gutter": 1993,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              446,
+              209,
+              3444,
+              2771
+            ],
+            "emit": [
+              206,
+              4,
+              3683,
+              2975
+            ],
+            "gutter": 1993,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              477,
+              236,
+              3413,
+              2744
+            ],
+            "emit": [
+              242,
+              35,
+              3647,
+              2944
+            ],
+            "gutter": 1995,
+            "want": 2000,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          }
+        },
+        "de_02": {
+          "shrink_0pct": {
+            "drawn": [
+              360,
+              90,
+              3640,
+              2960
+            ],
+            "emit": [
+              97,
+              0,
+              3902,
+              3000
+            ],
+            "gutter": 2039,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              376,
+              104,
+              3624,
+              2946
+            ],
+            "emit": [
+              116,
+              0,
+              3883,
+              3000
+            ],
+            "gutter": 2040,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              392,
+              118,
+              3608,
+              2932
+            ],
+            "emit": [
+              134,
+              0,
+              3865,
+              3000
+            ],
+            "gutter": 2040,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              409,
+              133,
+              3591,
+              2917
+            ],
+            "emit": [
+              154,
+              0,
+              3845,
+              3000
+            ],
+            "gutter": 2041,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              442,
+              161,
+              3558,
+              2889
+            ],
+            "emit": [
+              192,
+              0,
+              3807,
+              3000
+            ],
+            "gutter": 2043,
+            "want": 2040,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          }
+        },
+        "paleset_01": {
+          "shrink_0pct": {
+            "drawn": [
+              0,
+              400,
+              3050,
+              2760
+            ],
+            "emit": [
+              0,
+              211,
+              3294,
+              2948
+            ],
+            "gutter": 1699,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              15,
+              411,
+              3035,
+              2749
+            ],
+            "emit": [
+              0,
+              223,
+              3276,
+              2936
+            ],
+            "gutter": 1699,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              30,
+              423,
+              3020,
+              2737
+            ],
+            "emit": [
+              0,
+              237,
+              3259,
+              2922
+            ],
+            "gutter": 1699,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              45,
+              435,
+              3005,
+              2725
+            ],
+            "emit": [
+              0,
+              251,
+              3241,
+              2908
+            ],
+            "gutter": 1700,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              76,
+              459,
+              2974,
+              2701
+            ],
+            "emit": [
+              0,
+              279,
+              3205,
+              2880
+            ],
+            "gutter": 1700,
+            "want": 1680,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          }
+        },
+        "paleset_02": {
+          "shrink_0pct": {
+            "drawn": [
+              340,
+              495,
+              3150,
+              2430
+            ],
+            "emit": [
+              115,
+              340,
+              3374,
+              2584
+            ],
+            "gutter": 1749,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              354,
+              504,
+              3136,
+              2421
+            ],
+            "emit": [
+              131,
+              350,
+              3358,
+              2574
+            ],
+            "gutter": 1750,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              368,
+              514,
+              3122,
+              2411
+            ],
+            "emit": [
+              147,
+              362,
+              3342,
+              2562
+            ],
+            "gutter": 1750,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              382,
+              524,
+              3108,
+              2401
+            ],
+            "emit": [
+              163,
+              373,
+              3326,
+              2551
+            ],
+            "gutter": 1750,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              410,
+              543,
+              3080,
+              2382
+            ],
+            "emit": [
+              196,
+              395,
+              3293,
+              2529
+            ],
+            "gutter": 1750,
+            "want": 1778,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          }
+        },
+        "zoomset_de_01": {
+          "shrink_0pct": {
+            "drawn": [
+              330,
+              400,
+              2860,
+              2530
+            ],
+            "emit": [
+              127,
+              229,
+              3062,
+              2700
+            ],
+            "gutter": 1691,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              342,
+              410,
+              2848,
+              2520
+            ],
+            "emit": [
+              141,
+              241,
+              3048,
+              2688
+            ],
+            "gutter": 1692,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              355,
+              421,
+              2835,
+              2509
+            ],
+            "emit": [
+              156,
+              253,
+              3033,
+              2676
+            ],
+            "gutter": 1691,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              367,
+              431,
+              2823,
+              2499
+            ],
+            "emit": [
+              170,
+              265,
+              3019,
+              2664
+            ],
+            "gutter": 1690,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              393,
+              453,
+              2797,
+              2477
+            ],
+            "emit": [
+              200,
+              291,
+              2989,
+              2638
+            ],
+            "gutter": 1689,
+            "want": 1675,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "pinch"
+          }
+        },
+        "zoomset_de_02": {
+          "shrink_0pct": {
+            "drawn": [
+              300,
+              480,
+              2880,
+              2510
+            ],
+            "emit": [
+              93,
+              317,
+              3086,
+              2672
+            ],
+            "gutter": 1626,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              312,
+              490,
+              2868,
+              2500
+            ],
+            "emit": [
+              107,
+              329,
+              3072,
+              2660
+            ],
+            "gutter": 1626,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              325,
+              500,
+              2855,
+              2490
+            ],
+            "emit": [
+              122,
+              340,
+              3057,
+              2649
+            ],
+            "gutter": 1626,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              338,
+              510,
+              2842,
+              2480
+            ],
+            "emit": [
+              137,
+              352,
+              3042,
+              2637
+            ],
+            "gutter": 1626,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              364,
+              530,
+              2816,
+              2460
+            ],
+            "emit": [
+              167,
+              375,
+              3012,
+              2614
+            ],
+            "gutter": 1625,
+            "want": 1631,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          }
+        },
+        "zoomset_en_01": {
+          "shrink_0pct": {
+            "drawn": [
+              640,
+              420,
+              2350,
+              2570
+            ],
+            "emit": [
+              503,
+              248,
+              2486,
+              2742
+            ],
+            "gutter": 1595,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              648,
+              430,
+              2342,
+              2560
+            ],
+            "emit": [
+              512,
+              259,
+              2477,
+              2730
+            ],
+            "gutter": 1595,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              657,
+              441,
+              2333,
+              2549
+            ],
+            "emit": [
+              522,
+              272,
+              2467,
+              2717
+            ],
+            "gutter": 1628,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              665,
+              452,
+              2325,
+              2538
+            ],
+            "emit": [
+              532,
+              285,
+              2457,
+              2704
+            ],
+            "gutter": 1628,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              682,
+              473,
+              2308,
+              2517
+            ],
+            "emit": [
+              551,
+              309,
+              2438,
+              2680
+            ],
+            "gutter": 1594,
+            "want": 1615,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          }
+        },
+        "zoomset_en_02": {
+          "shrink_0pct": {
+            "drawn": [
+              620,
+              560,
+              2620,
+              2750
+            ],
+            "emit": [
+              460,
+              384,
+              2780,
+              2925
+            ],
+            "gutter": 1628,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_1pct": {
+            "drawn": [
+              630,
+              570,
+              2610,
+              2740
+            ],
+            "emit": [
+              471,
+              396,
+              2768,
+              2913
+            ],
+            "gutter": 1629,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_2pct": {
+            "drawn": [
+              640,
+              581,
+              2600,
+              2729
+            ],
+            "emit": [
+              483,
+              409,
+              2756,
+              2900
+            ],
+            "gutter": 1629,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_3pct": {
+            "drawn": [
+              650,
+              592,
+              2590,
+              2718
+            ],
+            "emit": [
+              494,
+              421,
+              2745,
+              2888
+            ],
+            "gutter": 1629,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          },
+          "shrink_5pct": {
+            "drawn": [
+              670,
+              614,
+              2570,
+              2696
+            ],
+            "emit": [
+              518,
+              447,
+              2722,
+              2862
+            ],
+            "gutter": 1630,
+            "want": 1660,
+            "hit": true,
+            "clip_pct": 0.0,
+            "method": "ink"
+          }
+        }
+      }
+    }
+  },
+  "how_wrong_can_the_drag_be": {
+    "symmetric_error": {
+      "envelope": "+-10% -> 8/8 gutters and 0.00% clipping",
+      "grown_15_20_30pct": "7/8 (paleset_02 fails)",
+      "shrunk_10pct": "7/8 (zoomset_de_01 fails)",
+      "clipping": "0.00% at every step measured, both directions",
+      "per_fixture": {
+        "per_fixture": {
+          "de_01": {
+            "30": {
+              "hit": true,
+              "gutter": 1983,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.851
+            },
+            "20": {
+              "hit": true,
+              "gutter": 1983,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.851
+            },
+            "15": {
+              "hit": true,
+              "gutter": 1983,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.851
+            },
+            "10": {
+              "hit": true,
+              "gutter": 1985,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.853
+            },
+            "5": {
+              "hit": true,
+              "gutter": 1988,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.85
+            },
+            "0": {
+              "hit": true,
+              "gutter": 1991,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.843
+            },
+            "-5": {
+              "hit": true,
+              "gutter": 1995,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.837
+            },
+            "-10": {
+              "hit": true,
+              "gutter": 1998,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.804
+            }
+          },
+          "de_02": {
+            "30": {
+              "hit": true,
+              "gutter": 2047,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.666
+            },
+            "20": {
+              "hit": true,
+              "gutter": 2047,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.666
+            },
+            "15": {
+              "hit": true,
+              "gutter": 2047,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.666
+            },
+            "10": {
+              "hit": true,
+              "gutter": 2047,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.666
+            },
+            "5": {
+              "hit": true,
+              "gutter": 2047,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.662
+            },
+            "0": {
+              "hit": true,
+              "gutter": 2039,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.651
+            },
+            "-5": {
+              "hit": true,
+              "gutter": 2043,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.64
+            },
+            "-10": {
+              "hit": true,
+              "gutter": 2046,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.611
+            }
+          },
+          "paleset_01": {
+            "30": {
+              "hit": true,
+              "gutter": 1674,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.586
+            },
+            "20": {
+              "hit": true,
+              "gutter": 1680,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.564
+            },
+            "15": {
+              "hit": true,
+              "gutter": 1697,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.542
+            },
+            "10": {
+              "hit": true,
+              "gutter": 1697,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.5
+            },
+            "5": {
+              "hit": true,
+              "gutter": 1698,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.486
+            },
+            "0": {
+              "hit": true,
+              "gutter": 1699,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.469
+            },
+            "-5": {
+              "hit": true,
+              "gutter": 1700,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.466
+            },
+            "-10": {
+              "hit": true,
+              "gutter": 1699,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.451
+            }
+          },
+          "paleset_02": {
+            "30": {
+              "hit": false,
+              "gutter": null,
+              "clip_pct": 0.0,
+              "method": "none",
+              "ratio": 0.66
+            },
+            "20": {
+              "hit": false,
+              "gutter": null,
+              "clip_pct": 0.0,
+              "method": "none",
+              "ratio": 0.596
+            },
+            "15": {
+              "hit": false,
+              "gutter": null,
+              "clip_pct": 0.0,
+              "method": "none",
+              "ratio": 0.565
+            },
+            "10": {
+              "hit": true,
+              "gutter": 1747,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.518
+            },
+            "5": {
+              "hit": true,
+              "gutter": 1747,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.48
+            },
+            "0": {
+              "hit": true,
+              "gutter": 1749,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.435
+            },
+            "-5": {
+              "hit": true,
+              "gutter": 1750,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.384
+            },
+            "-10": {
+              "hit": true,
+              "gutter": 1753,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.34
+            }
+          },
+          "zoomset_de_01": {
+            "30": {
+              "hit": true,
+              "gutter": 1480,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.677
+            },
+            "20": {
+              "hit": true,
+              "gutter": 1483,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.67
+            },
+            "15": {
+              "hit": true,
+              "gutter": 1621,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.657
+            },
+            "10": {
+              "hit": true,
+              "gutter": 1664,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.654
+            },
+            "5": {
+              "hit": true,
+              "gutter": 1688,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.641
+            },
+            "0": {
+              "hit": true,
+              "gutter": 1691,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.638
+            },
+            "-5": {
+              "hit": true,
+              "gutter": 1689,
+              "clip_pct": 0.0,
+              "method": "pinch",
+              "ratio": 0.612
+            },
+            "-10": {
+              "hit": false,
+              "gutter": null,
+              "clip_pct": 0.0,
+              "method": "none",
+              "ratio": 0.56
+            }
+          },
+          "zoomset_de_02": {
+            "30": {
+              "hit": true,
+              "gutter": 1631,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.144
+            },
+            "20": {
+              "hit": true,
+              "gutter": 1629,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.116
+            },
+            "15": {
+              "hit": true,
+              "gutter": 1630,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.109
+            },
+            "10": {
+              "hit": true,
+              "gutter": 1629,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.098
+            },
+            "5": {
+              "hit": true,
+              "gutter": 1628,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.069
+            },
+            "0": {
+              "hit": true,
+              "gutter": 1626,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.049
+            },
+            "-5": {
+              "hit": true,
+              "gutter": 1625,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.043
+            },
+            "-10": {
+              "hit": true,
+              "gutter": 1623,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.035
+            }
+          },
+          "zoomset_en_01": {
+            "30": {
+              "hit": true,
+              "gutter": 1612,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.165
+            },
+            "20": {
+              "hit": true,
+              "gutter": 1612,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.144
+            },
+            "15": {
+              "hit": true,
+              "gutter": 1623,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.112
+            },
+            "10": {
+              "hit": true,
+              "gutter": 1624,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.103
+            },
+            "5": {
+              "hit": true,
+              "gutter": 1625,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.094
+            },
+            "0": {
+              "hit": true,
+              "gutter": 1595,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.085
+            },
+            "-5": {
+              "hit": true,
+              "gutter": 1594,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.065
+            },
+            "-10": {
+              "hit": true,
+              "gutter": 1628,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.048
+            }
+          },
+          "zoomset_en_02": {
+            "30": {
+              "hit": true,
+              "gutter": 1623,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.342
+            },
+            "20": {
+              "hit": true,
+              "gutter": 1624,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.271
+            },
+            "15": {
+              "hit": true,
+              "gutter": 1627,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.249
+            },
+            "10": {
+              "hit": true,
+              "gutter": 1628,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.228
+            },
+            "5": {
+              "hit": true,
+              "gutter": 1628,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.19
+            },
+            "0": {
+              "hit": true,
+              "gutter": 1628,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.177
+            },
+            "-5": {
+              "hit": true,
+              "gutter": 1630,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.165
+            },
+            "-10": {
+              "hit": true,
+              "gutter": 1629,
+              "clip_pct": 0.0,
+              "method": "ink",
+              "ratio": 0.148
+            }
+          }
+        },
+        "summary": {
+          "30": {
+            "hits": 7,
+            "worst_clip": 0.0
+          },
+          "20": {
+            "hits": 7,
+            "worst_clip": 0.0
+          },
+          "15": {
+            "hits": 7,
+            "worst_clip": 0.0
+          },
+          "10": {
+            "hits": 8,
+            "worst_clip": 0.0
+          },
+          "5": {
+            "hits": 8,
+            "worst_clip": 0.0
+          },
+          "0": {
+            "hits": 8,
+            "worst_clip": 0.0
+          },
+          "-5": {
+            "hits": 8,
+            "worst_clip": 0.0
+          },
+          "-10": {
+            "hits": 7,
+            "worst_clip": 0.0
+          }
+        }
+      }
+    },
+    "one_sided_error_is_the_dangerous_one": {
+      "found_how": "By driving the tool in a browser and making the mistake: a drag ~400px too wide on the RIGHT only took paleset_01's ink ratio from 0.44 to 0.56 and lost the split entirely. The perturbation sweep had only tested SYMMETRIC error.",
+      "mechanism": "the spine is searched in the middle 30-70% OF THE DRAWN BOX, so extra width on one side slides the book sideways inside it until the spine leaves the band",
+      "extra_width_on_one_edge": {
+        "0%": "8/8",
+        "5%": "8/8",
+        "10%": "7/8",
+        "15%": "7/8",
+        "20%": "5/8",
+        "30%": "4/8",
+        "40%": "4/8"
+      },
+      "what_shipped_because_of_it": "the editor now SHADES the 30-70% band of the drawn box and draws the last gutter it found, so an off-centre box is visible rather than a surprise; and the header hint says extra room on one side is the mistake, not sloppiness in general"
+    }
+  },
+  "safety_rules_that_ship": [
+    "the drawn box is padded outward by search_pad before anything is cut",
+    "a box whose frame or frame_size does not match the current anchor is REFUSED with a stated reason, and the detector runs instead - a box drawn on a re-run anchor is a wrong crop carrying a human's confidence",
+    "a degenerate or sub-min_area_frac box is refused in the editor BEFORE it is written, and again in Stage 02",
+    "a corrupt book_box.json is treated as absent, never as an error - the convenience tool must not be able to stop a page processing",
+    "deleting the file restores the detector byte-for-byte",
+    "book_crop_source records detector | operator | operator-refused, because 'applied False' alone cannot distinguish a refused operator box from a page nobody drew on"
+  ]
+}

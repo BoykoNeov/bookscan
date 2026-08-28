@@ -335,6 +335,75 @@ def grabcut_box(image: np.ndarray, p: dict) -> Box | None:
 # --------------------------------------------------------------------------
 
 
+def user_box(image: np.ndarray, drawn: Box, p: dict | None = None
+             ) -> BookBoundary:
+    """Use a box an operator drew, instead of detecting one.
+
+    This is the escape hatch the whole pale-background investigation ended at.
+    Eight families of cue were measured and none can tell "the book fills the
+    frame" from "the mask merged the book with the room" (RESULTS 2026-08-28), so
+    the remaining option with a guaranteed ceiling is to let a human say where the
+    book is. Phase 1 is what makes that offer honest: the detector can now admit
+    it did not find the book, which is the moment to ask.
+
+    **The drawn box is padded, not used as drawn, and that is load-bearing.**
+    Measured on the eight labelled spreads by shrinking each box to simulate a
+    sloppy drag (a 4080 px frame shown ~1000 px wide is ~4 image px per screen
+    px, so a drag is nowhere near ruler-accurate):
+
+      * emit = the box exactly as drawn -> a 1 % small drag already clips 1.95 %
+        of the book, a 5 % one clips 9.73 %. That is lost text, the one failure
+        this stage treats as real.
+      * emit = the drawn box padded by ``search_pad`` -> **0.00 % clipping at
+        every perturbation up to 5 %**, with all eight gutters still correct.
+        Text is only lost past a ~14 % undersized drag.
+
+    So both boxes are the padded one. The two-box split does not disappear, it
+    simply collapses here — ``_union(emit, search)`` below already guaranteed
+    emit could never be tighter than search, and the module docstring's asymmetry
+    (stray room is harmless, clipping cannot be undone) says that collapse should
+    land on the generous side. The tightness of the drawn box is what buys the
+    SEARCH; nothing is bought by cropping to it exactly.
+
+    Refuses a box that is degenerate or outside the frame; the caller then falls
+    back to detection rather than cropping to nonsense.
+    """
+    p = dict(DEFAULTS) if p is None else p
+    h, w = image.shape[:2]
+    full: Box = (0, 0, w, h)
+    x0, y0, x1, y1 = (int(v) for v in drawn)
+    x0, y0 = max(0, x0), max(0, y0)
+    x1, y1 = min(w, x1), min(h, y1)
+    if x1 - x0 < 2 or y1 - y0 < 2:
+        return BookBoundary(
+            applied=False, emit=full, search=full,
+            reason=f"operator box {tuple(drawn)} is empty or outside the "
+                   f"{w}x{h} frame - ignoring it and detecting instead",
+            diag={"user_box": list(drawn), "user_box_rejected": True})
+    frame_area = float(w * h)
+    area_frac = ((x1 - x0) * (y1 - y0)) / frame_area
+    if area_frac < p["min_area_frac"]:
+        return BookBoundary(
+            applied=False, emit=full, search=full,
+            reason=f"operator box is {area_frac:.1%} of the frame (< "
+                   f"{p['min_area_frac']:.0%}) - too small to be a book spread, "
+                   f"ignoring it and detecting instead",
+            diag={"user_box": list(drawn), "user_box_rejected": True})
+
+    sbox = _pad_box((x0, y0, x1, y1), float(p["search_pad"]), w, h)
+    ebox = _union(_pad_box((x0, y0, x1, y1), float(p["emit_pad"]), w, h), sbox)
+    ex0, ey0, ex1, ey1 = ebox
+    return BookBoundary(
+        applied=True, emit=ebox, search=sbox,
+        reason=f"using the book box an operator drew: {(x0, y0, x1, y1)}, "
+               f"padded {float(p['search_pad']):.0%} outward",
+        diag={"user_box": [x0, y0, x1, y1],
+              "emit_source": "operator",
+              "emit_area_frac": round(((ex1-ex0)*(ey1-ey0)) / frame_area, 3),
+              "search_area_frac": round(
+                  ((sbox[2]-sbox[0])*(sbox[3]-sbox[1])) / frame_area, 3)})
+
+
 def find_book(image: np.ndarray, p: dict | None = None) -> BookBoundary:
     """Locate the book. Abstaining is a normal, recorded outcome.
 

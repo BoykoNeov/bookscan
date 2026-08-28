@@ -6599,3 +6599,97 @@ a *negative* for A10 itself.
 Background-first is **23 ms** on the 4080×3060 `paleset_01` frame, against
 `find_book`'s own 318 ms, and it would run only where the paper route already
 abstained on area. Cost is not what stands in the way.
+
+## 2026-08-28 — the operator draws the box, on the desktop
+
+The escape hatch the pale-background investigation ended at, built. Owner's call
+on both counts: do this **and** go shoot more fixtures, and draw the box **on the
+computer, not the phone** ("it is easier"). `tools/split_eval` is unchanged at
+**19/21, exit 1**, worst clipping **0.0 %** — nothing in `testset/` has a drawn
+box, and the absent case is byte-identical by construction. Suite **569**
+(was 554). Machine-readable: `docs/data/operator_book_box_20260828.json`.
+
+### It works, and on exactly the frames that fail today
+
+Feeding the eight hand-read boxes from `gt/book_box.json` in as if an operator
+had drawn them — those were read with ruler overlays off the committed pixels,
+which is what a careful drag approximates — splits **8 of 8**:
+
+| | today, no box | with a drawn box | ground truth |
+|---|---|---|---|
+| `paleset_01` | **2741** (inside the right page) | **1699** | 1680 ±200 |
+| `paleset_02` | **none** — one page | **1749** | 1778 ±200 |
+
+The other six (`de_01`, `de_02`, four `zoomset_*`) stay correct.
+
+### The drawn box is padded, and that is the whole safety property
+
+Feeding the labels in straight makes "clips 0.00 %" true by construction, so the
+real question is what a *drag* produces. A 4080 px frame shown ~1000 px wide is
+~4 image pixels per screen pixel. Shrinking each label to simulate that:
+
+| emit box is… | 1 % undersized | 2 % | 3 % | 5 % |
+|---|---|---|---|---|
+| the drag exactly | **1.95 %** of the book lost | 3.92 % | 5.90 % | **9.73 %** |
+| the drag padded by `search_pad` | **0.00 %** | 0.00 % | 0.00 % | **0.00 %** |
+
+All eight gutters stay correct in both rows; text is only lost past a ~14 %
+undersized drag. So `book_boundary.user_box` pads the box outward and Stage 02
+cuts the padded one — which is also what `find_book`'s existing
+`_union(emit, search)` produces anyway. The module's own asymmetry decides it:
+stray room inside the emit box is harmless, clipping cannot be undone.
+
+**On the 0.08 pad — no overclaiming.** It was chosen by sweeping {0, 0.03, 0.06,
+0.10} against these eight boxes and taking what worked; 0.06, 0.08 and 0.10 all
+give 8/8. That it equals the existing `search_pad` is a consistency argument (one
+pad concept, one value), not independent evidence. And record the **dead zone**:
+`zoomset_de_01` passes at 0.00, **fails at 0.03**, passes at 0.06+ — the ink cue
+has lost its valley there while the pinch cue is not yet applicable, a direct
+consequence of the applicability gate shipped earlier the same day. A smaller pad
+is *not* safer.
+
+### The failure mode found by actually using it
+
+Driving the tool in a browser, a drag ~400 px too wide **on the right only**
+took `paleset_01`'s ink ratio from 0.44 to 0.56 and lost the split entirely. The
+perturbation sweep had only tested *symmetric* error, so it had missed this.
+Measured properly afterwards:
+
+| extra width on **one** edge | 0 % | 5 % | 10 % | 15 % | 20 % | 30 % |
+|---|---|---|---|---|---|---|
+| spreads split correctly | 8/8 | 8/8 | **7/8** | 7/8 | **5/8** | 4/8 |
+
+Symmetric error is far more forgiving — **±10 % is 8/8 with 0.00 % clipping**.
+The mechanism is plain once seen: the spine is searched in the middle **30–70 %
+of the drawn box**, so extra width on one side slides the book sideways inside it
+until the spine leaves the band.
+
+That is invisible to an operator, so the editor now **shades the 30–70 % band of
+the box being drawn** and draws the last gutter it found as a line, and the
+header says the mistake to avoid is *extra room on one side* rather than
+sloppiness in general. A wrong box is now something you can see before you save
+it.
+
+### What ships, and the rules that keep a trusted box safe
+
+`tools/book_box_editor` (stdlib HTTP server + a browser page, the
+`pipeline/editor.py` pattern) writes `<page_dir>/book_box.json`. That file is
+**user input, not a stage artifact** — the same kind of thing as `config.yaml` or
+`--mode patch` — which is why it sits at the page-dir root rather than in a
+numbered folder, and why it is a documented CLAUDE.md exception. A hand-drawn box
+carries a human's confidence, so:
+
+* a box whose `frame`/`frame_size` does not match the current anchor is
+  **refused** with a stated reason and the detector runs instead — a box drawn
+  before Stage 01 re-ran is a wrong crop nobody would question;
+* a degenerate or sub-`min_area_frac` box is refused in the editor *before* it is
+  written, and again in Stage 02;
+* a corrupt `book_box.json` is treated as absent, never as an error — a
+  convenience tool must not be able to stop a page processing;
+* deleting the file restores the detector byte-for-byte;
+* `split.json` gains `book_crop_source` (`detector` | `operator` |
+  `operator-refused`), because `book_crop_applied: false` alone cannot tell a
+  refused operator box from a page nobody ever drew on.
+
+The re-split button runs **Stage 02 only** — draw, re-split, look at the overlay.
+Stages 03–06 stay a separate explicit run.

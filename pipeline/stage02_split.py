@@ -164,6 +164,30 @@ class SubPage(BaseModel):
     book_crop: BBox | None = None
 
 
+class UserBookBox(BaseModel):
+    """``<page_dir>/book_box.json`` — the book box an operator drew.
+
+    **A documented exception to the stage contract, and a narrow one.** Item 2 of
+    the contract (CLAUDE.md) says a stage reads only the previous stage's
+    artifacts. This file is not an artifact of any stage: it is USER INPUT, the
+    same kind of thing as ``config.yaml`` or ``--mode patch``, and it lives at the
+    page-dir ROOT rather than inside a numbered folder so it is never mistaken for
+    one. No stage writes it; ``tools/book_box_editor`` does, from a human's mouse.
+
+    ``frame`` and ``frame_size`` are the box's provenance and they are CHECKED,
+    not decoration. A box drawn on one anchor and applied to another is a wrong
+    crop carrying a human's full confidence — precisely the class of failure the
+    2026-08-28 honesty work exists to stop — so Stage 02 refuses a box whose frame
+    does not match and says why, rather than cropping to it.
+    """
+
+    box: list[int]                        # x0, y0, x1, y1 in ``frame`` pixels
+    frame: str = "01_fuse/anchor.png"     # page-dir-relative frame it was drawn on
+    frame_size: list[int]                 # [width, height] of that frame
+    drawn_at: str = ""                    # ISO timestamp, informational
+    note: str = ""                        # free text from the operator
+
+
 class SplitResult(BaseModel):
     """Contents of ``02_split/split.json`` — the stage's inter-stage data."""
 
@@ -209,6 +233,11 @@ class SplitResult(BaseModel):
     # not a crop was applied, so Stage 03 and patch-mode word crops need to know
     # nothing about the crop. Asserted in test_stage02_split.
     book_crop_applied: bool = False
+    # "detector" | "operator" | "operator-refused". Never infer this from
+    # book_crop_applied: an operator box that failed its provenance check leaves
+    # applied False with the DETECTOR's own reason, and a reader has to be able
+    # to tell that from a page nobody ever drew on.
+    book_crop_source: str = "detector"
     book_crop_reason: str = ""
     # How far ``book_crop_reason`` licenses a conclusion. Load-bearing when the
     # crop abstained on area: that refusal is NOT a finding that the shot was
@@ -536,6 +565,12 @@ def draw_overlay_full(image: np.ndarray, book: "BB.BookBoundary",
         cv2.line(canvas, (gutter_x, 0), (gutter_x, h), (0, 0, 230), 3)
     label = (f"book crop {'APPLIED' if ok else 'REFUSED'}: {book.reason}"
              f"  [green=emit, blue=search]")
+    if book.diag.get("emit_source") == "operator":
+        ux0, uy0, ux1, uy1 = book.diag["user_box"]
+        cv2.rectangle(canvas, (ux0, uy0), (ux1 - 1, uy1 - 1), (255, 255, 255), 3)
+        cv2.putText(canvas, "white = the box you drew (emit is padded outward "
+                    "from it, deliberately)", (30, h - 125),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
     cv2.putText(canvas, label, (30, h - 90), cv2.FONT_HERSHEY_SIMPLEX, 1.1,
                 (0, 220, 0) if ok else (0, 190, 255), 3)
     # The caveat belongs on the picture, not only in split.json — this overlay
@@ -554,6 +589,48 @@ def draw_overlay_full(image: np.ndarray, book: "BB.BookBoundary",
             cv2.putText(canvas, text, (30, h - 55 + i * 26),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 190, 255), 2)
     return canvas
+
+
+# --------------------------------------------------------------------------
+# Operator-supplied book box (user input, not a stage artifact)
+# --------------------------------------------------------------------------
+
+USER_BOX_FILE = "book_box.json"
+
+
+def load_user_box(page_dir: Path) -> UserBookBox | None:
+    """Read ``<page_dir>/book_box.json``, or None when nobody has drawn one.
+
+    A malformed file is reported as absent rather than raised: the operator's
+    convenience tool must never be able to stop a page from processing. The
+    warning path is the caller's.
+    """
+    f = page_dir / USER_BOX_FILE
+    if not f.exists():
+        return None
+    try:
+        return UserBookBox.model_validate_json(f.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def user_box_mismatch(user: UserBookBox, w: int, h: int) -> str | None:
+    """Why this box may NOT be applied to a ``w`` x ``h`` anchor, or None.
+
+    Provenance, not geometry — geometry is ``book_boundary.user_box``'s job. A
+    box drawn on a different frame is the dangerous case, because it looks
+    perfectly valid and is confidently wrong.
+    """
+    if user.frame != "01_fuse/anchor.png":
+        return (f"it was drawn on {user.frame!r}, but Stage 02 cuts "
+                f"01_fuse/anchor.png")
+    if list(user.frame_size) != [w, h]:
+        return (f"it was drawn on a {user.frame_size[0]}x{user.frame_size[1]} "
+                f"frame and this anchor is {w}x{h} — Stage 01 has re-run since, "
+                f"so the coordinates no longer mean the same thing")
+    if len(user.box) != 4:
+        return f"box {user.box} is not [x0, y0, x1, y1]"
+    return None
 
 
 # --------------------------------------------------------------------------
@@ -606,7 +683,25 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     # line below behaves exactly as it did before.
     bb_params = BB.resolve_params(cfg)
     t_book = time.perf_counter()
-    book = BB.find_book(image, bb_params)
+    # An operator's box wins over detection — but only after its provenance is
+    # checked. See UserBookBox and pipeline/book_boundary.user_box.
+    user, crop_source = load_user_box(page_dir), "detector"
+    if user is not None:
+        bad = user_box_mismatch(user, w, h)
+        if bad:
+            warnings.append(
+                f"operator book box in {USER_BOX_FILE} REFUSED: {bad}. Falling "
+                f"back to detection. Redraw it with tools/book_box_editor.")
+            crop_source = "operator-refused"
+            book = BB.find_book(image, bb_params)
+        else:
+            book = BB.user_box(image, tuple(user.box), bb_params)
+            crop_source = "operator" if book.applied else "operator-refused"
+            if not book.applied:
+                warnings.append(f"operator book box REFUSED: {book.reason}")
+                book = BB.find_book(image, bb_params)
+    else:
+        book = BB.find_book(image, bb_params)
     book_ms = (time.perf_counter() - t_book) * 1000.0
     if book.applied:
         warnings.append(
@@ -775,8 +870,8 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
         pinch_corroborated=bool(diag["pinch_corroborated"]),
         corroborated_by=list(diag["corroborated_by"]),
         other_cues_agree_elsewhere=bool(diag["other_cues_agree_elsewhere"]),
-        book_crop_applied=book.applied, book_crop_reason=book.reason,
-        book_crop_evidence=book.evidence,
+        book_crop_applied=book.applied, book_crop_source=crop_source,
+        book_crop_reason=book.reason, book_crop_evidence=book.evidence,
         book_crop=anchor_box,
         book_search=BBox(x=sx0, y=sy0, w=sx1 - sx0, h=sy1 - sy0),
         per_page_source=selection,

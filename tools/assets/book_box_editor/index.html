@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book box editor</title>
+<style>
+  :root{
+    --bg:#14161a; --panel:#1c1f26; --line:#2c313b; --ink:#e7eaf0;
+    --dim:#98a0ae; --accent:#5aa9ff; --ok:#4ec98a; --warn:#ffb545; --bad:#ff6b6b;
+    --drawn:#ffffff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+  header{padding:14px 20px;border-bottom:1px solid var(--line);
+         display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+  h1{font-size:17px;margin:0;font-weight:600}
+  .hint{color:var(--dim);font-size:13px}
+  main{display:flex;gap:0;align-items:flex-start;height:calc(100vh - 56px)}
+  #sidebar{width:250px;flex:none;border-right:1px solid var(--line);
+           overflow-y:auto;height:100%;padding:10px}
+  #sidebar button{display:block;width:100%;text-align:left;margin-bottom:6px;
+                  background:var(--panel);color:var(--ink);border:1px solid var(--line);
+                  border-radius:7px;padding:9px 11px;cursor:pointer;font:inherit}
+  #sidebar button.sel{border-color:var(--accent);background:#20293a}
+  #sidebar .tag{display:block;font-size:12px;color:var(--dim);margin-top:2px}
+  #stage{flex:1;padding:16px 20px;overflow:auto;height:100%}
+  .wrap{position:relative;display:inline-block;line-height:0;
+        border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .wrap img{display:block;max-width:100%}
+  .wrap canvas{position:absolute;inset:0;cursor:crosshair}
+  .bar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:12px 0}
+  button.act{background:var(--accent);color:#08121f;border:0;border-radius:7px;
+             padding:9px 15px;font:inherit;font-weight:600;cursor:pointer}
+  button.act.ghost{background:transparent;color:var(--ink);
+                   border:1px solid var(--line);font-weight:400}
+  button.act:disabled{opacity:.4;cursor:default}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:9px;
+        padding:12px 14px;margin:12px 0;max-width:920px}
+  .card h3{margin:0 0 6px;font-size:13px;letter-spacing:.04em;
+           text-transform:uppercase;color:var(--dim);font-weight:600}
+  .k{color:var(--dim)} .ok{color:var(--ok)} .warn{color:var(--warn)}
+  .bad{color:var(--bad)}
+  code{background:#0f1115;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;margin-right:16px;
+               font-size:12.5px;color:var(--dim)}
+  .sw{width:13px;height:13px;border-radius:3px;display:inline-block}
+</style>
+</head>
+<body>
+<header>
+  <h1>Book box editor</h1>
+  <span class="hint">Drag a rough rectangle round the <b>whole book</b>. Drawing
+    it slightly small is safe (it is padded outward before cutting). What breaks
+    the split is <b>extra room on one side</b> &mdash; keep it roughly even, and
+    keep the spine inside the shaded band.</span>
+</header>
+<main>
+  <nav id="sidebar"></nav>
+  <section id="stage"><p class="hint">Loading&hellip;</p></section>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+let PAGES = [], cur = 0, drawn = null, showOverlay = false;
+
+async function boot(){
+  PAGES = await (await fetch('/api/pages')).json();
+  if (PAGES.error){ $('#stage').innerHTML = '<p class="bad">'+PAGES.error+'</p>'; return; }
+  renderSidebar(); select(0);
+}
+
+function renderSidebar(){
+  $('#sidebar').innerHTML = PAGES.map((p,i)=>{
+    let tag, cls;
+    if (p.crop_source === 'operator'){ tag='your box'; cls='ok'; }
+    else if (p.user_box && p.user_box_stale){ tag='box is stale'; cls='bad'; }
+    else if (p.user_box){ tag='box drawn, not applied yet'; cls='warn'; }
+    else if (p.crop_applied){ tag='detector cropped'; cls='k'; }
+    else { tag='detector did not crop'; cls='warn'; }
+    const g = p.gutter_x==null ? 'no gutter &mdash; one page' : ('gutter '+p.gutter_x);
+    return `<button data-i="${i}" class="${i===cur?'sel':''}">${p.page}
+      <span class="tag ${cls}">${tag}</span>
+      <span class="tag">${g}</span></button>`;
+  }).join('');
+  $('#sidebar').querySelectorAll('button').forEach(b =>
+    b.onclick = () => select(+b.dataset.i));
+}
+
+function select(i){
+  cur = i; drawn = PAGES[i].user_box ? PAGES[i].user_box.slice() : null;
+  showOverlay = false; renderSidebar(); render();
+}
+
+function render(){
+  const p = PAGES[cur];
+  const src = showOverlay ? '/overlay?page='+p.page : '/frame?page='+p.page;
+  $('#stage').innerHTML = `
+    <div class="wrap"><img id="pic" src="${src}&t=${Date.now()}">
+      <canvas id="cv"></canvas></div>
+    <div class="bar">
+      <button class="act" id="save" ${drawn?'':'disabled'}>Save box</button>
+      <button class="act ghost" id="resplit">Save &amp; re-split</button>
+      <button class="act ghost" id="clear">Use the detector instead</button>
+      <button class="act ghost" id="toggle" ${p.has_overlay?'':'disabled'}>
+        ${showOverlay?'Show the photo':'Show the split overlay'}</button>
+      <span class="hint" id="msg"></span>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:#fff"></i>the box you drew</span>
+      <span><i class="sw" style="background:#5aa9ff"></i>what the detector found</span>
+      <span><i class="sw" style="background:rgba(90,169,255,.35)"></i>where the
+        spine is looked for &mdash; it must fall in here</span>
+      <span><i class="sw" style="background:#4ec98a"></i>the gutter last found</span>
+    </div>
+    <div class="card">
+      <h3>What Stage 02 did on this page</h3>
+      <div><span class="k">gutter:</span>
+        ${p.gutter_x==null
+          ? '<span class="warn">none found &mdash; emitted one page, not two</span>'
+          : '<b>x = '+p.gutter_x+'</b> <span class="k">via '+p.method+'</span>'}</div>
+      <div><span class="k">crop:</span> ${p.reason || '<span class="k">not run yet</span>'}</div>
+      ${p.evidence ? '<div class="k" style="margin-top:6px">'+p.evidence+'</div>' : ''}
+      ${p.user_box_stale ? '<div class="bad" style="margin-top:6px">Your saved box '
+        +'was refused: '+p.user_box_stale+'. Redraw it.</div>' : ''}
+    </div>`;
+  const img = $('#pic');
+  img.onload = () => { fit(); paint(); };
+  if (img.complete) { fit(); paint(); }
+  $('#save').onclick = () => save(false);
+  $('#resplit').onclick = () => save(true);
+  $('#clear').onclick = clearBox;
+  $('#toggle').onclick = () => { showOverlay = !showOverlay; render(); };
+  hookDrag();
+}
+
+function fit(){
+  const img = $('#pic'), cv = $('#cv');
+  cv.width = img.clientWidth; cv.height = img.clientHeight;
+}
+// screen <-> full-resolution image pixels
+function sc(){ return PAGES[cur].frame_w / $('#pic').clientWidth; }
+
+function paint(){
+  const cv = $('#cv'), g = cv.getContext('2d'), k = 1/sc();
+  g.clearRect(0,0,cv.width,cv.height);
+  const det = PAGES[cur].detected_box;
+  if (det && !showOverlay){
+    g.strokeStyle = '#5aa9ff'; g.lineWidth = 2; g.setLineDash([7,5]);
+    g.strokeRect(det[0]*k, det[1]*k, (det[2]-det[0])*k, (det[3]-det[1])*k);
+    g.setLineDash([]);
+  }
+  if (drawn){
+    const x = drawn[0]*k, y = drawn[1]*k;
+    const w = (drawn[2]-drawn[0])*k, h = (drawn[3]-drawn[1])*k;
+    // The spine is only ever looked for in the middle 30-70% OF YOUR BOX. Extra
+    // room on one side slides the book sideways inside it and pushes the spine
+    // out of the band -- measured 2026-08-28: 5% extra on one edge is still
+    // 8/8, 10% loses paleset_01, 20% loses three of eight. Symmetric error is
+    // far more forgiving (+-10% is 8/8), so the thing to show is the BAND.
+    g.fillStyle = 'rgba(90,169,255,0.14)';
+    g.fillRect(x + w*0.30, y, w*0.40, h);
+    g.strokeStyle = 'rgba(90,169,255,0.65)'; g.lineWidth = 1;
+    g.setLineDash([4,4]);
+    g.strokeRect(x + w*0.30, y, w*0.40, h);
+    g.setLineDash([]);
+    g.strokeStyle = '#fff'; g.lineWidth = 3;
+    g.strokeRect(x, y, w, h);
+    if (gutterK() != null){
+      g.strokeStyle = '#4ec98a'; g.lineWidth = 2;
+      g.beginPath(); g.moveTo(gutterK(), y); g.lineTo(gutterK(), y+h); g.stroke();
+    }
+  }
+}
+
+// the gutter Stage 02 last found, in screen pixels — so the operator can see
+// whether it landed inside the band their box defines
+function gutterK(){
+  const gx = PAGES[cur].gutter_x;
+  return gx == null ? null : gx / sc();
+}
+
+function hookDrag(){
+  const cv = $('#cv'); let a = null;
+  const at = e => { const r = cv.getBoundingClientRect();
+                    return [(e.clientX-r.left)*sc(), (e.clientY-r.top)*sc()]; };
+  cv.onmousedown = e => { a = at(e); };
+  cv.onmousemove = e => {
+    if (!a) return;
+    const b = at(e);
+    drawn = [Math.round(Math.min(a[0],b[0])), Math.round(Math.min(a[1],b[1])),
+             Math.round(Math.max(a[0],b[0])), Math.round(Math.max(a[1],b[1]))];
+    paint();
+  };
+  window.onmouseup = () => {
+    if (a){ a = null; const s = $('#save'); if (s) s.disabled = !drawn; }
+  };
+}
+
+async function post(url, body){
+  return (await fetch(url, {method:'POST',
+    headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})).json();
+}
+
+async function save(andSplit){
+  if (!drawn) return;
+  const p = PAGES[cur];
+  msg('saving…');
+  const r = await post('/api/box', {page:p.page, box:drawn});
+  if (!r.ok){ msg(r.error || 'save failed', 'bad'); return; }
+  if (!andSplit){ msg('saved — run Stage 02 to use it', 'ok'); await refresh(); return; }
+  msg('re-splitting…');
+  const s = await post('/api/resplit', {page:p.page});
+  if (s.error){ msg(s.error, 'bad'); return; }
+  await refresh();
+  showOverlay = true; render();
+  msg(s.gutter_x==null
+      ? 'still no gutter — the split is one page'
+      : 'gutter x = '+s.gutter_x+' via '+s.method,
+      s.gutter_x==null ? 'warn' : 'ok');
+}
+
+async function clearBox(){
+  const p = PAGES[cur];
+  await post('/api/clear', {page:p.page});
+  const s = await post('/api/resplit', {page:p.page});
+  drawn = null; await refresh(); showOverlay = true; render();
+  msg(s.gutter_x==null ? 'detector restored — still no gutter'
+                       : 'detector restored — gutter x = '+s.gutter_x,
+      s.gutter_x==null ? 'warn' : 'ok');
+}
+
+async function refresh(){
+  PAGES = await (await fetch('/api/pages')).json();
+  renderSidebar();
+}
+
+function msg(t, cls){
+  const m = $('#msg'); if (!m) return;
+  m.className = 'hint ' + (cls||''); m.innerHTML = t;
+}
+
+window.addEventListener('resize', () => { fit(); paint(); });
+boot();
+</script>
+</body>
+</html>

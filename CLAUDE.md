@@ -69,7 +69,15 @@ Italian, German**.
       scenes, not 31 examples, so more fixtures must be NEW photographs of NEW
       surfaces. Awaiting an owner call between shipping it off-by-default (the
       `per_page_source` precedent), gathering that data, or escalating to A9 (the
-      phone supplies the box).
+      phone supplies the box). **Owner's call 2026-08-28: build A9 AND go shoot
+      more fixtures — and draw the box on the COMPUTER, not the phone.**
+      `tools/book_box_editor` is BUILT and splits **8/8** with a drawn box,
+      including both failing frames (`paleset_01` 2741 -> 1699, `paleset_02`
+      none -> 1749). The shooting brief for the fixtures that would let the
+      program stop asking is `docs/plans/pale-background-fixture-shoot.md` — and
+      note what it needs is **negatives** (tightly framed handheld spreads), not
+      more sofas. `split_eval` stays 19/21 until those exist and a precondition
+      can be calibrated.
 
 ## Architecture: the stage contract (IMPORTANT)
 
@@ -99,6 +107,22 @@ baking a PDF). Stage 07 `assemble` builds it from the whole job; Stage 08
 + `document_assets/` — never the per-page folders — so a saved document survives
 upstream re-runs (self-containment). Assemble won't clobber an edited document
 without `--force`. See `docs/GATE4_SPEC.md`.
+
+**Operator-book-box exception (Stage 02).** Item 2 says a stage reads only the
+previous stage's artifacts. `<page_dir>/book_box.json` is not an artifact of any
+stage: it is **user input**, the same kind of thing as `config.yaml` or
+`--mode patch`, and it lives at the page-dir ROOT rather than in a numbered
+folder so it can never be mistaken for one. No stage writes it —
+`tools/book_box_editor` does, from a human's mouse. It exists because the book
+detector provably cannot find the book on a pale or cluttered surface (eight cue
+families measured and closed, RESULTS 2026-08-28), and a hand-drawn box splits
+8/8 including both frames that fail today. Because it carries a human's
+confidence it is checked, not trusted blindly: Stage 02 **refuses** a box whose
+recorded frame or frame size does not match the current anchor (a box drawn
+before Stage 01 re-ran is a confidently wrong crop), the box is **padded outward**
+before anything is cut (measured: cutting to the drag exactly loses 1.95–9.73 %
+of the book on a 1–5 % undersized drag, padding loses 0.00 %), and a missing or
+corrupt file means the detector runs exactly as before.
 
 **Per-page frame-source exception (Stage 02, opt-in and OFF by default).** Item 2
 says a stage reads only the previous stage's artifacts. Per-page frame selection
@@ -245,6 +269,10 @@ python -m pipeline.stage05_ocr jobs/demo/page_001/
 
 # run full pipeline on a folder of captures
 python -m pipeline.run_all --input testset/spread_03/ --job demo --mode flag
+
+# draw the book box by hand when the detector could not find the book
+# (writes <page>/book_box.json; "Save & re-split" re-runs Stage 02 only)
+python -m tools.book_box_editor jobs/<job>/ [--port 8011]
 
 # open the visual editor on an assembled job (edit OCR/type/order/translation,
 # then Preview / re-render). Reads+writes ONLY document.json + document_assets/.

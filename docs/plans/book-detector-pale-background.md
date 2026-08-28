@@ -488,12 +488,12 @@ Do this **after** the crop works, because a correct crop may make it moot.
 
 | option | what it is | cost | ceiling |
 |---|---|---|---|
-| **A9. The phone supplies the box** | user drags a rectangle, or the app sends a rough crop | low: UI work, no new CV | **guaranteed** |
+| **A9. The operator supplies the box** — **BUILT 2026-08-28** as `tools/book_box_editor`, on the DESKTOP (owner: "easier than the phone"). Splits **8/8** with a drawn box, including both failing frames. The drag is padded outward before cutting (cutting to it exactly loses 1.95–9.73 % of the book on a 1–5 % undersized drag; padded, 0.00 %). One-sided over-draw is the real hazard — 10 % extra on one edge loses `paleset_01` — so the editor shades the 30–70 % spine-search band. RESULTS 2026-08-28. | user drags a rectangle | low: UI work, no new CV | **guaranteed** |
 | **A8. Multi-hypothesis + arbitration** | generate boxes from several cues, pick by downstream evidence | high — multiplies 258-1375 ms per candidate | unknown |
 | **A7. Learned segmentation** | pretrained salient-object / document segmentation | GPU; lazy-load + VRAM release per the repo rule | high, unmeasured |
 | **A5. Edge/quad detection** | Hough/LSD line segments, fit the page quadrilateral | medium | poor here — low page/sofa contrast is the whole problem |
 
-**A9 is first-class, not a footnote.** It is the only option with a guaranteed
+**A9 is first-class, not a footnote — and it is now the shipped answer.** It is the only option with a guaranteed
 ceiling, it fits the manual-capture flow the owner chose this session, and it
 pairs naturally with Phase 1: once the detector can say *"I did not find the
 book"* honestly, the app can ask instead of guessing.
@@ -535,6 +535,13 @@ repo cheap criteria have been coin flips. Weigh that, do not rediscover it.
    multiplier is written down.
 5. A dated row in `docs/RESULTS.md` with machine-readable inputs and outputs
    under `docs/data/`, per the house rule.
+
+**Where this plan now stands (2026-08-28).** Phase 0 done, Phase 1 done, A10
+measured and refused, A9 built. The remaining automatic fix is blocked on **data,
+not ideas**: a precondition needs negatives to be calibrated against and the
+corpus has one usable positive. The shot list is
+`docs/plans/pale-background-fixture-shoot.md`. Until those photographs exist,
+`split_eval` stays at 19/21 and the box is drawn by hand.
 
 **Stated refuse-outcome:** if no cheap cue separates page from background on
 this corpus, that is a **measured negative to record and escalate to A9/A7** —

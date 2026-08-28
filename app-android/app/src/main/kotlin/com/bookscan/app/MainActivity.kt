@@ -36,6 +36,17 @@ private sealed interface CaptureFlow {
     // selects the sharpest at full resolution, so the phone does not throw the
     // rest away. A manual shot is a one-element list.
     data class CapturingCloseup(val anchors: List<File>, val closeups: List<File>) : CaptureFlow
+
+    /**
+     * Re-entering the capture screen to add ANOTHER whole-spread shot to a
+     * spread already under review. Several full views of the same spread are
+     * worth uploading: Stage 01 keeps the sharpest as the anchor and the
+     * selector has been measured to pick the better of two real full-spread
+     * frames (RESULTS 2026-08-19, `zoomset_en_02`). They are NOT stitched —
+     * blending was measured to make OCR worse — so extra views cost bytes and
+     * buy a better anchor, nothing else.
+     */
+    data class CapturingMoreAnchors(val anchors: List<File>, val closeups: List<File>) : CaptureFlow
     data class ReviewingSpread(val anchors: List<File>, val closeups: List<File>) : CaptureFlow
 }
 
@@ -51,13 +62,15 @@ class MainActivity : ComponentActivity() {
             // screen unusable for calibration: a passing streak is 8 frames
             // (~0.3 s at 30 fps), so it fired and handed off to the review
             // screen before the calibration button could be tapped at all.
-            // The thresholds are now fitted (2026-08-19), but this default
-            // stays false until the fit has been CONFIRMED ON THE DEVICE with
-            // auto-capture armed by hand. Flipping it on the strength of the
-            // replay alone would re-break the thing it was added to fix: the
-            // simulation says a steady hold fires 0.23 s in, so the screen
-            // would hand off to review before the calibration button could be
-            // reached, and the confirmation run could never be recorded.
+            // The thresholds are fitted (2026-08-19), and the confirmation run
+            // this default was waiting on HAPPENED on 2026-08-28 — it went the
+            // other way. Armed over a real spread the burst delivered ONE shot,
+            // not the four the hysteresis fix was measured to give, because the
+            // replay those four came from was recorded with capture suspended
+            // and so contains no frame from just after a shutter fires. Manual
+            // capture is therefore the default flow and auto-capture is an
+            // opt-in toggle (owner's call, 2026-08-28). Do not flip this to
+            // true without a device run that shows a burst of more than one.
             var autoArmed by remember { mutableStateOf(false) }
 
             val requestCameraPermission = rememberLauncherForActivityResult(
@@ -98,10 +111,34 @@ class MainActivity : ComponentActivity() {
                                 onCancel = { flow = CaptureFlow.Hidden },
                             )
 
+                            is CaptureFlow.CapturingMoreAnchors -> CaptureScreen(
+                                outputDir = cacheDir,
+                                logDir = getExternalFilesDir(null) ?: cacheDir,
+                                autoArmed = autoArmed,
+                                onAutoArmedChange = { autoArmed = it },
+                                // Appends and STAYS, same reason as the
+                                // close-up screen: taking several shots of one
+                                // spread is the point, so each must not cost a
+                                // round trip through review.
+                                onCaptured = { files ->
+                                    flow = CaptureFlow.CapturingMoreAnchors(f.anchors + files, f.closeups)
+                                },
+                                onCancel = { flow = CaptureFlow.ReviewingSpread(f.anchors, f.closeups) },
+                                cancelLabel = "Done",
+                                capturedCount = f.anchors.size,
+                            )
+
                             is CaptureFlow.CapturingCloseup -> CloseupScreen(
                                 outputDir = cacheDir,
                                 closeupCount = f.closeups.size,
-                                onCaptured = { file -> flow = CaptureFlow.ReviewingSpread(f.anchors, f.closeups + file) },
+                                // STAYS on the close-up screen and appends.
+                                // Returning to review after every shot made
+                                // capturing several close-ups — the normal
+                                // case — a re-entry per shot (owner, on the
+                                // device, 2026-08-28). "Done" is the way back.
+                                onCaptured = { file ->
+                                    flow = CaptureFlow.CapturingCloseup(f.anchors, f.closeups + file)
+                                },
                                 onDone = { flow = CaptureFlow.ReviewingSpread(f.anchors, f.closeups) },
                             )
 
@@ -110,6 +147,7 @@ class MainActivity : ComponentActivity() {
                                 closeups = f.closeups,
                                 uploading = s.uploading,
                                 error = s.error,
+                                onAddAnchor = { flow = CaptureFlow.CapturingMoreAnchors(f.anchors, f.closeups) },
                                 onAddCloseup = { flow = CaptureFlow.CapturingCloseup(f.anchors, f.closeups) },
                                 onUpload = {
                                     viewModel.uploadSpread(f.anchors, f.closeups)

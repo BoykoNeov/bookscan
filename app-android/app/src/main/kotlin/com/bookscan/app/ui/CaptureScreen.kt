@@ -115,6 +115,17 @@ fun CaptureScreen(
     onAutoArmedChange: (Boolean) -> Unit,
     onCaptured: (List<File>) -> Unit,
     onCancel: () -> Unit,
+    /**
+     * Label for [onCancel]. "Cancel" when this screen opens a fresh spread and
+     * leaving abandons it; "Done" when it is adding shots to a spread already
+     * under review, where leaving keeps everything captured so far.
+     */
+    cancelLabel: String = "Cancel",
+    /**
+     * Shots of this spread already banked, shown so a screen that stays put
+     * after each capture still tells the user the tap registered. 0 hides it.
+     */
+    capturedCount: Int = 0,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -358,11 +369,14 @@ fun CaptureScreen(
                     .padding(horizontal = 12.dp, vertical = 8.dp),
             ) {
                 Text(calibrationReadout(lastScore, streak), color = Color.White)
+                if (capturedCount > 0) {
+                    Text("$capturedCount shot(s) of this spread — tap Done when finished", color = Color.White)
+                }
                 logStatus?.let { Text(it, color = Color.White) }
                 Text(
                     when {
                         logging -> "recording — nothing will be captured"
-                        !armedNow -> "auto-capture OFF — arm it below when done calibrating"
+                        !armedNow -> "tap Capture page for each shot — take as many as you like"
                         else -> autoStatus
                     },
                     color = Color.White,
@@ -411,7 +425,7 @@ fun CaptureScreen(
                 Text(if (armedNow) "Auto-capture: ON — tap to pause" else "Auto-capture: OFF — tap to arm")
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = onCancel, enabled = !capturing) { Text("Cancel") }
+                Button(onClick = onCancel, enabled = !capturing) { Text(cancelLabel) }
                 Button(
                     // `!logging` too: the button above promises nothing will be
                     // captured, and this one sits right under the user's thumb.
@@ -438,7 +452,7 @@ fun CaptureScreen(
                         )
                     },
                 ) {
-                    Text(if (capturing) "Capturing…" else "Capture page (manual)")
+                    Text(if (capturing) "Capturing…" else "Capture page")
                 }
             }
         }

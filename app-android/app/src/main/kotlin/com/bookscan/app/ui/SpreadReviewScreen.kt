@@ -25,9 +25,9 @@ private const val THUMBNAIL_SAMPLE_SIZE = 8
 
 /**
  * M4's review step between capture and upload: shows every shot of the spread
- * (an auto-capture burst is several near-duplicates) plus any close-ups
- * captured so far, lets the user add more or finish — upload sends them all
- * together in one
+ * (several manual shots of the same spread, or an auto-capture burst) plus any
+ * close-ups captured so far, lets the user add more or finish — upload sends
+ * them all together in one
  * `POST /api/jobs/{id}/pages` request (server/routes_jobs.py; Stage 01 Fuse
  * classifies anchor-vs-closeup by area itself, no per-file tagging needed).
  * See docs/plans/android-guided-capture.md.
@@ -38,6 +38,7 @@ fun SpreadReviewScreen(
     closeups: List<File>,
     uploading: Boolean,
     error: String?,
+    onAddAnchor: () -> Unit,
     onAddCloseup: () -> Unit,
     onUpload: () -> Unit,
     onDiscard: () -> Unit,
@@ -54,9 +55,15 @@ fun SpreadReviewScreen(
 
         error?.let { Text(it, color = Color.Red) }
 
+        // Two rows: four labels side by side clip on a narrow phone. The
+        // "add" pair leads because the manual flow is several shots of the
+        // same spread — take them all, then upload once.
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Button(onClick = onAddAnchor, enabled = !uploading) { Text("Add full shot") }
+            Button(onClick = onAddCloseup, enabled = !uploading) { Text("Add close-up") }
+        }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(onClick = onDiscard, enabled = !uploading) { Text("Discard") }
-            Button(onClick = onAddCloseup, enabled = !uploading) { Text("Add close-up") }
             Button(onClick = onUpload, enabled = !uploading) {
                 Text(if (uploading) "Uploading…" else "Upload spread")
             }

@@ -6336,3 +6336,139 @@ contains ink** — blank outer margin is label precision (report the number *and
 adjudication), ink removed is a real failure at any size. The 19 pre-existing
 spreads keep the plain 0.0 % bar; they never hit this because their emitted crops
 are larger than their labels.
+
+## 2026-08-28 — the book detector stops claiming things it did not measure
+
+Phase 1 of `docs/plans/book-detector-pale-background.md`. **No accuracy change,
+and that is the point:** `tools/split_eval` still reads **19/21, exit 1**, worst
+clipping still **0.0 %**, and the table is identical to the previous commit row
+for row — verified by running the eval at `HEAD`, applying the change, and
+diffing. Suite 554 green. What changed is what the artifacts *say* when the
+detector fails, because on 2026-08-28 they said three things that were not true.
+
+Machine-readable inputs and outputs: `docs/data/phase1_honest_failure_20260828.json`.
+
+### 1. The abstain reason is no longer a verdict about the photograph
+
+Before: *"book fills 92 % of the frame (>= 83 %) — already tightly framed, not
+cropping."* That sentence is a claim about the **shot**, inferred from a
+detection that — by the act of abstaining — was never confirmed. On the two pale
+captures it was wrong and it was actionable: it sent an operator to reframe a
+correctly framed photograph. After:
+
+> `reason`: detected region covers 92 % of the frame (>= 83 %) - cropping to it
+> would discard almost nothing, so not cropping
+>
+> `evidence`: an edge was found inside the frame, but the region it encloses
+> still covers almost all of it. This is NOT a finding that the shot is tightly
+> framed: a mask that merged the book with its surroundings produces the same
+> number, and no runtime test measured on this corpus tells the two apart
+> (2026-08-28). If the pages came out wrong, check debug/02_split.png before
+> reframing.
+
+`paleset_02`, whose box is the entire frame, gets the stronger first clause —
+*"the region IS the entire frame - no edge was found anywhere in it."* The
+caveat rides in a new `BookBoundary.evidence` / `split.json.book_crop_evidence`,
+appears in `meta.warnings`, and is drawn on `debug/02_split.png`, which is where
+a human actually looks. The conclusive refusals (no mask at all, a mask that is
+a speck) carry **no** evidence string — a caveat that appears everywhere means
+nothing anywhere, and that is asserted in the tests.
+
+### 2. A classifier was attempted first, and it failed — measured, not assumed
+
+The plan asked for positive evidence that a book was found. Six candidates were
+measured across all 21 fixtures. **Every one puts a pale capture inside the range
+of `de_01`/`de_02`**, which abstain through the same 83 % gate and are
+legitimately near-tight (their boxes overshoot the labelled book by only
+1.26×/1.14×, against 1.59×/2.30× for the pale pair):
+
+| signal | 13 flat | de_01 / de_02 | paleset_01 / 02 | separates? |
+|---|---|---|---|---|
+| component ÷ emit-box area | 0.69–0.95 | 0.39 / 0.32 | 0.59 / 0.81 | no — inverted |
+| component growth on close | 1.26–3.34 | 1.57 / 2.92 | 1.40 / 2.37 | no |
+| component fills own bbox | 0.69–0.95 | 0.57 / 0.59 | 0.65 / 0.82 | no |
+| component covers frame ring | 0.10–0.82 | 0.00 / 0.00 | 0.06 / 0.63 | no |
+| emit box ÷ search box | 1.00–1.01 | 1.32 / 1.66 | 1.15 / 1.04 | no |
+| component ÷ raw mask area | 1.23–1.79 | 1.26 / 1.24 | 1.28 / 2.04 | no |
+
+**Why, and it is not a missing threshold:** on a tightly framed scan the book
+really does reach the frame border, so *"the box is the frame"* is the correct
+answer and the failure's answer at the same time. Separating them needs the one
+question none of these ask — **is there a background in this photograph at
+all?** — which is precisely the precondition Phase 2's background-first detector
+is built around. Until that exists, refusing to guess is the honest outcome, and
+`evidence` says so instead of picking a side. **Do not re-attempt these six.**
+
+### 3. The spine-pinch cue can now say "I could not measure anything"
+
+`paleset_02` reported `pinch_depth: 0.012`, which reads as *"this book has no
+pinch"*. It is not a small pinch; it is **no measurement**. The cue takes the
+first and last bright row of each column, so it only sees a page outline when
+there is background above and below the page.
+
+**The plan's model of this was wrong, and the correction matters.** It said
+"Otsu inverts on a pale background". Otsu does not invert: on `paleset_02` the
+sofa still reads dark — only **8.9 %** of the pixels outside the labelled book
+pass as bright. What breaks the cue is that scattered bright specks reach the top
+and bottom edges of most columns, pinning the profile flat at the image height.
+
+Mean column extent over the search band, as a fraction of image height, separates
+cleanly on all 21 fixtures:
+
+| | rows | value |
+|---|---|---|
+| outline visible → cue applies | `paleset_01` 0.798, `de_01` 0.823, `de_02` 0.829, `zoomset_de_01` 0.840 | **max 0.840** |
+| profile pinned → no measurement | the other 17, incl. `paleset_02` **0.977** | **min 0.924** |
+
+Gate at the midpoint, **0.88** — the rule this stage already uses for
+`pinch_min_depth` and Stage 00 uses for its OSD 180° floor. Layer 2 is skipped
+when the cue is inapplicable, so a meaningless number can never cut a page.
+
+**Non-regression here is MEASURED, not structural**, unlike the other two items.
+The only two spreads pinch decides (`de_01` 0.823, `de_02` 0.829) stay applicable
+with room to spare, and every other row is decided by ink or by nothing — so no
+shipped answer moves. But `zoomset_de_01` (extent 0.940, pinch depth 0.215) would
+newly be refused the pinch cue *if ink ever stopped deciding there*. That is a
+counterfactual, not a change on this corpus, and it is the correct call: its
+search box is cropped inside the book, so there is no outline in those pixels.
+
+### 4. Corroboration now says what it corroborates
+
+`corroborated` → **`pinch_corroborated`**, which is the question it always asked
+(does anything agree with the *pinch candidate*), computed whether or not pinch
+decides. On `paleset_01` it read `true` for a column ~1000 px from the cut that
+shipped. New **`corroborated_by`** lists the cues that agree with the column that
+**actually shipped** — `[]` on `paleset_01`, `["ink","shadow"]` on `de_02`. New
+**`band_x`** publishes the search band in original coordinates, because a cue
+reported *on* that boundary is the band clipping its profile, not a page feature.
+Note `pinch_corroborated` is meaningless when `pinch_applicable` is false, and
+says so in the schema.
+
+### 5. The dissent flag is weak, and it admits it
+
+`other_cues_agree_elsewhere` fires when the two cues that did **not** decide agree
+with each other and both disagree with the winner — the `paleset_01` shape, and
+positive evidence against the shipped column. Measured over all 21 fixtures it
+**fires 5 times, and 4 of those are correct splits**:
+
+| id | shipped | 2nd cue | 3rd cue | band | correct? |
+|---|---|---|---|---|---|
+| `paleset_01` | ink 2741 | pinch 1668 | shadow 1730 | 1224–2856 | **no — true positive** |
+| `en_coins_01` | ink 1960 | pinch 2799 | shadow 2799 | 1200–2800 | yes |
+| `en_coins_02` | ink 1994 | pinch 2796 | shadow 2744 | 1200–2800 | yes |
+| `en_coins_03` | ink 2024 | pinch 2791 | shadow 2799 | 1200–2800 | yes |
+| `de_01` | pinch 1983 | ink 2703 | shadow 2790 | 1200–2800 | yes |
+
+In **all four** false alarms both agreeing cues sit pinned at an *end of the
+search band* — the artifact the plan's band-edge guard (Phase 2, C3) is for.
+Rather than smuggle that guard into a phase that promised no accuracy change, the
+warning states its own hit rate and prints the band, so a reader can dismiss a
+band-edge case at a glance. **Nothing acts on the flag.** Acting on it is C1, and
+the plan puts that deliberately last, after the crop works.
+
+### Cost
+
+`find_book` 318 ms and `detect_gutter` 82 ms on the 4080×3060 `paleset_01`
+frame — unchanged. B1 adds **no computation**: it re-words a string from numbers
+already in `find_book`'s diag. C2 adds one mean over the search band of an array
+Layer 2 already builds: **0.003 ms**, 0.004 % of the resolver.

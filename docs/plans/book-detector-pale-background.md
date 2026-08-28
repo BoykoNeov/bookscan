@@ -1,7 +1,10 @@
 # Fixing the book detector on a pale background
 
 **Status:** Phase 0 DONE 2026-08-28 (fixtures banked, suite deliberately red at
-19/21 — see RESULTS 2026-08-28 and section 3). Phases 1-3 not started. Written
+19/21 — see RESULTS 2026-08-28 and section 3). **Phase 1 DONE 2026-08-28** (the
+artifacts stop claiming things they did not measure; suite still 19/21 exit 1,
+table identical row for row — see section 4 and RESULTS). Phases 2-3 not
+started; next is A10. Written
 2026-08-28 at the end of the on-device session that found the defect; the
 scouting numbers below were measured that day, the fix was deliberately not
 attempted.
@@ -44,9 +47,14 @@ not a patch.
      binding-shadow cue (x=1730) **agreed with each other** inside the 122 px
      tolerance, ~1000 px away, and were ignored.
    * `page_002`: ink ratio 0.701 (no valley) and pinch depth 0.012 — the pinch
-     cue assumes a **dark** background, so Otsu inverts on a pale sofa and the
      cue returns a meaningless number rather than declaring itself
-     inapplicable. No gutter, so `single.png`.
+     inapplicable. No gutter, so `single.png`. **The mechanism stated here was
+     wrong; corrected by Phase 1 (section 4):** Otsu does *not* invert on the
+     pale sofa — the sofa still reads dark (8.9 % of pixels outside the labelled
+     book pass as bright). The profile is pinned at the image height because
+     scattered bright specks reach the top and bottom edges of most columns.
+     Since Phase 1 the cue declares itself inapplicable here and Layer 2 is
+     skipped.
 
 ### The near-miss table (page_001)
 
@@ -81,7 +89,7 @@ The crop is only *applied* on 4 of the 19 (the `zoomset_*` lap captures);
 | knob | current | must keep passing | must start failing | headroom |
 |---|---|---|---|---|
 | `valley_ratio` | 0.55 | en_coins_02 and zoomset_de_01 at **0.47** | page_001 at **0.525** | 0.055, midpoint ~0.50 |
-| `pinch_min_depth` | 0.11 | de_01 **0.15**, de_02 **0.18** | page_002 **0.012** | wide, but page_001's **0.106** sits just under |
+| `pinch_min_depth` | 0.11 | de_01 **0.15**, de_02 **0.18** | page_002 **0.012** (since Phase 1 this is not a depth at all — the cue is inapplicable there and Layer 2 is skipped) | wide, but page_001's **0.106** sits just under |
 | `abstain_area_frac` | 0.83 | de_02 at 0.89 must abstain | — | cropping de_02 was measured to move its gutter from 7 px to 96 px off |
 
 **Trap on `valley_ratio`:** en_coins_02 is the floor, and its pinch depth is
@@ -148,25 +156,58 @@ these rows.** The `known_failing` string in `gutter.json` is documentation only 
 
 ---
 
-## 4. Phase 1 — make the failure honest (no accuracy change)
+## 4. Phase 1 — make the failure honest — **DONE 2026-08-28**
 
-Cheapest work on the list, provably non-regressive, and it is the part that
-actually burned the owner.
+Cheapest work on the list, and the part that actually burned the owner. Shipped
+with `split_eval` still at **19/21, exit 1**, worst clipping 0.0 %, and the table
+identical to the previous commit row for row (verified by diffing an eval run at
+`HEAD` against one after the change). Suite 554. Full row in `docs/RESULTS.md`
+2026-08-28; machine-readable in `docs/data/phase1_honest_failure_20260828.json`.
 
-* **B1. Separate "no detection" from "already tight."** Before the 83 % gate,
-  test positive evidence that a book was actually found — whether the mask
-  reaches the frame border and corners, or whether there is any colour contrast
-  between inside and outside the box. If the box is the frame because the mask
-  ran away, say *that*, in `meta.warnings`, `split.json` and the overlay.
-  Accuracy is unchanged by construction, so the 19/19 is safe.
-* **C2. Let the pinch cue declare itself inapplicable.** Check that Otsu
-  actually separated a bright page from a dark background (bimodality, and
-  which side the page falls on). On a pale background return "not applicable"
-  instead of 0.012, so a reader can tell "no pinch" from "cue meaningless".
-* **B3. Make `corroborated` self-describing** in `split.json`. It is currently
-  serialized unqualified and is scoped to the pinch cue only; on page_001 it
-  read `true` while the shipped answer was ~1000 px away from both corroborating
-  cues. Already noted as owed in RESULTS 2026-08-28.
+* [x] **B1. The abstain reason stops asserting a framing verdict.** The 83 %
+  gate now reports only what it measured, and a new `BookBoundary.evidence` (→
+  `split.json.book_crop_evidence`, `meta.warnings`, and the overlay) carries the
+  caveat. `paleset_02`, whose box is the whole frame, gets the stronger clause
+  *"the region IS the entire frame - no edge was found anywhere in it."*
+  Conclusive refusals (no mask, a speck) deliberately carry NO evidence string.
+* [x] **B1's other half — the classifier — was attempted and FAILED. Do not
+  re-attempt these six.** The plan asked for positive evidence that a book was
+  found. Six candidate signals were measured on all 21 fixtures and **every one
+  puts a pale capture inside the range of `de_01`/`de_02`**, which abstain
+  through the same gate and are legitimately near-tight (overshoot of the
+  labelled book 1.26×/1.14×, against 1.59×/2.30× for the pale pair): component ÷
+  emit-box area (0.39/0.32 vs 0.59/0.81 — *inverted*), component growth on
+  close, component fills its own bbox, component coverage of the frame ring,
+  emit ÷ search box, component ÷ raw mask area. The reason is structural: **on a
+  tight scan the book really does reach the frame border, so "the box is the
+  frame" is the correct answer and the failure's answer at once.** Separating
+  them needs the question none of these ask — *is there a background at all?* —
+  i.e. **A10's precondition is not just a nice pairing with B1, it is the only
+  known route to B1's stronger form.** Build it there; B1's reason string can
+  then be upgraded to use its verdict.
+* [x] **C2. The pinch cue declares itself inapplicable**, and Layer 2 is skipped
+  when it does, so a meaningless number can never cut a page. **This plan's model
+  of the failure was wrong and is corrected:** Otsu does *not* invert on a pale
+  background — on `paleset_02` the sofa still reads dark (8.9 % of pixels outside
+  the labelled book pass as bright). The profile is pinned at full height because
+  scattered bright specks reach the top and bottom edges of most columns. The
+  test is therefore mean column extent over the band ÷ image height: outline
+  visible 0.798–0.840 (`paleset_01`, `de_01`, `de_02`, `zoomset_de_01`), pinned
+  0.924–0.991 (the other 17, `paleset_02` at 0.977), gate at the midpoint
+  **0.88**. Non-regression here is **measured, not structural** — the two
+  pinch-deciding spreads stay applicable with room to spare, but
+  `zoomset_de_01` would newly be refused the cue if ink ever stopped deciding
+  there, which is the correct call (its search box is inside the book).
+* [x] **B3. `corroborated` → `pinch_corroborated`** (its real scope), plus new
+  `corroborated_by` (cues agreeing with the column that actually **shipped** —
+  `[]` on `paleset_01`) and `band_x` (the search band in original coordinates).
+* [x] **A dissent flag, reported only.** `other_cues_agree_elsewhere` fires when
+  the two non-deciding cues agree with each other and not with the winner.
+  Measured: **fires 5/21, and 4 of those are correct splits** — in every one of
+  the four, both agreeing cues sit pinned at an *end of the search band*, which
+  is exactly the artifact **C3** below is for. The warning therefore states its
+  own hit rate and prints the band rather than smuggling C3 into a phase that
+  promised no accuracy change.
 
 ---
 
@@ -245,8 +286,13 @@ and if it cannot tell those three frames apart it is not a precondition. Check i
 there first; it is cheaper than the whole fixture sweep and it isolates exactly
 the failure mode above (border-is-the-page).
 
-**So the deliverable is not the detector, it is the precondition.** Before
-trusting a background-first box, test *whether there is a background at all*:
+**So the deliverable is not the detector, it is the precondition.** Phase 1
+raised the stakes on this: it measured six cheap ways to ask "was a book actually
+found?" and none works, precisely because none asks whether there is a
+background. So this precondition is now the only known route to an honest answer
+at the abstain gate too — B1's reason string should be upgraded to quote its
+verdict once it exists. Before trusting a background-first box, test *whether
+there is a background at all*:
 
 * is the border strip homogeneous (low variance within it)?
 * is the frame interior actually different from it (a real distance gap, not
@@ -347,6 +393,12 @@ Do this **after** the crop works, because a correct crop may make it moot.
   outright is exactly what guarantees the 13 flat non-regressions.
 * **C3. Band-edge guard.** A minimum pinned near the edge of the `[0.30, 0.70]`
   search band is usually the band clipping the profile, not a real valley.
+  **Phase 1 supplied independent evidence that this artifact is real and
+  common:** the new dissent flag fires on 5 of 21 fixtures and 4 of those are
+  *correct* splits, and in all four both non-deciding cues are pinned at a band
+  end (`en_coins_01/02/03` pinch+shadow at 2744-2799 against a band ending at
+  2800; `de_01` ink 2703 + shadow 2790). A band-edge guard cleans those up as a
+  side effect.
   Measured on the shipped path: the bad call sits **0.070** of the band from the
   edge, and the closest *ink-deciding* fixture is zoomset_en_02 at **0.225** — a
   clean gap, candidate gate ~0.15. **Scope it to the cue that decides:** de_01's

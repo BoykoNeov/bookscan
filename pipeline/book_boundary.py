@@ -77,6 +77,38 @@ lap captures that need cropping and 85-100 % on the fifteen spreads that do not
 ``de_01``/``de_02``), so the gate sits at the midpoint of that gap — the same
 rule used for the pinch gate and the OSD 180 floor.
 
+**What that gate may NOT be read as saying (measured 2026-08-28).** The area
+gate used to refuse with "already tightly framed", which is a verdict about the
+PHOTOGRAPH inferred from a detection that may never have happened. On the two
+pale-background captures it was flatly wrong — the emit box covered 92 % and
+100 % of frames whose books cover 58 % and 44 % — and it sent the operator off
+to reframe a shot that was framed fine. So the gate now reports only what it
+measured, and ``BookBoundary.evidence`` carries the caveat.
+
+The obvious next move — classify the two cases apart — was tried and **failed on
+this corpus**. Every cheap statistic available at the gate puts at least one pale
+capture inside the range of the legitimately-tight ``de_01``/``de_02``:
+
+===========================  ==============  ==================  ==============
+signal                       13 flat         de_01 / de_02       paleset_01 / 02
+===========================  ==============  ==================  ==============
+component / emit-box area    0.69-0.95       0.39 / 0.32         0.59 / 0.81
+component growth on close    1.26-3.34       1.57 / 2.92         1.40 / 2.37
+component fills own bbox     0.69-0.95       0.57 / 0.59         0.65 / 0.82
+component covers frame ring  0.10-0.82       0.00 / 0.00         0.06 / 0.63
+emit box / search box        1.00-1.01       1.32 / 1.66         1.15 / 1.04
+component / raw mask area    1.23-1.79       1.26 / 1.24         1.28 / 2.04
+===========================  ==============  ==================  ==============
+
+The reason is structural, not a missing threshold: on a tightly framed scan the
+book really does reach the frame border, so "the box is the frame" is the
+CORRECT answer and the failure's answer at the same time. Telling them apart
+needs the one question none of these ask — *is there a background in this
+photograph at all?* — which is the precondition Phase 2's background-first
+detector is built around (``docs/plans/book-detector-pale-background.md``).
+Until that test exists, refusing to guess is the honest outcome, and
+``evidence`` says so rather than picking a side.
+
 The gap is narrow, so the threshold also had to be justified by CONSEQUENCE, and
 it is: cropping ``de_02`` at 89 % moves its gutter from 7 px off ground truth to
 96 px, because the ink valley becomes "confident" on the cropped frame and
@@ -149,6 +181,13 @@ class BookBoundary:
     emit: Box
     search: Box
     diag: dict = field(default_factory=dict)
+    # What the reason may and may not be read as claiming. ``reason`` states
+    # what was measured; ``evidence`` states how far that measurement licenses
+    # a conclusion. Empty when the refusal needs no qualification (a mask that
+    # never formed, a box of an impossible shape); load-bearing on the area
+    # gate, which is the one that used to assert a framing verdict it could not
+    # support. See the module docstring.
+    evidence: str = ""
 
 
 def resolve_params(cfg: dict) -> dict:
@@ -308,9 +347,10 @@ def find_book(image: np.ndarray, p: dict | None = None) -> BookBoundary:
     full: Box = (0, 0, w, h)
     frame_area = float(w * h)
 
-    def refuse(reason: str, diag: dict | None = None) -> BookBoundary:
+    def refuse(reason: str, diag: dict | None = None,
+               evidence: str = "") -> BookBoundary:
         return BookBoundary(applied=False, reason=reason, emit=full,
-                            search=full, diag=diag or {})
+                            search=full, diag=diag or {}, evidence=evidence)
 
     if not p.get("enabled", True):
         return refuse("book_crop disabled in config")
@@ -354,10 +394,31 @@ def find_book(image: np.ndarray, p: dict | None = None) -> BookBoundary:
                      ((sbox[2] - sbox[0]) * (sbox[3] - sbox[1])) / frame_area, 3)})
 
     if area_frac >= p["abstain_area_frac"]:
+        # Was: "book fills N% of the frame — already tightly framed". That
+        # sentence is a claim about the PHOTOGRAPH, and it is only true if the
+        # box is the book — which is exactly what refusing here means we could
+        # not establish. State the measurement; leave the verdict to `evidence`.
+        boundary_found = not (ex0 <= 0 and ey0 <= 0 and ex1 >= w and ey1 >= h)
+        diag["boundary_found"] = boundary_found
+        located = ("an edge was found inside the frame, but the region it "
+                   "encloses still covers almost all of it"
+                   if boundary_found else
+                   "the region IS the entire frame - no edge was found anywhere "
+                   "in it")
+        # ASCII only from here down: these two strings are drawn onto the debug
+        # overlay with cv2.putText, which cannot render an em dash and silently
+        # substitutes "?" for one.
         return refuse(
-            f"book fills {area_frac:.0%} of the frame (>= "
-            f"{p['abstain_area_frac']:.0%}) — already tightly framed, not cropping",
-            diag)
+            f"detected region covers {area_frac:.0%} of the frame (>= "
+            f"{p['abstain_area_frac']:.0%}) - cropping to it would discard "
+            f"almost nothing, so not cropping",
+            diag,
+            evidence=(
+                f"{located}. This is NOT a finding that the shot is tightly "
+                f"framed: a mask that merged the book with its surroundings "
+                f"produces the same number, and no runtime test measured on "
+                f"this corpus tells the two apart (2026-08-28). If the pages "
+                f"came out wrong, check debug/02_split.png before reframing."))
     if area_frac < p["min_area_frac"]:
         return refuse(
             f"book box is {area_frac:.1%} of the frame (< "

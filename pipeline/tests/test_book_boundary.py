@@ -112,6 +112,41 @@ def test_refuses_a_speck_too_small_to_be_a_spread():
     assert "too small" in bb.reason
 
 
+def test_area_abstain_states_a_measurement_not_a_framing_verdict():
+    """The 83 % gate must not claim the photograph was tightly framed.
+
+    That sentence is an inference from a detection that, by the act of
+    abstaining, was never confirmed — and on the two pale-background captures it
+    was wrong AND actionable: it told an operator to reframe a correctly framed
+    shot (RESULTS 2026-08-28). The refusal may report what it measured; the
+    caveat lives in ``evidence``.
+    """
+    img = np.dstack([np.zeros((1500, 2000), np.uint8)] * 3)
+    img[:, :] = _paper(1500, 2000)
+    bb = BB.find_book(img)
+    assert not bb.applied
+    assert "tightly framed" not in bb.reason.lower()
+    assert "covers" in bb.reason and "%" in bb.reason
+    # …and it says out loud what it cannot tell apart.
+    assert bb.evidence, "the area gate must qualify its own refusal"
+    assert "NOT a finding that the shot is tightly framed" in bb.evidence
+
+
+def test_only_the_area_gate_needs_the_caveat():
+    """A refusal that IS conclusive must not be watered down with one.
+
+    'No mask formed at all' and 'the mask is a speck' are direct observations,
+    not inferences, so they carry no evidence string — otherwise the caveat
+    stops meaning anything wherever it appears.
+    """
+    img = np.clip(RNG.integers(0, 60, (1500, 2000, 3), dtype=np.int16),
+                  0, 255).astype(np.uint8)
+    assert BB.find_book(img).evidence == ""
+    img[700:760, 900:980] = 245
+    speck = BB.find_book(img)
+    assert "too small" in speck.reason and speck.evidence == ""
+
+
 def test_disabled_by_config_is_a_clean_no_op():
     img, _ = _cluttered_frame()
     p = BB.resolve_params({"book_crop": {"enabled": False}})

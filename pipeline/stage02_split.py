@@ -40,6 +40,27 @@ Known v1 limitations (recorded in meta.warnings): a single VERTICAL cut assumes
 a near-vertical gutter; strong tilt/curvature is Stage 03's (dewarp) job. The
 ``single.png`` branch is untested — the current testset is all two-page spreads.
 
+**v0.5.0 says what it does not know (no accuracy change).** Three reporting
+defects found by the 2026-08-28 device session, where two real captures split
+wrongly and the artifacts explained the failure inaccurately:
+
+  * the spine-pinch cue now tests whether it can run at all before reporting a
+    depth. On pixels with no visible page outline its number is noise, and
+    ``paleset_02``'s 0.012 was being read as "this book has no pinch" when it
+    was "this cue never measured anything". Layer 2 is skipped when the cue is
+    inapplicable — measured to change no shipped answer on the 21 fixtures, and
+    the point is the fixture it would refuse next.
+  * ``corroborated`` became ``pinch_corroborated``, which is what it always
+    asked, and ``corroborated_by`` is the new field about the column that
+    actually shipped. On ``paleset_01`` the old flag read ``true`` for a column
+    ~1000 px away from the cut.
+  * when the two non-deciding cues agree with each other and not with the
+    winner, ``other_cues_agree_elsewhere`` says so. Reported, never acted on.
+
+The book-boundary crop's matching fix — an abstain reason that no longer claims
+the shot was "already tightly framed" when it never found the book — is in
+``pipeline/book_boundary.py`` and surfaces here as ``book_crop_evidence``.
+
 Usage:
     python -m pipeline.stage02_split jobs/<job_id>/<page>/ [--debug]
 """
@@ -61,7 +82,7 @@ from pipeline import page_source as PS
 from pipeline.page_model import BBox, StageMeta
 
 STAGE = "stage02_split"
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -99,6 +120,17 @@ DEFAULTS = {
     # spreads keep their exact ink result (non-regression by construction).
     "pinch_smooth_frac": 0.04,   # extent-profile smoothing (2x the ink smoothing)
     "pinch_min_depth": 0.11,     # confident pinch iff extent dip >= this fraction
+    # The pinch cue reads the FIRST and LAST bright row of each column, so it
+    # only measures a page outline when there is visible background above and
+    # below the page. When the bright region reaches the top and bottom of
+    # nearly every column the profile is pinned at the image height and the
+    # depth it reports is noise. Mean column extent over the search band, as a
+    # fraction of image height, separates cleanly (measured on all 21 fixtures
+    # 2026-08-28): outline visible 0.798-0.840 (paleset_01, de_01, de_02,
+    # zoomset_de_01), pinned 0.924-0.991 (everything else, incl. paleset_02 at
+    # 0.977). Gate at the midpoint of that gap, the rule this file already uses
+    # for pinch_min_depth and Stage 00's OSD 180 floor.
+    "pinch_max_mean_extent": 0.88,
     "corroborate_frac": 0.03,    # a 2nd cue "agrees" if within this frac of W
     "pinch_margin_frac": 0.020,  # wider overlap for pinch (curved) cuts vs 0.010
 }
@@ -147,15 +179,41 @@ class SplitResult(BaseModel):
     page_ref: float = 0.0           # Layer 1: typical text-column ink
     ratio: float = 0.0              # Layer 1: valley / page_ref (< valley_ratio => split)
     pinch_depth: float = 0.0        # Layer 2: extent dip at spine (>= pinch_min_depth => split)
+    # Whether the pinch cue could work here at all. False => pinch_depth is not
+    # a small pinch, it is no measurement (see extent_profile). Layer 2 is
+    # skipped when False, so a meaningless number can never decide a split.
+    pinch_applicable: bool = True
+    pinch_extent_frac: float = 0.0  # mean column extent / image height, over the band
     pinch_x: int | None = None      # Layer 2: spine column from the page-pinch cue
     shadow_x: int | None = None     # binding-shadow luminance-valley column (corroboration only)
-    corroborated: bool = False      # for a pinch split: did shadow OR ink agree within tol?
+    # The window every cue's argmin was taken over, in ORIGINAL spread pixels. A
+    # cue reported ON this boundary is the band clipping its profile, not a
+    # feature of the page — the single most common way to misread the columns
+    # above (it accounts for 4 of the 5 other_cues_agree_elsewhere hits).
+    band_x: list[int] = Field(default_factory=list)
+    # Scoped to the PINCH CANDIDATE, computed whether or not pinch decided: did
+    # shadow OR ink land within tol of pinch_x? Named for its scope since
+    # 2026-08-28 — as a bare ``corroborated`` it read as endorsing the shipped
+    # gutter, which on paleset_01 it was ~1000 px away from. MEANINGLESS when
+    # ``pinch_applicable`` is False: it then reports agreement with a column
+    # that was never measured (paleset_02 reads True on exactly that footing).
+    pinch_corroborated: bool = False
+    # Scoped to the gutter that ACTUALLY SHIPPED: which other cues agree with it.
+    corroborated_by: list[str] = Field(default_factory=list)
+    # True when the two cues that did NOT decide agree with each other and both
+    # disagree with the one that did — evidence against the shipped column.
+    # Reported, never acted on (that is the plan's Phase 2 consensus override).
+    other_cues_agree_elsewhere: bool = False
     # --- book-boundary crop (pipeline/book_boundary.py, v0.3.0) -------------
     # Every box and column in this file is in ORIGINAL spread pixels whether or
     # not a crop was applied, so Stage 03 and patch-mode word crops need to know
     # nothing about the crop. Asserted in test_stage02_split.
     book_crop_applied: bool = False
     book_crop_reason: str = ""
+    # How far ``book_crop_reason`` licenses a conclusion. Load-bearing when the
+    # crop abstained on area: that refusal is NOT a finding that the shot was
+    # tightly framed. See pipeline/book_boundary.py.
+    book_crop_evidence: str = ""
     book_crop: BBox | None = None    # pixels emitted as the page(s)
     book_search: BBox | None = None  # region the gutter search was restricted to
     # --- per-page frame selection (pipeline/page_source.py, v0.4.0) ----------
@@ -221,10 +279,19 @@ def extent_profile(gray: np.ndarray) -> tuple[np.ndarray, float]:
     content-independent gutter cue that survives figure-heavy pages where the
     ink-whitespace valley and the binding shadow both fail.
 
-    ASSUMES a dark background (page brighter than surroundings) — true for every
-    current fixture (books on dark fabric). Recorded in meta.warnings; on a bright
-    background Otsu inverts and this cue is meaningless, but Layer 1 (ink) and the
-    depth gate keep it from firing wrongly there.
+    ASSUMES the page's outline is visible — that there is background above and
+    below it, and that the background is darker than the page. The caller tests
+    that assumption (``pinch_max_mean_extent``) instead of trusting it, because
+    when it fails this function still returns a perfectly ordinary-looking
+    profile and a number that means nothing.
+
+    The failure was originally modelled as "on a bright background Otsu inverts".
+    Measurement says otherwise: on ``paleset_02`` (a book on a pale sofa) Otsu
+    does NOT invert — the sofa still reads dark, 8.9 % of the pixels outside the
+    labelled book pass as bright. What breaks the cue is that scattered bright
+    specks reach the top and bottom edges of most columns, so ``first`` is ~0 and
+    ``last`` is ~h-1 and the profile is pinned flat at the image height. Its dip
+    is then 0.012, which is not "no pinch" — it is no measurement.
     """
     h, w = gray.shape
     thr, _ = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -270,7 +337,17 @@ def detect_gutter(gray: np.ndarray, p: dict) -> tuple[int | None, dict]:
     ink_confident = page_ref > 0 and ratio < p["valley_ratio"]
 
     # --- Layer 2: spine pinch (page vertical-extent minimum) -----------------
-    ext = smooth(extent_profile(gray)[0], int(w * p["pinch_smooth_frac"]))
+    # Ask whether the cue can work here BEFORE reading what it says. A pinned
+    # profile (no visible page outline in the searched pixels) yields a depth
+    # that is noise, and a reader cannot tell that from an honest "flat book, no
+    # pinch" unless we say so. Non-regression is MEASURED, not structural: on
+    # this corpus the only two spreads pinch decides (de_01 0.823, de_02 0.829)
+    # are applicable with room to spare, so gating changes no shipped answer —
+    # but a future fixture could be gated out, and that is the point of it.
+    ext_raw, otsu_thr = extent_profile(gray)
+    pinch_extent_frac = float(ext_raw[band].mean()) / float(h)
+    pinch_applicable = pinch_extent_frac <= p["pinch_max_mean_extent"]
+    ext = smooth(ext_raw, int(w * p["pinch_smooth_frac"]))
     pinch_x = x0 + int(np.argmin(ext[band]))
     pinch_val = float(ext[pinch_x])
     # Compare the dip to the page height at the OUTER fifths of the band (away
@@ -279,7 +356,7 @@ def detect_gutter(gray: np.ndarray, p: dict) -> tuple[int | None, dict]:
     edge_ref = float(np.median(
         np.concatenate([ext[x0:x0 + fifth], ext[x1 - fifth:x1]])))
     pinch_depth = (1.0 - pinch_val / edge_ref) if edge_ref > 0 else 0.0
-    pinch_confident = pinch_depth >= p["pinch_min_depth"]
+    pinch_confident = pinch_applicable and pinch_depth >= p["pinch_min_depth"]
 
     # --- Binding-shadow luminance valley (corroboration only, never decides) --
     lum = smooth(gray.mean(axis=0).astype(np.float64), int(w * p["smooth_frac"]))
@@ -290,24 +367,52 @@ def detect_gutter(gray: np.ndarray, p: dict) -> tuple[int | None, dict]:
     # figure-heavy pages (de_01) shadow drifts onto a dark photo, so pinch stands
     # alone — we still split, but flag it (advisor: require agreement where we
     # can get it, don't gate the whole cue on it).
+    #
+    # NAME IT FOR WHAT IT ASKS. This question is about the PINCH CANDIDATE, and
+    # it is asked whether or not pinch decides — so on paleset_01, where ink won
+    # at x=2741, it was serialized as a bare ``corroborated: true`` describing a
+    # column ~1000 px from the answer that actually shipped (RESULTS 2026-08-28).
+    # Nothing was wrong with the arithmetic; a reader was entitled to think it
+    # endorsed the split, and it did not.
     tol = int(w * p["corroborate_frac"])
-    corroborated = (abs(shadow_x - pinch_x) <= tol) or (abs(ink_x - pinch_x) <= tol)
+    pinch_corroborated = (abs(shadow_x - pinch_x) <= tol
+                          or abs(ink_x - pinch_x) <= tol)
+
+    # Decide first, then say what agrees with the DECISION.
+    if ink_confident:
+        method, gutter = "ink", ink_x
+    elif pinch_confident:
+        method, gutter = "pinch", pinch_x
+    else:
+        method, gutter = "none", None
+
+    cue_x = {"ink": ink_x, "pinch": pinch_x, "shadow": shadow_x}
+    others = sorted(k for k in cue_x if k != method)
+    corroborated_by = ([] if gutter is None else
+                       sorted(k for k in others if abs(cue_x[k] - gutter) <= tol))
+    # Two cues agreeing with each other, far from the column that shipped, is
+    # positive evidence AGAINST the shipped column — the shape of paleset_01's
+    # failure and of the 2026-08-19 "both flags true on the wrong edge" finding.
+    # Reported only. Acting on it is the consensus override (C1) in
+    # docs/plans/book-detector-pale-background.md, which that plan puts
+    # deliberately last, after the crop works.
+    other_cues_agree_elsewhere = (
+        gutter is not None and not corroborated_by and len(others) == 2
+        and abs(cue_x[others[0]] - cue_x[others[1]]) <= tol)
 
     diag = {
         "cols": cols, "window": (x0, x1), "valley": valley,
         "page_ref": page_ref, "ratio": ratio,
+        "ink_x": ink_x,
         "ext": ext, "pinch_x": pinch_x, "pinch_depth": pinch_depth,
-        "shadow_x": shadow_x, "corroborated": corroborated,
+        "pinch_applicable": pinch_applicable,
+        "pinch_extent_frac": pinch_extent_frac, "otsu_thr": otsu_thr,
+        "shadow_x": shadow_x, "pinch_corroborated": pinch_corroborated,
+        "corroborated_by": corroborated_by, "tol": tol,
+        "other_cues_agree_elsewhere": other_cues_agree_elsewhere,
+        "method": method,
     }
-
-    if ink_confident:
-        diag["method"] = "ink"
-        return ink_x, diag
-    if pinch_confident:
-        diag["method"] = "pinch"
-        return pinch_x, diag
-    diag["method"] = "none"
-    return None, diag
+    return gutter, diag
 
 
 # --------------------------------------------------------------------------
@@ -371,17 +476,33 @@ def draw_overlay(image: np.ndarray, gutter_x: int | None, diag: dict) -> np.ndar
 
     if gutter_x is not None:
         cv2.line(canvas, (gutter_x, 0), (gutter_x, h), (0, 0, 230), 3)
+        agree = diag.get("corroborated_by") or []
         if method == "pinch":
             label = (f"gutter x={gutter_x} via PINCH depth={diag['pinch_depth']:.2f}"
-                     f" corrob={diag['corroborated']} (ink ratio={diag['ratio']:.2f})")
+                     f" pinch_corrob={diag['pinch_corroborated']}"
+                     f" (ink ratio={diag['ratio']:.2f})")
         else:
             label = f"gutter x={gutter_x} via INK ratio={diag['ratio']:.2f}"
+        # Corroboration OF THIS CUT, which is not the same question as
+        # pinch_corrob above and used to be conflated with it.
+        label += f"  agreeing cues: {','.join(agree) if agree else 'NONE'}"
         color = (0, 0, 230)
     else:
-        label = (f"NO GUTTER  ink={diag['ratio']:.2f} pinch={diag['pinch_depth']:.2f}"
+        pinch_say = (f"{diag['pinch_depth']:.2f}" if diag.get("pinch_applicable", True)
+                     else "n/a (cue cannot run here)")
+        label = (f"NO GUTTER  ink={diag['ratio']:.2f} pinch={pinch_say}"
                  f" (single page)")
         color = (0, 200, 255)
     cv2.putText(canvas, label, (30, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 3)
+    if not diag.get("pinch_applicable", True):
+        cv2.putText(canvas, "pinch cue NOT APPLICABLE: no page outline in these "
+                    "pixels (profile pinned at full height)", (30, 110),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 200, 255), 3)
+    if diag.get("other_cues_agree_elsewhere"):
+        cv2.putText(canvas, "CUE DISSENT (weak: 4 of its 5 fixture hits are "
+                    "correct splits): the two cues that did not decide agree "
+                    "with EACH OTHER, elsewhere", (30, 160),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 140, 255), 3)
     return canvas
 
 
@@ -415,8 +536,23 @@ def draw_overlay_full(image: np.ndarray, book: "BB.BookBoundary",
         cv2.line(canvas, (gutter_x, 0), (gutter_x, h), (0, 0, 230), 3)
     label = (f"book crop {'APPLIED' if ok else 'REFUSED'}: {book.reason}"
              f"  [green=emit, blue=search]")
-    cv2.putText(canvas, label, (30, h - 30), cv2.FONT_HERSHEY_SIMPLEX, 1.1,
+    cv2.putText(canvas, label, (30, h - 90), cv2.FONT_HERSHEY_SIMPLEX, 1.1,
                 (0, 220, 0) if ok else (0, 190, 255), 3)
+    # The caveat belongs on the picture, not only in split.json — this overlay
+    # is what a human looks at when pages come out wrong, and the sentence it
+    # used to carry ("already tightly framed") is what sent an operator off to
+    # reframe a correctly framed shot.
+    if book.evidence:
+        words, line, lines = book.evidence.split(), "", []
+        for word in words:
+            if len(line) + len(word) + 1 > 96:
+                lines.append(line); line = word
+            else:
+                line = f"{line} {word}".strip()
+        lines.append(line)
+        for i, text in enumerate(lines[:2]):
+            cv2.putText(canvas, text, (30, h - 55 + i * 26),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 190, 255), 2)
     return canvas
 
 
@@ -480,6 +616,9 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
             f"inside the book, not the whole frame.")
     else:
         warnings.append(f"book-boundary crop NOT applied: {book.reason}")
+        if book.evidence:
+            warnings.append(f"book-boundary crop, what that does NOT mean: "
+                            f"{book.evidence}")
 
     ex0, ey0, ex1, ey1 = book.emit
     sx0, sy0, sx1, sy1 = book.search
@@ -492,13 +631,30 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     # Back to ORIGINAL spread coordinates immediately, so nothing downstream ever
     # sees a search-box coordinate.
     gutter_x = None if gutter_local is None else gutter_local + sx0
+    # Every cue column reported to a human is in ORIGINAL spread coordinates,
+    # like everything else in this file.
+    band_abs = (int(diag["window"][0]) + sx0, int(diag["window"][1]) + sx0)
+    ink_abs = int(diag["ink_x"]) + sx0
+    pinch_abs, shadow_abs = int(diag["pinch_x"]) + sx0, int(diag["shadow_x"]) + sx0
 
     method = diag["method"]
+    if not diag["pinch_applicable"]:
+        # Say "this cue could not run" rather than letting its number be read as
+        # a measured absence of a spine. See extent_profile.
+        warnings.append(
+            f"spine-pinch cue (Layer 2) NOT APPLICABLE here: mean column extent "
+            f"is {diag['pinch_extent_frac']:.3f} of the image height (> "
+            f"{params['pinch_max_mean_extent']}), so the page outline is not "
+            f"visible in the searched pixels and the profile is pinned flat. "
+            f"Its depth={diag['pinch_depth']:.3f} is NOT a measurement of a "
+            f"flat spine — it is no measurement, and Layer 2 was skipped.")
     if gutter_x is None:
+        pinch_say = (f"pinch depth={diag['pinch_depth']:.2f} < "
+                     f"{params['pinch_min_depth']}" if diag["pinch_applicable"]
+                     else "pinch cue not applicable (see above)")
         warnings.append(
             f"no confident gutter (ink ratio={diag['ratio']:.2f} >= "
-            f"{params['valley_ratio']}, pinch depth={diag['pinch_depth']:.2f} < "
-            f"{params['pinch_min_depth']}); emitting single.png"
+            f"{params['valley_ratio']}, {pinch_say}); emitting single.png"
         )
     elif method == "pinch":
         # Layer-2 rescue: the ink valley was washed out (curved spread); the
@@ -507,16 +663,47 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
         # the straight cut from clipping text at the page's top/bottom.
         warnings.append(
             f"gutter from spine-pinch (Layer 2): ink ratio={diag['ratio']:.2f} "
-            f"failed, pinch depth={diag['pinch_depth']:.2f}, corroborated="
-            f"{diag['corroborated']}. Pinch cue assumes a DARK capture background "
-            f"(Otsu page/background split)."
+            f"failed, pinch depth={diag['pinch_depth']:.2f}, pinch_corroborated="
+            f"{diag['pinch_corroborated']}. The cue needs a visible page outline; "
+            f"here mean column extent is {diag['pinch_extent_frac']:.3f} of the "
+            f"image height (<= {params['pinch_max_mean_extent']}), so it applies."
         )
-        if not diag["corroborated"]:
+        if not diag["pinch_corroborated"]:
             warnings.append(
                 "pinch split is UNCORROBORATED (neither the binding-shadow nor "
                 "the ink valley agree within tolerance) — lower confidence; "
                 "check debug/02_split.png."
             )
+
+    if gutter_x is not None:
+        # Corroboration OF THE COLUMN THAT SHIPPED — the question a reader of
+        # split.json actually has, and the one the old bare ``corroborated``
+        # flag did not answer.
+        agree = diag["corroborated_by"]
+        warnings.append(
+            f"gutter x={gutter_x} decided by {method}; other cues agreeing "
+            f"within {diag['tol']}px: {', '.join(agree) if agree else 'NONE'} "
+            f"(ink={ink_abs}, pinch={pinch_abs}, shadow={shadow_abs}; search "
+            f"band x={band_abs[0]}..{band_abs[1]} - a cue sitting on a band edge "
+            f"is the band clipping its profile, not a feature of the page)")
+        if diag["other_cues_agree_elsewhere"]:
+            # Honest about its own hit rate, because it is poor. Measured over
+            # all 21 fixtures 2026-08-28: fires on 5, and 4 of those 5 are
+            # CORRECT splits. In every one of the four, both agreeing cues sit
+            # pinned at an END of the search band, which is the band clipping
+            # their profile rather than a feature in the page — the artifact the
+            # plan's band-edge guard (Phase 2, C3) is for. So: read the band
+            # below first, and if both cues are sitting on its edge, ignore this.
+            warnings.append(
+                f"CUE DISSENT (weak signal, see below): the two cues that did "
+                f"NOT decide agree with each other and both disagree with the "
+                f"{method} column that shipped. ink={ink_abs} pinch={pinch_abs} "
+                f"shadow={shadow_abs}, search band x={band_abs[0]}..{band_abs[1]}. "
+                f"On the 21 testset fixtures this fires 5 times and 4 of those "
+                f"are correct splits, every one of them with both cues pinned at "
+                f"a band edge. It is a prompt to open debug/02_split.png, not "
+                f"evidence. Nothing acts on it (consensus override is Phase 2 of "
+                f"docs/plans/book-detector-pale-background.md).")
 
     margin_frac = params["pinch_margin_frac"] if method == "pinch" else params["margin_frac"]
     # Overlap is a fraction of the width being CUT. Identical to the old
@@ -581,9 +768,15 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
         valley=round(diag["valley"], 1), page_ref=round(diag["page_ref"], 1),
         ratio=round(diag["ratio"], 3),
         pinch_depth=round(diag["pinch_depth"], 3),
+        pinch_applicable=bool(diag["pinch_applicable"]),
+        pinch_extent_frac=round(diag["pinch_extent_frac"], 3),
         pinch_x=int(diag["pinch_x"]) + sx0,
-        shadow_x=int(diag["shadow_x"]) + sx0, corroborated=bool(diag["corroborated"]),
+        shadow_x=int(diag["shadow_x"]) + sx0, band_x=list(band_abs),
+        pinch_corroborated=bool(diag["pinch_corroborated"]),
+        corroborated_by=list(diag["corroborated_by"]),
+        other_cues_agree_elsewhere=bool(diag["other_cues_agree_elsewhere"]),
         book_crop_applied=book.applied, book_crop_reason=book.reason,
+        book_crop_evidence=book.evidence,
         book_crop=anchor_box,
         book_search=BBox(x=sx0, y=sy0, w=sx1 - sx0, h=sy1 - sy0),
         per_page_source=selection,
@@ -664,14 +857,19 @@ def main(argv: list[str] | None = None) -> int:
         else f"{p.name}<-{Path(p.source).name}" for p in result.pages)
     if result.gutter_x is not None and result.method == "pinch":
         print(f"{args.page_dir}: gutter x={result.gutter_x} via PINCH "
-              f"(depth={result.pinch_depth}, corrob={result.corroborated}; "
+              f"(depth={result.pinch_depth}, pinch_corrob="
+              f"{result.pinch_corroborated}, agreeing="
+              f"{','.join(result.corroborated_by) or 'NONE'}; "
               f"ink ratio={result.ratio}) -> {names}")
     elif result.gutter_x is not None:
         print(f"{args.page_dir}: gutter x={result.gutter_x} via INK "
-              f"(ratio={result.ratio}) -> {names}")
+              f"(ratio={result.ratio}, agreeing="
+              f"{','.join(result.corroborated_by) or 'NONE'}) -> {names}")
     else:
+        pinch_say = (str(result.pinch_depth) if result.pinch_applicable
+                     else "n/a (cue cannot run here)")
         print(f"{args.page_dir}: no gutter (ink ratio={result.ratio}, "
-              f"pinch depth={result.pinch_depth}) -> {names}")
+              f"pinch depth={pinch_say}) -> {names}")
     return 0
 
 

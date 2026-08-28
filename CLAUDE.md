@@ -47,9 +47,17 @@ Italian, German**.
       now reads 19/21 and exits 1 on purpose** — the owner chose a red suite over
       hiding two known failures, so do NOT "fix" it by removing those rows.
       Scouting 2026-08-28 already closed the obvious fix: retuning the HSV
-      thresholds cannot work (see the plan's section 5). Next is the plan's
-      Phase 1 (make the failure honest — no accuracy change), then A10
-      (background-first, behind an "is there a background at all" precondition).
+      thresholds cannot work (see the plan's section 5). **Phase 1 is DONE
+      2026-08-28**: the artifacts no longer claim things they did not measure —
+      the abstain reason stopped asserting "already tightly framed", the
+      spine-pinch cue declares itself inapplicable where it cannot measure (and
+      Layer 2 is skipped), and `corroborated` became `pinch_corroborated` plus a
+      `corroborated_by` about the column that actually shipped. Zero accuracy
+      change, verified by diffing the eval against HEAD. It also **closed B1's
+      classifier by measurement** — six cheap ways to ask "was a book actually
+      found?" all fail, because on a tight scan the book really does reach the
+      frame border, so the only route is asking whether there is a background at
+      all. Next is A10 (background-first, behind that precondition).
 
 ## Architecture: the stage contract (IMPORTANT)
 

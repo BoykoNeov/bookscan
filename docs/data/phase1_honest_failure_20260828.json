@@ -1,0 +1,784 @@
+{
+  "date": "2026-08-28",
+  "what": "Phase 1 of docs/plans/book-detector-pale-background.md - make the failure honest. No accuracy change: every shipped gutter column and every crop decision is byte-identical to the previous commit.",
+  "acceptance": {
+    "split_eval": "19/21 spreads correct, exit 1, worst clipping 0.0% - unchanged",
+    "table_diff_vs_previous_commit": "identical, row for row",
+    "test_suite": "554 passed (pipeline/tests server/tests tools/tests)"
+  },
+  "cost_ms_paleset_01_4080x3060": {
+    "find_book_total": 317.8,
+    "detect_gutter_total": 82.2,
+    "added_by_C2_applicability_mean": 0.0028,
+    "note": "C2 adds one mean over the search band of the extent array Layer 2 already computes; B1 adds no computation at all, it re-words a reason string from numbers already in find_book's diag."
+  },
+  "B1_the_classifier_that_failed": {
+    "question": "At the 83% area gate, can any cheap signal separate 'the box is the frame because the mask ran away' from 'the box is the frame because the frame really is tight'?",
+    "answer": "No. Every candidate puts a pale capture inside the legitimately-tight range.",
+    "why": "Structural, not a missing threshold: on a tight scan the book DOES reach the frame border, so 'the box is the frame' is the correct answer and the failure's answer at once. Telling them apart needs the question none of these ask - is there a background at all - which is the precondition of Phase 2's background-first detector.",
+    "signals_measured": {
+      "bg_01": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.895,
+        "component_growth_on_close": 1.504,
+        "component_fills_own_bbox": 0.895,
+        "component_covers_frame_ring": 0.6885,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.439
+      },
+      "bg_02": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.945,
+        "component_growth_on_close": 1.271,
+        "component_fills_own_bbox": 0.945,
+        "component_covers_frame_ring": 0.6069,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.246
+      },
+      "bg_03": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.947,
+        "component_growth_on_close": 1.372,
+        "component_fills_own_bbox": 0.947,
+        "component_covers_frame_ring": 0.6709,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.325
+      },
+      "en_coins_01": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.845,
+        "component_growth_on_close": 1.651,
+        "component_fills_own_bbox": 0.845,
+        "component_covers_frame_ring": 0.3522,
+        "emit_over_search_box": 1.001,
+        "component_over_raw_mask": 1.542
+      },
+      "en_coins_02": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.811,
+        "component_growth_on_close": 1.386,
+        "component_fills_own_bbox": 0.811,
+        "component_covers_frame_ring": 0.3745,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.335
+      },
+      "en_coins_03": {
+        "emit_area_frac": 0.98,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.835,
+        "component_growth_on_close": 2.179,
+        "component_fills_own_bbox": 0.851,
+        "component_covers_frame_ring": 0.3113,
+        "emit_over_search_box": 1.013,
+        "component_over_raw_mask": 1.38
+      },
+      "it_geo_01": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.692,
+        "component_growth_on_close": 1.256,
+        "component_fills_own_bbox": 0.692,
+        "component_covers_frame_ring": 0.1831,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.23
+      },
+      "it_geo_02": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.797,
+        "component_growth_on_close": 1.288,
+        "component_fills_own_bbox": 0.844,
+        "component_covers_frame_ring": 0.128,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.267
+      },
+      "it_geo_03": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.853,
+        "component_growth_on_close": 1.465,
+        "component_fills_own_bbox": 0.876,
+        "component_covers_frame_ring": 0.0989,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.4
+      },
+      "it_geo_04": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.774,
+        "component_growth_on_close": 2.38,
+        "component_fills_own_bbox": 0.774,
+        "component_covers_frame_ring": 0.714,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.586
+      },
+      "it_geo_05": {
+        "emit_area_frac": 0.973,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.833,
+        "component_growth_on_close": 1.484,
+        "component_fills_own_bbox": 0.882,
+        "component_covers_frame_ring": 0.5344,
+        "emit_over_search_box": 1.01,
+        "component_over_raw_mask": 1.413
+      },
+      "it_geo_06": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.772,
+        "component_growth_on_close": 2.205,
+        "component_fills_own_bbox": 0.772,
+        "component_covers_frame_ring": 0.7719,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.787
+      },
+      "it_geo_07": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": null,
+        "emit_over_true_book": null,
+        "component_over_emit_box": 0.812,
+        "component_growth_on_close": 3.339,
+        "component_fills_own_bbox": 0.812,
+        "component_covers_frame_ring": 0.82,
+        "emit_over_search_box": 1.0,
+        "component_over_raw_mask": 1.579
+      },
+      "de_01": {
+        "emit_area_frac": 0.855,
+        "gt_book_box_frac": 0.6798,
+        "emit_over_true_book": 1.258,
+        "component_over_emit_box": 0.386,
+        "component_growth_on_close": 1.57,
+        "component_fills_own_bbox": 0.568,
+        "component_covers_frame_ring": 0.0,
+        "emit_over_search_box": 1.324,
+        "component_over_raw_mask": 1.265
+      },
+      "de_02": {
+        "emit_area_frac": 0.892,
+        "gt_book_box_frac": 0.7845,
+        "emit_over_true_book": 1.137,
+        "component_over_emit_box": 0.324,
+        "component_growth_on_close": 2.923,
+        "component_fills_own_bbox": 0.593,
+        "component_covers_frame_ring": 0.0,
+        "emit_over_search_box": 1.655,
+        "component_over_raw_mask": 1.239
+      },
+      "zoomset_de_01": {
+        "emit_area_frac": 0.652,
+        "gt_book_box_frac": 0.4316,
+        "emit_over_true_book": 1.511,
+        "component_over_emit_box": 0.469,
+        "component_growth_on_close": 1.621,
+        "component_fills_own_bbox": 0.623,
+        "component_covers_frame_ring": 0.0488,
+        "emit_over_search_box": 1.312,
+        "component_over_raw_mask": 1.304
+      },
+      "zoomset_de_02": {
+        "emit_area_frac": 0.718,
+        "gt_book_box_frac": 0.4195,
+        "emit_over_true_book": 1.712,
+        "component_over_emit_box": 0.481,
+        "component_growth_on_close": 1.588,
+        "component_fills_own_bbox": 0.596,
+        "component_covers_frame_ring": 0.0528,
+        "emit_over_search_box": 1.229,
+        "component_over_raw_mask": 1.159
+      },
+      "zoomset_en_01": {
+        "emit_area_frac": 0.802,
+        "gt_book_box_frac": 0.2945,
+        "emit_over_true_book": 2.723,
+        "component_over_emit_box": 0.416,
+        "component_growth_on_close": 1.463,
+        "component_fills_own_bbox": 0.578,
+        "component_covers_frame_ring": 0.0719,
+        "emit_over_search_box": 1.321,
+        "component_over_raw_mask": 1.053
+      },
+      "zoomset_en_02": {
+        "emit_area_frac": 0.74,
+        "gt_book_box_frac": 0.3508,
+        "emit_over_true_book": 2.109,
+        "component_over_emit_box": 0.457,
+        "component_growth_on_close": 1.649,
+        "component_fills_own_bbox": 0.526,
+        "component_covers_frame_ring": 0.0459,
+        "emit_over_search_box": 1.219,
+        "component_over_raw_mask": 1.271
+      },
+      "paleset_01": {
+        "emit_area_frac": 0.918,
+        "gt_book_box_frac": 0.5765,
+        "emit_over_true_book": 1.592,
+        "component_over_emit_box": 0.588,
+        "component_growth_on_close": 1.397,
+        "component_fills_own_bbox": 0.651,
+        "component_covers_frame_ring": 0.0608,
+        "emit_over_search_box": 1.147,
+        "component_over_raw_mask": 1.282
+      },
+      "paleset_02": {
+        "emit_area_frac": 1.0,
+        "gt_book_box_frac": 0.4355,
+        "emit_over_true_book": 2.296,
+        "component_over_emit_box": 0.805,
+        "component_growth_on_close": 2.373,
+        "component_fills_own_bbox": 0.82,
+        "component_covers_frame_ring": 0.6262,
+        "emit_over_search_box": 1.04,
+        "component_over_raw_mask": 2.038
+      }
+    }
+  },
+  "C2_pinch_applicability": {
+    "gate": "pinch_max_mean_extent = 0.88",
+    "quantity": "mean per-column vertical extent of the Otsu-bright region over the search band, as a fraction of image height",
+    "measured_gap": {
+      "outline_visible_max": 0.84,
+      "pinned_min": 0.924,
+      "midpoint": 0.882
+    },
+    "corrected_failure_model": "The plan modelled this as 'Otsu inverts on a pale background'. It does not: on paleset_02 the sofa still reads dark (8.9% of pixels outside the labelled book pass as bright). The profile is pinned at full height because scattered bright specks reach the top and bottom edges of most columns, so first-bright is ~0 and last-bright is ~h-1.",
+    "non_regression": "MEASURED, not structural. The only two spreads pinch decides (de_01 0.823, de_02 0.829) stay applicable with room to spare; every other row decides by ink or none. zoomset_de_01 would newly be refused the pinch cue if ink ever stopped deciding there (extent 0.940, depth 0.215) - a counterfactual, not a change on this corpus.",
+    "per_fixture": {
+      "bg_01": {
+        "mean_extent_over_height": 0.965,
+        "applicable": false,
+        "pinch_depth": 0.0553,
+        "otsu_thr": 133.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "bg_02": {
+        "mean_extent_over_height": 0.9743,
+        "applicable": false,
+        "pinch_depth": 0.0263,
+        "otsu_thr": 128.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "bg_03": {
+        "mean_extent_over_height": 0.9744,
+        "applicable": false,
+        "pinch_depth": 0.0291,
+        "otsu_thr": 129.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "en_coins_01": {
+        "mean_extent_over_height": 0.9372,
+        "applicable": false,
+        "pinch_depth": 0.0426,
+        "otsu_thr": 131.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "en_coins_02": {
+        "mean_extent_over_height": 0.9356,
+        "applicable": false,
+        "pinch_depth": 0.0498,
+        "otsu_thr": 131.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "en_coins_03": {
+        "mean_extent_over_height": 0.9241,
+        "applicable": false,
+        "pinch_depth": 0.0606,
+        "otsu_thr": 135.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "it_geo_01": {
+        "mean_extent_over_height": 0.9631,
+        "applicable": false,
+        "pinch_depth": 0.0265,
+        "otsu_thr": 125.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "it_geo_02": {
+        "mean_extent_over_height": 0.9585,
+        "applicable": false,
+        "pinch_depth": 0.0326,
+        "otsu_thr": 119.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "it_geo_03": {
+        "mean_extent_over_height": 0.958,
+        "applicable": false,
+        "pinch_depth": 0.0318,
+        "otsu_thr": 119.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "it_geo_04": {
+        "mean_extent_over_height": 0.983,
+        "applicable": false,
+        "pinch_depth": 0.0238,
+        "otsu_thr": 134.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "it_geo_05": {
+        "mean_extent_over_height": 0.9701,
+        "applicable": false,
+        "pinch_depth": 0.089,
+        "otsu_thr": 133.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "it_geo_06": {
+        "mean_extent_over_height": 0.991,
+        "applicable": false,
+        "pinch_depth": 0.0218,
+        "otsu_thr": 128.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "it_geo_07": {
+        "mean_extent_over_height": 0.9726,
+        "applicable": false,
+        "pinch_depth": 0.052,
+        "otsu_thr": 133.0,
+        "bright_frac_outside_labelled_book": null,
+        "method_that_decided": "ink"
+      },
+      "de_01": {
+        "mean_extent_over_height": 0.8225,
+        "applicable": true,
+        "pinch_depth": 0.1496,
+        "otsu_thr": 121.0,
+        "bright_frac_outside_labelled_book": 0.0629,
+        "method_that_decided": "pinch"
+      },
+      "de_02": {
+        "mean_extent_over_height": 0.8289,
+        "applicable": true,
+        "pinch_depth": 0.1758,
+        "otsu_thr": 122.0,
+        "bright_frac_outside_labelled_book": 0.1105,
+        "method_that_decided": "pinch"
+      },
+      "zoomset_de_01": {
+        "mean_extent_over_height": 0.8404,
+        "applicable": true,
+        "pinch_depth": 0.2151,
+        "otsu_thr": 129.0,
+        "bright_frac_outside_labelled_book": 0.076,
+        "method_that_decided": "ink"
+      },
+      "zoomset_de_02": {
+        "mean_extent_over_height": 0.9399,
+        "applicable": false,
+        "pinch_depth": 0.1023,
+        "otsu_thr": 125.0,
+        "bright_frac_outside_labelled_book": 0.2417,
+        "method_that_decided": "ink"
+      },
+      "zoomset_en_01": {
+        "mean_extent_over_height": 0.9803,
+        "applicable": false,
+        "pinch_depth": 0.0337,
+        "otsu_thr": 119.0,
+        "bright_frac_outside_labelled_book": 0.4051,
+        "method_that_decided": "ink"
+      },
+      "zoomset_en_02": {
+        "mean_extent_over_height": 0.9663,
+        "applicable": false,
+        "pinch_depth": 0.1388,
+        "otsu_thr": 120.0,
+        "bright_frac_outside_labelled_book": 0.2792,
+        "method_that_decided": "ink"
+      },
+      "paleset_01": {
+        "mean_extent_over_height": 0.7982,
+        "applicable": true,
+        "pinch_depth": 0.1058,
+        "otsu_thr": 108.0,
+        "bright_frac_outside_labelled_book": 0.1273,
+        "method_that_decided": "ink"
+      },
+      "paleset_02": {
+        "mean_extent_over_height": 0.9766,
+        "applicable": false,
+        "pinch_depth": 0.0117,
+        "otsu_thr": 137.0,
+        "bright_frac_outside_labelled_book": 0.089,
+        "method_that_decided": "none"
+      }
+    }
+  },
+  "B3_corroboration": {
+    "renamed": "corroborated -> pinch_corroborated (its actual scope)",
+    "added": [
+      "corroborated_by (cues agreeing with the column that SHIPPED)",
+      "other_cues_agree_elsewhere",
+      "band_x (the search band, orig coords)"
+    ],
+    "dissent_flag_precision": {
+      "fires_on": 5,
+      "of_fixtures": 21,
+      "of_which_correct_splits": 4,
+      "cause_of_the_4": "both agreeing cues pinned at an end of the search band - the band clipping their profile, not a page feature. Fix is the plan's Phase 2 band-edge guard (C3). Until then the warning states its own hit rate and prints the band.",
+      "true_positive": "paleset_01 (pinch 1668 + shadow 1730 vs shipped ink 2741)"
+    },
+    "per_fixture": {
+      "bg_01": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1907,
+        "pinch_x": 1860,
+        "shadow_x": 2799,
+        "tol": 120,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "bg_02": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1940,
+        "pinch_x": 1987,
+        "shadow_x": 2784,
+        "tol": 120,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "bg_03": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 2011,
+        "pinch_x": 1647,
+        "shadow_x": 1883,
+        "tol": 120,
+        "corroborated_by": [],
+        "pinch_corroborated": false,
+        "other_cues_agree_elsewhere": false
+      },
+      "en_coins_01": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1960,
+        "pinch_x": 2799,
+        "shadow_x": 2799,
+        "tol": 120,
+        "corroborated_by": [],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": true
+      },
+      "en_coins_02": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1994,
+        "pinch_x": 2796,
+        "shadow_x": 2744,
+        "tol": 120,
+        "corroborated_by": [],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": true
+      },
+      "en_coins_03": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 2024,
+        "pinch_x": 2791,
+        "shadow_x": 2799,
+        "tol": 120,
+        "corroborated_by": [],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": true
+      },
+      "it_geo_01": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 2091,
+        "pinch_x": 2087,
+        "shadow_x": 2647,
+        "tol": 120,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "it_geo_02": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 2099,
+        "pinch_x": 2094,
+        "shadow_x": 2799,
+        "tol": 120,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "it_geo_03": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 2082,
+        "pinch_x": 2028,
+        "shadow_x": 1877,
+        "tol": 120,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "it_geo_04": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1941,
+        "pinch_x": 2751,
+        "shadow_x": 1948,
+        "tol": 120,
+        "corroborated_by": [
+          "shadow"
+        ],
+        "pinch_corroborated": false,
+        "other_cues_agree_elsewhere": false
+      },
+      "it_geo_05": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 2012,
+        "pinch_x": 1991,
+        "shadow_x": 2799,
+        "tol": 120,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "it_geo_06": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 2089,
+        "pinch_x": 2065,
+        "shadow_x": 1579,
+        "tol": 120,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "it_geo_07": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 2040,
+        "pinch_x": 1993,
+        "shadow_x": 2799,
+        "tol": 120,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "de_01": {
+        "hit": true,
+        "method": "pinch",
+        "ink_x": 2703,
+        "pinch_x": 1983,
+        "shadow_x": 2790,
+        "tol": 120,
+        "corroborated_by": [],
+        "pinch_corroborated": false,
+        "other_cues_agree_elsewhere": true
+      },
+      "de_02": {
+        "hit": true,
+        "method": "pinch",
+        "ink_x": 2150,
+        "pinch_x": 2047,
+        "shadow_x": 2025,
+        "tol": 120,
+        "corroborated_by": [
+          "ink",
+          "shadow"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "zoomset_de_01": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1684,
+        "pinch_x": 1687,
+        "shadow_x": 1789,
+        "tol": 72,
+        "corroborated_by": [
+          "pinch"
+        ],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      },
+      "zoomset_de_02": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1626,
+        "pinch_x": 1276,
+        "shadow_x": 1560,
+        "tol": 87,
+        "corroborated_by": [
+          "shadow"
+        ],
+        "pinch_corroborated": false,
+        "other_cues_agree_elsewhere": false
+      },
+      "zoomset_en_01": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1616,
+        "pinch_x": 2505,
+        "shadow_x": 1404,
+        "tol": 86,
+        "corroborated_by": [],
+        "pinch_corroborated": false,
+        "other_cues_agree_elsewhere": false
+      },
+      "zoomset_en_02": {
+        "hit": true,
+        "method": "ink",
+        "ink_x": 1623,
+        "pinch_x": 2541,
+        "shadow_x": 1634,
+        "tol": 88,
+        "corroborated_by": [
+          "shadow"
+        ],
+        "pinch_corroborated": false,
+        "other_cues_agree_elsewhere": false
+      },
+      "paleset_01": {
+        "hit": false,
+        "method": "ink",
+        "ink_x": 2741,
+        "pinch_x": 1668,
+        "shadow_x": 1730,
+        "tol": 122,
+        "corroborated_by": [],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": true
+      },
+      "paleset_02": {
+        "hit": false,
+        "method": "none",
+        "ink_x": 1741,
+        "pinch_x": 1624,
+        "shadow_x": 2467,
+        "tol": 122,
+        "corroborated_by": [],
+        "pinch_corroborated": true,
+        "other_cues_agree_elsewhere": false
+      }
+    }
+  },
+  "end_to_end_strings": {
+    "paleset_01": {
+      "gutter_x": 2741,
+      "confident": true,
+      "method": "ink",
+      "ratio": 0.525,
+      "pinch_depth": 0.106,
+      "pinch_applicable": true,
+      "pinch_extent_frac": 0.798,
+      "pinch_x": 1668,
+      "shadow_x": 1730,
+      "pinch_corroborated": true,
+      "corroborated_by": [],
+      "other_cues_agree_elsewhere": true,
+      "book_crop_applied": false,
+      "book_crop_reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+      "book_crop_evidence": "an edge was found inside the frame, but the region it encloses still covers almost all of it. This is NOT a finding that the shot is tightly framed: a mask that merged the book with its surroundings produces the same number, and no runtime test measured on this corpus tells the two apart (2026-08-28). If the pages came out wrong, check debug/02_split.png before reframing.",
+      "warnings": [
+        "book-boundary crop NOT applied: detected region covers 92% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+        "book-boundary crop, what that does NOT mean: an edge was found inside the frame, but the region it encloses still covers almost all of it. This is NOT a finding that the shot is tightly framed: a mask that merged the book with its surroundings produces the same number, and no runtime test measured on this corpus tells the two apart (2026-08-28). If the pages came out wrong, check debug/02_split.png before reframing.",
+        "gutter x=2741 decided by ink; other cues agreeing within 122px: NONE (ink=2741, pinch=1668, shadow=1730; search band x=1224..2856 - a cue sitting on a band edge is the band clipping its profile, not a feature of the page)",
+        "CUE DISSENT (weak signal, see below): the two cues that did NOT decide agree with each other and both disagree with the ink column that shipped. ink=2741 pinch=1668 shadow=1730, search band x=1224..2856. On the 21 testset fixtures this fires 5 times and 4 of those are correct splits, every one of them with both cues pinned at a band edge. It is a prompt to open debug/02_split.png, not evidence. Nothing acts on it (consensus override is Phase 2 of docs/plans/book-detector-pale-background.md).",
+        "single vertical cut assumes a near-vertical gutter; residual tilt/curvature is Stage 03 (dewarp)'s job. single.png branch is still untested (no single-page fixture in the testset)."
+      ]
+    },
+    "paleset_02": {
+      "gutter_x": null,
+      "confident": false,
+      "method": "none",
+      "ratio": 0.701,
+      "pinch_depth": 0.012,
+      "pinch_applicable": false,
+      "pinch_extent_frac": 0.977,
+      "pinch_x": 1624,
+      "shadow_x": 2467,
+      "pinch_corroborated": true,
+      "corroborated_by": [],
+      "other_cues_agree_elsewhere": false,
+      "book_crop_applied": false,
+      "book_crop_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+      "book_crop_evidence": "the region IS the entire frame - no edge was found anywhere in it. This is NOT a finding that the shot is tightly framed: a mask that merged the book with its surroundings produces the same number, and no runtime test measured on this corpus tells the two apart (2026-08-28). If the pages came out wrong, check debug/02_split.png before reframing.",
+      "warnings": [
+        "book-boundary crop NOT applied: detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+        "book-boundary crop, what that does NOT mean: the region IS the entire frame - no edge was found anywhere in it. This is NOT a finding that the shot is tightly framed: a mask that merged the book with its surroundings produces the same number, and no runtime test measured on this corpus tells the two apart (2026-08-28). If the pages came out wrong, check debug/02_split.png before reframing.",
+        "spine-pinch cue (Layer 2) NOT APPLICABLE here: mean column extent is 0.977 of the image height (> 0.88), so the page outline is not visible in the searched pixels and the profile is pinned flat. Its depth=0.012 is NOT a measurement of a flat spine \u2014 it is no measurement, and Layer 2 was skipped.",
+        "no confident gutter (ink ratio=0.70 >= 0.55, pinch cue not applicable (see above)); emitting single.png",
+        "single vertical cut assumes a near-vertical gutter; residual tilt/curvature is Stage 03 (dewarp)'s job. single.png branch is still untested (no single-page fixture in the testset)."
+      ]
+    },
+    "en_coins_03": {
+      "gutter_x": 2024,
+      "confident": true,
+      "method": "ink",
+      "ratio": 0.329,
+      "pinch_depth": 0.061,
+      "pinch_applicable": false,
+      "pinch_extent_frac": 0.924,
+      "pinch_x": 2791,
+      "shadow_x": 2799,
+      "pinch_corroborated": true,
+      "corroborated_by": [],
+      "other_cues_agree_elsewhere": true,
+      "book_crop_applied": false,
+      "book_crop_reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+      "book_crop_evidence": "an edge was found inside the frame, but the region it encloses still covers almost all of it. This is NOT a finding that the shot is tightly framed: a mask that merged the book with its surroundings produces the same number, and no runtime test measured on this corpus tells the two apart (2026-08-28). If the pages came out wrong, check debug/02_split.png before reframing.",
+      "warnings": [
+        "book-boundary crop NOT applied: detected region covers 98% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+        "book-boundary crop, what that does NOT mean: an edge was found inside the frame, but the region it encloses still covers almost all of it. This is NOT a finding that the shot is tightly framed: a mask that merged the book with its surroundings produces the same number, and no runtime test measured on this corpus tells the two apart (2026-08-28). If the pages came out wrong, check debug/02_split.png before reframing.",
+        "spine-pinch cue (Layer 2) NOT APPLICABLE here: mean column extent is 0.924 of the image height (> 0.88), so the page outline is not visible in the searched pixels and the profile is pinned flat. Its depth=0.061 is NOT a measurement of a flat spine \u2014 it is no measurement, and Layer 2 was skipped.",
+        "gutter x=2024 decided by ink; other cues agreeing within 120px: NONE (ink=2024, pinch=2791, shadow=2799; search band x=1200..2800 - a cue sitting on a band edge is the band clipping its profile, not a feature of the page)",
+        "CUE DISSENT (weak signal, see below): the two cues that did NOT decide agree with each other and both disagree with the ink column that shipped. ink=2024 pinch=2791 shadow=2799, search band x=1200..2800. On the 21 testset fixtures this fires 5 times and 4 of those are correct splits, every one of them with both cues pinned at a band edge. It is a prompt to open debug/02_split.png, not evidence. Nothing acts on it (consensus override is Phase 2 of docs/plans/book-detector-pale-background.md).",
+        "single vertical cut assumes a near-vertical gutter; residual tilt/curvature is Stage 03 (dewarp)'s job. single.png branch is still untested (no single-page fixture in the testset)."
+      ]
+    }
+  }
+}

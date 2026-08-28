@@ -121,6 +121,113 @@ def test_curved_spread_splits_via_pinch():
     assert gx is not None and abs(gx - 2000) < 150, f"pinch gutter {gx} off"
 
 
+# --------------------------------------------------------------------------
+# v0.5.0 — saying what the detector does NOT know. No accuracy change: these
+# pin the honesty of the report, and the shipped columns are pinned by
+# tools/split_eval against real photographs.
+# --------------------------------------------------------------------------
+
+
+def test_pinch_cue_declares_itself_inapplicable_without_a_page_outline():
+    """A page that fills the frame gives the pinch cue nothing to measure.
+
+    The cue reads the first and last bright row of each column, so with no
+    background above and below the page the profile is pinned at the image
+    height. Whatever dip survives is noise. ``paleset_02`` reported 0.012 that
+    way and it was read as 'this book has no pinch' (RESULTS 2026-08-28).
+    """
+    img = _single_page()                       # bright page, edge to edge
+    gx, diag = detect_gutter(img, DEFAULTS)
+    assert diag["pinch_applicable"] is False
+    assert diag["pinch_extent_frac"] > DEFAULTS["pinch_max_mean_extent"]
+    assert gx is None and diag["method"] == "none"
+
+
+def test_an_inapplicable_pinch_can_never_decide_a_split():
+    """Skipping Layer 2 is the point: a meaningless number must not cut a page.
+
+    Built to be the hostile case — a frame with no page outline whose extent
+    profile still dips hard enough to clear ``pinch_min_depth``. Without the
+    applicability test this splits; with it, it declines.
+    """
+    h, w = 3000, 4000
+    img = np.full((h, w), 245, np.uint8)       # page fills the frame
+    _text_block(img, int(w * 0.05), int(w * 0.95))
+    # A NARROW dark vertical band: every column inside it reads no bright pixel,
+    # so its extent collapses to 0 and the dip is total — the strongest possible
+    # false pinch. Narrow on purpose: the applicability test is a MEAN over the
+    # band, so a wide dark region pulls it down, and rightly so — a wide dark
+    # region is background, which is exactly when the cue does work.
+    img[:, 1970:2030] = 20
+    _, diag = detect_gutter(img, DEFAULTS)
+    assert diag["pinch_depth"] >= DEFAULTS["pinch_min_depth"], (
+        "fixture no longer produces a false pinch strong enough to fire")
+    assert diag["pinch_applicable"] is False
+    assert diag["method"] != "pinch", (
+        "an inapplicable cue decided the split — Layer 2 was not skipped")
+
+
+def test_a_real_pinch_stays_applicable():
+    """The gate must not switch off the cue it exists to protect.
+
+    Non-regression here is measured, not structural: on the real corpus the two
+    spreads pinch actually decides sit at 0.823/0.829 against a 0.88 gate.
+    """
+    img = _curved_spread_no_ink_valley(gutter=2000)
+    gx, diag = detect_gutter(img, DEFAULTS)
+    assert diag["pinch_applicable"] is True
+    assert diag["pinch_extent_frac"] <= DEFAULTS["pinch_max_mean_extent"]
+    assert diag["method"] == "pinch" and gx is not None
+
+
+def test_corroboration_is_scoped_to_the_column_that_shipped():
+    """``corroborated_by`` answers the question a reader of split.json has.
+
+    The old bare ``corroborated`` flag asked only about the pinch CANDIDATE, and
+    on paleset_01 it serialized ``true`` for a column ~1000 px from the cut.
+    """
+    img = _two_page_spread(gutter=2000)
+    gx, diag = detect_gutter(img, DEFAULTS)
+    assert diag["method"] == "ink" and gx is not None
+    assert "pinch_corroborated" in diag and "corroborated" not in diag
+    # Every name listed must be a cue that really does land on the shipped cut,
+    # and the deciding cue never corroborates itself.
+    cue_x = {"ink": diag["ink_x"], "pinch": diag["pinch_x"],
+             "shadow": diag["shadow_x"]}
+    assert diag["method"] not in diag["corroborated_by"]
+    for name in diag["corroborated_by"]:
+        assert abs(cue_x[name] - gx) <= diag["tol"]
+    for name in set(cue_x) - {diag["method"], *diag["corroborated_by"]}:
+        assert abs(cue_x[name] - gx) > diag["tol"]
+
+
+def test_two_cues_agreeing_away_from_the_winner_are_reported():
+    """The paleset_01 shape: ink wins, pinch and shadow agree ~1000 px away.
+
+    Reported only — acting on it is the plan's Phase 2 consensus override.
+    """
+    h, w = 3000, 4000
+    img = np.full((h, w), 30, np.uint8)                  # dark background
+    ptop, pbot = int(h * 0.05), int(h * 0.95)
+    img[ptop:pbot, int(w * 0.10):int(w * 0.90)] = 235    # page block
+    _text_block(img, int(w * 0.11), int(w * 0.89))
+    # A real spine at 1700: pinched page outline AND a binding shadow…
+    notch_hw, notch_max = 300, int((pbot - ptop) * 0.20)
+    for x in range(1700 - notch_hw, 1700 + notch_hw):
+        eat = int(notch_max * (1 - abs(x - 1700) / notch_hw))
+        img[ptop:ptop + eat, x] = 30
+        img[pbot - eat:pbot, x] = 30
+    img[ptop:pbot, 1680:1720] = np.clip(
+        img[ptop:pbot, 1680:1720].astype(np.int16) - 90, 0, 255).astype(np.uint8)
+    # …and a decoy whitespace channel INSIDE the right page, which ink prefers.
+    img[ptop:pbot, 2600:2800] = 235
+    gx, diag = detect_gutter(img, DEFAULTS)
+    assert diag["method"] == "ink" and gx is not None and gx > 2400, (
+        "fixture must make the ink cue win on the decoy channel")
+    assert diag["corroborated_by"] == [], "nothing should agree with the decoy"
+    assert diag["other_cues_agree_elsewhere"] is True
+
+
 def test_cut_pages_loses_no_columns_and_overlaps():
     img = _two_page_spread(gutter=2000)
     w = img.shape[1]

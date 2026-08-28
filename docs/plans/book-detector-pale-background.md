@@ -4,7 +4,11 @@
 19/21 — see RESULTS 2026-08-28 and section 3). **Phase 1 DONE 2026-08-28** (the
 artifacts stop claiming things they did not measure; suite still 19/21 exit 1,
 table identical row for row — see section 4 and RESULTS). Phases 2-3 not
-started; next is A10. Written
+started. **A10 was MEASURED 2026-08-28 and is NOT shipped** — the detector
+half-works (fixes `paleset_02` outright, wrecks `paleset_01`) and the
+precondition this plan correctly named as the real deliverable **does not exist
+on this corpus**; see section 5's A10 entry. Nothing else in Phase 2 has been
+attempted. Written
 2026-08-28 at the end of the on-device session that found the defect; the
 scouting numbers below were measured that day, the fix was deliberately not
 attempted.
@@ -131,7 +135,12 @@ re-checked by drawing them back onto the frame — independent of every quantity
 the detector computes, and read before any fix was attempted. They agree with the
 same day's background-first probe to within ~2 points of frame area (0.577 vs
 0.561, 0.436 vs 0.438), which is corroboration from an independent route, **not**
-a label fitted to a candidate detector. The book-box convention is unchanged, so
+a label fitted to a candidate detector. **That corroboration is AREA-ONLY, and
+2026-08-28's faithful re-run showed why the distinction matters:** it puts
+paleset_01's blob at 0.716 of frame, and that blob misses the left page entirely
+while leaking to the bottom-right corner. A box can agree on area and still be
+badly wrong in position. The labels stay independent for the other reasons given
+here - hand-read with rulers, off the committed pixels, before any fix. The book-box convention is unchanged, so
 `gt/book_box.json` is still diagnostic-only: do not fit a detector to these boxes.
 
 **Free control:** both frames are the same two pages as `en_coins_03`
@@ -255,6 +264,11 @@ border to be background (`GC_BGD`); what it gets wrong is the *foreground* seed,
 which comes from the broken paper mask. Replacing that seed with "everything far
 from the border's colour model" is a change to code that already exists.
 
+**MEASURED PROPERLY 2026-08-28 — read the verdict at the end of this section
+before building anything here.** The scouting numbers immediately below are the
+original throwaway probe's and are kept because they are what motivated the work;
+the faithful re-run and its verdict follow.
+
 **Probed on 2026-08-28** (throwaway prototype: Lab colour, a Gaussian model
 fitted to a 2 % border strip, Mahalanobis distance, Otsu, largest blob):
 
@@ -316,6 +330,66 @@ would be fragile. The literature's answer to precisely this is below.
 book*, including the fanned block of closed pages beside the spread.
 `testset/gt/book_box.json` deliberately excludes that block. Harmless for the
 search box, wrong for the emit box, so the two-box split still matters.
+
+#### A10 — VERDICT, measured 2026-08-28 (RESULTS; `docs/data/a10_background_first_20260828.json`)
+
+**Not shipped. The detector half-works; the precondition does not exist.** Full
+row in `docs/RESULTS.md`; the essentials, so nobody re-derives them:
+
+* **It reproduces, with two traps.** Normalising the Mahalanobis map by its own
+  *max* lets one outlier pixel squash the bulk of the distribution into ~20 of
+  256 levels; and adding morphology (not in the recipe above) moved `paleset_02`
+  from 0.452 to 0.845. Percentile-clip, no morphology.
+* **It fixes `paleset_02` outright** — box (312,498)-(3222,2436) against a
+  labelled (340,495)-(3150,2430), gutter 1752 against 1778 ±200, **0.00 %**
+  clipping. The row would go green.
+* **It wrecks `paleset_01`** — gutter 3045 against 1680, and it **clips 20.85 %
+  of the labelled book**. *Named mechanism:* that book **runs off the left frame
+  edge**, so the 2 % border strip the model is fitted to contains page pixels;
+  paper then reads as background, the left page drops out, and the blob leaks
+  along a cable to the bottom-right corner. When the border is not background
+  this method does not degrade, **it inverts**.
+* **Half the precondition IS solved, and cheaply:** *how many frame sides the
+  candidate blob touches.* `paleset_01` = 2, `paleset_02` = 0, `zoomset_de_01`
+  and `zoomset_en_01` = 1, the other seventeen = 0. Two or more sides means the
+  candidate is not enclosed or the model was fitted to the book. Keep this.
+* **The other half — "is there a background at all" — has no cheap answer.**
+  Eight families measured across all 21: paper-mask statistics (six, closed in
+  Phase 1); Mahalanobis scalars; absolute ring homogeneity in Lab σ
+  (`paleset_02` 19.52 against `it_geo_06` **19.81** — a 0.29 gap on a 50-unit
+  scale); blob compactness (0.91 against `bg_01` 0.87, and *inverted* at 0.92
+  against 0.94 on the connectivity variant); connectivity (ring coverage 0.995
+  inside 0.849–1.000; enclosure degenerate at 1.000 for all 21); a text-ink veto
+  (fabric texture reads as glyphs — 63.75 % of "ink" outside a box that clips
+  0.00 %); brightness polarity (ΔL 72 against `bg_01/02/03` at 71/71/69); and
+  border texture (Sobel median 69.87 against `bg_01` 71.34 — the weave is
+  indistinguishable from page texture, which **A3/A6 below predicted and is now
+  measured**). **Do not re-attempt these eight.**
+* **Why it is structural.** On a tightly framed scan the border *is* the page, so
+  this method finds the **printed area** instead of the book — and a printed area
+  is also large, also rectangular, also compact, also bordered by something
+  darker, and at the ring also textured. Every property that makes a book look
+  like a book is shared by the thing this method finds when it inverts.
+* **Beware `ring_p90`-style measures.** Mahalanobis of the ring under the ring's
+  *own* model is self-normalising and reads 2.14–3.11 on every frame. It looks
+  like a homogeneity measure; it is not one.
+* **What an unguarded fallback would cost.** `min_area_frac` 0.10 refuses
+  `en_coins_01/02/03` for free — **including this section's nominated "sharpest
+  test" `en_coins_03`, which therefore discriminates nothing** — and
+  `abstain_area_frac` 0.83 refuses `bg_02`/`bg_03`/`it_geo_04`. **Seven of the 13
+  flat fixtures survive both guards** and would lose 17.6 %, 46.0 %, 92.5 %,
+  57.7 %, 39.1 %, 39.6 % and 69.6 % of their text-like ink (`bg_01`,
+  `it_geo_01/02/03/05/06/07`). **None of the seven has a labelled book box, so
+  `split_eval`'s clipping column is blank for all of them** — an unguarded A10
+  could destroy page content on seven fixtures and still print a green table.
+  Check per row, never infer safety from the harness here.
+* **"Bank more pale fixtures" is not available.** The 31 archived
+  pale-background files are 11 frames of `page_001` (lap), 18 of `page_002`
+  (sofa) and 2 more of the lap scene — **two scenes, one session, one book**, not
+  31 examples. Question 1 has exactly **one** usable positive. The route to
+  n > 1 is **new photographs of new surfaces**.
+* **Cost is not the obstacle:** 23 ms on a 4080×3060 frame against `find_book`'s
+  own 318 ms, and it would run only where the paper route already abstained.
 
 ### A11. Contour hypotheses ranked by contrast (from the literature)
 

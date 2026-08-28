@@ -6472,3 +6472,130 @@ the plan puts that deliberately last, after the crop works.
 frame — unchanged. B1 adds **no computation**: it re-words a string from numbers
 already in `find_book`'s diag. C2 adds one mean over the search band of an array
 Layer 2 already builds: **0.003 ms**, 0.004 % of the resolver.
+
+## 2026-08-28 — background-first detection: the detector half-works, the precondition does not exist
+
+Phase 2 / A10 of `docs/plans/book-detector-pale-background.md`. **Nothing shipped
+— this row is a measurement, and the decision is the owner's.** `tools/split_eval`
+is untouched at 19/21, exit 1. Machine-readable inputs and outputs:
+`docs/data/a10_background_first_20260828.json`.
+
+The plan says the deliverable is not the detector but the **precondition** —
+*"before trusting a background-first box, test whether there is a background at
+all."* That was the right thing to name, and it is the thing that failed.
+
+### The detector reproduces, and it splits the two failing frames in half
+
+| frame | box found | labelled box | gutter after crop | want | clips labelled book |
+|---|---|---|---|---|---|
+| `paleset_02` | (312,498)-(3222,2436) | (340,495)-(3150,2430) | **1752** | 1778 ±200 | **0.00 %** |
+| `paleset_01` | (702,414)-(4080,3060) | (0,400)-(3050,2760) | **3045** | 1680 ±200 | **20.85 %** |
+
+`paleset_02` is an outright win — the box lands almost exactly on the hand label
+and the row would flip from FAIL to OK. `paleset_01` would destroy a fifth of the
+book.
+
+**Why `paleset_01` fails, named rather than guessed:** its book **runs off the
+left frame edge**, so the 2 % border strip the background model is fitted to
+*contains page pixels*. Paper then reads as "background", the left page drops out
+of the blob, and the blob leaks along a cable to the bottom-right corner. A
+background-first method presumes the border is background; when it is not, it
+does not degrade — **it inverts**. Same inversion the plan already identified for
+tightly framed spreads, arrived at from a different direction.
+
+### Reproducing the plan's throwaway probe — and one methodological correction
+
+`paleset_02` reproduces (0.452 vs the plan's 0.438). `paleset_01` does not
+(0.716 vs 0.561). Two bugs in the first attempt, both worth recording because
+they are easy to repeat: normalising the Mahalanobis map by **its own max** lets
+one outlier pixel squash the bulk of the distribution (1–5) into ~20 of 256
+levels, so Otsu thresholds a histogram with all its mass in 20 bins; and adding
+morphological close/open, which the plan's recipe does not have, moved
+`paleset_02` from 0.452 to 0.845. Percentile-clip, no morphology, and it
+reproduces.
+
+**Area agreement is not box agreement.** The reproduced `paleset_01` blob covers
+0.716 of frame against a labelled 0.577 — and it *misses the left page entirely*
+while leaking to the bottom-right corner. So Phase 0's "the labels agree with the
+background-first probe to within ~2 points of frame area" is **area-only
+corroboration**, and should be read that way. The labels themselves remain
+independent for the reasons Phase 0 gives separately: hand-read with rulers, off
+the committed pixels, before any fix was attempted.
+
+### One half of the precondition IS solved
+
+The precondition has to answer two different questions, and they have different
+mechanisms:
+
+1. **Is the background model valid** — was it fitted to background, or to the book?
+2. **Is there a background at all** — or is the border simply the page?
+
+**Question 2 is answered by a single principled signal: how many frame sides the
+candidate blob touches.** `paleset_01` = 2, `paleset_02` = 0, `zoomset_de_01` and
+`zoomset_en_01` = 1, all other seventeen = 0. Two or more sides means the
+candidate is not enclosed, or the border model was fitted to the book — exactly
+the mechanism confirmed on `paleset_01`'s pixels. That is a real result and it is
+not a fitted threshold.
+
+### Question 1 has no cheap answer — eight families measured
+
+| # | family | best signal | `paleset_02` | nearest flat row | verdict |
+|---|---|---|---|---|---|
+| 1 | paper-mask statistics (six) | — | — | — | closed in Phase 1 |
+| 2 | Mahalanobis scalars | `inner_med` | 2.73 | 1.74–7.37 | inside the range |
+| 3 | absolute ring homogeneity (Lab σ) | — | **19.52** | `it_geo_06` **19.81** | 0.29 gap on a 50-unit scale |
+| 4 | blob compactness | fill | 0.91 | `bg_01` 0.87 (0.94 on the connectivity variant — *inverted*) | no gap |
+| 5 | connectivity | ring coverage | 0.995 | 0.849–1.000 | inside; enclosure is degenerate at 1.000 for all 21 |
+| 6 | text-ink veto | ink outside box | **63.75 %** on a box that clips **0.00 %** | — | fabric texture reads as glyphs |
+| 7 | brightness polarity | ΔL fg−bg | 72 | `bg_01` 71, `bg_02` 71, `bg_03` 69 | no separation |
+| 8 | border texture | Sobel median | 69.87 | `bg_01` 71.34, `it_geo_04` 69.81 | weave = page texture |
+
+Family 3's `ring_p90` deserves a specific warning: Mahalanobis distance of the
+ring **under the ring's own model** is self-normalising by construction, and duly
+reads 2.14–3.11 across all 21 frames. It looks like a homogeneity measure and is
+not one. Family 8 was predicted to fail by the plan's own A3/A6 ("upholstery is
+smooth at both scales"); it is now measured rather than predicted.
+
+**Why this is structural, not a missing threshold.** On a tightly framed scan the
+border *is* the page, so a background-first method finds the **printed area**
+instead of the book — and a printed area is also large, also rectangular, also
+compact, also bordered by something darker, and (at the ring) also textured.
+Every property that makes a book look like a book is shared by the thing this
+method finds when it inverts.
+
+### What an unguarded fallback would cost, measured
+
+The existing guards refuse some bad boxes for free: `min_area_frac` 0.10 refuses
+`en_coins_01/02/03` (0.026–0.028) — **including the plan's nominated "sharpest
+test", `en_coins_03`, which therefore discriminates nothing** — and
+`abstain_area_frac` 0.83 refuses `bg_02`, `bg_03`, `it_geo_04` (0.92–0.99).
+
+**Seven of the thirteen flat fixtures survive both guards and would be cropped**,
+losing this much of their text-like ink:
+
+| `bg_01` | `it_geo_01` | `it_geo_02` | `it_geo_03` | `it_geo_05` | `it_geo_06` | `it_geo_07` |
+|---|---|---|---|---|---|---|
+| 17.6 % | 46.0 % | 92.5 % | 57.7 % | 39.1 % | 39.6 % | 69.6 % |
+
+None of those seven has a labelled book box, so **`split_eval`'s clipping column
+is blank for all of them** — an unguarded A10 could destroy page content on seven
+fixtures and still print a green table. That is why this was checked directly per
+row instead of being inferred from the harness.
+
+### The archive cannot fix this, and that corrects a standing impression
+
+Calibrating a precondition on one positive example is not calibration. The
+obvious remedy — bank more pale-background fixtures, there are 31 in the archive —
+**does not exist**. Those 31 files are **11 frames of `page_001` (a lap shot), 18
+frames of `page_002` (the sofa shot), and 2 more frames of the lap scene** from
+the same session's patch-mode run. Two scenes, one session, one book, one surface
+each. Question 1 has exactly **one** usable positive, and `paleset_01`'s scene is
+a *negative* for A10 itself.
+
+**The route to n > 1 is new photographs of new surfaces, not the archive.**
+
+### Cost, if it ever ships
+
+Background-first is **23 ms** on the 4080×3060 `paleset_01` frame, against
+`find_book`'s own 318 ms, and it would run only where the paper route already
+abstained on area. Cost is not what stands in the way.

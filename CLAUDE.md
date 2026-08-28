@@ -57,7 +57,19 @@ Italian, German**.
       classifier by measurement** — six cheap ways to ask "was a book actually
       found?" all fail, because on a tight scan the book really does reach the
       frame border, so the only route is asking whether there is a background at
-      all. Next is A10 (background-first, behind that precondition).
+      all. **A10 (background-first) was then MEASURED 2026-08-28 and
+      NOT shipped:** it fixes `paleset_02` outright (0.00% clipping, gutter 1752
+      vs 1778) and wrecks `paleset_01` (clips 20.85% of the book, because that
+      book runs off the left frame edge so the background model gets fitted to
+      paper). Half the precondition is solved — how many frame sides the candidate
+      blob touches — but "is there a background at all" has no cheap answer:
+      eight families measured, all fail, structurally, because on a tight scan the
+      method finds the printed area and a printed area is also large, rectangular,
+      compact and darker-bordered. **n = 1:** the 31 archived pale captures are two
+      scenes, not 31 examples, so more fixtures must be NEW photographs of NEW
+      surfaces. Awaiting an owner call between shipping it off-by-default (the
+      `per_page_source` precedent), gathering that data, or escalating to A9 (the
+      phone supplies the box).
 
 ## Architecture: the stage contract (IMPORTANT)
 

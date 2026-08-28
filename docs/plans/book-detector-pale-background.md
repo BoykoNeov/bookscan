@@ -237,6 +237,14 @@ frame border IS the page*. The background model gets fitted to paper, and the
 largest "unlike the border" blob becomes a figure **inside** the book. The method
 does not degrade gracefully; it inverts.
 
+**The sharpest possible test of that precondition is already in the testset, for
+free:** `en_coins_03` is the *same two pages* as `paleset_01`/`paleset_02`, shot
+flat and tightly framed. Same content, opposite background condition — the
+precondition must **fire** on the paleset pair and **abstain** on `en_coins_03`,
+and if it cannot tell those three frames apart it is not a precondition. Check it
+there first; it is cheaper than the whole fixture sweep and it isolates exactly
+the failure mode above (border-is-the-page).
+
 **So the deliverable is not the detector, it is the precondition.** Before
 trusting a background-first box, test *whether there is a background at all*:
 
@@ -377,8 +385,21 @@ repo cheap criteria have been coin flips. Weigh that, do not rediscover it.
 1. `python -m tools.split_eval` keeps all **19 pre-existing** spreads correct
    (the run reads 19/21 today because of the two banked failures; a fix takes it
    to 21/21, and any drop below 19-of-the-old-19 is a regression).
-2. **Worst clipping stays 0.0 %** — losing page content is the one failure this
-   stage treats as real.
+2. **Worst clipping stays 0.0 % on the 19 pre-existing spreads** — losing page
+   content is the one failure this stage treats as real. **On the two `paleset`
+   rows the exact-zero reading is a trap, and Phase 0 measured why:** the metric
+   divides by the labelled box area, so on `paleset_01` one pixel off the left or
+   right edge costs 0.033 % (0.042 % top/bottom) and on `paleset_02` 0.036 %
+   (0.052 %) — a 20-px inset all round prints ~3 % and shouts PAGE CONTENT LOST.
+   Worse, `paleset_01`'s book **runs off the left edge of its frame** (the page
+   reaches x=0 around y=2620-2660), so its label starts at x=0 and *any* crop
+   starting further right clips it — 25 px in is already 1.4 %. The label was not
+   softened by inventing an inset, because the book really does leave the frame
+   there. So on those two rows: if a clip is under ~2 % and lands in an edge band,
+   look at the band. **Blank outer margin with no ink = label precision, and the
+   result is the number plus that adjudication, written down. Any clip that
+   removes ink is a real failure at any size.** The older six rows never hit this
+   because their emitted crops are bigger than their labels.
 3. Both new pale-background fixtures split within tolerance (`paleset_01` 1680,
    `paleset_02` 1778, tol 200 each), **or** the detector abstains for a
    correctly-stated reason (Phase 1 is what makes that outcome honest, and

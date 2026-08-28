@@ -83,5 +83,29 @@
     },
     "unchanged_rows": 19,
     "unchanged_note": "All 19 pre-existing spreads keep their exact shipped answers; worst clipping stays 0.0%."
+  },
+  "clipping_metric_sensitivity": {
+    "_doc": "Measured with tools.split_eval._clipped_fraction. The metric divides by the labelled box area, so a hand label read to +-20 px is knife-edge against a bar of exactly 0.0 %. Recorded so a future session can tell a label-precision artefact from real lost page.",
+    "paleset_01": {
+      "box_wh": [
+        3050,
+        2360
+      ],
+      "pct_per_px_left_right": 0.0328,
+      "pct_per_px_top_bottom": 0.0424,
+      "inset_20px_all_round_pct": 2.984,
+      "page_surface_tight_x0_25_y0_405_pct": 1.403,
+      "note": "the book runs OFF the left edge of the frame (page reaches x=0 around y=2620-2660), so the label starts at x=0 and any crop starting further right clips it"
+    },
+    "paleset_02": {
+      "box_wh": [
+        2810,
+        1935
+      ],
+      "pct_per_px_left_right": 0.0356,
+      "pct_per_px_top_bottom": 0.0517,
+      "inset_20px_all_round_pct": 3.461
+    },
+    "adjudication_rule": "On the two paleset rows, a clip under ~2 % confined to an edge band is judged by whether that band contains ink: blank outer margin = label precision (record the number and the adjudication); ink removed = a real failure at any size. The 19 pre-existing spreads keep the plain 0.0 % bar."
   }
 }

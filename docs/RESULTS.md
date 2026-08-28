@@ -6314,3 +6314,25 @@ day, commit e048b34) already put all 31 of those captures in
 at risk by the time this ran. What Phase 0 actually delivered is the other half:
 committed, labelled fixtures, so an experiment is reproducible from the repo
 alone.
+
+### A trap these two labels set, measured rather than discovered later
+
+The clipping metric divides by the **labelled box area**, so a hand label read to
+±20 px is knife-edge against a bar of exactly 0.0 %. Measured with
+`_clipped_fraction`: on `paleset_01` one pixel off the left or right edge costs
+**0.033 %** (0.042 % top/bottom), on `paleset_02` **0.036 %** (0.052 %). A 20-px
+inset all round therefore reports **~3 %** and prints as PAGE CONTENT LOST.
+
+`paleset_01` is the sharp case: **its book runs off the left edge of the frame** —
+the page reaches x=0 in a band around y=2620–2660 — so the label starts at x=0 and
+any crop starting further right clips it (25 px in is already 1.4 %). The label was
+*not* softened by inventing an inset, because the book really does leave the frame
+there.
+
+Both rows read 0.0 % today only because the detector abstains and emits the whole
+frame; the trap springs the moment a fix makes the crop apply. So on those two rows:
+a clip under ~2 % landing in an edge band is adjudicated by **whether the band
+contains ink** — blank outer margin is label precision (report the number *and* the
+adjudication), ink removed is a real failure at any size. The 19 pre-existing
+spreads keep the plain 0.0 % bar; they never hit this because their emitted crops
+are larger than their labels.

@@ -4,14 +4,22 @@
     "command": "python -m tools.split_eval",
     "spreads_correct": "19/19",
     "worst_clip_pct": 0.0,
-    "crop_applied_on": ["zoomset_de_01", "zoomset_de_02", "zoomset_en_01", "zoomset_en_02"],
+    "crop_applied_on": [
+      "zoomset_de_01",
+      "zoomset_de_02",
+      "zoomset_en_01",
+      "zoomset_en_02"
+    ],
     "note": "de_01/de_02 abstain at 85%/89%; the 13 flat spreads at 97-100%"
   },
   "failing_captures": {
     "source": "jobs/20260828-092505-15c41a76 (gitignored - Phase 0 must copy these into testset/)",
     "page_001": {
       "anchor": "page_001/01_fuse/anchor.png",
-      "size": [4080, 3060],
+      "size": [
+        4080,
+        3060
+      ],
       "shipped_gutter_x": 2741,
       "method": "ink",
       "ink_ratio": 0.525,
@@ -25,7 +33,10 @@
     },
     "page_002": {
       "anchor": "page_002/01_fuse/anchor.png",
-      "size": [4080, 3060],
+      "size": [
+        4080,
+        3060
+      ],
       "shipped_gutter_x": null,
       "method": "none",
       "ink_ratio": 0.701,
@@ -38,72 +49,256 @@
     "_doc": "emit-box area as a fraction of frame; >= 0.83 trips the abstain gate, i.e. detection failed. Rows are val_min, columns sat_max.",
     "finding": "val_min is inert (identical down every column); sat_max is the whole story",
     "page_001": {
-      "val_min_0.55": {"sat_0.25": 0.918, "sat_0.18": 0.832, "sat_0.12": 0.702},
-      "val_min_0.50": {"sat_0.25": 0.918, "sat_0.18": 0.918, "sat_0.12": 0.757},
-      "val_min_0.45": {"sat_0.25": 0.918, "sat_0.18": 0.918, "sat_0.12": 0.617},
-      "val_min_0.40": {"sat_0.25": 0.918, "sat_0.18": 0.918, "sat_0.12": 0.617},
-      "val_min_0.35": {"sat_0.25": 0.918, "sat_0.18": 0.918, "sat_0.12": 0.616}
+      "val_min_0.55": {
+        "sat_0.25": 0.918,
+        "sat_0.18": 0.832,
+        "sat_0.12": 0.702
+      },
+      "val_min_0.50": {
+        "sat_0.25": 0.918,
+        "sat_0.18": 0.918,
+        "sat_0.12": 0.757
+      },
+      "val_min_0.45": {
+        "sat_0.25": 0.918,
+        "sat_0.18": 0.918,
+        "sat_0.12": 0.617
+      },
+      "val_min_0.40": {
+        "sat_0.25": 0.918,
+        "sat_0.18": 0.918,
+        "sat_0.12": 0.617
+      },
+      "val_min_0.35": {
+        "sat_0.25": 0.918,
+        "sat_0.18": 0.918,
+        "sat_0.12": 0.616
+      }
     },
     "page_002": {
-      "val_min_0.55": {"sat_0.25": 1.0, "sat_0.18": 0.871, "sat_0.12": 0.631},
-      "val_min_0.50": {"sat_0.25": 1.0, "sat_0.18": 0.883, "sat_0.12": 0.793},
-      "val_min_0.45": {"sat_0.25": 1.0, "sat_0.18": 0.883, "sat_0.12": 0.796},
-      "val_min_0.40": {"sat_0.25": 1.0, "sat_0.18": 0.883, "sat_0.12": 0.796},
-      "val_min_0.35": {"sat_0.25": 1.0, "sat_0.18": 0.883, "sat_0.12": 0.796}
+      "val_min_0.55": {
+        "sat_0.25": 1.0,
+        "sat_0.18": 0.871,
+        "sat_0.12": 0.631
+      },
+      "val_min_0.50": {
+        "sat_0.25": 1.0,
+        "sat_0.18": 0.883,
+        "sat_0.12": 0.793
+      },
+      "val_min_0.45": {
+        "sat_0.25": 1.0,
+        "sat_0.18": 0.883,
+        "sat_0.12": 0.796
+      },
+      "val_min_0.40": {
+        "sat_0.25": 1.0,
+        "sat_0.18": 0.883,
+        "sat_0.12": 0.796
+      },
+      "val_min_0.35": {
+        "sat_0.25": 1.0,
+        "sat_0.18": 0.883,
+        "sat_0.12": 0.796
+      }
     }
   },
   "global_sat_max_retune_REJECTED": {
     "_doc": "sat_max 0.12 fixes both real captures but destroys the suite. This closes 'retune the threshold' as an option.",
-    "sat_max_0.18": {"spreads_correct": "17/19", "worst_clip_pct": 42.1},
+    "sat_max_0.18": {
+      "spreads_correct": "17/19",
+      "worst_clip_pct": 42.1
+    },
     "sat_max_0.12": {
       "spreads_correct": "12/19",
       "worst_clip_pct": 100.0,
-      "failures": ["it_geo_01", "it_geo_02", "it_geo_03", "de_01", "zoomset_de_02", "zoomset_en_01", "zoomset_en_02"],
+      "failures": [
+        "it_geo_01",
+        "it_geo_02",
+        "it_geo_03",
+        "de_01",
+        "zoomset_de_02",
+        "zoomset_en_01",
+        "zoomset_en_02"
+      ],
       "worst_case": "zoomset_en_01 loses 100% of its labelled book"
     },
     "conclusion": "no single global saturation constant serves both corpora; the fix must be per-image adaptivity, a different cue, or escalation"
   },
   "band_edge_margins": {
     "_doc": "distance of the ink-profile argmin from the nearest edge of the [0.30,0.70] search band, as a fraction of band width, ON THE SHIPPED PATH (book crop applied where find_book says so). A first attempt measured this on full frames and was wrong for the four cropped fixtures.",
-    "bad_call_page_001": 0.070,
-    "closest_ink_deciding_fixture": {"id": "zoomset_en_02", "margin": 0.225},
-    "trap": {"id": "de_01", "margin": 0.061, "why_safe": "resolves by pinch, not ink, so a guard scoped to the DECIDING cue leaves it untouched"},
+    "bad_call_page_001": 0.07,
+    "closest_ink_deciding_fixture": {
+      "id": "zoomset_en_02",
+      "margin": 0.225
+    },
+    "trap": {
+      "id": "de_01",
+      "margin": 0.061,
+      "why_safe": "resolves by pinch, not ink, so a guard scoped to the DECIDING cue leaves it untouched"
+    },
     "candidate_gate": 0.15,
     "all_fixtures": {
-      "de_01": {"margin": 0.061, "method": "pinch"},
-      "zoomset_en_02": {"margin": 0.225, "method": "ink"},
-      "zoomset_en_01": {"margin": 0.230, "method": "ink"},
-      "de_02": {"margin": 0.406, "method": "pinch"},
-      "zoomset_de_02": {"margin": 0.406, "method": "ink"},
-      "zoomset_de_01": {"margin": 0.411, "method": "ink"},
-      "it_geo_02": {"margin": 0.438, "method": "ink"},
-      "bg_01": {"margin": 0.442, "method": "ink"},
-      "it_geo_01": {"margin": 0.443, "method": "ink"},
-      "it_geo_06": {"margin": 0.444, "method": "ink"},
-      "it_geo_03": {"margin": 0.449, "method": "ink"},
-      "bg_02": {"margin": 0.463, "method": "ink"},
-      "it_geo_04": {"margin": 0.463, "method": "ink"},
-      "en_coins_01": {"margin": 0.475, "method": "ink"},
-      "it_geo_07": {"margin": 0.475, "method": "ink"},
-      "en_coins_03": {"margin": 0.485, "method": "ink"},
-      "it_geo_05": {"margin": 0.492, "method": "ink"},
-      "bg_03": {"margin": 0.493, "method": "ink"},
-      "en_coins_02": {"margin": 0.496, "method": "ink"}
+      "de_01": {
+        "margin": 0.061,
+        "method": "pinch"
+      },
+      "zoomset_en_02": {
+        "margin": 0.225,
+        "method": "ink"
+      },
+      "zoomset_en_01": {
+        "margin": 0.23,
+        "method": "ink"
+      },
+      "de_02": {
+        "margin": 0.406,
+        "method": "pinch"
+      },
+      "zoomset_de_02": {
+        "margin": 0.406,
+        "method": "ink"
+      },
+      "zoomset_de_01": {
+        "margin": 0.411,
+        "method": "ink"
+      },
+      "it_geo_02": {
+        "margin": 0.438,
+        "method": "ink"
+      },
+      "bg_01": {
+        "margin": 0.442,
+        "method": "ink"
+      },
+      "it_geo_01": {
+        "margin": 0.443,
+        "method": "ink"
+      },
+      "it_geo_06": {
+        "margin": 0.444,
+        "method": "ink"
+      },
+      "it_geo_03": {
+        "margin": 0.449,
+        "method": "ink"
+      },
+      "bg_02": {
+        "margin": 0.463,
+        "method": "ink"
+      },
+      "it_geo_04": {
+        "margin": 0.463,
+        "method": "ink"
+      },
+      "en_coins_01": {
+        "margin": 0.475,
+        "method": "ink"
+      },
+      "it_geo_07": {
+        "margin": 0.475,
+        "method": "ink"
+      },
+      "en_coins_03": {
+        "margin": 0.485,
+        "method": "ink"
+      },
+      "it_geo_05": {
+        "margin": 0.492,
+        "method": "ink"
+      },
+      "bg_03": {
+        "margin": 0.493,
+        "method": "ink"
+      },
+      "en_coins_02": {
+        "margin": 0.496,
+        "method": "ink"
+      }
     }
   },
   "gate_headroom": {
     "valley_ratio": {
       "current": 0.55,
-      "highest_passing_fixture": {"ids": ["en_coins_02", "zoomset_de_01"], "ratio": 0.47},
+      "highest_passing_fixture": {
+        "ids": [
+          "en_coins_02",
+          "zoomset_de_01"
+        ],
+        "ratio": 0.47
+      },
       "bad_call": 0.525,
-      "midpoint": 0.50,
+      "midpoint": 0.5,
       "trap": "en_coins_02's pinch depth is only 0.05, so if a tighter ink gate drops it to Layer 2 there is no net and it becomes a single-page regression; zoomset_de_01 has one (pinch 0.22)"
     },
     "pinch_min_depth": {
       "current": 0.11,
-      "must_pass": {"de_01": 0.15, "de_02": 0.18},
-      "must_fail": {"page_002": 0.012},
-      "near_miss": {"page_001": 0.106}
+      "must_pass": {
+        "de_01": 0.15,
+        "de_02": 0.18
+      },
+      "must_fail": {
+        "page_002": 0.012
+      },
+      "near_miss": {
+        "page_001": 0.106
+      }
+    }
+  },
+  "background_first_probe": {
+    "_doc": "Owner's proposal, probed 2026-08-28: model the BACKGROUND from a 2% frame-border strip (Lab, Mahalanobis distance), Otsu the distance map, take the largest blob that is unlike the border. Throwaway prototype, no code shipped. Reports box area as a fraction of frame; the current detector abstains at >= 0.83.",
+    "fixes_the_real_captures": {
+      "page_001": {
+        "today": 0.918,
+        "background_first": 0.561,
+        "verdict": "would crop"
+      },
+      "page_002": {
+        "today": 1.0,
+        "background_first": 0.438,
+        "verdict": "would crop; visually a tight, correct box on the book"
+      }
+    },
+    "but_breaks_tight_frames": {
+      "_why": "on a tightly-framed spread the frame border IS the page, so the background model is seeded on paper and the largest 'unlike the border' blob is something INSIDE the page",
+      "en_coins_01": 0.054,
+      "zoomset_en_01": 0.056,
+      "de_02": 0.094,
+      "zoomset_de_02": 0.09,
+      "it_geo_01": 0.387,
+      "de_01": 0.683,
+      "bg_01": 0.705,
+      "caught_by_existing_guard": "min_area_frac 0.10 already rejects the four tiny ones",
+      "NOT_caught": [
+        "it_geo_01 0.387",
+        "de_01 0.683",
+        "bg_01 0.705"
+      ],
+      "conclusion": "needs a PRECONDITION test -- is there a background at all? -- not a tighter area guard"
+    },
+    "edge_strength_at_900px": {
+      "_doc": "is there a border to detect on the pale-sofa frame? gradient magnitude per channel, page_002",
+      "gray": {
+        "median": 24.08,
+        "p99": 242.3
+      },
+      "saturation": {
+        "median": 14.76,
+        "p99": 159.51
+      },
+      "lab_a": {
+        "median": 1.41,
+        "p99": 8.0
+      },
+      "lab_b": {
+        "median": 3.16,
+        "p99": 17.26
+      },
+      "border_background_model": {
+        "mahalanobis_median": 2.45,
+        "p90": 5.79,
+        "max": 13.84
+      }
     }
   }
 }

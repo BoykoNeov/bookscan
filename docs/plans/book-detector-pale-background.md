@@ -143,6 +143,10 @@ actually burned the owner.
 
 ## 5. Phase 2 — cheap cues, in the order the evidence supports
 
+**Recommended order after the 2026-08-28 probes: A10 first** (it already solves
+both failing frames and reuses existing GrabCut code), then A11's ranking idea
+if A10's precondition proves hard to state, then A1'/A4 as fallbacks.
+
 ### Already closed by measurement this session — do not re-attempt
 
 * **Retuning `val_min` (brightness).** Swept 0.55 down to 0.35 on both failing
@@ -161,6 +165,105 @@ actually burned the owner.
 That negative is the most useful thing this scouting produced: **the fix cannot
 be a threshold retune.** It has to be per-image adaptivity, a different cue, or
 escalation.
+
+### A10. Background-first: model the surface, not the page (owner's proposal, 2026-08-28)
+
+**The idea.** Every method above asks *"what does a page look like?"* — bright,
+colourless, covered in text. Each of those assumptions dies on a real book: a
+full-page photograph is neither bright nor colourless, a coloured border is not
+paper-white, and a plate-only page has no text. Turn the question around and ask
+*"what does the surface look like?"* The sofa or desk is **relatively
+homogeneous and touches the frame border**, so it can be modelled without
+knowing anything about books at all — the book is then simply the large thing
+that is *not* the surface, and it is roughly rectangular.
+
+This is assumption-light in exactly the place the current detector is
+assumption-heavy, and it is **the recommended first experiment of Phase 2.**
+
+**It is also nearly free to build.** `grabcut_box` already declares the frame
+border to be background (`GC_BGD`); what it gets wrong is the *foreground* seed,
+which comes from the broken paper mask. Replacing that seed with "everything far
+from the border's colour model" is a change to code that already exists.
+
+**Probed on 2026-08-28** (throwaway prototype: Lab colour, a Gaussian model
+fitted to a 2 % border strip, Mahalanobis distance, Otsu, largest blob):
+
+| frame | detector today | background-first | |
+|---|---|---|---|
+| real page_001 | 0.918 of frame (abstains) | **0.561** | would crop |
+| real page_002 | 1.000 of frame (abstains) | **0.438** | would crop, and the box is visually tight and correct |
+
+So it **solves the case that motivated this plan**, on the first try, with no
+tuning. But run across the existing fixtures it produces nonsense:
+
+| fixture | box area | |
+|---|---|---|
+| en_coins_01 / zoomset_en_01 / de_02 / zoomset_de_02 | 0.054 - 0.094 | absurd; already caught by the `min_area_frac` 0.10 guard |
+| it_geo_01 | 0.387 | **would crop wrongly — not caught** |
+| de_01 | 0.683 | **would crop wrongly — not caught** |
+| bg_01 | 0.705 | **would crop wrongly — not caught** |
+
+**Why, and this is the load-bearing insight:** on a tightly-framed spread *the
+frame border IS the page*. The background model gets fitted to paper, and the
+largest "unlike the border" blob becomes a figure **inside** the book. The method
+does not degrade gracefully; it inverts.
+
+**So the deliverable is not the detector, it is the precondition.** Before
+trusting a background-first box, test *whether there is a background at all*:
+
+* is the border strip homogeneous (low variance within it)?
+* is the frame interior actually different from it (a real distance gap, not
+  Otsu splitting noise)?
+* does the resulting blob avoid touching the frame edge?
+
+If the answer is no, abstain — which is already the correct, byte-identical
+behaviour for all 13 flat fixtures. Note this pairs perfectly with Phase 1's B1:
+"there is no background, so I cannot locate the book" is exactly the honest
+reason string that item is about.
+
+**Can we detect borders directly?** Measured on the pale-sofa frame, gradient
+magnitude at 900 px width: grayscale median 24.1 / p99 242.3, saturation 14.8 /
+159.5, and the Lab colour-opponent channels are nearly flat (a: 1.4 / 8.0,
+b: 3.2 / 17.3). There *is* a usable step in luminance and saturation, so a
+contour method is not hopeless here — but the edge is not dramatically stronger
+than the page's own internal texture, so bare Canny plus "largest quadrilateral"
+would be fragile. The literature's answer to precisely this is below.
+
+**Known limit to record:** a background-first box encloses the *whole physical
+book*, including the fanned block of closed pages beside the spread.
+`testset/gt/book_box.json` deliberately excludes that block. Harmless for the
+search box, wrong for the emit box, so the two-box split still matters.
+
+### A11. Contour hypotheses ranked by contrast (from the literature)
+
+The published state of the art for this exact problem — locating a document in a
+phone photo against an unhelpful background — does not pick one boundary. It
+**generates many candidate borders and then ranks them by a contrast criterion**:
+how different the region *just inside* a candidate edge is from the region *just
+outside* it. Tropin et al., *Approach for Document Detection by Contours and
+Contrasts* (arXiv:2008.02615), report ~40 % fewer alternative-ordering errors and
+~10 % fewer detection errors than contour-only methods, and name occlusion,
+complex backgrounds and blur as what contour-only approaches fail on. The same
+group's *Advanced Hough-based method for on-device document localization*
+combines edge and colour features under a projective model and is built to run
+on a phone. Benchmarks in this literature are MIDV-500 and SmartDoc.
+
+Two things transfer directly:
+
+1. **Rank, do not threshold.** Our failure is a thresholding failure — one global
+   constant asked to serve two corpora. A scoring function over candidate
+   rectangles ("strong edge support along the border, homogeneous outside,
+   inhomogeneous inside") is a global fit that tolerates a weak or broken edge,
+   and it subsumes A10 as one candidate generator among several.
+2. **The rectangle prior is strong evidence and we are not using it at all.**
+   Today's mask is per-pixel and shape-blind. A book is a quadrilateral; scoring
+   candidate quadrilaterals uses that fact.
+
+This is more work than A10 and should follow it, but it is the direction that
+ends the whack-a-mole. Older work in the same vein — page-frame detection for
+border-noise removal, and scanning inward from the image border for the first
+statistically different pixels — supports the same "start from the outside"
+instinct.
 
 ### A1'. Per-image adaptive saturation (most promising cheap lever)
 

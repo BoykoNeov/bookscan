@@ -76,11 +76,12 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun createJob() {
+    /** [mode] is Stage 06's uncertainty mode; see [com.bookscan.network.BookscanApi.createJob]. */
+    fun createJob(mode: String) {
         val api = api ?: return
         viewModelScope.launch {
             try {
-                val res = api.createJob()
+                val res = api.createJob(mode)
                 updateReady { it.copy(jobId = res.job_id, jobStatus = null, error = null) }
                 startPolling(res.job_id)
             } catch (e: Exception) {

@@ -26,15 +26,19 @@ class BookscanApiTest {
 
     @Test
     fun `createJob parses job_id`() = runTest {
-        val s = server("""{"job_id": "20260707-153000-ab12cd34"}""")
+        val s = server("""{"job_id": "20260707-153000-ab12cd34", "mode": "patch"}""")
         try {
             val api = BookscanClientFactory.create(s.url("/").toString())
-            val res = api.createJob()
+            val res = api.createJob("patch")
             assertEquals("20260707-153000-ab12cd34", res.job_id)
+            assertEquals("patch", res.mode)
 
             val recorded = s.takeRequest()
             assertEquals("POST", recorded.method)
-            assertEquals("/api/jobs", recorded.path)
+            // The query param, not just the path: sending no mode at all is
+            // exactly the defect this call had until 2026-08-28, and a path
+            // assertion alone passed happily throughout.
+            assertEquals("/api/jobs?mode=patch", recorded.path)
         } finally {
             s.shutdown()
         }

@@ -10,15 +10,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.bookscan.app.UiState
 import com.bookscan.network.STAGE_ORDER
+
+/** Stage 06's three modes, in server/jobs.py's MODES order; sent as the `mode` query param. */
+private val UNCERTAINTY_MODES = listOf("flag", "best_guess", "patch")
+
+/** What each mode does to a word the OCR is unsure of, in the user's terms. */
+private val MODE_LABELS = mapOf(
+    "flag" to "highlight them",
+    "best_guess" to "just print the best guess",
+    "patch" to "show a picture of the word",
+)
 
 /**
  * No job picked: list existing jobs (`GET /api/jobs`, M5) to resume, or start
@@ -28,7 +43,7 @@ import com.bookscan.network.STAGE_ORDER
 @Composable
 fun JobScreen(
     state: UiState.Ready,
-    onCreateJob: () -> Unit,
+    onCreateJob: (String) -> Unit,
     onCapturePage: () -> Unit,
     onResumeJob: (String) -> Unit,
     onRefreshJobs: () -> Unit,
@@ -40,8 +55,25 @@ fun JobScreen(
         Text("Server: ${state.serverUrl}")
 
         if (state.jobId == null) {
+            // Stage 06's uncertainty mode, chosen per job because the server
+            // persists it per job and the worker reads it for every page.
+            // Fixed at "flag" until 2026-08-28 — the picker did not exist, so
+            // two of the three modes CLAUDE.md requires were unreachable from
+            // the phone even though the server had supported them since
+            // commit ecc9993.
+            var mode by remember { mutableStateOf(UNCERTAINTY_MODES.first()) }
+            Text("Uncertain words: ${MODE_LABELS[mode]}")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                UNCERTAINTY_MODES.forEach { choice ->
+                    if (choice == mode) {
+                        Button(onClick = { mode = choice }) { Text(choice) }
+                    } else {
+                        OutlinedButton(onClick = { mode = choice }) { Text(choice) }
+                    }
+                }
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = onCreateJob) { Text("New job") }
+                Button(onClick = { onCreateJob(mode) }) { Text("New job") }
                 Button(onClick = onRefreshJobs) { Text("Refresh jobs") }
             }
             state.error?.let { Text(it, color = Color.Red) }

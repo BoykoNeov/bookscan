@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class CreateJobResponse(val job_id: String)
+data class CreateJobResponse(val job_id: String, val mode: String? = null)
 
 @Serializable
 data class JobSummary(val job_id: String)

@@ -17,6 +17,15 @@ longer does. Where ``testset/gt/book_box.json`` has a label, it also reports how
 much of the labelled book the EMITTED crop would cut away; that column must stay
 0.0 %, because losing text is the one failure Stage 02 treats as real.
 
+THIS EVAL IS RED ON PURPOSE since 2026-08-28, and that is not a broken harness.
+``paleset_01``/``paleset_02`` are the two real pale-background captures the book
+detector fails on; the owner chose to bank them as ordinary graded rows rather
+than mark them expected-fail or move them to a second arm, so the run reads
+**19/21, exit 1** until the detector is fixed. The 19 pre-existing spreads must
+stay correct and worst clipping must stay 0.0 % — that is the non-regression bar.
+Do NOT restore a green run by deleting, excusing or re-labelling those two rows.
+See ``docs/plans/book-detector-pale-background.md`` and RESULTS 2026-08-28.
+
     python -m tools.split_eval              # table + summary, exit 0 iff all pass
     python -m tools.split_eval --overlays   # also (re)write debug overlays under
                                             #   jobs/split_eval/<id>/ for eyeballing

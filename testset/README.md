@@ -235,3 +235,48 @@ They carry **no ground truth of any kind**. They are diagnostic fixtures:
 per-frame roles, sharpness, and the measured Stage 01 match numbers live in
 `testset/zoomset_manifest.json`, and the findings behind them in
 `docs/RESULTS.md` (2026-08-19).
+
+## Pale-background captures (`paleset`) — added 2026-08-28
+
+Two real phone captures of **one spread** (`Chopmarked Coins` pp.104-105) taken
+during the on-device session of 2026-08-28, and the sole evidence for the
+pale-background book-detector defect: neither split into pages. `paleset_01` was
+cut at x=2741, *inside* the right page; `paleset_02` was not cut at all and came
+out as `single.png`. The diagnosis, the closed doors and the plan are in
+`docs/plans/book-detector-pale-background.md`.
+
+| id | surface | what it traps |
+|---|---|---|
+| `paleset_01` | book on a lap over a pale patterned throw, room and desk clutter all round | the **near-miss cascade**: the ink-valley cue found a false valley inside a page (ratio 0.525 against a 0.55 gate) and won outright, while the spine-pinch (x=1668) and binding-shadow (x=1730) cues agreed with each other ~1000 px away and were ignored |
+| `paleset_02` | book flat on a pale woven sofa | the **inapplicable cue**: no ink valley at all, and the pinch cue assumes a dark background, so Otsu inverts on pale fabric and it returns a meaningless 0.012 rather than declaring itself inapplicable |
+
+Three properties make them worth the two extra fixtures:
+
+- **They are the first pale-background lighting setup in the testset.** Every
+  other handheld capture here sits on a dark floor or a dark lap, which is
+  exactly the assumption `book_boundary.py` was tuned on.
+- **They are a paired control.** `en_coins_03` is the *same two pages*, flat and
+  well framed, and it passes today. So content is held constant and only the
+  surface changes — a fix that works by reading the page rather than the room
+  can be checked against its own twin.
+- **They carry real ground truth**, not just pixels: an entry each in
+  `gt/book_box.json` (the first pale-background book-box labels, taking that
+  corpus from 6 spreads to 8) and in `gt/gutter.json`. No text GT: recognition is
+  not what these are for.
+
+**They are committed KNOWN-FAILING, and `tools/split_eval` is red because of
+them** — 19/21, exit code 1, until the detector is fixed. That was the owner's
+call on 2026-08-28, taken over the two alternatives (an expected-fail list, or a
+second arm like `layout_order_eval --no-stage05`): a real failure should not be
+parked somewhere it stops being visible. Do **not** "fix" the suite by removing,
+excusing or re-labelling these rows.
+
+The images are the Stage 01 anchors the failing job actually saw: each committed
+JPEG decodes byte-for-byte identical to
+`jobs/20260828-092505-15c41a76/page_00N/01_fuse/anchor.png` (verified, and Stage
+00 applied no rotation to either), so these rows need no gitignored `jobs/` input
+— unlike the `de_01`/`de_02` rows, which still reach into `jobs/orient_fix_de*`
+through `split_eval`'s `ANCHOR_OVERRIDE`. Originals and every other photograph
+this project has taken are archived outside the repo in
+`M:\claud_projects\bookscan_captures` (`manifest.csv` there, deduplicated by
+content hash).

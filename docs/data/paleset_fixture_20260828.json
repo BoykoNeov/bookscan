@@ -1,0 +1,87 @@
+{
+  "_doc": "Phase 0 of docs/plans/book-detector-pale-background.md: the two pale-background frames banked as committed, labelled testset fixtures, plus the split_eval baseline they change. Inputs are the committed JPEGs; outputs are the shipped detector's behaviour on 2026-08-28 BEFORE any fix.",
+  "date": "2026-08-28",
+  "fixtures": [
+    {
+      "id": "paleset_01",
+      "file": "testset/paleset_01.jpg",
+      "bytes": 7164874,
+      "sha256": "7c42a773217a1552fa951def6c4b98a72b8a507199e1927fe063027aaa114720",
+      "size": [
+        4080,
+        3060
+      ],
+      "same_spread_as": "en_coins_03 (Chopmarked Coins pp.104-105) — a flat, well-framed control that passes today",
+      "book_box": {
+        "x0": 0,
+        "y0": 400,
+        "x1": 3050,
+        "y1": 2760
+      },
+      "book_box_frac_of_frame": 0.577,
+      "gutter_x": 1680,
+      "gutter_tol": 200,
+      "source_anchor": "jobs/20260828-092505-15c41a76/page_001/01_fuse/anchor.png",
+      "anchor_identity": "committed JPEG decodes pixel-identical to that anchor (verified; Stage 00 applied no rotation)",
+      "archive": "M:/claud_projects/bookscan_captures/upload_20260828-092505_page_001_frame_00.jpg",
+      "known_failure": "lap over a pale patterned throw; shipped cascade splits at x=2741, inside the right page"
+    },
+    {
+      "id": "paleset_02",
+      "file": "testset/paleset_02.jpg",
+      "bytes": 9138176,
+      "sha256": "a9ec4cc681e0bc91e50be50ec6d3291ef728eb0c0d4520d5008e54b6cffaeb2d",
+      "size": [
+        4080,
+        3060
+      ],
+      "same_spread_as": "en_coins_03 (Chopmarked Coins pp.104-105) — a flat, well-framed control that passes today",
+      "book_box": {
+        "x0": 340,
+        "y0": 495,
+        "x1": 3150,
+        "y1": 2430
+      },
+      "book_box_frac_of_frame": 0.436,
+      "gutter_x": 1778,
+      "gutter_tol": 200,
+      "source_anchor": "jobs/20260828-092505-15c41a76/page_002/01_fuse/anchor.png",
+      "anchor_identity": "committed JPEG decodes pixel-identical to that anchor (verified; Stage 00 applied no rotation)",
+      "archive": "M:/claud_projects/bookscan_captures/upload_20260828-092505_page_002_frame_00.jpg",
+      "known_failure": "flat on a pale woven sofa; shipped cascade finds no gutter, emits single.png"
+    }
+  ],
+  "labels_provenance": "Hand-read off the committed full-resolution JPEG with 50/100-px ruler overlays at 1:1 and 1.4-1.6x zoom on each edge, then re-checked by drawing box+gutter back onto the frame. Independent of every quantity book_boundary.py or stage02_split computes. Read before any fix was attempted.",
+  "corroboration": "Book-box area as a fraction of frame: paleset_01 0.577, paleset_02 0.436. The throwaway background-first probe of the same day reported 0.561 and 0.438. Independent agreement within ~2 points of frame area; the labels were not fitted to the probe.",
+  "split_eval_baseline": {
+    "command": "python -m tools.split_eval",
+    "spreads_correct": "19/21",
+    "exit_code": 1,
+    "worst_clipping_pct": 0.0,
+    "note": "Was 19/19 before these two rows. Red on purpose: the owner chose to let the suite fail rather than mark the new rows expected-fail or move them to a second arm.",
+    "new_rows": {
+      "paleset_01": {
+        "expect": 1680,
+        "got": 2741,
+        "method": "ink",
+        "ratio": 0.53,
+        "pinch": 0.11,
+        "crop_applied": false,
+        "clip_pct": 0.0,
+        "hit": false
+      },
+      "paleset_02": {
+        "expect": 1778,
+        "got": null,
+        "method": "none",
+        "ratio": 0.7,
+        "pinch": 0.01,
+        "crop_applied": false,
+        "clip_pct": 0.0,
+        "hit": false
+      }
+    },
+    "unchanged_rows": 19,
+    "unchanged_note": "All 19 pre-existing spreads keep their exact shipped answers; worst clipping stays 0.0%."
+  }
+}

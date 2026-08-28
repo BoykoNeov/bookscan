@@ -6256,3 +6256,61 @@ and `taskkill` answered `The process "?39452" not found` — which the script
 did not treat as fatal. The page then completed under the *original* server
 and the state timeline looked exactly like a recovery. Read the PID with
 `utf-8-sig`, and check that the process is actually gone.
+
+## 2026-08-28 — the pale-background frames become fixtures, and the suite goes red
+
+Phase 0 of `docs/plans/book-detector-pale-background.md`. No detector code was
+touched; this row exists because the **baseline moved**, which is the thing a
+later fix will be measured against.
+
+`testset/paleset_01.jpg` and `testset/paleset_02.jpg` are the two real captures
+of 2026-08-28 that did not split into pages. They are now committed, labelled
+fixtures, and `tools/split_eval` is **19/21, exit 1** because of them.
+
+| id | expect | got | method | ratio | pinch | clip | |
+|---|---|---|---|---|---|---|---|
+| `paleset_01` | 1680 | **2741** | ink | 0.53 | 0.11 | 0.0 % | FAIL — split inside the right page |
+| `paleset_02` | 1778 | **none** | none | 0.70 | 0.01 | 0.0 % | FAIL — no gutter, `single.png` |
+
+**All 19 pre-existing spreads keep their exact shipped answers**, and worst
+clipping of a labelled book stays 0.0 %, so nothing regressed: the two new rows
+are the whole of the difference between 19/19 and 19/21.
+
+**Red on purpose.** The plan listed three ways to absorb two known-failing
+fixtures — an expected-fail list, a second arm like `layout_order_eval
+--no-stage05`, or simply letting the suite fail. The owner chose the third:
+a real failure should not be parked somewhere it stops being visible. Do not
+"fix" the suite by removing or excusing these rows.
+
+### What was banked, and how it was labelled
+
+- **Pixels.** Each committed JPEG decodes **byte-for-byte identical** to the
+  Stage 01 anchor the failing job actually saw
+  (`jobs/20260828-092505-15c41a76/page_00N/01_fuse/anchor.png`; Stage 00 applied
+  no rotation to either), so these rows need no gitignored `jobs/` input — unlike
+  `de_01`/`de_02`, which still reach into `jobs/orient_fix_de*`.
+- **Ground truth.** A book box each in `gt/book_box.json` — the **first
+  pale-background book-box labels**, taking that corpus from 6 spreads to 8 — and
+  a gutter each in `gt/gutter.json`. Hand-read off the committed full-resolution
+  JPEG with ruler overlays at 1:1 and 1.4–1.6× on every edge, then re-checked by
+  drawing the labels back onto the frame. Independent of every quantity the
+  detector computes, and read before any fix was attempted.
+- **A corroboration, not a fit.** The labelled boxes cover 0.577 and 0.436 of
+  their frames; the same day's throwaway background-first probe reported 0.561
+  and 0.438. Two independent routes to the same box, within ~2 points of frame
+  area.
+- **A paired control, for free.** Both frames are the *same two pages* as
+  `en_coins_03` (`Chopmarked Coins` pp.104–105), which is flat, well framed, and
+  passes today. Content is held constant and only the surface changes.
+
+Machine-readable inputs and outputs: `docs/data/paleset_fixture_20260828.json`.
+
+### One line of the plan is now stale
+
+Phase 0 was written as urgent because "the two failing frames exist only in
+gitignored `jobs/`, one `git clean` from gone". `tools/archive_photos.py` (same
+day, commit e048b34) already put all 31 of those captures in
+`M:\claud_projects\bookscan_captures` with a manifest, so the pixels were never
+at risk by the time this ran. What Phase 0 actually delivered is the other half:
+committed, labelled fixtures, so an experiment is reproducible from the repo
+alone.

@@ -49,3 +49,5 @@ zoomset_en_02_f02,zoomset_en_02_f02.jpg,english,,zoomset,"multi-zoom set zoomset
 zoomset_en_02_f03,zoomset_en_02_f03.jpg,english,,zoomset,"multi-zoom set zoomset_en_02 (Pale di San Martino (English), 'Cima di Van del Pez'), close-up; see testset/zoomset_manifest.json. NO GT yet."
 zoomset_en_02_f04,zoomset_en_02_f04.jpg,english,,zoomset,"multi-zoom set zoomset_en_02 (Pale di San Martino (English), 'Cima di Van del Pez'), close-up; see testset/zoomset_manifest.json. NO GT yet."
 zoomset_en_02_f05,zoomset_en_02_f05.jpg,english,,zoomset,"multi-zoom set zoomset_en_02 (Pale di San Martino (English), 'Cima di Van del Pez'), close-up; see testset/zoomset_manifest.json. NO GT yet."
+paleset_01,paleset_01.jpg,english,,paleset,"Chopmarked Coins bk, pp.104-105 (SAME spread as en_coins_03) shot on a lap over a pale patterned throw; the frame the book detector mis-splits at x=2741. Book-box + gutter GT; no text GT."
+paleset_02,paleset_02.jpg,english,,paleset,"Chopmarked Coins bk, pp.104-105 (SAME spread as en_coins_03) shot flat on a pale woven sofa; the frame the book detector does not split at all (single.png). Book-box + gutter GT; no text GT."

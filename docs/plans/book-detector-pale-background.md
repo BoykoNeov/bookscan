@@ -1,8 +1,10 @@
 # Fixing the book detector on a pale background
 
-**Status:** planned, not started. Written 2026-08-28 at the end of the
-on-device session that found the defect; the scouting numbers below were
-measured that day, the fix was deliberately not attempted.
+**Status:** Phase 0 DONE 2026-08-28 (fixtures banked, suite deliberately red at
+19/21 — see RESULTS 2026-08-28 and section 3). Phases 1-3 not started. Written
+2026-08-28 at the end of the on-device session that found the defect; the
+scouting numbers below were measured that day, the fix was deliberately not
+attempted.
 
 **Owner-visible symptom:** two real phone captures of a book on a pale sofa did
 not split into pages. One was cut in the wrong place, one was not cut at all.
@@ -62,10 +64,14 @@ in section 5 is on the list at all.
 
 ## 2. Baseline and constraints (measured 2026-08-28; re-run before trusting)
 
-`python -m tools.split_eval` gives **19/19 spreads correct, worst clipping
-0.0 %**. That harness already grades both things the fix must not break, and
-exits non-zero on either. It is the acceptance gate; nothing here ships without
-it.
+`python -m tools.split_eval` gave **19/19 spreads correct, worst clipping
+0.0 %** before Phase 0. It is now **19/21, exit 1**, because Phase 0 added the
+two failing frames as ordinary graded rows (owner's call; see section 3). The
+19 pre-existing spreads are untouched and worst clipping is still 0.0 %, so the
+non-regression bar is unchanged in substance: **those 19 must stay correct and
+clipping must stay 0.0 %**, and a fix is what turns 19/21 into 21/21. That
+harness already grades both things the fix must not break, and exits non-zero on
+either. It is the acceptance gate; nothing here ships without it.
 
 The crop is only *applied* on 4 of the 19 (the `zoomset_*` lap captures);
 `de_01`/`de_02` abstain at 85 %/89 %, the 13 flat spreads at 97-100 %.
@@ -88,34 +94,57 @@ per-candidate multiplies that.
 
 ---
 
-## 3. Phase 0 — bank the fixture (blocking; do this first)
+## 3. Phase 0 — bank the fixture — **DONE 2026-08-28**
 
-The two failing frames exist **only** in gitignored `jobs/`:
+**Outcome:** `testset/paleset_01.jpg` and `testset/paleset_02.jpg`, both with
+book-box and gutter ground truth, both failing in the documented way. Full row in
+`docs/RESULTS.md` 2026-08-28; machine-readable in
+`docs/data/paleset_fixture_20260828.json`.
+
+The premise below was **already stale when this ran**: the same day's
+`tools/archive_photos.py` had copied all 31 captures to
+`M:/claud_projects/bookscan_captures`, so the pixels were not at risk. What
+Phase 0 actually delivered is the other half — *committed, labelled* fixtures, so
+an experiment is reproducible from the repo alone. (Original framing, kept for
+the record: the two frames existed only in gitignored `jobs/`, 565 MB + 178 MB of
+job folder, one `git clean` from gone.)
 
 ```
 jobs/20260828-092505-15c41a76/page_001/01_fuse/anchor.png   4080x3060, wrong split at 2741
 jobs/20260828-092505-15c41a76/page_002/01_fuse/anchor.png   4080x3060, no split at all
 ```
 
-565 MB + 178 MB of job folder, one `git clean` from gone. Every experiment
-below is measured against these two frames; without them this plan is
-unexecutable.
+Each committed JPEG decodes **pixel-identical** to its anchor above (Stage 00
+applied no rotation to either), so the new rows read nothing from `jobs/`.
 
-1. Copy both anchors into `testset/` under a new id (suggested `paleset_01` /
-   `paleset_02`), append-only, and commit the **anchor itself** so the row is
-   reproducible from the repo alone. Do **not** copy `split_eval.py`'s
-   `ANCHOR_OVERRIDE` wart, which reaches into gitignored `jobs/` for
-   `de_01`/`de_02`.
-2. Hand-label `testset/gt/book_box.json` — this doubles the labelled corpus from
-   6 to 8 and adds the *first* pale-background lighting setup — and
-   `testset/gt/gutter.json`.
-3. Append the ids to `testset/README.md` with what makes them special.
+**What the labels are, and what they are not.** Hand-read off the committed
+full-resolution JPEGs with ruler overlays at 1:1 and 1.4-1.6x on every edge, then
+re-checked by drawing them back onto the frame — independent of every quantity
+the detector computes, and read before any fix was attempted. They agree with the
+same day's background-first probe to within ~2 points of frame area (0.577 vs
+0.561, 0.436 vs 0.438), which is corroboration from an independent route, **not**
+a label fitted to a candidate detector. The book-box convention is unchanged, so
+`gt/book_box.json` is still diagnostic-only: do not fit a detector to these boxes.
 
-**Decide the red-suite mechanism at the same time.** `split_eval` exits
-non-zero unless everything passes, so adding two known-failing spreads turns
-the suite red on day one. Either mark them expected-fail carrying the reason,
-or give them a separate arm (repo precedent: `layout_order_eval --no-stage05`).
-Pick one in the first ten minutes or the phase stalls on it.
+**Free control:** both frames are the same two pages as `en_coins_03`
+(`Chopmarked Coins` pp.104-105), which is flat, well framed and passes today.
+Content held constant, only the surface changes.
+
+1. [x] Copied both anchors into `testset/` as `paleset_01` / `paleset_02`,
+   append-only, from the photo archive. No `ANCHOR_OVERRIDE` wart was added.
+2. [x] Hand-labelled `testset/gt/book_box.json` (6 -> 8 labelled spreads, first
+   pale-background lighting setup) and `testset/gt/gutter.json` (1680 and 1778,
+   tol 200), plus rows in `testset/manifest.csv`.
+3. [x] `testset/README.md` has a `paleset` section saying what each one traps.
+
+**Red-suite mechanism — decided by the owner 2026-08-28: let the suite go red.**
+The rows are ordinary graded rows, `split_eval` reports 19/21 and exits 1, and it
+stays that way until the detector is fixed. The two alternatives (an expected-fail
+list, or a second arm on the `layout_order_eval --no-stage05` precedent) were put
+to the owner and refused: a real failure should not be parked somewhere it stops
+being visible. **Do not "fix" the suite by removing, excusing or re-labelling
+these rows.** The `known_failing` string in `gutter.json` is documentation only —
+`split_eval` does not read it.
 
 ---
 
@@ -345,12 +374,16 @@ repo cheap criteria have been coin flips. Weigh that, do not rediscover it.
 
 ## 7. Acceptance criteria
 
-1. `python -m tools.split_eval` stays at **19/19** on the existing spreads.
+1. `python -m tools.split_eval` keeps all **19 pre-existing** spreads correct
+   (the run reads 19/21 today because of the two banked failures; a fix takes it
+   to 21/21, and any drop below 19-of-the-old-19 is a regression).
 2. **Worst clipping stays 0.0 %** — losing page content is the one failure this
    stage treats as real.
-3. Both new pale-background fixtures split within tolerance, **or** the detector
-   abstains for a correctly-stated reason (Phase 1 is what makes that outcome
-   honest, and therefore acceptable).
+3. Both new pale-background fixtures split within tolerance (`paleset_01` 1680,
+   `paleset_02` 1778, tol 200 each), **or** the detector abstains for a
+   correctly-stated reason (Phase 1 is what makes that outcome honest, and
+   therefore acceptable — but note the suite stays red either way, since the
+   rows grade the split, not the excuse).
 4. `find_book` cost stays inside a stated budget; if a phase multiplies it, the
    multiplier is written down.
 5. A dated row in `docs/RESULTS.md` with machine-readable inputs and outputs

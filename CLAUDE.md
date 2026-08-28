@@ -41,10 +41,15 @@ Italian, German**.
       pages. `pipeline/book_boundary.py` returns the whole frame on a pale
       background, so the crop abstains and Stage 02's ink cue picks a white
       channel *inside* a page. Fix not attempted (13+ non-regression fixtures);
-      planned in `docs/plans/book-detector-pale-background.md`, whose Phase 0
-      is blocking — the two failing frames exist only in gitignored `jobs/`.
+      planned in `docs/plans/book-detector-pale-background.md`. Its **Phase 0 is
+      DONE 2026-08-28**: both failing frames are committed, labelled fixtures
+      (`testset/paleset_01/02` + book-box and gutter GT), so **`tools/split_eval`
+      now reads 19/21 and exits 1 on purpose** — the owner chose a red suite over
+      hiding two known failures, so do NOT "fix" it by removing those rows.
       Scouting 2026-08-28 already closed the obvious fix: retuning the HSV
-      thresholds cannot work (see the plan's section 5).
+      thresholds cannot work (see the plan's section 5). Next is the plan's
+      Phase 1 (make the failure honest — no accuracy change), then A10
+      (background-first, behind an "is there a background at all" precondition).
 
 ## Architecture: the stage contract (IMPORTANT)
 

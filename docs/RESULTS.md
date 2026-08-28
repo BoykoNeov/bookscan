@@ -6227,8 +6227,8 @@ this says the good path works, not that the duplicate path is unreachable.
 
 **Server killed mid-page — reconcile rescues it.** Killed on *state*, never on
 a timer: `reconcile.py` deliberately never re-enqueues a `failed` page, so
-hitting the wrong moment would test nothing. Run twice, same result both
-times:
+hitting the wrong moment would test nothing. Same result both times — these
+are **runs 2 and 3; run 1 killed nothing and was invalid, see the scar below**:
 
 | | page_002 | page_003 |
 |---|---|---|

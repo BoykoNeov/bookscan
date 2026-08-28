@@ -109,7 +109,7 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
 | 02 | `stage02_split` | book-boundary crop (`book_boundary.py`) → gutter detection → left/right pages; optional per-page frame source (`page_source.py`, off by default) | OpenCV (projection profile, GrabCut) |
 | 03 | `stage03_dewarp` | flatten page curvature | UVDoc (default), DocTr++ (partial crops) |
 | 04 | `stage04_layout` | block detection + reading order | DocLayout-YOLO + XY-Cut++ |
-| 05 | `stage05_ocr` | word-level text + bbox + confidence; caption ejection (`caption_eject.py`) + starved-block re-read (`block_reocr.py`) | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |
+| 05 | `stage05_ocr` | word-level text + bbox + confidence; caption ejection (`caption_eject.py`) + starved-block re-read (`block_reocr.py`) + figure-edge text absorption (`figure_text.py`) | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |
 | 06 | `stage06_uncertainty` | per-word decision using user mode a/b/c | own code |
 | 07 | `stage07_assemble` | job-level: build editable `document.json` + self-contained `document_assets/` | own code |
 | 08 | `stage08_render` | `document.json` → re-typeset HTML (always) → PDF (re-runnable) | own code; WeasyPrint/headless-Chromium (PDF, TBD), Noto fonts |

@@ -50,7 +50,7 @@ def test_routes_to_smallest_containing_block():
     outer = _blk(0, 0, 0, 1000, 1000)
     inner = _blk(1, 100, 100, 200, 100, type=BlockType.CAPTION)
     words = [_tw("hi", left=150, top=120, width=40, height=30)]  # center (170,135)
-    ordered, orphans = attach_words(words, [outer, inner], 1.0, 1000, 1000, DEFAULTS)
+    ordered, orphans, _ = attach_words(words, [outer, inner], 1.0, 1000, 1000, DEFAULTS)
     assert orphans == 0
     by_type = {b.type: b for b in ordered}
     assert len(by_type[BlockType.CAPTION].words) == 1
@@ -65,7 +65,7 @@ def test_word_conservation_with_orphans():
         _tw("inside", left=100, top=100, width=50, height=30),   # in blk
         _tw("orphan", left=800, top=800, width=50, height=30),   # outside everything
     ]
-    ordered, orphans = attach_words(words, [blk], 1.0, 1000, 1000, DEFAULTS)
+    ordered, orphans, _ = attach_words(words, [blk], 1.0, 1000, 1000, DEFAULTS)
     assert orphans == 1
     assert sum(len(b.words) for b in ordered) == 2               # conservation
     others = [b for b in ordered if b.type == BlockType.OTHER]
@@ -82,7 +82,7 @@ def test_reading_order_and_ids_are_gapless_and_synced():
         _tw("B", left=10, top=220, width=40, height=30),   # -> bottom
         _tw("orph", left=10, top=600, width=40, height=30),  # orphan between/after
     ]
-    ordered, _ = attach_words(words, [top, bottom], 1.0, 1000, 1000, DEFAULTS)
+    ordered, _, _ = attach_words(words, [top, bottom], 1.0, 1000, 1000, DEFAULTS)
     assert [b.reading_order for b in ordered] == list(range(len(ordered)))
     assert [b.id for b in ordered] == list(range(len(ordered)))
     for b in ordered:
@@ -100,7 +100,7 @@ def test_no_orphans_trusts_stage04_order():
         _tw("low", left=10, top=520, width=40, height=30),   # -> lower (ro 0)
         _tw("up", left=10, top=20, width=40, height=30),     # -> upper (ro 1)
     ]
-    ordered, orphans = attach_words(words, [lower, upper], 1.0, 1000, 1000, DEFAULTS)
+    ordered, orphans, _ = attach_words(words, [lower, upper], 1.0, 1000, 1000, DEFAULTS)
     assert orphans == 0
     assert [b.words[0].text for b in ordered] == ["low", "up"]  # trusts ro, not y
 
@@ -110,7 +110,7 @@ def test_raw_confidence_only_no_decision():
     the keep/flag/patch call)."""
     blk = _blk(0, 0, 0, 400, 400)
     words = [_tw("w", left=100, top=100, width=50, height=30, conf=42.0)]
-    ordered, _ = attach_words(words, [blk], 1.0, 500, 500, DEFAULTS)
+    ordered, _, _ = attach_words(words, [blk], 1.0, 500, 500, DEFAULTS)
     w = ordered[0].words[0]
     assert w.conf == 42.0
     assert w.engine == "tesseract"
@@ -126,7 +126,7 @@ def test_line_ids_track_tsv_lines():
         _tw("b", left=50, top=10, width=30, height=20, line_num=1),
         _tw("c", left=10, top=40, width=30, height=20, line_num=2),
     ]
-    ordered, _ = attach_words(words, [blk], 1.0, 1000, 1000, DEFAULTS)
+    ordered, _, _ = attach_words(words, [blk], 1.0, 1000, 1000, DEFAULTS)
     ids = {w.text: w.line_id for b in ordered for w in b.words}
     assert ids["a"] == ids["b"] and ids["c"] != ids["a"]
 

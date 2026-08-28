@@ -5961,3 +5961,131 @@ deserved it, and abstained on the other 15.
 
 Suite **534 green** (was 512): +13 for the new module, +9 for the editor commit
 immediately before it.
+
+---
+
+## The map's own title was reading as a paragraph — putting it back on the picture — 2026-08-28
+
+Stage 04's figure box does not always reach the ink. On `it_geo_05`-left the box
+starts 51px BELOW the handwritten annotation the map carries across its top
+(`LINEAMENTO PERIADRIATICO`); on `it_geo_07`-right it starts 17px below the
+cross-section's printed waterline label (`Livello del mare`). Those words fall
+inside no block, so `attach_words` rescues them into synthetic `OTHER` blocks,
+XY-Cut ranks them by position, and the re-typeset document opens the page with a
+loose paragraph reading `CL 'INEAMENTO` — a fragment of a map's annotation,
+standing in the reading flow as if it were prose. The 2026-08-26 rescued-block
+census (`docs/data/rescued_type_census_20260826.json`) counted these and recorded
+the verdict: they are text, but they belong to the artwork, and what they need is
+SEGMENTING, not typing. `pipeline/figure_text.py` is that segmentation — the
+stray is folded INTO the figure (box unioned, words moved onto the figure, where
+Stage 08 draws pixels and ignores text), so no block is created and no word is
+lost.
+
+Evidence: `docs/data/figure_text_ab_20260828.json` (both arms in full, the
+pre-registration, and the full-field diff) plus two crops of the real pixels.
+
+### The A/B, and why it is a real one
+
+ON = shipped default. OFF = the SAME code and the SAME config with one knob
+disabled, `layout.figtext_max_gap_frac = -1.0`, which makes the vertical-gap gate
+unsatisfiable so nothing can be absorbed. Not a `git stash`: stashing would also
+revert the eval-tool changes and the two arms would dump different JSON schemas,
+turning a clean comparison into a noisy one.
+
+The alternate config lives outside the repo, which is a hazard worth naming: if
+`yolo_ckpt` / `uvdoc_ckpt` / `tessdata_dir` resolved against the CONFIG file's
+directory, the OFF arm would have found no checkpoint and silently fallen back to
+the classical detector, and the whole comparison would be two different detectors
+mistaken for a feature. They resolve against `REPO_ROOT`
+(`stage04_layout.py:814`, `stage03_dewarp.py:347`, `gate1_harness.py:72`), and
+the arms confirm it empirically: identical `real_blocks` COUNT on all 16
+subpages, and byte-identical boxes everywhere except one box per absorption site
+— the figure that grew.
+
+`n_det_blocks` is NOT that check and must not be used as one: it counts the
+SHIPPED set, after Stage 05 adds blocks, so it differs (5 vs 7, 17 vs 18) on
+exactly the two absorbing subpages for the expected reason.
+
+### What changed
+
+Three absorptions, at two sites, across all 8 images / 16 subpages:
+
+| site | words | figure box OFF -> ON | v-gap | h-inside | nearest text |
+|---|---|---|---|---|---|
+| `it_geo_05`-L `LINEAMENTO`   | 1 | (231,331,1806,2658) -> (231,280,1806,2709) | +3px  | 1.00 | +130px |
+| `it_geo_05`-L `PERIADRIATICO`| 2 | (same figure, same growth)                  | -12px | 1.00 | +158px |
+| `it_geo_07`-R `Livello del`  | 2 | (91,842,876,624) -> (91,825,876,641)        | -6px  | 1.00 |  +36px |
+
+Six of the eight images are bit-identical between arms. The two documented
+must-rejects both stayed rejected: `de_01`-left's garbage token `ME` (33px under
+a figure but 18px from a paragraph) and `it_geo_07`-left's two scale bars (53px
+and 150px from any figure — a legend for a whole column of stacked
+cross-sections, not text clipped off one picture's edge).
+
+Every accuracy column is unchanged in both arms: segmentation recall 112/112,
+caption<->figure pairs **16/19 recovered, 0 wrong**, type accuracy identical.
+**No order field moved** on either subpage — the two absorbed groups leave the
+XY-Cut ranking rather than re-entering it, so `tau` and `order_all` are untouched
+rather than perturbed-and-recovered.
+
+### The positive evidence is PIXELS, because the metric cannot see it
+
+None of the three absorbed blocks matches a GT anchor, so the accuracy columns
+are structurally blind to a wrong call here — the same blindness `rescued_type`
+paid for on 2026-08-26. A clean diff is evidence of no collateral damage, and of
+nothing else. So both sites were cropped out of the real dewarped pages with the
+two candidate figure tops drawn on them:
+
+* `docs/data/figure_text_ab_20260828_map_title.png` — green = ON figure top
+  (y=280), red = OFF (y=331). The red line runs straight THROUGH the middle of a
+  handwritten `LINEAMENTO PERIADRIATICO` written across the map. That is why the
+  words fell outside every block. Green sits above them.
+* `docs/data/figure_text_ab_20260828_livello.png` — green y=825, red y=842. Red
+  cuts through an italic `Livello del mare` printed on the cross-section at the
+  waterline, with the blue sea directly beneath it.
+
+Both are unambiguously part of the artwork, and in both the OFF box bisects the
+words rather than missing them cleanly.
+
+### What got WORSE, and why it still ships
+
+**One caption<->figure pair that used to be emitted now abstains.** On
+`it_geo_07`-right, the caption-typed block `det3` sits 4px below figure `D6` and
+was paired to it by the geometry arm. Growing `D7` upward by 17px moved the
+runner-up gap from 53px to 36px — inside the ambiguity band
+`geom_ambiguity_ratio * max(best_gap, floor) = 1.60 * max(4, 30) = 48` — so
+`figure_grouping` now abstains with "two figures are comparably close (4px vs
+36px)". The pair was marginal in the OFF arm (53px against a 48px bar), not
+comfortably held.
+
+This subpage has no GT pair, so the eval grades neither arm. Reading the GT
+settles it against BOTH of them: `it_geo_07`'s D6 is described as *"Stage 6
+diagram ('Riempimento del Bacino di Belluno: fondale omogeneo dal Cansiglio al
+Garda' **sub-label stays inside**)"*. That text is `det3`. It is not a caption at
+all — it is D6's sub-label, and it belongs INSIDE D6. The OFF arm paired a
+sub-label to a figure as if it were a caption; the ON arm stops doing that and
+leaves it standing alone. Neither is the right output. Corpus pair totals are
+unchanged (16/19, 0 wrong) and the standing bar prefers an abstention to a guess,
+so this ships — recorded, not buried.
+
+### Limits, stated
+
+* **Three true positives on one corpus of four books, none of them GT-anchored.**
+  The gates sit in measured gaps (accepted at +3/-12/-6px against a nearest
+  rejected 33px; h-inside 1.00 x3 against a nearest rejected 0.69), but a book
+  whose figure boxes are looser would need them re-measured.
+* **A DETECTED block that belongs inside a figure is out of reach by
+  construction.** `figure_text` only sees words that landed in NO block. D6's
+  sub-label above has its own detection, so absorption cannot touch it even
+  though the GT says explicitly that it belongs inside the figure. Same class of
+  defect, different mechanism, still open — and now the reason `it_geo_07`-right
+  looks odd, so the next reader does not rediscover it from scratch.
+* **`it_geo_07`-left's two scale bars are still loose.** Deliberately: they are a
+  legend for a column of stacked diagrams, and folding them into the topmost one
+  would be a guess about which figure owns them. Known-wrong output recorded
+  rather than a wrong pairing shipped — the same `0 wrong` bar `figure_grouping`
+  holds.
+* **The module's own docstring said "every other number is unchanged."** That is
+  now contradicted by this measurement and is corrected in the same commit.
+
+Suite **547 green** (was 534): +13 for the new module.

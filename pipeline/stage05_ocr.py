@@ -79,6 +79,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
 import cv2
@@ -90,6 +91,7 @@ from pipeline import stage04_layout as S4
 from pipeline import block_reocr as BR
 from pipeline import rescued_type as RT
 from pipeline import caption_eject as CE
+from pipeline import figure_text as FT
 from pipeline.second_opinion import (
     EasyOCRSecondOpinion, find_disagreements, load_lexicon)
 
@@ -221,22 +223,44 @@ def _union(boxes: list[BBox]) -> BBox:
 # --------------------------------------------------------------------------
 
 
+@dataclass(frozen=True)
+class AttachNotes:
+    """What ``attach_words`` did beyond routing, reported by IDENTITY.
+
+    ``synthetic`` is the list of orphan-rescued blocks it created, as the very
+    objects that are in the returned block list — the only reliable way for a
+    caller to tell a rescued block from a detected one after ordering renumbers
+    both. (It used to be inferred from ``bbox`` object identity, which held only
+    while every real block shared Stage 04's box by reference; figure absorption
+    gives one of them a new box and breaks that trick.)
+    """
+
+    synthetic: list[Block]
+    absorbed: list[FT.Absorption]
+    absorbed_words: int
+
+
 def attach_words(twords: list[M.TWord], blocks: list[Block], scale: float,
                  page_w: int, page_h: int, p: dict
-                 ) -> tuple[list[Block], int]:
+                 ) -> tuple[list[Block], int, AttachNotes]:
     """Attach recognized words to Stage 04 blocks in reading order.
 
     Each word routes to the smallest-area block containing its center; within a
     block words keep natural (line, word) TSV order. Orphans (no block) group by
-    their TSV (block, par) paragraph into synthetic blocks, which ``rescued_type``
-    then types against the page (``OTHER`` unless the page proves otherwise — see
-    that module for why that is one rung and not a classifier). If there are no
-    orphans, Stage 04's block ``reading_order`` is trusted verbatim; otherwise all
-    blocks (real + synthetic) are re-ranked by the SAME XY-Cut Stage 04 uses, so
-    real blocks keep their relative order and orphans land in geometric place.
+    their TSV (block, par) paragraph. A group that is text the detector clipped
+    off a figure's edge is ABSORBED into that figure (``figure_text``) — box
+    unioned, words moved, no block created. The rest become synthetic blocks,
+    which ``rescued_type`` then types against the page (``OTHER`` unless the page
+    proves otherwise — see that module for why that is one rung and not a
+    classifier). If no synthetic block survives, Stage 04's block
+    ``reading_order`` is trusted verbatim; otherwise all blocks (real +
+    synthetic) are re-ranked by the SAME XY-Cut Stage 04 uses, so real blocks
+    keep their relative order and orphans land in geometric place.
 
-    Returns ``(ordered_blocks, orphan_word_count)``. Word-conservation invariant:
-    every input word ends up in exactly one output block (asserted by the caller).
+    Returns ``(ordered_blocks, orphan_word_count, notes)``; the orphan count is
+    every word that fell outside all blocks, absorbed ones included. Word
+    conservation: every input word ends up in exactly one output block (asserted
+    by the caller) — absorption MOVES words and never drops one.
     Emits RAW confidence + engine only — ``Word.decision`` stays None (Stage 06).
     """
     wboxes = [_word_box(w, scale) for w in twords]
@@ -266,30 +290,56 @@ def attach_words(twords: list[M.TWord], blocks: list[Block], scale: float,
                     best, best_area = bi, area
         assign.append(best)
 
-    # Fresh copies of the real blocks (never mutate Stage 04's objects), each
-    # collecting its routed words in original TSV order (== reading order).
-    real: list[Block] = [
-        Block(id=b.id, type=b.type, bbox=b.bbox, reading_order=b.reading_order,
-              words=[])
-        for b in blocks
-    ]
-    for wi, bi in enumerate(assign):
-        if bi >= 0:
-            real[bi].words.append(make_word(wi, blocks[bi].id))
-
-    # Orphans -> synthetic OTHER blocks, grouped by TSV (block, par) paragraph.
+    # Orphan words -> groups by TSV (block, par) paragraph. Grouped BEFORE the
+    # block objects are built, because absorption (below) may re-route a whole
+    # group into a figure and that group must never become a block at all.
     orphan_idx = [wi for wi, bi in enumerate(assign) if bi < 0]
     groups: dict[tuple[int, int], list[int]] = {}
     for wi in orphan_idx:
         tw = twords[wi]
         groups.setdefault((tw.block_num, tw.par_num), []).append(wi)
-    synth: list[Block] = []
-    for members in groups.values():
-        members.sort()  # TSV order
-        synth.append(Block(id=-1, type=BlockType.OTHER,
-                           bbox=_union([wboxes[wi] for wi in members]),
-                           reading_order=-1,
-                           words=[make_word(wi, None) for wi in members]))
+    members_by_group: list[list[int]] = [sorted(m) for m in groups.values()]
+    stray_boxes = [_union([wboxes[wi] for wi in m]) for m in members_by_group]
+
+    # Text the detector CLIPPED OFF a figure's edge (a map's title, a label on a
+    # cross-section) is not a rescued block at all — it is part of the picture.
+    # Fold it in: the figure's box grows to cover the words and the words move
+    # onto the figure, where Stage 08 renders pixels and ignores text. See
+    # pipeline/figure_text.py for the gates and the measured gaps they sit in.
+    boxes: list[BBox] = [b.bbox for b in blocks]
+    has_words = [False] * len(blocks)
+    for bi in assign:
+        if bi >= 0:
+            has_words[bi] = True
+    absorbed = FT.absorb_figure_text(
+        stray_boxes, boxes, [b.type for b in blocks], has_words, page_h, p)
+    absorbed_words = 0
+    for a in absorbed:
+        boxes[a.figure] = FT.union(boxes[a.figure], stray_boxes[a.stray])
+        for wi in members_by_group[a.stray]:
+            assign[wi] = a.figure
+        absorbed_words += len(members_by_group[a.stray])
+    taken = {a.stray for a in absorbed}
+
+    # Fresh copies of the real blocks (never mutate Stage 04's objects), each
+    # collecting its routed words in original TSV order (== reading order). An
+    # absorbing figure gets a NEW box; every other block shares Stage 04's.
+    real: list[Block] = [
+        Block(id=b.id, type=b.type, bbox=boxes[i], reading_order=b.reading_order,
+              words=[])
+        for i, b in enumerate(blocks)
+    ]
+    for wi, bi in enumerate(assign):
+        if bi >= 0:
+            real[bi].words.append(make_word(wi, blocks[bi].id))
+
+    # What is left over -> synthetic OTHER blocks, one per surviving group.
+    synth: list[Block] = [
+        Block(id=-1, type=BlockType.OTHER, bbox=stray_boxes[gi],
+              reading_order=-1,
+              words=[make_word(wi, None) for wi in members_by_group[gi]])
+        for gi in range(len(members_by_group)) if gi not in taken
+    ]
 
     # Give each rescued block a real type where the page proves one. Runs against
     # the REAL blocks (Stage 04's), not against the other rescued ones — a stray
@@ -315,7 +365,8 @@ def attach_words(twords: list[M.TWord], blocks: list[Block], scale: float,
         for w in b.words:
             w.block_id = rank
 
-    return ordered, len(orphan_idx)
+    return ordered, len(orphan_idx), AttachNotes(
+        synthetic=synth, absorbed=absorbed, absorbed_words=absorbed_words)
 
 
 # --------------------------------------------------------------------------
@@ -424,7 +475,13 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
         h, w = img.shape[:2]
 
         twords, scale = ocr_subpage(binary, cfg, img, lang_code_used)
-        ordered, n_orphan = attach_words(twords, pl.blocks, scale, w, h, p)
+        ordered, n_orphan, notes = attach_words(twords, pl.blocks, scale, w, h, p)
+        # An absorption is an intended outcome, not a problem — same "note:"
+        # prefix and same reason as the ejections below (StageMeta has no notes
+        # channel and adding one is a schema change owed its own commit).
+        warnings.extend(f"note: absorbed rescued block into figure "
+                        f"{pl.blocks[a.figure].id}: {a.reason}"
+                        for a in notes.absorbed)
 
         # A caption PRINTED INSIDE a figure box routes to the figure (it is the
         # smallest block containing those words), and Stage 08 renders a figure

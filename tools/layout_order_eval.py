@@ -598,25 +598,30 @@ def stage05_blocks(pl: "S4.PageLayout", img: np.ndarray, twords: list,
     tessdata = resolve_tessdata_dir(cfg)
     oem = int((cfg.get("tesseract", {}) or {}).get("oem", 1))
 
-    ordered, n_orphan = S5.attach_words(twords, pl.blocks, scale, w, h, p)
+    ordered, n_orphan, notes = S5.attach_words(twords, pl.blocks, scale, w, h, p)
     n_after_attach = len(ordered)
     # Census the SYNTHETIC (orphan-rescued) blocks while they are still
-    # identifiable. attach_words copies a real block's bbox BY REFERENCE, so
-    # object identity separates real from synthetic exactly; after this point the
-    # ids are renumbered and the two are indistinguishable. Recorded so the typing
-    # rule for rescued blocks can be designed on what is actually there rather
-    # than on the single one that happens to match a GT anchor.
-    _real_bbox_ids = {id(b.bbox) for b in pl.blocks}
-    orphan_notes = [
-        {"bbox": [blk.bbox.x, blk.bbox.y, blk.bbox.w, blk.bbox.h],
-         "type": blk.type.value,
-         "n_words": len(blk.words),
-         "median_word_h": (
-             sorted(wd.bbox.h for wd in blk.words)[len(blk.words) // 2]
-             if blk.words else 0),
-         "text": " ".join(wd.text for wd in blk.words if wd.text.strip())[:160]}
-        for blk in ordered if id(blk.bbox) not in _real_bbox_ids
-    ]
+    # identifiable — after this point the ids are renumbered and the two are
+    # indistinguishable. Recorded so the typing rule for rescued blocks can be
+    # designed on what is actually there rather than on the single one that
+    # happens to match a GT anchor.
+    #
+    # The synthetic blocks come from ``attach_words`` BY IDENTITY. This used to
+    # be inferred from ``bbox`` object identity (real blocks shared Stage 04's
+    # box by reference); ``figure_text`` absorption gives an absorbing figure a
+    # NEW box, which would have silently reclassified that figure as rescued in
+    # this very dump.
+    _synth_ids = {id(b) for b in notes.synthetic}
+    def _blk_note(blk: Block) -> dict:
+        return {"bbox": [blk.bbox.x, blk.bbox.y, blk.bbox.w, blk.bbox.h],
+                "type": blk.type.value,
+                "n_words": len(blk.words),
+                "median_word_h": (
+                    sorted(wd.bbox.h for wd in blk.words)[len(blk.words) // 2]
+                    if blk.words else 0),
+                "text": " ".join(wd.text for wd in blk.words
+                                 if wd.text.strip())[:160]}
+    orphan_notes = [_blk_note(blk) for blk in ordered if id(blk) in _synth_ids]
     ordered, eject_notes = CE.eject_inline_captions(
         ordered, img, binary, tessdata, lang, p, w, h)
     ordered, rescues, n_dropped, n_added = BR.rescue_starved_blocks(
@@ -649,7 +654,11 @@ def stage05_blocks(pl: "S4.PageLayout", img: np.ndarray, twords: list,
                          "median_word_h": (
                              sorted(wd.bbox.h for wd in b.words)[len(b.words) // 2]
                              if b.words else 0)}
-                        for b in ordered if id(b.bbox) in _real_bbox_ids],
+                        for b in ordered if id(b) not in _synth_ids],
+        "n_absorbed": len(notes.absorbed),
+        "absorbed_words": notes.absorbed_words,
+        "absorb_notes": [f"into figure #{pl.blocks[a.figure].id}: {a.reason}"
+                         for a in notes.absorbed],
         "n_ejected": len(eject_notes),
         "n_rescued": len(rescues),
         "eject_notes": list(eject_notes),
@@ -994,17 +1003,23 @@ def build_report(grade: ImageGrade, tver: str, run_date: str) -> str:
                  "inside no detected box (typed `other` by construction); an "
                  "`eject` moves a caption printed inside a figure out into its own "
                  "CAPTION block; a `re-read` replaces a starved block's words with "
-                 "a read of that block's own crop.")
+                 "a read of that block's own crop; an `absorb` folds a rescued "
+                 "block that is text clipped off a figure's edge back INTO that "
+                 "figure, so it stops standing in the reading flow.")
         for sg in grade.subpages:
             d = sg.stage05
             L.append(f"- `{sg.name}`: {d.get('n_orphan_blocks', 0)} orphan block(s) "
                      f"from {d.get('orphan_words', 0)} orphan words, "
                      f"{d.get('n_ejected', 0)} caption ejection(s), "
-                     f"{d.get('n_rescued', 0)} starved block(s) re-read.")
+                     f"{d.get('n_rescued', 0)} starved block(s) re-read, "
+                     f"{d.get('n_absorbed', 0)} absorbed into a figure "
+                     f"({d.get('absorbed_words', 0)} word(s)).")
             for note in d.get("rescue_notes", []):
                 L.append(f"  - re-read {note}")
             for note in d.get("eject_notes", []):
                 L.append(f"  - eject {note}")
+            for note in d.get("absorb_notes", []):
+                L.append(f"  - absorb {note}")
 
     # --- Figure-inclusive order detail -----------------------------------------
     gradeable = [s for s in grade.subpages if s.order_all.gradeable]

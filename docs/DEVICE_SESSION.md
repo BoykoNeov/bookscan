@@ -5,6 +5,27 @@ session has ever driven a real camera over a real book**. Every UX claim in
 `docs/plans/android-guided-capture.md` M2–M5 is "unverified without a device".
 This file is the protocol for closing that — run it once, with the phone.
 
+> **STATUS 2026-08-28 — most of this is BANKED; do not re-run it blind.**
+>
+> * **Goal 1 (calibrate auto-capture): CLOSED, and the feature was demoted.**
+>   Thresholds were fitted on 2026-08-19; the armed confirmation run happened
+>   on 2026-08-28 and the burst delivered ONE still, not the four the
+>   hysteresis fix was measured to give. Manual capture is now the default
+>   flow and auto-capture is an opt-in toggle (owner's call). **Do not record
+>   three more frame logs** — the numbers exist, and the metric is no longer
+>   load-bearing. See RESULTS 2026-08-28.
+> * **Goal 2 (capture → upload → pipeline): DONE**, twice, on real spreads.
+> * **Goal 3 (close-ups → `testset/zoomset_*`): fixture exists** from
+>   2026-08-19. Two more real multi-image pages ran clean on 2026-08-28.
+> * **Goal 4 (session UX): job list, resume and the 7/7 progress display are
+>   CONFIRMED** on a live server (2026-08-28). Still open: upload retry over a
+>   dropped link, and server-restart-mid-page.
+>
+> What a fresh device session is actually for now: the two open goal-4 items,
+> and re-testing whatever the Stage 02 book-boundary fix turns into (RESULTS
+> 2026-08-28 — the book detector returns the whole frame on a pale background,
+> so neither real capture split into pages).
+
 The session has four goals, in order of value:
 
 1. **Calibrate auto-capture.** `SHARPNESS_THRESHOLD` / `STABILITY_THRESHOLD` in

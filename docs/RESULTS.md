@@ -6089,3 +6089,125 @@ so this ships — recorded, not buried.
   now contradicted by this measurement and is corrected in the same commit.
 
 Suite **547 green** (was 534): +13 for the new module.
+
+## The phone session that demoted auto-capture, and found the book detector blind — 2026-08-28
+
+Second on-device session (Galaxy S23, SM-S911B, wireless adb; server on the
+LAN at `0.0.0.0:8000`). The phone reached the server on the first try —
+`curl` from the device to `/api/jobs` returned 200 before any UI was
+exercised — so nothing below is a network-plumbing artefact.
+
+### What is now confirmed on real hardware, for the first time
+
+| Thing | Evidence |
+|---|---|
+| Job list + **resume** from the list | tapped an existing job, it re-targeted polling and rendered its state |
+| **Progress display** | "7/7 stages" with per-stage ✓ against a live server |
+| Manual capture → review → close-ups → upload → full pipeline | two pages, both `exit 0` through all seven stages |
+| An **18-image page** (2 full shots + 16 close-ups) | `page_002`, ran clean |
+| **Uncertainty mode chosen on the phone** | created a job as `patch`; server wrote `{"mode": "patch"}` |
+
+### Finding 1 — the hover gate delivers ONE still on a phone, not four
+
+The confirmation run that `autoArmed`'s default had been waiting on since
+2026-08-19 finally happened, and it went the other way. Armed over a real
+spread, the burst handed off **1 shot**. The device's own cache is the
+evidence, not the UI: exactly one `auto_*.jpg` for the hover, so the burst
+collapsed after the first still rather than losing async callbacks.
+
+**The replay that produced "four stills per hover" could not have caught
+this.** Calibration logging *deliberately suspends capture* — that is what
+makes a 15 s recording possible at all — so the three recordings the hold
+threshold was fitted on contain **no frame from just after a shutter fires**,
+which is precisely the moment the hold test fails. The blind spot is
+structural. Any future gate tuning has to log through a live capture or it
+will keep re-deriving a number the device does not honour.
+
+Owner's call, same session: **manual capture is the flow, auto-capture stays
+as an opt-in toggle.** Shipped in `5a7f463` together with two UX defects the
+device surfaced immediately — the close-up screen returned to review after
+*every* shot (so capturing several cost a re-entry each), and there was no way
+to take more than one whole-spread photograph. Both now stay put and append,
+and Stage 01 gets the several full-spread frames its anchor choice wants.
+They are still **not stitched**: blending close-ups was measured to make OCR
+worse (RESULTS 2026-08-19) and 16 of 16 were correctly declined here
+(3 inliers against a floor of 8).
+
+### Finding 2 — the phone could not choose the uncertainty mode
+
+`createJob` sent no `mode`, so every phone job was the server's `flag`
+default and two of the three modes CLAUDE.md requires were unreachable from
+the only client that exists — despite the server having persisted a per-job
+mode since `ecc9993`. Fixed and verified on the device in `665791b`. The
+existing test asserted only the request *path*, which passed happily
+throughout the defect; it now asserts the query string.
+
+### Finding 3 (the important one) — the book detector returns the whole frame
+
+**Neither real capture split into pages.** Two different failures, one cause
+upstream of both.
+
+`page_001` — the ink-valley cue fired at `gutter_x = 2741` and **won
+outright**, cutting through the middle of the right-hand page. `left.png`
+came out holding *both* pages; `right.png` held margin and read **0 words**.
+The other two cues had it right: `pinch_x = 1668`, `shadow_x = 1730`, and
+cropping those columns out of the anchor confirms on pixels that the real
+gutter is there (left page ends, right page's "Honduras" heading begins),
+while 2741 is a **white channel inside the right page** between its
+coin/caption column and its body text — a product of the figure layout.
+
+`page_002` — no cue cleared its gate, so Stage 02 abstained and emitted
+`single.png` (the whole spread as one page). Text quality was fine:
+935 words, 860 at conf ≥ 60, mean 88.6.
+
+**Both gates were within a few percent of going the other way, and both went
+the wrong way.** `page_001`: ink `ratio` 0.525 against a 0.55 cutoff (fires,
+wrongly); `pinch_depth` 0.106 against a 0.11 cutoff (silent, correctly
+located). `page_002`: ratio 0.701, pinch depth 0.012. That says the cascade is
+not robust on this corpus, not that one threshold is mistuned.
+
+**Why the ink cue is wrong here, stated as a property of the book rather than
+of the photograph:** it assumes the gutter is the emptiest vertical strip. On
+a numismatic page — coin plates floating in white, captions in a side column —
+there are several emptier strips than the gutter, and at least one of them is
+*inside* a page.
+
+**And why the crop that exists to prevent exactly this never ran.** Both
+captures reported `book_crop_applied: false` with the reason "book fills
+92%/100% of the frame — already tightly framed". That reason is **derived
+from a failed detection, not from the framing**: `page_002` is a book on a
+sofa with a wide margin of upholstery all round, and the debug overlay's emit
+box runs along the frame edge. Measured on that exact photograph, the search
+box's bright-paper test (`S < 0.25 and V > 0.55`):
+
+| region | S | V | share passing the paper test |
+|---|---|---|---|
+| whole frame | — | — | **39.9 %** |
+| the page itself | 0.140 | 0.534 | **56 %** |
+| sofa (bottom left) | 0.256 | 0.524 | **22 %** |
+
+The page is dim enough that its brightness sits *below* the 0.55 cutoff, and
+the sofa is pale and desaturated enough to partly pass it. Page and background
+are not separable by that rule on this shot, so the component spans the frame
+and the box becomes the frame. The 83 % abstain gate then reads a detection
+failure as tight framing — the gate is not wrong, its input is.
+
+**Not a logic bug, a reporting one.** `corroborated: true` is documented as
+scoped to the *pinch* cue ("for a pinch split: did shadow OR ink agree?") and
+on `page_001` it is factually correct — shadow 1730 vs pinch 1668, inside the
+122 px tolerance. The defect is that it is serialized into `split.json`
+unqualified, so a reader takes it as endorsing whichever gutter shipped. The
+larger half is that **nothing acts on two cues agreeing ~1000 px away from the
+answer that shipped** — which is positive evidence against that answer, and is
+also the shape of the 2026-08-19 "both flags true on the wrong edge" finding.
+
+Fix deliberately **not attempted in this session**: Stage 02 carries 13+
+non-regression fixtures and the bar here is a measured row, not a plausible
+patch.
+
+### One number NOT to quote
+
+`page_001`'s 826 words / 677 at conf ≥ 60 / mean 79.8 is a **whole-spread**
+figure — it came from an image containing both pages because the split was
+wrong. It is **not** comparable to `zoomset_de_02`'s per-page 293/385, and it
+is not evidence that OCR improved.

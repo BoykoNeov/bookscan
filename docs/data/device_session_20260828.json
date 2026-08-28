@@ -1,0 +1,103 @@
+{
+  "session": "2026-08-28 on-device Gate 5 verification",
+  "device": "Samsung Galaxy S23 (SM-S911B), wireless adb",
+  "server": "uvicorn server.app:app --host 0.0.0.0 --port 8000",
+  "jobs": {
+    "flag_job": "20260828-092505-15c41a76",
+    "patch_job": "20260828-094929-677fd774"
+  },
+  "hover_gate": {
+    "claim_from_replay_2026_08_19": {
+      "stills_per_hover": 4
+    },
+    "observed_on_device": {
+      "stills_per_hover": 1
+    },
+    "evidence": "exactly one auto_*.jpg in the app cache for the hover (burst collapsed; not lost async callbacks)",
+    "why_replay_missed_it": "calibration logging suspends capture, so the three fitting recordings contain no frame from just after a shutter fires",
+    "outcome": "manual capture made the default flow; auto-capture kept as an opt-in toggle (owner's call)"
+  },
+  "mode_selection": {
+    "before": "createJob sent no mode; every phone job was the server 'flag' default",
+    "after": "picker on the new-job screen; verified job.json == {\"mode\": \"patch\"}"
+  },
+  "pages": {
+    "page_001": {
+      "n_frames": 11,
+      "gutter_x": 2741,
+      "method": "ink",
+      "ink_ratio": 0.525,
+      "ink_gate": 0.55,
+      "pinch_x": 1668,
+      "pinch_depth": 0.106,
+      "pinch_gate": 0.11,
+      "shadow_x": 1730,
+      "corroborated": true,
+      "book_crop_applied": false,
+      "book_crop_reason": "book fills 92% of the frame (>= 83%) — already tightly framed, not cropping",
+      "emitted": [
+        "left.png",
+        "right.png"
+      ],
+      "ocr": {
+        "left.png": {
+          "words": 826,
+          "conf_ge_60": 677,
+          "mean_conf": 79.8
+        },
+        "right.png": {
+          "words": 0,
+          "conf_ge_60": 0,
+          "mean_conf": 0.0
+        }
+      }
+    },
+    "page_002": {
+      "n_frames": 18,
+      "gutter_x": null,
+      "method": "none",
+      "ink_ratio": 0.701,
+      "ink_gate": 0.55,
+      "pinch_x": 1624,
+      "pinch_depth": 0.012,
+      "pinch_gate": 0.11,
+      "shadow_x": 2467,
+      "corroborated": true,
+      "book_crop_applied": false,
+      "book_crop_reason": "book fills 100% of the frame (>= 83%) — already tightly framed, not cropping",
+      "emitted": [
+        "single.png"
+      ],
+      "ocr": {
+        "single.png": {
+          "words": 935,
+          "conf_ge_60": 860,
+          "mean_conf": 88.6
+        }
+      }
+    }
+  },
+  "paper_mask_probe": {
+    "image": "jobs/20260828-092505-15c41a76/page_002/00_ingest/frame_00.png",
+    "rule": "S < 0.25 and V > 0.55 (book_boundary.py search box)",
+    "whole_frame_frac_passing": 0.399,
+    "regions": {
+      "sofa_top_left": {
+        "S": 0.329,
+        "V": 0.487,
+        "frac_passing": 0.023
+      },
+      "sofa_bottom_left": {
+        "S": 0.256,
+        "V": 0.524,
+        "frac_passing": 0.222
+      },
+      "page": {
+        "S": 0.14,
+        "V": 0.534,
+        "frac_passing": 0.563
+      }
+    },
+    "conclusion": "page and background are not separable by this rule on this capture: the page is dim (V 0.534 < 0.55) and the sofa is pale and desaturated, so the book box grows to the whole frame and the 83% abstain gate reads a detection failure as tight framing"
+  }
+}

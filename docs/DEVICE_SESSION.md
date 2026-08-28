@@ -21,10 +21,15 @@ This file is the protocol for closing that — run it once, with the phone.
 >   CONFIRMED** on a live server (2026-08-28). Still open: upload retry over a
 >   dropped link, and server-restart-mid-page.
 >
-> What a fresh device session is actually for now: the two open goal-4 items,
-> and re-testing whatever the Stage 02 book-boundary fix turns into (RESULTS
-> 2026-08-28 — the book detector returns the whole frame on a pale background,
-> so neither real capture split into pages).
+> * **Goal 4's two open items are now CLOSED too** (2026-08-28): upload retry
+>   over a dropped link took the clean-retry branch, and the server was killed
+>   mid-page twice and recovered both times. Gate 5 is complete.
+>
+> What a fresh device session is actually for now: re-testing whatever the
+> Stage 02 book-boundary fix turns into — see
+> `docs/plans/book-detector-pale-background.md` (RESULTS 2026-08-28: the book
+> detector returns the whole frame on a pale background, so neither real
+> capture split into pages). Nothing else here needs a phone.
 
 The session has four goals, in order of value:
 

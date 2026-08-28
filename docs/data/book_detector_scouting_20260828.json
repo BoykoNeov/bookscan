@@ -1,0 +1,109 @@
+{
+  "_doc": "Scouting probes behind docs/plans/book-detector-pale-background.md. Measured 2026-08-28; NO code was changed - the sat_max/val_min variants were monkeypatched in-process and discarded. These are the numbers that rule options in and out before Phase 2 starts.",
+  "baseline": {
+    "command": "python -m tools.split_eval",
+    "spreads_correct": "19/19",
+    "worst_clip_pct": 0.0,
+    "crop_applied_on": ["zoomset_de_01", "zoomset_de_02", "zoomset_en_01", "zoomset_en_02"],
+    "note": "de_01/de_02 abstain at 85%/89%; the 13 flat spreads at 97-100%"
+  },
+  "failing_captures": {
+    "source": "jobs/20260828-092505-15c41a76 (gitignored - Phase 0 must copy these into testset/)",
+    "page_001": {
+      "anchor": "page_001/01_fuse/anchor.png",
+      "size": [4080, 3060],
+      "shipped_gutter_x": 2741,
+      "method": "ink",
+      "ink_ratio": 0.525,
+      "ink_gate": 0.55,
+      "pinch_x": 1668,
+      "pinch_depth": 0.106,
+      "pinch_gate": 0.11,
+      "shadow_x": 1730,
+      "corroborate_tol_px": 122,
+      "verdict": "wrong cut; the two cues that agreed with each other (pinch+shadow, 62px apart) were ~1000px from the shipped answer"
+    },
+    "page_002": {
+      "anchor": "page_002/01_fuse/anchor.png",
+      "size": [4080, 3060],
+      "shipped_gutter_x": null,
+      "method": "none",
+      "ink_ratio": 0.701,
+      "pinch_depth": 0.012,
+      "shadow_x": 2467,
+      "verdict": "no cut at all; pinch cue assumes a dark background so Otsu inverts on a pale sofa"
+    }
+  },
+  "hsv_knob_sweep": {
+    "_doc": "emit-box area as a fraction of frame; >= 0.83 trips the abstain gate, i.e. detection failed. Rows are val_min, columns sat_max.",
+    "finding": "val_min is inert (identical down every column); sat_max is the whole story",
+    "page_001": {
+      "val_min_0.55": {"sat_0.25": 0.918, "sat_0.18": 0.832, "sat_0.12": 0.702},
+      "val_min_0.50": {"sat_0.25": 0.918, "sat_0.18": 0.918, "sat_0.12": 0.757},
+      "val_min_0.45": {"sat_0.25": 0.918, "sat_0.18": 0.918, "sat_0.12": 0.617},
+      "val_min_0.40": {"sat_0.25": 0.918, "sat_0.18": 0.918, "sat_0.12": 0.617},
+      "val_min_0.35": {"sat_0.25": 0.918, "sat_0.18": 0.918, "sat_0.12": 0.616}
+    },
+    "page_002": {
+      "val_min_0.55": {"sat_0.25": 1.0, "sat_0.18": 0.871, "sat_0.12": 0.631},
+      "val_min_0.50": {"sat_0.25": 1.0, "sat_0.18": 0.883, "sat_0.12": 0.793},
+      "val_min_0.45": {"sat_0.25": 1.0, "sat_0.18": 0.883, "sat_0.12": 0.796},
+      "val_min_0.40": {"sat_0.25": 1.0, "sat_0.18": 0.883, "sat_0.12": 0.796},
+      "val_min_0.35": {"sat_0.25": 1.0, "sat_0.18": 0.883, "sat_0.12": 0.796}
+    }
+  },
+  "global_sat_max_retune_REJECTED": {
+    "_doc": "sat_max 0.12 fixes both real captures but destroys the suite. This closes 'retune the threshold' as an option.",
+    "sat_max_0.18": {"spreads_correct": "17/19", "worst_clip_pct": 42.1},
+    "sat_max_0.12": {
+      "spreads_correct": "12/19",
+      "worst_clip_pct": 100.0,
+      "failures": ["it_geo_01", "it_geo_02", "it_geo_03", "de_01", "zoomset_de_02", "zoomset_en_01", "zoomset_en_02"],
+      "worst_case": "zoomset_en_01 loses 100% of its labelled book"
+    },
+    "conclusion": "no single global saturation constant serves both corpora; the fix must be per-image adaptivity, a different cue, or escalation"
+  },
+  "band_edge_margins": {
+    "_doc": "distance of the ink-profile argmin from the nearest edge of the [0.30,0.70] search band, as a fraction of band width, ON THE SHIPPED PATH (book crop applied where find_book says so). A first attempt measured this on full frames and was wrong for the four cropped fixtures.",
+    "bad_call_page_001": 0.070,
+    "closest_ink_deciding_fixture": {"id": "zoomset_en_02", "margin": 0.225},
+    "trap": {"id": "de_01", "margin": 0.061, "why_safe": "resolves by pinch, not ink, so a guard scoped to the DECIDING cue leaves it untouched"},
+    "candidate_gate": 0.15,
+    "all_fixtures": {
+      "de_01": {"margin": 0.061, "method": "pinch"},
+      "zoomset_en_02": {"margin": 0.225, "method": "ink"},
+      "zoomset_en_01": {"margin": 0.230, "method": "ink"},
+      "de_02": {"margin": 0.406, "method": "pinch"},
+      "zoomset_de_02": {"margin": 0.406, "method": "ink"},
+      "zoomset_de_01": {"margin": 0.411, "method": "ink"},
+      "it_geo_02": {"margin": 0.438, "method": "ink"},
+      "bg_01": {"margin": 0.442, "method": "ink"},
+      "it_geo_01": {"margin": 0.443, "method": "ink"},
+      "it_geo_06": {"margin": 0.444, "method": "ink"},
+      "it_geo_03": {"margin": 0.449, "method": "ink"},
+      "bg_02": {"margin": 0.463, "method": "ink"},
+      "it_geo_04": {"margin": 0.463, "method": "ink"},
+      "en_coins_01": {"margin": 0.475, "method": "ink"},
+      "it_geo_07": {"margin": 0.475, "method": "ink"},
+      "en_coins_03": {"margin": 0.485, "method": "ink"},
+      "it_geo_05": {"margin": 0.492, "method": "ink"},
+      "bg_03": {"margin": 0.493, "method": "ink"},
+      "en_coins_02": {"margin": 0.496, "method": "ink"}
+    }
+  },
+  "gate_headroom": {
+    "valley_ratio": {
+      "current": 0.55,
+      "highest_passing_fixture": {"ids": ["en_coins_02", "zoomset_de_01"], "ratio": 0.47},
+      "bad_call": 0.525,
+      "midpoint": 0.50,
+      "trap": "en_coins_02's pinch depth is only 0.05, so if a tighter ink gate drops it to Layer 2 there is no net and it becomes a single-page regression; zoomset_de_01 has one (pinch 0.22)"
+    },
+    "pinch_min_depth": {
+      "current": 0.11,
+      "must_pass": {"de_01": 0.15, "de_02": 0.18},
+      "must_fail": {"page_002": 0.012},
+      "near_miss": {"page_001": 0.106}
+    }
+  }
+}

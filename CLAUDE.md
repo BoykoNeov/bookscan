@@ -40,7 +40,11 @@ Italian, German**.
       **Known open defect, not an app one:** neither real capture split into
       pages. `pipeline/book_boundary.py` returns the whole frame on a pale
       background, so the crop abstains and Stage 02's ink cue picks a white
-      channel *inside* a page. Fix not attempted (13+ non-regression fixtures).
+      channel *inside* a page. Fix not attempted (13+ non-regression fixtures);
+      planned in `docs/plans/book-detector-pale-background.md`, whose Phase 0
+      is blocking — the two failing frames exist only in gitignored `jobs/`.
+      Scouting 2026-08-28 already closed the obvious fix: retuning the HSV
+      thresholds cannot work (see the plan's section 5).
 
 ## Architecture: the stage contract (IMPORTANT)
 

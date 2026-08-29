@@ -211,7 +211,7 @@ Italian, German**.
       of the anchor's. Matching works here precisely because it failed there: a
       spread is repetitive text, a figure is locally unique, and on `page_023` six
       frames register against the figure that Stage 01 never located.
-      **25 of 163 figures upgraded** on the owner's book, median **1.42x** linear,
+      **24 of 163 figures upgraded** on the owner's book, median **1.43x** linear,
       best **3.65x**, ~8 s per spread inside assemble. Refusing is
       the normal outcome and costs nothing — the page crop stays. Three things
       the measurement decided, do not undo them casually: `min_ncc` is **0.60**
@@ -229,8 +229,13 @@ Italian, German**.
       flattened page** by a smooth displacement field before it lands
       (`mesh_align`), because one homography cannot express what Stage 03 did to
       the paper — without it the sharpest-first composite tore the word
-      "Arzalpenturm" in half at a seam. 25 upgraded (was 22), 0 lost, topo map
-      1.86x -> 3.16x. **`min_coverage` stays 0.90 and lowering it is REFUSED by
+      "Arzalpenturm" in half at a seam. 24 upgraded (was 22), 0 lost, topo map
+      1.86x -> 3.16x. **One open thread:** an offline sweep upgrades 25 and the
+      shipped run 24; `page_022__left` block 5 upgrades reproducibly in isolation
+      (1.29x, coverage 1.00, agreement 0.827) but was refused in the batch. Most
+      likely a frame decode returning None under memory pressure — the module
+      holds every frame of a spread decoded — which `candidates` skips SILENTLY.
+      Fix the silent skip before chasing the rest. **`min_coverage` stays 0.90 and lowering it is REFUSED by
       measurement:** at union 0.607 the composite is visibly worse than the page
       crop (two disagreeing sources smeared across a wide feather, 39 % still an
       upsample) and it scored 0.889 on the result gate while damaged — an

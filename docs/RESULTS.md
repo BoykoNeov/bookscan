@@ -7158,7 +7158,7 @@ confident tiles only, interpolated and smoothed) before it is laid down.
 
 | | before | after |
 |---|---|---|
-| figures upgraded (163 searched, 151 large enough) | 22 | **25** |
+| figures upgraded (163 searched, 151 large enough) | 22 | **24** |
 | median linear scale | 1.35x | **1.42x** |
 | best | 1.86x | **3.65x** |
 | the topo map | 1.86x | **3.16x** (2.9x the pixels) |
@@ -7166,7 +7166,18 @@ confident tiles only, interpolated and smoothed) before it is laid down.
 | figures lost | — | **0** |
 
 14 of the 22 already-upgraded figures gained more than 5 % linear; none lost
-anything. Mesh alignment adds one figure and removes none. Cost: figure assets on
+anything. Mesh alignment adds one figure and removes none.
+
+**One figure is unreconciled and is recorded rather than rounded away.** An
+offline sweep over the same 151 figures upgrades 25; the shipped assemble run
+upgraded 24. The one that differs (`page_022__left` block 5) upgrades
+reproducibly when run on its own — six identical searches, one source at 1.29x
+covering 1.00 with agreement 0.827 and 60 inliers — including through Stage 07's
+own `_upgrade_figure` with the config's own parameters. So it is not a marginal
+case flipping. The most plausible cause is that `figure_hires` keeps every frame
+of a spread decoded until the spread ends (18 frames x ~12 Mpx here) and a decode
+returned None under memory pressure, which `candidates` skips SILENTLY. Not
+reproduced, not fixed, and the silent skip is the part worth fixing first. Cost: figure assets on
 this book grow to 117 MB of PNG (16 MB if written as JPEG q92 — not done, the
 asset is the lossless master).
 

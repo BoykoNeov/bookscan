@@ -7363,3 +7363,78 @@ blocks on the affected spreads sit outside the paper band implied by the flagged
 surface figures. The junk is *on* the paper — it is real content read badly,
 because the dewarp ran on a frame containing fabric. That points back at the
 crop, not at a text filter.
+
+## 2026-08-29 — Multi-language OCR raises confidence and *lowers* accuracy (REFUSED as a page-level setting)
+
+Books are multilingual; this via-ferrata guide is German with Italian and English
+translation panels on the same page. Tesseract accepts `deu+ita`, and the job
+language field already validates that shape, so offering it in the console picker
+is a two-line change. **Measured first — and it must not be offered.**
+
+One page's Stage 05 re-run three ways, everything else identical (same dewarp,
+same layout blocks). High-confidence words (conf >= 70):
+
+| page | `deu` | `deu+ita` | `deu+ita+eng` |
+|---|---|---|---|
+| `page_013` (German body text) | 332 | 336 | 340 |
+| `page_005` (route tables + panels) | 499 | 528 | 535 |
+
+By the metric that has driven every earlier language decision — the one that gave
+`eng` 324 vs `deu` 335 — adding languages is a clear win: **+7.2 %** confident
+words on `page_005`. **It is an illusion.** Diffing the text itself:
+
+```
+Berücksichtigung -> Beriicksichtigung      Überholende -> Uberholende
+alpinverlag      -> alpinveriag            Via         -> Ya
+2,0              -> 20                     Alpin),     -> Alpini,
+```
+
+Adding a language whose alphabet has no umlauts makes the non-umlaut reading
+*plausible*, so Tesseract picks it **and scores it higher**, because it now fits a
+lexicon. 3 of 13 changed words on `page_013` lost an umlaut or `ß`; `Via` — an
+Italian word — got *worse* when Italian was added. Cost is also real: 11 s -> 18 s
+-> 23 s per page.
+
+This is the same trap as the outer-gutter CLAHE spike (2026-07-17): **confidence
+rose while the text got worse.** Confident-word count is a valid metric only when
+the alphabet is held constant; across language sets it is not comparable, and no
+future language decision may be made on it alone without a text diff.
+
+**Consequence for multilingual support:** a page-level language *list* is the
+wrong shape. The right unit is the block — this book's foreign-language content is
+physically separated into panels, which is also why 28 of them are currently
+locked inside FIGURE blocks (12.2 % of the book's words). See
+`docs/plans/panorama-and-next-steps.md`.
+
+## 2026-08-29 — Reading the close-ups separately and merging the words: a wash
+
+The owner's proposal: OCR each close-up on its own and union the words with the
+anchor's, merging by lines and part-lines because a close-up does not span the
+page width. Measured over 34 registered close-ups on the owner's book, aligning
+Tesseract's own line groupings with `difflib` (coordinates cannot be the merge
+key — leftover displacement is a large fraction of a word height, and a position
+matcher inflated the same union to a false 1.403x):
+
+```
+anchor confident words over the same areas : 6155
+close-ups alone                            : 6010
+aligned as the same word                   : 4087
+  close-up reads it well, anchor badly     :  122   <- the win
+  anchor reads it well, close-up badly     :  133   <- keep the anchor
+unpaired close-up tokens                   : 2118   <- suspect, not wins
+```
+
+A max-confidence merge gains **122 words, +2.0 %**, and loses 133 the other way.
+**The gains are not text recovery.** Every example is the same string at higher
+confidence — `Kostenlos@5 -> kostenlos@87`, `und@50 -> und@95`,
+`urheberrechtlich@34 -> urheberrechtlich@89`. Nothing unreadable became readable.
+
+**Bound on the conclusion:** these close-ups are framed on the *page*, median
+1.30x linear. This says the union does not pay **at this framing**, not that it
+never could. It is the same operator-side lever `figure_hires` found: a close-up
+framed on a text block is untested.
+
+The 2118 unpaired tokens are not a hidden win — they are border fragments
+(a close-up cuts words at its edge and Tesseract reads the fragment confidently)
+plus alignment failures. Counting them as rescues is exactly the error that
+produced the 1.403x figure.

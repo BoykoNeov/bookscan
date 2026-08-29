@@ -169,6 +169,33 @@ Italian, German**.
       the paper band, so the junk is *on* the paper — real content read badly
       because the dewarp ran on a frame containing fabric. That points back at the
       crop, not at a text filter.
+- **Three owner proposals measured 2026-08-29, two refused; and two defects found
+      behind the German render.** (a) **Reading each close-up separately and merging
+      the words is a WASH** — line-aligned over 34 close-ups, a max-confidence merge
+      gains 122 words (+2.0 %) and loses 133, and **every gain is the same string at
+      higher confidence** (`und@50 -> und@95`), not a word recovered. Bounded, not
+      closed: these close-ups are framed on the PAGE at a median 1.30x, so it says
+      the union does not pay *at this framing*. (b) **A page-level multi-language
+      OCR string (`deu+ita`) is REFUSED** — it raises high-confidence words 7.2 %
+      while LOSING umlauts (`Berücksichtigung -> Beriicksichtigung`), because a
+      language whose alphabet lacks them makes the umlaut-free reading fit a
+      lexicon and therefore score higher. **Third time a change raised a confidence
+      number while making the text worse**; the rule is now **no accuracy claim
+      without a text diff**, and confident-word counts are NOT comparable across
+      language sets. Multilingual support belongs at the **block**, not the page.
+      (c) **Panorama is planned, not built** —
+      `docs/plans/panorama-and-next-steps.md`, whose premise is a REORDER
+      (flatten first, stitch second) because the doubled text was a homography
+      failing on a curved page, and whose Phase 0 is one day of reusing
+      `mesh_align`. That plan also ranks the remaining defects by measured cost;
+      the top item is that **12.2 % of the book's words (1607, in 28 blocks) are
+      rendered as photographs of text** — the route sidebars and the
+      English/Italian panels. Two defects fixed on the way: **Stage 08's
+      de-hyphenation rule was never handed a dictionary** (correct, unit-tested,
+      inert — 138 broken words in the owner's book, 63 now rejoin), and
+      **`normalize_token` was deleting the accented letters of three of the four
+      target languages** (`è -> ""`), with a measured **0 of 5604** delta on
+      Bulgarian, the only language whose gate actually runs.
 - **The operator console SHIPPED 2026-08-29** (`server/assets/console/index.html`
       + `server/routes_pages.py`, launched by `bookscan.bat`). One browser page
       for the whole job: the job list, a thumbnail grid, a per-page view with all

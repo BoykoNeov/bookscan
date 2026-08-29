@@ -181,14 +181,30 @@ Italian, German**.
       of the anchor's. Matching works here precisely because it failed there: a
       spread is repetitive text, a figure is locally unique, and on `page_023` six
       frames register against the figure that Stage 01 never located.
-      **22 of 125 figures upgraded** on the owner's book, median **1.35x** linear
-      (1.83x the pixels, best 3.5x), ~8 s per spread inside assemble. Refusing is
+      **25 of 163 figures upgraded** on the owner's book, median **1.42x** linear,
+      best **3.65x**, ~8 s per spread inside assemble. Refusing is
       the normal outcome and costs nothing — the page crop stays. Three things
       the measurement decided, do not undo them casually: `min_ncc` is **0.60**
       not 0.50 (wrong sources measured 0.51-0.52, right ones 0.63+); sources are
       chosen **greedily** (a source that adds no new pixels can only add its own
       alignment error — painting all ten on `page_023` was the bug); and each fit
       is **ECC-refined**, because the crop is dewarped and the source is not.
+      **REWORKED 2026-08-29 for maximum detail, on the owner's via-ferrata topo
+      map** (RESULTS 2026-08-29). The canvas now comes from the **sharpest**
+      source, not the widest — eighteen frames match that map, one holds a fifth
+      of it at 3.16x, and the old rule delivered the whole picture at 1.86x.
+      Sources are laid down **sharpest-first, each painting only pixels no better
+      source has claimed** (ordering by coverage handed every overlap to the
+      source with least resolution to offer). And each source is **bent onto the
+      flattened page** by a smooth displacement field before it lands
+      (`mesh_align`), because one homography cannot express what Stage 03 did to
+      the paper — without it the sharpest-first composite tore the word
+      "Arzalpenturm" in half at a seam. 25 upgraded (was 22), 0 lost, topo map
+      1.86x -> 3.16x. **`min_coverage` stays 0.90 and lowering it is REFUSED by
+      measurement:** at union 0.607 the composite is visibly worse than the page
+      crop (two disagreeing sources smeared across a wide feather, 39 % still an
+      upsample) and it scored 0.889 on the result gate while damaged — an
+      under-covered figure needs another PHOTOGRAPH, not another threshold.
       Verify by CHECKERBOARD, never side-by-side: a sharper picture reveals text
       the blurry crop hides, which reads as a framing change and misled this
       session twice. `--no-figure-hires` / `figure_hires.enabled: false` turns it

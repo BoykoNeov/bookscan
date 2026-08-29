@@ -7125,3 +7125,72 @@ what the pipeline did before. The upgrade is written as a separate asset with th
 bbox it was cut for recorded on the block, and Stage 08 falls back to the page
 crop if the block's bbox no longer matches — a high-resolution picture of a
 figure's *old* outline would be a wrong picture, which is worse than a soft one.
+
+
+## 2026-08-29 — A picture is now built at the scale of its SHARPEST source, not its widest
+
+`pipeline/figure_hires.py` shipped earlier today rebuilding each FIGURE from the
+captures that hold it. Asked to maximise the detail on a via-ferrata topo map
+(`page_021__right` block 1 — route grades and critical-point notes, the kind of
+picture the owner reads rather than looks at), three separate things were found to
+be throwing resolution away. All three are fixed; none of them was a threshold.
+
+**1. The canvas came from the widest source.** Eighteen frames match that topo
+map. One holds a fifth of it at **3.16x**; a frame covering half at 1.86x set the
+canvas and every sharper source was resampled DOWN into it. The old comment
+defended this ("a frame holding a fifth must not decide the resolution of the
+other four fifths") but the canvas is only a container — a region is as good as
+the source that lands on it, and a smaller container cannot improve the rest, only
+spoil the fifth. Canvas is now the sharpest accepted source.
+
+**2. Paint order gave every overlap to the WIDEST source** — precisely the one
+with least resolution to offer. Sources are now laid down sharpest-first, and each
+paints only pixels no better source has claimed. (This also keeps the page_023
+fix: a source that adds no new pixels can only add its own alignment error.)
+
+**3. The pieces did not agree, and the seam showed.** A source is a photograph of
+a CURVED page; the crop it must fill was flattened by Stage 03. One homography
+cannot express the difference, so a globally well-fitted source still sits a few
+pixels out in places — with sharpest-first painting the topo map came out with the
+word "Arzalpenturm" torn in half at a seam. Each source is now bent onto the
+flattened page by a smooth displacement field (phase correlation per tile,
+confident tiles only, interpolated and smoothed) before it is laid down.
+
+| | before | after |
+|---|---|---|
+| figures upgraded (163 searched, 151 large enough) | 22 | **25** |
+| median linear scale | 1.35x | **1.42x** |
+| best | 1.86x | **3.65x** |
+| the topo map | 1.86x | **3.16x** (2.9x the pixels) |
+| agreement with the page crop, topo map | 0.833 | **0.871** |
+| figures lost | — | **0** |
+
+14 of the 22 already-upgraded figures gained more than 5 % linear; none lost
+anything. Mesh alignment adds one figure and removes none. Cost: figure assets on
+this book grow to 117 MB of PNG (16 MB if written as JPEG q92 — not done, the
+asset is the lossless master).
+
+**The relaxation the owner asked about is REFUSED, by measurement.** "Why can't
+frames that hold part of the picture be stitched?" — they are, and always were
+(`min_piece` admits a source holding a tenth). What was thrown away is the
+COMPOSITE, when the sources together covered less than `min_coverage` = 0.90 —
+32 of 163 figures on this book. Lowering it to 0.60 admits six more, and the first
+one inspected (`page_013__left` block 7, union 0.607 from sources holding 0.40 and
+0.28) is **visibly worse than the page crop it would replace**: the two sources
+disagree, the feather smears the climber's arm and the rock beside it across a
+wide band, and 39 % of the picture is still an upsample. It scored **0.889** on
+the result gate while being damaged, so the gate does not catch this and must not
+be asked to. An under-covered figure needs another PHOTOGRAPH, not another
+threshold.
+
+**One trap closed on the way.** `_result_agreement` compared the whole thumbnail
+against the whole page crop. Wherever no source landed, the composite IS the page
+crop resized, so that part of the correlation is the crop against itself — the
+backstop lost its power exactly as coverage dropped, i.e. exactly where it was
+about to be relied on. It is now computed only over pixels a source actually
+covered.
+
+**Verify by CHECKERBOARD, never side-by-side** (standing rule, and it was needed
+again here: the first "misregistered" reading of the seam was correct, but only
+the checkerboard could tell it from the sharper picture merely revealing text the
+blurry one hid).

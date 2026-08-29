@@ -100,7 +100,23 @@ DEFAULTS = {
     # add detail, only its own alignment error, and the sources with least to add
     # are exactly the ones judged over the smallest footprint.
     "min_new_coverage": 0.03,
+    # Feather width, in PAGE-CROP pixels: it is multiplied by the canvas scale so
+    # a join is the same width on the printed page whether the asset came out at
+    # 1.2x or 3.6x. As a constant it silently narrowed as the canvas grew.
     "feather_px": 24.0,
+    # Bend each source onto the flattened page before laying it down. A source is
+    # a photograph of a CURVED page and the crop it must fill was flattened by
+    # Stage 03; one homography is a plane-to-plane map and cannot express the
+    # difference, so a globally well-fitted source still sits a few pixels out in
+    # places. Measured on the owner's via-ferrata topo map: without this the
+    # sharpest-first composite tore the word "Arzalpenturm" in half at a seam, and
+    # agreement with the page crop was 0.833; with it the tear is gone and
+    # agreement is 0.871. Set false to fall back to homography-only placement.
+    "mesh_align": True,
+    "mesh_tiles": 12,
+    "mesh_max_frac": 0.02,      # a correction larger than this is an error
+    "mesh_min_resp": 0.05,
+    "mesh_min_var": 25.0,
     # The finished asset, compared COARSELY against the page crop it replaces.
     # A BACKSTOP, not the main defence: min_ncc and the greedy source choice are
     # what keep a wrong source out, and this catches a composite that went wrong
@@ -432,6 +448,69 @@ def best_source(crop: np.ndarray, frames: list[FrameIndex], params: dict
     return best.H, best.frame, best.src
 
 
+def _mesh_refine(warped: np.ndarray, mask: np.ndarray, base: np.ndarray,
+                 params: dict) -> tuple[np.ndarray, np.ndarray] | None:
+    """Bend a placed source onto the flattened page, locally.
+
+    ``_refine`` already took out the global share of the dewarp-vs-homography
+    disagreement, at low resolution, as a homography. What is left is not a
+    homography at all: it is however much Stage 03 bent the paper, varying across
+    the picture. Estimate it as a smooth displacement FIELD - phase-correlate the
+    placed source against the (blurry, but geometrically correct) page crop tile
+    by tile, keep only tiles that answer confidently and move plausibly,
+    interpolate the rest, remap.
+
+    Deliberately unable to do much: a tile that disagrees loudly, or one on blank
+    paper with nothing to correlate, is DROPPED rather than trusted, and the field
+    is smoothed, because page curvature is smooth and a spike in the field is an
+    error rather than a finding. Returns None when too few tiles answered, which
+    means "place it by the homography alone".
+    """
+    h, w = base.shape[:2]
+    tiles = int(params["mesh_tiles"])
+    th, tw = h // tiles, w // tiles
+    if th < 24 or tw < 24:
+        return None
+    maxd = float(params["mesh_max_frac"]) * max(h, w)
+    min_var = float(params["mesh_min_var"])
+    min_resp = float(params["mesh_min_resp"])
+    g1 = cv2.cvtColor(base, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    g2 = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    dx = np.zeros((tiles, tiles), np.float32)
+    dy = np.zeros((tiles, tiles), np.float32)
+    got = np.zeros((tiles, tiles), bool)
+    win = cv2.createHanningWindow((tw, th), cv2.CV_32F)
+    for i in range(tiles):
+        for j in range(tiles):
+            y0, x0 = i * th, j * tw
+            a, b = g1[y0:y0 + th, x0:x0 + tw], g2[y0:y0 + th, x0:x0 + tw]
+            if a.shape != (th, tw) or b.shape != (th, tw):
+                continue
+            # The tile has to be mostly source pixels, or the correlation is
+            # partly the base against itself and answers zero by construction.
+            if float((mask[y0:y0 + th, x0:x0 + tw] > 0).mean()) < 0.5:
+                continue
+            if float(a.std()) < min_var or float(b.std()) < min_var:
+                continue
+            (sx, sy), resp = cv2.phaseCorrelate(a * win, b * win)
+            if resp < min_resp or abs(sx) > maxd or abs(sy) > maxd:
+                continue
+            dx[i, j], dy[i, j], got[i, j] = sx, sy, True
+    if int(got.sum()) < 6:
+        return None
+    miss = (~got).astype(np.uint8)
+    fx = cv2.GaussianBlur(cv2.inpaint(dx, miss, 3, cv2.INPAINT_TELEA), (3, 3), 0)
+    fy = cv2.GaussianBlur(cv2.inpaint(dy, miss, 3, cv2.INPAINT_TELEA), (3, 3), 0)
+    FX = cv2.resize(fx, (w, h), interpolation=cv2.INTER_CUBIC)
+    FY = cv2.resize(fy, (w, h), interpolation=cv2.INTER_CUBIC)
+    gy, gx = np.mgrid[0:h, 0:w].astype(np.float32)
+    out = cv2.remap(warped, gx + FX, gy + FY, cv2.INTER_CUBIC,
+                    borderMode=cv2.BORDER_REPLICATE)
+    nm = cv2.remap(mask, gx + FX, gy + FY, cv2.INTER_NEAREST,
+                   borderMode=cv2.BORDER_CONSTANT, borderValue=0)
+    return out, nm
+
+
 def _harmonise(patch: np.ndarray, base: np.ndarray, m: np.ndarray) -> np.ndarray:
     """Put ``patch`` on the same exposure as ``base`` over the pixels they share.
 
@@ -472,28 +551,40 @@ def compose(crop: np.ndarray, cands: list[Candidate], params: dict
     if not cands:
         return None
     h, w = crop.shape[:2]
-    # Canvas scale comes from the candidate that SEES THE MOST of the figure, not
-    # from the sharpest one. A frame holding a fifth of the picture at 2.6x must
-    # not decide the resolution of the other four fifths, which would then be an
-    # upsample of the page crop pretending to be detail.
-    dominant = max(cands, key=lambda c: (round(c.src.coverage, 2), c.src.scale))
-    scale = float(np.clip(dominant.src.scale, float(params["min_scale"]),
+    # Canvas scale comes from the SHARPEST source, not the widest one.
+    #
+    # It used to come from the candidate that saw the most of the figure, on the
+    # argument that a frame holding a fifth of the picture must not decide the
+    # resolution of the other four fifths. That argument confuses two things. The
+    # canvas is only a container: a region is as good as the source that lands on
+    # it, and building the container smaller cannot improve the four fifths - it
+    # can only throw away the fifth. Measured on the owner's via-ferrata topo map,
+    # eighteen frames match it, one holds a fifth of it at 3.16x, and the old rule
+    # delivered the whole picture at 1.86x, resampling that fifth DOWN. The cost of
+    # the new rule is bytes (a weaker region is stored upsampled); the cost of the
+    # old one was detail, which is the thing this module exists for.
+    scale = max(c.src.scale for c in cands)
+    scale = float(np.clip(scale, float(params["min_scale"]),
                           float(params["max_scale"])))
+    scale = min(scale, float(np.sqrt(float(params["max_output_px"]) / float(w * h))))
     ow, oh = int(round(w * scale)), int(round(h * scale))
-    if ow * oh > int(params["max_output_px"]) or ow < 2 or oh < 2:
+    if ow < 2 or oh < 2:
         return None
     S = np.diag([ow / w, oh / h, 1.0]).astype(np.float64)
 
-    out = cv2.resize(crop, (ow, oh), interpolation=cv2.INTER_CUBIC)
+    base = cv2.resize(crop, (ow, oh), interpolation=cv2.INTER_CUBIC)
+    out = base.copy()
     union = np.zeros((oh, ow), np.uint8)
     used: list[HiResSource] = []
-    # GREEDY, widest first, and a source only joins if it brings pixels nothing
-    # else has. Painting every candidate was the bug: on page_023 ten frames all
+    feather = max(1.0, float(params["feather_px"]) * scale)
+    # SHARPEST FIRST, and each source paints only the pixels no better source has
+    # already claimed. Two bugs are fixed by that one rule. Painting every
+    # candidate over its whole footprint was the first: on page_023 ten frames all
     # repainted the same middle, so the last one applied won it with its own
-    # alignment error, and the sources least able to be checked — a fifth of the
-    # picture, judged only over that fifth — were the ones painting last. A source
-    # that adds nothing cannot add detail either; it can only add its error.
-    for c in sorted(cands, key=lambda c: (-c.src.coverage, -c.src.scale)):
+    # alignment error. Ordering by coverage was the second: the WIDEST source won
+    # every overlap, which is precisely the source with least resolution to offer.
+    # A source that adds no new pixels adds only its error, so it is skipped.
+    for c in sorted(cands, key=lambda c: (-c.src.scale, -c.src.coverage)):
         img = c.frame.image
         if img is None:
             continue
@@ -505,10 +596,15 @@ def compose(crop: np.ndarray, cands: list[Candidate], params: dict
             continue
         if int((m > 0).sum()) < 500:
             continue
-        warped = _harmonise(cv2.warpPerspective(img, M, (ow, oh),
-                                                flags=cv2.INTER_CUBIC), out, m)
-        dist = cv2.distanceTransform((m > 0).astype(np.uint8), cv2.DIST_L2, 5)
-        alpha = np.clip(dist / float(params["feather_px"]), 0.0, 1.0)[..., None]
+        warped = cv2.warpPerspective(img, M, (ow, oh), flags=cv2.INTER_CUBIC)
+        if params.get("mesh_align", True):
+            got = _mesh_refine(warped, m, base, params)
+            if got is not None:
+                warped, m = got
+        warped = _harmonise(warped, out, m)
+        paint = ((m > 0) & (union == 0)).astype(np.uint8)
+        dist = cv2.distanceTransform(paint, cv2.DIST_L2, 5)
+        alpha = np.clip(dist / feather, 0.0, 1.0)[..., None]
         out = (out * (1.0 - alpha) + warped * alpha).astype(np.uint8)
         union = np.maximum(union, m)
         used.append(c.src)
@@ -517,17 +613,18 @@ def compose(crop: np.ndarray, cands: list[Candidate], params: dict
     # THE RESULT GATE. Everything above judges evidence; this judges the delivered
     # picture, once, as a whole. A correct upgrade is the same rectangle with more
     # pixels in it, so shrinking it back to the page crop's size must reproduce the
-    # page crop almost exactly — near-identity, not mere correlation. The per-source
-    # agreement cannot stand in for this: it is measured over each source's OWN
-    # footprint, so a source holding a fifth of a rock face can agree with that
-    # fifth at 0.6 and still be pasted in the wrong place, which is exactly how
-    # page_018 produced a confident picture of the wrong part of the page.
-    if _result_agreement(crop, out) < float(params["min_result_ncc"]):
+    # page crop almost exactly. The per-source agreement cannot stand in for this:
+    # it is measured over each source's OWN footprint, so a source holding a fifth
+    # of a rock face can agree with that fifth at 0.6 and still be pasted in the
+    # wrong place, which is exactly how page_018 produced a confident picture of
+    # the wrong part of the page.
+    if _result_agreement(crop, out, union) < float(params["min_result_ncc"]):
         return None
     return out, used
 
 
-def _result_agreement(crop: np.ndarray, out: np.ndarray) -> float:
+def _result_agreement(crop: np.ndarray, out: np.ndarray,
+                      union: np.ndarray | None = None) -> float:
     """Does the finished asset show the same thing as the page crop?
 
     Asked COARSELY, at a long side of ~128 px, and that is the whole design of the
@@ -549,7 +646,12 @@ def _result_agreement(crop: np.ndarray, out: np.ndarray) -> float:
     dim = (max(8, int(w * s)), max(8, int(h * s)))
     a = cv2.resize(crop, dim, interpolation=cv2.INTER_AREA)
     b = cv2.resize(out, dim, interpolation=cv2.INTER_AREA)
-    return _ncc(a, b, np.full(dim[::-1], 255, np.uint8), min_px=64)
+    if union is None:
+        m = np.full(dim[::-1], 255, np.uint8)
+    else:
+        m = (cv2.resize(union, dim, interpolation=cv2.INTER_AREA) > 127
+             ).astype(np.uint8) * 255
+    return _ncc(a, b, m, min_px=64)
 
 
 def render(crop: np.ndarray, source: FrameIndex, H: np.ndarray,

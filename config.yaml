@@ -243,14 +243,21 @@ figure_hires:
   detect_scale: 0.5     # SIFT on a half-size copy; full size is 4x slower for
                         # the same upgrades on this book (measured 2026-08-29)
   min_inliers: 20
-  min_coverage: 0.90    # source must hold this much of the figure; the rest is
-                        # filled from the page crop, feathered
+  min_coverage: 0.90    # the SOURCES TOGETHER must hold this much of the figure;
+                        # the rest is filled from the page crop, feathered.
+                        # Do not lower it: at 0.61 the composite measured worse
+                        # than the page crop it replaced (RESULTS 2026-08-29)
   min_ncc: 0.60         # per-source gate; wrong sources measured 0.51-0.52,
                         # correct ones 0.63-0.90
   min_result_ncc: 0.80  # backstop on the finished picture (see figure_hires.py)
   min_scale: 1.15       # below this the substitution is only a resampling
   max_scale: 4.0
   min_figure_px: 20000
+  mesh_align: true      # bend each source onto the flattened page before laying
+                        # it down; without it the sharpest-first composite tears
+                        # at seams (measured on the via-ferrata topo map)
+  mesh_tiles: 12
+  mesh_max_frac: 0.02   # a correction bigger than this is an error, not a fit
 
 # --- Paths ---
 paths:

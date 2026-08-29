@@ -108,21 +108,70 @@ def test_a_tiny_figure_is_not_worth_searching(params):
     assert FH.candidates(tiny, [_FakeFrame("f.png", big, params)], params) == []
 
 
-def test_the_canvas_scale_comes_from_the_frame_that_sees_the_most(params):
-    """A frame holding a sliver at high magnification must not set the resolution
-    of the whole picture: the rest would be an upsample of the page crop wearing
-    the sliver's scale."""
-    truth = _texture(1200, 900, seed=7)
-    crop = cv2.resize(truth, (600, 450), interpolation=cv2.INTER_AREA)
-    wide = truth.copy()                                     # whole figure at 2x
-    sliver = cv2.resize(truth[300:600, 400:700], (1200, 1200),
-                        interpolation=cv2.INTER_CUBIC)      # a corner at ~8x
+def test_the_canvas_scale_comes_from_the_sharpest_source(params):
+    """A source holding a piece of the picture at higher magnification must set
+    the resolution of that piece, not be resampled down into a wider source's
+    canvas.
+
+    This test used to assert the opposite, on the argument that a frame holding a
+    fifth of the picture should not decide the resolution of the other four
+    fifths. Measured on the owner's via-ferrata topo map (RESULTS 2026-08-29) that
+    argument is wrong: the canvas is only a container, a region is as good as the
+    source that lands on it, and the smaller container merely threw the fifth
+    away — 1.86x delivered where 3.16x was available.
+    """
+    truth = _texture(1500, 1200, seed=7)
+    crop = cv2.resize(truth, (500, 400), interpolation=cv2.INTER_AREA)
+    wide = cv2.resize(truth, (1000, 800), interpolation=cv2.INTER_AREA)   # 2x, all
+    piece = truth[300:900, 400:1100]                                      # 3x, part
     got = FH.compose(crop, FH.candidates(crop, [
         _FakeFrame("wide.png", wide, params),
-        _FakeFrame("sliver.png", sliver, params)], params), params)
+        _FakeFrame("piece.png", piece, params)], params), params)
     assert got is not None
-    out, _ = got
-    assert out.shape[1] / crop.shape[1] < 3.0
+    out, used = got
+    assert {s.frame for s in used} == {"wide.png", "piece.png"}
+    assert out.shape[1] / crop.shape[1] > 2.5
+
+
+def test_a_source_beyond_max_scale_is_refused(params):
+    """The guard behind that change: a "match" claiming an implausible
+    magnification is a degenerate homography, not a windfall."""
+    truth = _texture(1200, 900, seed=11)
+    crop = cv2.resize(truth, (600, 450), interpolation=cv2.INTER_AREA)
+    absurd = cv2.resize(truth[400:500, 500:600], (2000, 2000),
+                        interpolation=cv2.INTER_CUBIC)
+    cands = FH.candidates(crop, [_FakeFrame("absurd.png", absurd, params)], params)
+    assert all(c.src.scale <= params["max_scale"] for c in cands)
+
+
+def test_bending_a_source_onto_the_page_is_optional_and_harmless(params):
+    """``mesh_align`` corrects what a homography cannot express. On synthetic
+    sources there is nothing to correct, so it must change the ANSWER not at all —
+    the guard against a refinement that quietly becomes a gate."""
+    truth = _texture(1200, 900, seed=13)
+    crop = cv2.resize(truth, (600, 450), interpolation=cv2.INTER_AREA)
+    frames = [_FakeFrame("closeup.png", truth, params)]
+    on = FH.compose(crop, FH.candidates(crop, frames, params), params)
+    off = FH.compose(crop, FH.candidates(crop, frames, params),
+                     dict(params, mesh_align=False))
+    assert on is not None and off is not None
+    assert on[0].shape == off[0].shape
+    assert [s.frame for s in on[1]] == [s.frame for s in off[1]]
+
+
+def test_the_result_gate_is_judged_only_where_a_source_landed(params):
+    """Where nothing landed the composite IS the page crop resized, so counting
+    that region would be the crop agreeing with itself — the backstop would lose
+    its power exactly as coverage falls, which is where it is needed."""
+    truth = _texture(900, 900, seed=17)
+    crop = cv2.resize(truth, (450, 450), interpolation=cv2.INTER_AREA)
+    out = cv2.resize(crop, (900, 900), interpolation=cv2.INTER_CUBIC)
+    out[:, 450:] = 0                       # half the picture is plainly wrong
+    union = np.zeros((900, 900), np.uint8)
+    union[:, 450:] = 255                   # ... and it is the half a source covered
+    assert FH._result_agreement(crop, out, union) < params["min_result_ncc"]
+    # Unmasked, the untouched half would carry the verdict.
+    assert FH._result_agreement(crop, out) > FH._result_agreement(crop, out, union)
 
 
 # --------------------------------------------------------------------------

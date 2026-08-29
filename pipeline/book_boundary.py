@@ -423,6 +423,40 @@ def user_box(image: np.ndarray, drawn: Box, p: dict | None = None
                   ((sbox[2]-sbox[0])*(sbox[3]-sbox[1])) / frame_area, 3)})
 
 
+def search_only(image: np.ndarray, box: Box, base: BookBoundary,
+                p: dict | None = None) -> BookBoundary:
+    """Aim the gutter search at ``box`` while emitting exactly what ``base`` did.
+
+    The third way to get a boundary, after detection and an operator's drawing,
+    and the only one that separates the two boxes completely: ``search`` comes
+    from ``box`` (padded outward by ``search_pad``, like every other search
+    window here), ``emit`` is copied from ``base`` untouched.
+
+    **Why the emit box is not taken from the same source.** A box from
+    ``pipeline/vlm_box`` carries no human's confidence and no measured accuracy
+    floor. Cutting page pixels to it was measured to go wrong in one direction:
+    outward error is harmless (a box 15 % too big on one edge still split
+    correctly) while an inward error past what the pad returns removes page —
+    1.89 % of the labelled book on ``de_02`` (RESULTS 2026-08-29). Since the
+    entire measured benefit is in the *search* window, this path takes the
+    benefit and declines the risk. ``applied`` stays whatever ``base`` said, so
+    nothing downstream believes a crop happened when none did.
+    """
+    p = p or dict(DEFAULTS)
+    h, w = image.shape[:2]
+    sbox = _pad_box(box, float(p["search_pad"]), w, h)
+    frame_area = float(w * h)
+    diag = dict(base.diag)
+    diag.update({"vlm_box": list(box), "search_source": "vlm",
+                 "search_area_frac": round(
+                     ((sbox[2]-sbox[0])*(sbox[3]-sbox[1])) / frame_area, 3)})
+    return BookBoundary(
+        applied=base.applied, emit=base.emit, search=sbox,
+        reason=base.reason,
+        diag=diag,
+        evidence=base.evidence)
+
+
 def find_book(image: np.ndarray, p: dict | None = None) -> BookBoundary:
     """Locate the book. Abstaining is a normal, recorded outcome.
 

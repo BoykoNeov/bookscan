@@ -208,6 +208,26 @@ reconstruct:
     conf_ratio: 0.75
     min_words: 8
 
+# --- Vision-model book box (pipeline/vlm_box.py) ---
+# Last-resort fallback for Stage 02: when the book detector finds nothing AND no
+# operator drew a box, ask a local vision-language model (Ollama) where the book
+# is and aim the SPINE SEARCH at its answer. It never changes which pixels are
+# emitted as pages, so it cannot clip the book.
+#
+# ON by default because the detector provably cannot find a book on a pale or
+# cluttered surface - eight cue families measured and closed (RESULTS
+# 2026-08-28) - and the alternative is drawing every box by hand. Measured
+# 21/21 gutters vs the detector's 19/21, zero regressions (RESULTS 2026-08-29).
+# If Ollama is not running the request fails and Stage 02 behaves exactly as it
+# did before, so leaving this on costs a page nothing but a timeout.
+vlm_box:
+  enabled: true
+  url: "http://127.0.0.1:11434"
+  model: "qwen3.6:27b"
+  max_side: 1120       # the size the 21/21 result was measured at
+  num_ctx: 8192        # Ollama truncates the image SILENTLY at its 4096 default
+  timeout_s: 180
+
 # --- Paths ---
 paths:
   jobs: "jobs"

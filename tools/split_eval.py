@@ -42,6 +42,7 @@ import cv2
 import numpy as np
 
 from pipeline import book_boundary as BB
+from pipeline import vlm_box as VLM
 from pipeline.stage02_split import (
     DEFAULTS, detect_gutter, draw_overlay_full)
 
@@ -91,6 +92,13 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Stage 02 gutter-split eval")
     ap.add_argument("--overlays", action="store_true",
                     help="also (re)write debug overlays under jobs/split_eval/")
+    # Grades the SHIPPED fallback, not a variant of it: same module, same
+    # params, same "only when the detector abstained" trigger as
+    # pipeline/stage02_split. Off here so the guard stays reproducible without
+    # a local model server running; config.yaml turns it on for real runs.
+    ap.add_argument("--vlm", action="store_true",
+                    help="when the detector abstains, aim the gutter search "
+                         "with pipeline/vlm_box (needs Ollama running)")
     args = ap.parse_args(argv)
 
     gt = json.loads(GT_PATH.read_text(encoding="utf-8"))["spreads"]
@@ -107,6 +115,10 @@ def main(argv: list[str] | None = None) -> int:
     for image_id, spec in gt.items():
         img = load_anchor(image_id, spec)
         book = BB.find_book(img, bb_params)
+        if args.vlm and not book.applied:
+            vbox, _vdiag = VLM.find_box(img, VLM.resolve_params({}))
+            if vbox is not None:
+                book = BB.search_only(img, vbox, book, bb_params)
         sx0, sy0, sx1, sy1 = book.search
         gray = cv2.cvtColor(img[sy0:sy1, sx0:sx1], cv2.COLOR_BGR2GRAY)
         gx, diag = detect_gutter(gray, DEFAULTS)

@@ -6858,3 +6858,73 @@ because the detector still runs. Both keep one pad concept with one value.
   is worth pursuing. It cannot say the pale-background defect is fixed, and it
   does not replace `docs/plans/pale-background-fixture-shoot.md` — which still
   needs the tightly-framed **negatives** most of all.
+
+---
+
+## 2026-08-29 — The vision model's box, shipped as a search window and nothing else
+
+`tools/split_eval --vlm` · `pipeline/vlm_box.py`, `book_boundary.search_only`,
+Stage 02 · model `qwen3.6:27b` on local Ollama
+
+| arm | gutters correct | worst clip of a labelled book |
+|---|---|---|
+| detector alone (the shipped guard) | **19/21** | 0.0 % |
+| detector + model-aimed search *(new, shipped)* | **21/21** | **0.0 %** |
+
+`paleset_01` 2741 -> 1697 (target 1680), `paleset_02` none -> 1749 (target 1778).
+Nineteen previously-correct rows unchanged or within tolerance. Same harness,
+same labels, same tolerance as every prior row — nothing was invented alongside
+the model.
+
+### What changed relative to yesterday's experiment, and why it matters
+
+Yesterday's arm C routed the model's box through `book_boundary.user_box`, the
+path a **hand-drawn** box takes, which pads the box outward and then **cuts** to
+it. That reached 21/21 too — but it also stopped the crop being clip-free
+(`de_02` lost 1.89 % of the labelled book), which forced an adjudication by hand
+and left an open owner decision about what the clipping bar should even measure.
+
+This ships the win without the risk, by separating the two boxes the boundary has
+always carried:
+
+* **`search`** — where the spine is looked for — comes from the model's box.
+* **`emit`** — which pixels become the page — is copied from the detector,
+  untouched.
+
+Every frame this fires on is one where the detector abstained, so `emit` is the
+whole frame and **no crop happens at all**. The path therefore **cannot clip, by
+construction** rather than by measurement, and the clipping column above is 0.0 %
+for a structural reason. Running uncropped is not new behaviour either: 17 of the
+21 graded spreads already do, and split correctly.
+
+**So the postponed owner decision is not blocked, and not forced.** Whether a
+model box should ever be allowed to *cut* — and whether the bar should grade lost
+ink, lost imagery, or lost labelled area — remains open exactly as recorded on
+2026-08-29. Nothing here depends on the answer. The known objection stands and is
+recorded: an ink-only bar would pass a trimmed photograph edge.
+
+### Where it fires, and where it does not
+
+Last resort only: the detector must have abstained **and** no operator box may be
+present. A successful detection wins; a human's drawn box wins. If Ollama is not
+running, the answer is unreadable, or the box is a shape no book makes (degenerate,
+outside the frame, under 5 % or over 99.5 % of the frame), Stage 02 does exactly
+what it did before and says so in `split.json`. A missing local service must never
+fail a scan.
+
+Recorded per page in `02_split/split.json` as `book_crop_source:
+"detector+vlm-search"` plus a `vlm_box` block carrying the model, the box, how the
+answer was read, the time, and — on refusal — the reason. "Never asked" is
+therefore distinguishable from "asked and gave nothing usable".
+
+### What this still does not settle
+
+**n = 2 scenes.** Both pale fixtures are one sofa and one lap, one session. This
+result is a reason to keep the fallback, not evidence that it generalises to
+surfaces it has not seen — `docs/plans/pale-background-fixture-shoot.md` is
+unchanged and still needed, negatives included.
+
+The model is deterministic at temperature 0 (three passes returned byte-identical
+boxes on 2026-08-29), so nothing here measures robustness to a re-ask.
+
+Suite: 588 passed.

@@ -78,6 +78,7 @@ import yaml
 from pydantic import BaseModel, Field
 
 from pipeline import book_boundary as BB
+from pipeline import vlm_box as VLM
 from pipeline import page_source as PS
 from pipeline.page_model import BBox, StageMeta
 
@@ -233,10 +234,13 @@ class SplitResult(BaseModel):
     # not a crop was applied, so Stage 03 and patch-mode word crops need to know
     # nothing about the crop. Asserted in test_stage02_split.
     book_crop_applied: bool = False
-    # "detector" | "operator" | "operator-refused". Never infer this from
-    # book_crop_applied: an operator box that failed its provenance check leaves
-    # applied False with the DETECTOR's own reason, and a reader has to be able
-    # to tell that from a page nobody ever drew on.
+    # Never infer this from book_crop_applied: an operator box that failed its
+    # provenance check leaves applied False with the DETECTOR's own reason, and a
+    # reader has to be able to tell that from a page nobody ever drew on.
+    # "detector" | "operator" | "operator-refused" | "detector+vlm-search".
+    # The last one means the emitted pixels are still the detector's (in
+    # practice: the whole frame, because it abstained) and ONLY the gutter
+    # search window came from a vision model — see pipeline/vlm_box.py.
     book_crop_source: str = "detector"
     book_crop_reason: str = ""
     # How far ``book_crop_reason`` licenses a conclusion. Load-bearing when the
@@ -245,6 +249,12 @@ class SplitResult(BaseModel):
     book_crop_evidence: str = ""
     book_crop: BBox | None = None    # pixels emitted as the page(s)
     book_search: BBox | None = None  # region the gutter search was restricted to
+    # --- vision-model book box (pipeline/vlm_box.py) ------------------------
+    # Empty unless the fallback ran. Carries the model, the box, how the answer
+    # was read, the time it took, and — when it declined — why. Recorded even on
+    # refusal, so "the model was never asked" is distinguishable from "the model
+    # was asked and gave nothing usable".
+    vlm_box: dict = Field(default_factory=dict)
     # --- per-page frame selection (pipeline/page_source.py, v0.4.0) ----------
     # None when the option is off (the default) — which is the shipped state and
     # the measured one: RESULTS 2026-08-26 found the two sides do prefer
@@ -708,6 +718,31 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     else:
         book = BB.find_book(image, bb_params)
     book_ms = (time.perf_counter() - t_book) * 1000.0
+
+    # Last resort, and only when the detector found nothing AND no human drew a
+    # box: ask a local vision model where the book is, and use its answer to aim
+    # the spine search. It changes the search WINDOW only — never the pixels
+    # emitted as pages — so it cannot clip the book. See pipeline/vlm_box.py for
+    # why that split, and why a missing Ollama must never fail a scan.
+    vlm_params = VLM.resolve_params(cfg)
+    vlm_diag: dict = {}
+    if vlm_params["enabled"] and not book.applied and crop_source == "detector":
+        t_vlm = time.perf_counter()
+        vbox, vlm_diag = VLM.find_box(image, vlm_params)
+        vlm_diag["ms"] = round((time.perf_counter() - t_vlm) * 1000.0, 1)
+        if vbox is not None:
+            book = BB.search_only(image, vbox, book, bb_params)
+            crop_source = "detector+vlm-search"
+            warnings.append(
+                f"the book detector found nothing, so the gutter search was "
+                f"aimed by a vision model's box {tuple(vbox)} "
+                f"({vlm_diag.get('model')}). The emitted pixels are unchanged: "
+                f"this narrows WHERE the spine is looked for, it does not crop.")
+        else:
+            warnings.append(
+                f"vision-model book box unavailable, searching as before: "
+                f"{vlm_diag.get('refused')}")
+
     if book.applied:
         warnings.append(
             f"book-boundary crop applied: emit={book.emit} search={book.search} "
@@ -877,7 +912,7 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
         other_cues_agree_elsewhere=bool(diag["other_cues_agree_elsewhere"]),
         book_crop_applied=book.applied, book_crop_source=crop_source,
         book_crop_reason=book.reason, book_crop_evidence=book.evidence,
-        book_crop=anchor_box,
+        book_crop=anchor_box, vlm_box=vlm_diag,
         book_search=BBox(x=sx0, y=sy0, w=sx1 - sx0, h=sy1 - sy0),
         per_page_source=selection,
     )

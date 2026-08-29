@@ -101,8 +101,14 @@ Italian, German**.
   components and by eye. **That is a finding about the METRIC too:** until now
   nothing could produce a small non-zero clip (the detector abstains; a human
   draws generously), so `worst_clip == 0.0` has never had to tell "lost text"
-  from "trimmed a tab". Whether to guard the box or grade **ink** instead of
-  labelled area is an **owner call** — do not settle it silently. **Mechanism and
+  from "trimmed a tab". **The owner POSTPONED this decision 2026-08-29** and killed
+  the easy half of it: grading **ink** is not a safe generalisation, because the
+  outer edge of a photograph or illustration carries no glyphs, so an ink-only bar
+  would pass a trimmed figure edge. "No text in the band" was never the same claim
+  as "nothing of value in the band" — it holds for `de_02` (checked), not as a
+  rule. Three live options, none chosen: an inward-only guard (no metric change),
+  grade **content** (ink *or* imagery — undefined in the harness today), or keep
+  `worst_clip == 0.0` and accept that a model box cannot pass it. **Mechanism and
   the number to build against:** outward excess is harmless (a **+15 %** edge
   still split), inward error is the whole failure mode, and the 8 % pad covers
   −3.64 % but not −8.36 %/−8.90 % — so it **stops covering between ~3.6 % and

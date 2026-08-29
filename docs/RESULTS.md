@@ -6788,6 +6788,26 @@ silently:
 What is NOT in doubt: the box loses no readable content, and `worst_clip == 0.0`
 as written would go red.
 
+**Owner's objection, 2026-08-29 — the second reading is worse than it looks, and
+the decision is POSTPONED.** "Grade ink lost" is not a safe generalisation of
+this adjudication. The outer edge of a **photograph or an illustration** carries
+no glyphs, so an ink-based bar would score a trimmed figure edge as a clean pass
+while real content went missing. The band on `de_02` happened to be book
+furniture (cloth, the fanned page-edge block, a coloured tab) — that was checked
+directly and still holds for **that row** — but "no text in the band" was never
+the same claim as "nothing of value in the band", and the write-up above leans on
+it as if it were.
+
+So the menu is not two options, it is at least three, and none is chosen yet:
+
+* an **inward-only guard** on the box (no metric change at all); or
+* grade **content lost** — ink *or* non-page imagery — which needs a definition
+  the harness does not currently have; or
+* keep `worst_clip == 0.0` and accept that a model box cannot pass it.
+
+Do NOT implement an ink-only bar on the strength of the `de_02` adjudication.
+The clipping question stays **open by the owner's decision**, not by oversight.
+
 ### The mechanism, and the threshold it hands the next step
 
 The cause is in the per-edge table (positive = the box sits outside the book,

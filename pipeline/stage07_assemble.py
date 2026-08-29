@@ -56,7 +56,7 @@ a user override. Stage 08 then floats the pair; the editor can correct it.
 Usage:
     python -m pipeline.stage07_assemble jobs/<job>/ [--force] [--debug]
                                         [--order-mode auto|review]
-                                        [--no-group-figures]
+                                        [--no-group-figures] [--no-figure-hires]
 """
 
 from __future__ import annotations
@@ -74,6 +74,7 @@ from pipeline.page_model import (
     Block, BlockType, Document, DocPage, DocSettings, PairSource, StageMeta, Word,
 )
 from pipeline import figure_grouping as FG
+from pipeline import figure_hires as FH
 from pipeline import unreadable_panel as UP
 from pipeline import stage04_layout as S4
 from pipeline import stage06_uncertainty as S6
@@ -113,6 +114,61 @@ def _ocr_language(page_dir: Path, default: str = "eng") -> str:
         except (ValueError, OSError):
             pass
     return default
+
+
+def _capture_frames(page_dir: Path, params: dict) -> list[FH.FrameIndex]:
+    """This spread's captures, as searchable indices.
+
+    STAGE-CONTRACT NOTE. Stage 07 otherwise reads ``03_dewarp`` and
+    ``06_uncertain``; ``00_ingest`` is a third per-page folder, still upstream and
+    still never written. It has to be this one: the extra pixels a figure needs
+    exist ONLY in the frames as shot. Stage 01 folds them into ``anchor.png`` by
+    warping them DOWN, which destroys exactly the resolution we came for, so
+    reading the anchor instead would be reading the loss.
+    """
+    ing = page_dir / "00_ingest" / "ingest.json"
+    if not ing.exists():
+        return []
+    try:
+        frames = json.loads(ing.read_text(encoding="utf-8")).get("frames", [])
+    except (ValueError, OSError):
+        return []
+    return [FH.FrameIndex(f["name"], page_dir / "00_ingest" / f["name"], params)
+            for f in frames if (page_dir / "00_ingest" / f["name"]).exists()]
+
+
+def _upgrade_figure(blk: Block, page_bgr: np.ndarray,
+                    frames: list[FH.FrameIndex], params: dict,
+                    assets_dir: Path, prefix: str) -> dict | None:
+    """Point this figure at a sharper cut of itself, if one of the spread's own
+    captures holds one. Returns the provenance it recorded, or None for "the page
+    crop stays", which is the pre-existing behaviour and never an error."""
+    if not frames:
+        return None
+    b = blk.bbox
+    h, w = page_bgr.shape[:2]
+    x0, y0, x1, y1 = max(0, b.x), max(0, b.y), min(w, b.x2), min(h, b.y2)
+    if x1 - x0 < 2 or y1 - y0 < 2:
+        return None
+    crop = page_bgr[y0:y1, x0:x1]
+    got = FH.compose(crop, FH.candidates(crop, frames, params), params)
+    if got is None:
+        return None
+    out, used = got
+    name = f"{prefix}__fig{blk.id:03d}.png"
+    if not cv2.imwrite(str(assets_dir / name), out):
+        return None
+    blk.figure_asset = f"{ASSETS_DIRNAME}/{name}"
+    # The rectangle this asset is a picture OF. Stage 08 compares it against the
+    # block's live bbox and falls back to the page crop when they differ — the
+    # document is editable, and a resized figure must not be filled with a
+    # high-resolution picture of its old outline.
+    blk.figure_asset_box = b.model_copy()
+    blk.figure_asset_scale = round(out.shape[1] / max(1, x1 - x0), 3)
+    blk.figure_asset_source = ", ".join(s.frame for s in used)
+    return {"scale": blk.figure_asset_scale,
+            "size": [out.shape[1], out.shape[0]],
+            "sources": [s.as_dict() for s in used]}
 
 
 def _enrich_block(blk: Block, patch_map: dict[tuple[int, int], str]) -> Block:
@@ -202,7 +258,8 @@ def _assemble_panel(bgr: np.ndarray, page: DocPage, panel_w: int = 1100) -> np.n
 
 
 def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
-        order_mode: str = "auto", group_figures: bool = True) -> Document:
+        order_mode: str = "auto", group_figures: bool = True,
+        figure_hires: bool = True) -> Document:
     t0 = time.perf_counter()
     warnings: list[str] = []
 
@@ -251,6 +308,11 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             "corner-label number arm (guarded geometry only). Set tesseract.binary "
             "in config.yaml to recover printed figure numbers.")
 
+    hires_params = FH.resolve_params(cfg)
+    hires_on = bool(figure_hires and hires_params.get("enabled", True))
+    n_hires = 0
+    hires_log: list[dict] = []
+
     for pd in page_dirs:
         resolved = S6.UncertaintyResult.model_validate_json(
             (pd / "06_uncertain" / "resolved.json").read_text(encoding="utf-8"))
@@ -258,6 +320,11 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
         langs_seen.add(_ocr_language(pd))
         dewarp_dir = pd / "03_dewarp"
         uncertain_dir = pd / "06_uncertain"
+        # The spread's own captures, indexed once and shared by both subpages —
+        # SIFT detection is the cost here and a left/right pair asks the same
+        # frames the same question. Built lazily: a page with no figure never
+        # decodes a frame.
+        frame_index = _capture_frames(pd, hires_params) if hires_on else []
 
         for rp in resolved.pages:                     # one per subpage (left/right/single)
             stem = Path(rp.name).stem                 # left | right | single
@@ -305,6 +372,23 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                 n_abstained += len(g.abstained)
 
             blocks = [_enrich_block(blk, patch_map) for blk in grouped]
+
+            # --- higher-resolution figure assets (pipeline/figure_hires.py) ---
+            # AFTER grouping, because grouping can re-type a block, and this pass
+            # only ever looks at blocks that are FIGURE in the final document.
+            if hires_on:
+                page_bgr_h = cv2.imread(str(src_img), cv2.IMREAD_COLOR)
+                for blk in blocks:
+                    if blk.type is not BlockType.FIGURE or page_bgr_h is None:
+                        continue
+                    up = _upgrade_figure(blk, page_bgr_h, frame_index,
+                                         hires_params, assets_dir,
+                                         f"{pd.name}__{stem}")
+                    if up is None:
+                        continue
+                    n_hires += 1
+                    hires_log.append({"page": page_id, "block": blk.id, **up})
+
             n_blocks += len(blocks)
             n_words += sum(bool(w.text.strip()) for blk in blocks for w in blk.words)
 
@@ -322,6 +406,12 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                 bgr = cv2.imread(str(src_img), cv2.IMREAD_COLOR)
                 if bgr is not None:
                     panels.append(_assemble_panel(bgr, dp))
+
+        # Both subpages are done with this spread's captures. Keep the SIFT
+        # descriptors (cheap) but drop the decoded frames — a dozen 6 Mpx images
+        # held across 25 spreads is gigabytes for nothing.
+        for fi in frame_index:
+            fi.release()
 
     # --- unreadable pictogram panels -> pictures (pipeline/unreadable_panel.py)
     # Runs here, over the WHOLE job, because its confidence reference is
@@ -377,6 +467,13 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             # ZERO WRONG pairs, so `abstained` is reported beside `pairs` — a
             # caption left unpaired is a deliberate outcome, not a silent gap.
             "group_figures": group_figures,
+            # Higher-resolution figure assets (pipeline/figure_hires.py).
+            # Every upgrade is listed with the gates that admitted it, so a
+            # wrong picture can be traced to the frame it came from without
+            # re-running anything.
+            "figure_hires": hires_on,
+            "figures_upgraded": n_hires,
+            "figure_hires_sources": hires_log,
             "captions_promoted": n_promoted,
             "figure_numbers_read": n_fig_numbers,
             "pairs_by_number": n_pairs_number,
@@ -423,6 +520,9 @@ def main(argv: list[str] | None = None) -> int:
                     help="reading-order handling: 'auto' trusts Stage 04's order; "
                          "'review' marks every block for editor confirm/correct before "
                          "reconstruction. Editor-review state only — no pipeline effect.")
+    ap.add_argument("--no-figure-hires", action="store_true",
+                    help="skip the higher-resolution figure pass; every figure is "
+                         "then cropped from the dewarped page, as before it existed")
     ap.add_argument("--no-group-figures", action="store_true",
                     help="skip the caption<->figure grouping pass (caption typing + "
                          "printed-number/geometry pairing). Diagnostic escape hatch: "
@@ -440,7 +540,8 @@ def main(argv: list[str] | None = None) -> int:
 
     cfg = S4.load_config(args.config)
     doc = run(args.job_dir, cfg, force=args.force, debug=args.debug,
-              order_mode=args.order_mode, group_figures=not args.no_group_figures)
+              order_mode=args.order_mode, group_figures=not args.no_group_figures,
+              figure_hires=not args.no_figure_hires)
     nword = sum(bool(w.text.strip()) for pg in doc.pages for blk in pg.blocks
                 for w in blk.words)
     nflag = sum(w.flag_visible for pg in doc.pages for blk in pg.blocks

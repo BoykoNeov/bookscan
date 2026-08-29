@@ -7002,3 +7002,126 @@ measured null on its own terms and is unaffected by this.
 
 Recorded per page in `01_fuse/fuse.json`, and now surfaced per page in the
 console ("close-ups used", with the rejection families counted).
+
+---
+
+## 2026-08-29 — The do-no-harm sharpness gate was measuring its own resampling
+
+**Control experiment, on the owner's 25-spread book.** Stage 01 refuses to blend
+a close-up that is not sharper than the anchor over the same pixels
+(`min_sharpness_ratio: 1.0`, variance of Laplacian over an eroded footprint
+mask). 28 close-ups on this book were refused by that gate, and the recorded
+reading of the zoomset run was that the close-ups are simply blurry.
+
+Push the **anchor's own pixels** through the identical warp — same homography,
+same `warpPerspective`, same eroded mask — and score them the same way:
+
+| | median | range |
+|---|---|---|
+| real close-up, warped into the anchor | **0.630** | 0.397–1.672 |
+| the anchor itself, through the same warp | **0.506** | 0.414–0.653 |
+| close-up ÷ control | **1.249** | — |
+
+n = 34 located close-ups. **The close-up beats the control on 25 of 34.** A
+perfect copy of the anchor scores 0.506 against a bar of 1.0, so no close-up can
+ever pass that gate however sharp it is. The statistic is dominated by the
+resampling the warp performs, not by the photograph's sharpness, and the earlier
+"all five are BLURRIER than the anchor" reading is an artifact of the
+measurement. Stage 01's docstring and the parameter comment now say so.
+
+**The decision does not change, and now has a better reason.** A close-up warped
+DOWN into the anchor has already lost the pixels it was taken for. Measured on
+the same book with Tesseract (`deu`, same settings, over the identical region):
+
+| arm | high-confidence words | vs the anchor |
+|---|---|---|
+| A — the anchor's own crop of the region | 6823 | — |
+| B — the close-up as shot, native resolution | 5784 | 0.85× |
+| C — the close-up warped into the anchor frame | 5252 | **0.77×** |
+
+Median linear scale close-up→anchor is 1.304, so the resolution is real; the
+anchor's coordinate frame is where it dies. **Caveat, stated because it matters:
+arms A and B are not strictly comparable** — Stage 05 upscales by median word
+height and this measurement did not, so B < A is "no evidence of a text win",
+not a measured loss. Arm C versus A is like-for-like (same frame, same scale)
+and is the one that carries the conclusion.
+
+So `min_sharpness_ratio` stays at 1.0, blending stays off, and the resolution is
+collected somewhere it survives — see the next row.
+
+## 2026-08-29 — Figures re-cut from the captures that hold them (`figure_hires.py`)
+
+**The owner's requirement:** "there are important pictures in the books - i want
+them with the highest available detail". A figure is cropped from the dewarped
+page, and the page is one photograph of a whole spread, so a picture gets
+whatever pixels are left after the spread is divided up. The close-ups hold more.
+
+**The move is to stop warping down.** Instead of folding a close-up into the
+anchor, take the figure we want, find every capture that contains a piece of it,
+and rebuild the figure at those captures' scale. The page keeps its resolution;
+only the figure asset grows. Stitching still happens — in the picture's own
+frame, where it pays, rather than in the anchor's, where it cannot.
+
+**Why the matching works here and not in Stage 01.** Stage 01 registers a whole
+close-up against a whole spread, and a spread is mostly text: repetitive,
+self-similar, generous with matches that are individually plausible and
+collectively contradictory (317 close-ups, 49 located, median 39 good matches to
+5 inliers). A figure is locally unique. On `page_023`'s cover photograph, six
+frames register against the figure crop that Stage 01 never located at all.
+
+**Result over the whole 25-spread book, 125 figure blocks:**
+
+| | |
+|---|---|
+| figures upgraded | **22 of 125 (18 %)** |
+| linear resolution gain | median **1.35×**, range 1.16–1.86× |
+| pixel gain | median **1.83×**, best 3.5× |
+| contributing frames per figure | median 2, max 4 |
+| cost | 205 s for the book (~8 s/spread), inside `stage07_assemble` |
+
+**Gates, and the two the measurement moved.**
+
+* `min_ncc: 0.60` per source, not the 0.50 an earlier single-source run
+  suggested. With partial-coverage sources admitted, agreement is computed over
+  each source's *own* footprint; every mis-registered source seen on this book
+  scored 0.51–0.52 and every correct one 0.63 or better. At 0.50 two figures were
+  rebuilt from the wrong part of the page.
+* **Greedy source selection.** A source joins only if it brings ≥ 3 % of the
+  figure that nothing already in the composite has. Painting every candidate was
+  the actual bug: on `page_023` ten frames all repainted the same middle, so the
+  last one applied won it with its own alignment error — and the sources with
+  least to add are exactly the ones judged over the smallest footprint. 10 → 1.
+* **ECC refinement** of each fit, because the crop is DEWARPED and the source is
+  the raw photograph: RANSAC on sparse matches leaves a systematic residual no
+  set of matches can remove. Both compositions of the correction are scored and
+  the unrefined fit competes, so a refinement that helps nothing changes nothing.
+  Worth +0.11 agreement on `page_009` right fig 11.
+* `min_result_ncc: 0.80` on the finished picture, compared **coarsely** (128 px).
+  At full resolution the number does not separate: correct composites scored
+  0.70–0.79 and so did one showing the wrong part of the page, because the
+  dewarp-vs-homography residual punishes fine texture. Shrunk past that, the
+  question left is "is this the same picture, in the same place" — the 22
+  shipped upgrades scored 0.825–0.980 and the two rejected as wrong scored 0.623
+  and 0.759. **This is a backstop, not the main defence, and n = 6 with one
+  labelled negative is thin** — `min_ncc` and greedy selection are what keep a
+  wrong source out.
+
+**Verification is by eye, on real pixels, with a checkerboard.** Side-by-side
+comparison is misleading here and misled me twice: a sharper picture reveals text
+the blurry crop hides, which reads as a framing change. Interleaving the two at
+80 px tiles is unambiguous — features and caption text either run continuously
+across tile boundaries or they do not. Four of the 22 were checked this way,
+including the two lowest-scoring, and all four align.
+
+**What this does not say.** It is one book, one photographer, one session. The
+103 figures that were NOT upgraded mostly had no candidate frame at all: a
+close-up must be *tighter* than the anchor to carry more resolution but *wider*
+than the figure to contain it, and these close-ups were not aimed at the
+pictures. That is the operator-facing half — **a close-up framed on a picture
+would upgrade it**; these were framed on the page.
+
+**Nothing can get worse.** A refusal means the page crop stays, which is exactly
+what the pipeline did before. The upgrade is written as a separate asset with the
+bbox it was cut for recorded on the block, and Stage 08 falls back to the page
+crop if the block's bbox no longer matches — a high-resolution picture of a
+figure's *old* outline would be a wrong picture, which is worse than a soft one.

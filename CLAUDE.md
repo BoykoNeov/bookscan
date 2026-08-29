@@ -163,6 +163,36 @@ Italian, German**.
       positive. The actionable half is the operator's: the extra taps per spread
       currently buy nothing, and the 28 "located but softer" close-ups are a
       capture problem (too close, motion blur, focus hunting), not a code one.
+      **REVISED 2026-08-29 on both halves.** The "softer" reading was wrong: a
+      control run put the ANCHOR'S OWN PIXELS through the identical warp and they
+      score 0.506 against a bar of 1.0, so nothing can pass that gate — the number
+      measures the warp's resampling, not the photograph. The close-ups actually
+      beat that control on 25 of 34. The *decision* stands, for a better reason:
+      warping a close-up DOWN into the anchor destroys the resolution before
+      anything is written (0.77x the anchor's high-confidence words over the same
+      region), so blending stays off and `min_sharpness_ratio` stays at 1.0.
+      The resolution is real (median 1.30x linear) and is now collected where it
+      survives — see the figure pass below.
+- **Pictures are re-cut at the close-ups' own scale (`pipeline/figure_hires.py`),
+      SHIPPED 2026-08-29.** The owner's requirement is pictures at the highest
+      available detail. Stage 01 cannot deliver that (see above), so Stage 07
+      takes each FIGURE, finds every capture holding a piece of it, and rebuilds
+      it at those captures' scale — stitching, in the picture's own frame instead
+      of the anchor's. Matching works here precisely because it failed there: a
+      spread is repetitive text, a figure is locally unique, and on `page_023` six
+      frames register against the figure that Stage 01 never located.
+      **22 of 125 figures upgraded** on the owner's book, median **1.35x** linear
+      (1.83x the pixels, best 3.5x), ~8 s per spread inside assemble. Refusing is
+      the normal outcome and costs nothing — the page crop stays. Three things
+      the measurement decided, do not undo them casually: `min_ncc` is **0.60**
+      not 0.50 (wrong sources measured 0.51-0.52, right ones 0.63+); sources are
+      chosen **greedily** (a source that adds no new pixels can only add its own
+      alignment error — painting all ten on `page_023` was the bug); and each fit
+      is **ECC-refined**, because the crop is dewarped and the source is not.
+      Verify by CHECKERBOARD, never side-by-side: a sharper picture reveals text
+      the blurry crop hides, which reads as a framing change and misled this
+      session twice. `--no-figure-hires` / `figure_hires.enabled: false` turns it
+      off. See RESULTS 2026-08-29.
 - **Importing a PDF and re-typesetting it is PLANNED, not built** —
       `docs/plans/pdf-import.md`. Import fills `00_ingest/` and nothing
       downstream changes; the PDF's own text layer is a second opinion routed
@@ -213,6 +243,18 @@ before anything is cut (measured: cutting to the drag exactly loses 1.95–9.73 
 of the book on a 1–5 % undersized drag, padding loses 0.00 %), and a missing or
 corrupt file means the detector runs exactly as before.
 
+**Higher-resolution figure exception (Stage 07).** Item 2 again. Stage 07 reads
+`03_dewarp` and `06_uncertain`; `pipeline/figure_hires.py` makes `00_ingest` a
+third per-page folder it reads — still upstream, still never written. It has to be
+that one: the extra pixels a picture needs exist ONLY in the frames as shot, and
+`01_fuse/anchor.png` is where Stage 01 already threw them away (it warps a
+close-up DOWN into the anchor, so reading the anchor would be reading the loss).
+The upgrade is an ADDITION, never a replacement: `Block.figure_asset` is optional,
+None means "crop the page image" and is the normal case, and Stage 08 falls back
+to the page crop whenever `figure_asset_box` does not equal the block's live bbox
+— the document is mutable, and a high-resolution picture of a figure's OLD
+outline is a wrong picture, which is worse than a soft one.
+
 **Per-page frame-source exception (Stage 02, opt-in and OFF by default).** Item 2
 says a stage reads only the previous stage's artifacts. Per-page frame selection
 (`pipeline/page_source.py`, config `per_page_source.mode: ocr`) lets `left.png`
@@ -259,7 +301,7 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
 | 04 | `stage04_layout` | block detection + reading order | DocLayout-YOLO + XY-Cut++ |
 | 05 | `stage05_ocr` | word-level text + bbox + confidence; caption ejection (`caption_eject.py`) + starved-block re-read (`block_reocr.py`) + figure-edge text absorption (`figure_text.py`) | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |
 | 06 | `stage06_uncertainty` | per-word decision using user mode a/b/c | own code |
-| 07 | `stage07_assemble` | job-level: build editable `document.json` + self-contained `document_assets/` | own code |
+| 07 | `stage07_assemble` | job-level: build editable `document.json` + self-contained `document_assets/`; higher-resolution figure assets (`figure_hires.py`) | own code; OpenCV (SIFT + RANSAC + ECC) |
 | 08 | `stage08_render` | `document.json` → re-typeset HTML (always) → PDF (re-runnable) | own code; WeasyPrint/headless-Chromium (PDF, TBD), Noto fonts |
 
 ### Non-negotiable design decisions (do not "optimize" these away)

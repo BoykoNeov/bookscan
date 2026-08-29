@@ -224,6 +224,26 @@ class Block(BaseModel):
                                          # it lands in type_auto too, so the editor never
                                          # mistakes it for an edit)
 
+    # --- higher-resolution figure asset (Stage 07; see figure_hires.py) -------
+    # CLAUDE.md says figures are cropped from the full-resolution dewarped image.
+    # They still are — this is an OPTIONAL better source for the same rectangle,
+    # cut from whichever capture of this spread holds the most pixels of it (the
+    # operator's close-ups are ~1.2-1.6x the anchor's linear resolution where they
+    # land). It is an addition, never a replacement: ``figure_asset`` being None
+    # is the normal case and means "crop the page image", which is what Stage 08
+    # did before this existed.
+    #
+    # ``figure_asset_box`` is the bbox the asset was CUT FOR, and Stage 08 must
+    # compare it against the block's current bbox before using the asset. The
+    # document is mutable: a user who resizes a figure in the editor would
+    # otherwise get a picture of the OLD rectangle at the new one's size, which is
+    # a wrong picture rather than a stale one. On a mismatch, fall back to the
+    # page crop — always correct, merely not upgraded.
+    figure_asset: str | None = None        # rel path into document_assets/
+    figure_asset_box: BBox | None = None   # the bbox this asset was cut for
+    figure_asset_scale: float | None = None  # linear scale vs the page crop
+    figure_asset_source: str | None = None   # capture frame it came from
+
     def order_review_visible(self, order_mode: str) -> bool:
         """Reading-order analogue of ``Word.flag_visible``: in REVIEW mode a block's
         proposed order stays 'needs review' until the user clears it, and — like

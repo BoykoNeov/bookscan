@@ -132,6 +132,26 @@ honest claim is *no error survives at the stated bar*, not *the selector is
 perfect*. See
 ``docs/RESULTS.md`` 2026-08-26. Do not re-open this by re-measuring flat frames.
 
+**CORRECTION 2026-08-29 — the sharpness gate was measuring its own resampling.**
+The paragraph above says the five correctly-registered close-ups are "softer than
+what they replace", on ratios of 0.49-0.83 against a bar of 1.0. A control run on
+the owner's 25-spread book overturns the reading, though not the decision: push
+the ANCHOR'S OWN PIXELS through the identical warp — same homography, same
+``warpPerspective``, same eroded mask — and they score a median 0.506. A perfect
+copy of the anchor cannot pass a 1.0 bar, so no close-up ever could, and the real
+close-ups (median 0.630) actually beat that control on 25 of 34 cases. They are
+not blurry; they are downsampled, by the warp, on the way in.
+
+That does NOT reopen blending, and the numbers say so plainly. A close-up warped
+DOWN into the anchor has already lost the pixels it was taken for, which is why
+blending cost de_01 178 words; measured on the same book, the warped close-ups
+read 0.77x the anchor's high-confidence words over the identical region. The
+resolution is real (median 1.30x linear) and the anchor's coordinate frame is
+where it dies. So the gate stays exactly as it is, now for a stated reason rather
+than a mismeasured one, and the resolution is collected somewhere it survives:
+``pipeline/figure_hires.py`` rebuilds each FIGURE at the close-ups' own scale.
+See RESULTS.md 2026-08-29.
+
 **Left unsolved, with the mechanism now identified.** The 6 close-ups that no
 setting registers (``en_01`` f01-f03, ``en_02`` f02-f04) are all oblique views of
 a strongly curved page — a cylinder seen near edge-on. A homography assumes a
@@ -222,6 +242,13 @@ DEFAULTS = {
     #    resolution it had (measured linear scale 0.71-0.94 — almost none).
     #    Set below 1.0 to allow a marginally softer patch; 1.0 means "must not
     #    make the page worse", which is the only defensible default.
+    #    READ THIS BEFORE TUNING IT (2026-08-29): the ratio is NOT a measure of how
+    #    blurry the close-up is. The anchor's own pixels, put through the same warp,
+    #    score a median 0.506 on this statistic, so 1.0 is unreachable by any
+    #    close-up however sharp — see the module docstring's correction. The gate
+    #    still refuses the right things, because a down-warped close-up genuinely
+    #    has nothing left to add (0.77x the anchor's words over the same region),
+    #    but do not read a 0.63 here as "this photograph is soft".
     "min_sharpness_ratio": 1.0,
 
     "feather_px": 40.0,     # blend feather width at the warped close-up border

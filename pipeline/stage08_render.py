@@ -172,25 +172,65 @@ def _crop_data_uri(page_bgr: np.ndarray, box: BBox,
     x1, y1 = min(w, box.x2), min(h, box.y2)
     if x1 <= x0 or y1 <= y0:
         return None
-    crop = page_bgr[y0:y1, x0:x1]
-    if mask:
-        # A caption printed INSIDE the figure box is now its own block (Stage 05
-        # ejects it), but it is still in these pixels — so the crop would show the
-        # caption a second time, in the photo, right next to its own rendered text.
-        # Paint it out. The fill is sampled from the crop's border rather than a
-        # fixed white, because these regions sit on artwork (a map's pale margin),
-        # not on page background. Cutting instead of masking is not an option here:
-        # the only cut that separates this caption slices the map in half.
-        crop = crop.copy()
-        edge = np.concatenate([crop[0, :], crop[-1, :], crop[:, 0], crop[:, -1]])
-        fill = np.median(edge.reshape(-1, edge.shape[-1]), axis=0)
-        for m in mask:
-            mx0, my0 = max(x0, m.x) - x0, max(y0, m.y) - y0
-            mx1, my1 = min(x1, m.x2) - x0, min(y1, m.y2) - y0
-            if mx1 > mx0 and my1 > my0:
-                crop[my0:my1, mx0:mx1] = fill
+    crop = _paint_out(page_bgr[y0:y1, x0:x1], mask, x0, y0, x1, y1)
     ok, buf = cv2.imencode(".png", crop)
     return _data_uri_from_bytes(buf.tobytes()) if ok else None
+
+
+def _paint_out(crop: np.ndarray, mask: list[BBox] | None,
+               x0: int, y0: int, x1: int, y1: int) -> np.ndarray:
+    """Hide text blocks that are printed ON this artwork.
+
+    A caption printed INSIDE the figure box is now its own block (Stage 05 ejects
+    it), but it is still in these pixels — so the crop would show the caption a
+    second time, in the photo, right next to its own rendered text. Paint it out.
+    The fill is sampled from the crop's border rather than a fixed white, because
+    these regions sit on artwork (a map's pale margin), not on page background.
+    Cutting instead of masking is not an option here: the only cut that separates
+    this caption slices the map in half.
+
+    ``x0..y1`` are the crop's rectangle in PAGE coordinates, which is where the
+    mask boxes live. The crop's own pixel size need not match that rectangle — a
+    higher-resolution figure asset is the same rectangle with more pixels — so the
+    boxes are scaled by the ratio rather than used as pixel offsets.
+    """
+    if not mask:
+        return crop
+    out = crop.copy()
+    sx = out.shape[1] / max(1, x1 - x0)
+    sy = out.shape[0] / max(1, y1 - y0)
+    edge = np.concatenate([out[0, :], out[-1, :], out[:, 0], out[:, -1]])
+    fill = np.median(edge.reshape(-1, edge.shape[-1]), axis=0)
+    for m in mask:
+        mx0 = int(round((max(x0, m.x) - x0) * sx))
+        my0 = int(round((max(y0, m.y) - y0) * sy))
+        mx1 = int(round((min(x1, m.x2) - x0) * sx))
+        my1 = int(round((min(y1, m.y2) - y0) * sy))
+        if mx1 > mx0 and my1 > my0:
+            out[my0:my1, mx0:mx1] = fill
+    return out
+
+
+def _figure_data_uri(blk: Block, page_bgr: np.ndarray | None,
+                     mask: list[BBox] | None, job_dir: Path) -> str | None:
+    """The figure's pixels: the higher-resolution asset when one was cut for
+    exactly this rectangle, else the page crop.
+
+    The bbox check is the whole safety of the thing. ``document.json`` is mutable
+    and the asset is not re-cut on an edit, so a figure the user resized would
+    otherwise be filled with a high-resolution picture of its OLD outline — a
+    wrong picture, which is worse than a soft one. Any mismatch falls back
+    silently to the page crop, which is always right.
+    """
+    if blk.figure_asset and blk.figure_asset_box == blk.bbox:
+        img = cv2.imread(str(job_dir / blk.figure_asset), cv2.IMREAD_COLOR)
+        if img is not None:
+            b = blk.bbox
+            out = _paint_out(img, mask, b.x, b.y, b.x2, b.y2)
+            ok, buf = cv2.imencode(".png", out)
+            if ok:
+                return _data_uri_from_bytes(buf.tobytes())
+    return _crop_data_uri(page_bgr, blk.bbox, mask) if page_bgr is not None else None
 
 
 def _contained_text_boxes(blk: Block, blocks: list[Block]) -> list[BBox]:
@@ -278,8 +318,7 @@ def _figure_html(blk: Block, page_bgr: np.ndarray | None,
     shown twice (once as pixels, once as its own rendered block)."""
     inner = ""
     mask = _contained_text_boxes(blk, siblings) if siblings else None
-    uri = (_crop_data_uri(page_bgr, blk.bbox, mask)
-           if page_bgr is not None else None)
+    uri = _figure_data_uri(blk, page_bgr, mask, job_dir)
     if uri:
         inner += f'<img class="figure" src="{uri}" alt="figure">'
     else:

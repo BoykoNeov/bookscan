@@ -228,6 +228,30 @@ vlm_box:
   num_ctx: 8192        # Ollama truncates the image SILENTLY at its 4096 default
   timeout_s: 180
 
+# --- Higher-resolution figure assets (Stage 07; pipeline/figure_hires.py) ---
+# The pictures matter as much as the text, and the anchor is the WHOLE spread in
+# one photograph, so a figure gets whatever pixels are left after the page is
+# divided up. The operator's close-ups hold more of it. Stage 01 cannot deliver
+# them (it warps a close-up DOWN into the anchor, which resamples away the extra
+# resolution before anything is written) — so the figure is re-cut from the frame
+# that holds the most of it, at that frame's scale.
+#
+# Refusing is the normal outcome and costs nothing: the page crop stays. Set
+# enabled: false to skip the pass entirely (or pass --no-figure-hires).
+figure_hires:
+  enabled: true
+  detect_scale: 0.5     # SIFT on a half-size copy; full size is 4x slower for
+                        # the same upgrades on this book (measured 2026-08-29)
+  min_inliers: 20
+  min_coverage: 0.90    # source must hold this much of the figure; the rest is
+                        # filled from the page crop, feathered
+  min_ncc: 0.60         # per-source gate; wrong sources measured 0.51-0.52,
+                        # correct ones 0.63-0.90
+  min_result_ncc: 0.80  # backstop on the finished picture (see figure_hires.py)
+  min_scale: 1.15       # below this the substitution is only a resampling
+  max_scale: 4.0
+  min_figure_px: 20000
+
 # --- Paths ---
 paths:
   jobs: "jobs"

@@ -1,0 +1,2005 @@
+{
+ "boxes": {
+  "paleset_01": [
+   {
+    "box": [
+     4,
+     407,
+     3199,
+     2674
+    ],
+    "read_as": "norm1000",
+    "secs": 6.5,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [1, 133, 784, 874], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     4,
+     407,
+     3199,
+     2674
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [1, 133, 784, 874], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     4,
+     407,
+     3199,
+     2674
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [1, 133, 784, 874], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "paleset_02": [
+   {
+    "box": [
+     335,
+     539,
+     3191,
+     2390
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [82, 176, 782, 781], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     335,
+     539,
+     3191,
+     2390
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [82, 176, 782, 781], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     335,
+     539,
+     3191,
+     2390
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [82, 176, 782, 781], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "bg_01": [
+   {
+    "box": [
+     228,
+     321,
+     3652,
+     2712
+    ],
+    "read_as": "norm1000",
+    "secs": 1.0,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [57, 107, 913, 904], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     228,
+     321,
+     3652,
+     2712
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [57, 107, 913, 904], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     228,
+     321,
+     3652,
+     2712
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [57, 107, 913, 904], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "bg_02": [
+   {
+    "box": [
+     148,
+     111,
+     3848,
+     2862
+    ],
+    "read_as": "norm1000",
+    "secs": 1.0,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [37, 37, 962, 954], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     148,
+     111,
+     3848,
+     2862
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [37, 37, 962, 954], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     148,
+     111,
+     3848,
+     2862
+    ],
+    "read_as": "norm1000",
+    "secs": 0.5,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [37, 37, 962, 954], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "bg_03": [
+   {
+    "box": [
+     332,
+     219,
+     3812,
+     2838
+    ],
+    "read_as": "norm1000",
+    "secs": 1.0,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [83, 73, 953, 946], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     332,
+     219,
+     3812,
+     2838
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [83, 73, 953, 946], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     332,
+     219,
+     3812,
+     2838
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [83, 73, 953, 946], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "en_coins_01": [
+   {
+    "box": [
+     68,
+     129,
+     3996,
+     2802
+    ],
+    "read_as": "norm1000",
+    "secs": 1.0,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 43, 999, 934], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     68,
+     129,
+     3996,
+     2802
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 43, 999, 934], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     68,
+     129,
+     3996,
+     2802
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 43, 999, 934], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "en_coins_02": [
+   {
+    "box": [
+     148,
+     111,
+     3872,
+     2742
+    ],
+    "read_as": "norm1000",
+    "secs": 1.0,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [37, 37, 968, 914], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     148,
+     111,
+     3872,
+     2742
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [37, 37, 968, 914], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     148,
+     111,
+     3872,
+     2742
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [37, 37, 968, 914], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "en_coins_03": [
+   {
+    "box": [
+     4,
+     3,
+     3996,
+     2997
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [1, 1, 999, 999], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     4,
+     3,
+     3996,
+     2997
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [1, 1, 999, 999], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     4,
+     3,
+     3996,
+     2997
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [1, 1, 999, 999], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "it_geo_01": [
+   {
+    "box": [
+     68,
+     141,
+     3996,
+     2928
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 47, 999, 976], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     68,
+     141,
+     3996,
+     2928
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 47, 999, 976], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     68,
+     141,
+     3996,
+     2928
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 47, 999, 976], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "it_geo_02": [
+   {
+    "box": [
+     156,
+     81,
+     3908,
+     2913
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [39, 27, 977, 971], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     156,
+     81,
+     3908,
+     2913
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [39, 27, 977, 971], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     156,
+     81,
+     3908,
+     2913
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [39, 27, 977, 971], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "it_geo_03": [
+   {
+    "box": [
+     68,
+     111,
+     3832,
+     2934
+    ],
+    "read_as": "norm1000",
+    "secs": 1.0,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 37, 958, 978], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     68,
+     111,
+     3832,
+     2934
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 37, 958, 978], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     68,
+     111,
+     3832,
+     2934
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 37, 958, 978], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "it_geo_04": [
+   {
+    "box": [
+     68,
+     3,
+     3844,
+     2802
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 1, 961, 934], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     68,
+     3,
+     3844,
+     2802
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 1, 961, 934], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     68,
+     3,
+     3844,
+     2802
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [17, 1, 961, 934], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "it_geo_05": [
+   {
+    "box": [
+     444,
+     291,
+     3616,
+     2763
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [111, 97, 904, 921], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     444,
+     291,
+     3616,
+     2763
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [111, 97, 904, 921], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     444,
+     291,
+     3616,
+     2763
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [111, 97, 904, 921], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "it_geo_06": [
+   {
+    "box": [
+     320,
+     213,
+     3804,
+     2868
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [80, 71, 951, 956], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     320,
+     213,
+     3804,
+     2868
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [80, 71, 951, 956], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     320,
+     213,
+     3804,
+     2868
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [80, 71, 951, 956], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "it_geo_07": [
+   {
+    "box": [
+     312,
+     231,
+     3696,
+     2772
+    ],
+    "read_as": "norm1000",
+    "secs": 1.0,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [78, 77, 924, 924], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     312,
+     231,
+     3696,
+     2772
+    ],
+    "read_as": "norm1000",
+    "secs": 0.3,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [78, 77, 924, 924], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     312,
+     231,
+     3696,
+     2772
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [78, 77, 924, 924], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "de_01": [
+   {
+    "box": [
+     472,
+     192,
+     3512,
+     2811
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [118, 64, 878, 937], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     472,
+     192,
+     3512,
+     2811
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [118, 64, 878, 937], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     472,
+     192,
+     3512,
+     2811
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [118, 64, 878, 937], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "de_02": [
+   {
+    "box": [
+     652,
+     81,
+     3524,
+     2946
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [163, 27, 881, 982], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     652,
+     81,
+     3524,
+     2946
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [163, 27, 881, 982], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     652,
+     81,
+     3524,
+     2946
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [163, 27, 881, 982], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "zoomset_de_01": [
+   {
+    "box": [
+     318,
+     392,
+     2913,
+     2577
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [78, 128, 714, 842], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     318,
+     392,
+     2913,
+     2577
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [78, 128, 714, 842], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     318,
+     392,
+     2913,
+     2577
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [78, 128, 714, 842], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "zoomset_de_02": [
+   {
+    "box": [
+     322,
+     468,
+     2840,
+     2528
+    ],
+    "read_as": "norm1000",
+    "secs": 1.0,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [79, 153, 696, 826], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     322,
+     468,
+     2840,
+     2528
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [79, 153, 696, 826], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     322,
+     468,
+     2840,
+     2528
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [79, 153, 696, 826], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "zoomset_en_01": [
+   {
+    "box": [
+     596,
+     419,
+     2607,
+     2589
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [146, 137, 639, 846], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     596,
+     419,
+     2607,
+     2589
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [146, 137, 639, 846], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     596,
+     419,
+     2607,
+     2589
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [146, 137, 639, 846], \"label\": \"book\"}\n]\n```"
+   }
+  ],
+  "zoomset_en_02": [
+   {
+    "box": [
+     612,
+     600,
+     2587,
+     2567
+    ],
+    "read_as": "norm1000",
+    "secs": 0.9,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [150, 196, 634, 839], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     612,
+     600,
+     2587,
+     2567
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [150, 196, 634, 839], \"label\": \"book\"}\n]\n```"
+   },
+   {
+    "box": [
+     612,
+     600,
+     2587,
+     2567
+    ],
+    "read_as": "norm1000",
+    "secs": 0.4,
+    "raw": "```json\n[\n\t{\"bbox_2d\": [150, 196, 634, 839], \"label\": \"book\"}\n]\n```"
+   }
+  ]
+ },
+ "run": {
+  "date": "2026-08-29",
+  "model": "qwen3.6:27b",
+  "passes": 3,
+  "max_side": 1120,
+  "num_ctx": 8192,
+  "order": "xyxy",
+  "prompt": "This photograph shows an open book lying on a surface. Return the bounding box of the book itself - the two visible facing pages, including their printed area and margins. Exclude the surface, the table, the photographer's hands and the room. Answer with JSON only, exactly: {\"bbox_2d\": [x1, y1, x2, y2], \"label\": \"book\"} with coordinates normalised to 0-1000. No other text.",
+  "summary": {
+   "A": 19,
+   "B": 21,
+   "C": 21,
+   "total": 21,
+   "C_fixed": [
+    "paleset_01",
+    "paleset_02"
+   ],
+   "C_regressed": []
+  },
+  "rows": {
+   "bg_01": {
+    "expect": 1907,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 1907,
+    "A_hit": true,
+    "B_gutters": [
+     1811,
+     1811,
+     1811
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     1811,
+     1811,
+     1811
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      228,
+      321,
+      3652,
+      2712
+     ],
+     [
+      228,
+      321,
+      3652,
+      2712
+     ],
+     [
+      228,
+      321,
+      3652,
+      2712
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "bg_02": {
+    "expect": 1940,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 1940,
+    "A_hit": true,
+    "B_gutters": [
+     1940,
+     1940,
+     1940
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     1940,
+     1940,
+     1940
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      148,
+      111,
+      3848,
+      2862
+     ],
+     [
+      148,
+      111,
+      3848,
+      2862
+     ],
+     [
+      148,
+      111,
+      3848,
+      2862
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "bg_03": {
+    "expect": 2011,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 2011,
+    "A_hit": true,
+    "B_gutters": [
+     2010,
+     2010,
+     2010
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2010,
+     2010,
+     2010
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      332,
+      219,
+      3812,
+      2838
+     ],
+     [
+      332,
+      219,
+      3812,
+      2838
+     ],
+     [
+      332,
+      219,
+      3812,
+      2838
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "en_coins_01": {
+    "expect": 1960,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 1960,
+    "A_hit": true,
+    "B_gutters": [
+     1960,
+     1960,
+     1960
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     1960,
+     1960,
+     1960
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      68,
+      129,
+      3996,
+      2802
+     ],
+     [
+      68,
+      129,
+      3996,
+      2802
+     ],
+     [
+      68,
+      129,
+      3996,
+      2802
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "en_coins_02": {
+    "expect": 1994,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 1994,
+    "A_hit": true,
+    "B_gutters": [
+     1994,
+     1994,
+     1994
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     1994,
+     1994,
+     1994
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      148,
+      111,
+      3872,
+      2742
+     ],
+     [
+      148,
+      111,
+      3872,
+      2742
+     ],
+     [
+      148,
+      111,
+      3872,
+      2742
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "en_coins_03": {
+    "expect": 2024,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 2024,
+    "A_hit": true,
+    "B_gutters": [
+     2024,
+     2024,
+     2024
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2024,
+     2024,
+     2024
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      4,
+      3,
+      3996,
+      2997
+     ],
+     [
+      4,
+      3,
+      3996,
+      2997
+     ],
+     [
+      4,
+      3,
+      3996,
+      2997
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "it_geo_01": {
+    "expect": 2091,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 2091,
+    "A_hit": true,
+    "B_gutters": [
+     2091,
+     2091,
+     2091
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2091,
+     2091,
+     2091
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      68,
+      141,
+      3996,
+      2928
+     ],
+     [
+      68,
+      141,
+      3996,
+      2928
+     ],
+     [
+      68,
+      141,
+      3996,
+      2928
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "it_geo_02": {
+    "expect": 2099,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 2099,
+    "A_hit": true,
+    "B_gutters": [
+     2099,
+     2099,
+     2099
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2099,
+     2099,
+     2099
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      156,
+      81,
+      3908,
+      2913
+     ],
+     [
+      156,
+      81,
+      3908,
+      2913
+     ],
+     [
+      156,
+      81,
+      3908,
+      2913
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "it_geo_03": {
+    "expect": 2082,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 2082,
+    "A_hit": true,
+    "B_gutters": [
+     2082,
+     2082,
+     2082
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2082,
+     2082,
+     2082
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      68,
+      111,
+      3832,
+      2934
+     ],
+     [
+      68,
+      111,
+      3832,
+      2934
+     ],
+     [
+      68,
+      111,
+      3832,
+      2934
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "it_geo_04": {
+    "expect": 1941,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 1941,
+    "A_hit": true,
+    "B_gutters": [
+     1941,
+     1941,
+     1941
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     1941,
+     1941,
+     1941
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      68,
+      3,
+      3844,
+      2802
+     ],
+     [
+      68,
+      3,
+      3844,
+      2802
+     ],
+     [
+      68,
+      3,
+      3844,
+      2802
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "it_geo_05": {
+    "expect": 2012,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 2012,
+    "A_hit": true,
+    "B_gutters": [
+     2008,
+     2008,
+     2008
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2008,
+     2008,
+     2008
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      444,
+      291,
+      3616,
+      2763
+     ],
+     [
+      444,
+      291,
+      3616,
+      2763
+     ],
+     [
+      444,
+      291,
+      3616,
+      2763
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "it_geo_06": {
+    "expect": 2089,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 2089,
+    "A_hit": true,
+    "B_gutters": [
+     2088,
+     2088,
+     2088
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2088,
+     2088,
+     2088
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      320,
+      213,
+      3804,
+      2868
+     ],
+     [
+      320,
+      213,
+      3804,
+      2868
+     ],
+     [
+      320,
+      213,
+      3804,
+      2868
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "it_geo_07": {
+    "expect": 2040,
+    "tol": 180,
+    "detector_abstained": true,
+    "A_gutter": 2040,
+    "A_hit": true,
+    "B_gutters": [
+     2041,
+     2041,
+     2041
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2041,
+     2041,
+     2041
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": null,
+    "boxes": [
+     [
+      312,
+      231,
+      3696,
+      2772
+     ],
+     [
+      312,
+      231,
+      3696,
+      2772
+     ],
+     [
+      312,
+      231,
+      3696,
+      2772
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": null
+   },
+   "de_01": {
+    "expect": 2000,
+    "tol": 200,
+    "detector_abstained": true,
+    "A_gutter": 1983,
+    "A_hit": true,
+    "B_gutters": [
+     1992,
+     1992,
+     1992
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     1992,
+     1992,
+     1992
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": 0.0,
+    "boxes": [
+     [
+      472,
+      192,
+      3512,
+      2811
+     ],
+     [
+      472,
+      192,
+      3512,
+      2811
+     ],
+     [
+      472,
+      192,
+      3512,
+      2811
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": [
+     {
+      "left": -2.33,
+      "right": 0.71,
+      "top": -0.83,
+      "bottom": 0.04
+     },
+     {
+      "left": -2.33,
+      "right": 0.71,
+      "top": -0.83,
+      "bottom": 0.04
+     },
+     {
+      "left": -2.33,
+      "right": 0.71,
+      "top": -0.83,
+      "bottom": 0.04
+     }
+    ]
+   },
+   "de_02": {
+    "expect": 2040,
+    "tol": 200,
+    "detector_abstained": true,
+    "A_gutter": 2047,
+    "A_hit": true,
+    "B_gutters": [
+     2048,
+     2048,
+     2048
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     2048,
+     2048,
+     2048
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": 1.89,
+    "boxes": [
+     [
+      652,
+      81,
+      3524,
+      2946
+     ],
+     [
+      652,
+      81,
+      3524,
+      2946
+     ],
+     [
+      652,
+      81,
+      3524,
+      2946
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": [
+     {
+      "left": -8.9,
+      "right": -3.54,
+      "top": 0.31,
+      "bottom": -0.49
+     },
+     {
+      "left": -8.9,
+      "right": -3.54,
+      "top": 0.31,
+      "bottom": -0.49
+     },
+     {
+      "left": -8.9,
+      "right": -3.54,
+      "top": 0.31,
+      "bottom": -0.49
+     }
+    ]
+   },
+   "zoomset_de_01": {
+    "expect": 1675,
+    "tol": 200,
+    "detector_abstained": false,
+    "A_gutter": 1684,
+    "A_hit": true,
+    "B_gutters": [
+     1690,
+     1690,
+     1690
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "detector",
+    "C_gutters": [
+     1684,
+     1684,
+     1684
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": 0.0,
+    "boxes": [
+     [
+      318,
+      392,
+      2913,
+      2577
+     ],
+     [
+      318,
+      392,
+      2913,
+      2577
+     ],
+     [
+      318,
+      392,
+      2913,
+      2577
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": [
+     {
+      "left": 0.47,
+      "right": 2.09,
+      "top": 0.38,
+      "bottom": 2.21
+     },
+     {
+      "left": 0.47,
+      "right": 2.09,
+      "top": 0.38,
+      "bottom": 2.21
+     },
+     {
+      "left": 0.47,
+      "right": 2.09,
+      "top": 0.38,
+      "bottom": 2.21
+     }
+    ]
+   },
+   "zoomset_de_02": {
+    "expect": 1631,
+    "tol": 200,
+    "detector_abstained": false,
+    "A_gutter": 1626,
+    "A_hit": true,
+    "B_gutters": [
+     1626,
+     1626,
+     1626
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "detector",
+    "C_gutters": [
+     1626,
+     1626,
+     1626
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": 0.0,
+    "boxes": [
+     [
+      322,
+      468,
+      2840,
+      2528
+     ],
+     [
+      322,
+      468,
+      2840,
+      2528
+     ],
+     [
+      322,
+      468,
+      2840,
+      2528
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": [
+     {
+      "left": -0.85,
+      "right": -1.55,
+      "top": 0.59,
+      "bottom": 0.89
+     },
+     {
+      "left": -0.85,
+      "right": -1.55,
+      "top": 0.59,
+      "bottom": 0.89
+     },
+     {
+      "left": -0.85,
+      "right": -1.55,
+      "top": 0.59,
+      "bottom": 0.89
+     }
+    ]
+   },
+   "zoomset_en_01": {
+    "expect": 1615,
+    "tol": 200,
+    "detector_abstained": false,
+    "A_gutter": 1616,
+    "A_hit": true,
+    "B_gutters": [
+     1621,
+     1621,
+     1621
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "detector",
+    "C_gutters": [
+     1616,
+     1616,
+     1616
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": 0.0,
+    "boxes": [
+     [
+      596,
+      419,
+      2607,
+      2589
+     ],
+     [
+      596,
+      419,
+      2607,
+      2589
+     ],
+     [
+      596,
+      419,
+      2607,
+      2589
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": [
+     {
+      "left": 2.57,
+      "right": 15.03,
+      "top": 0.05,
+      "bottom": 0.88
+     },
+     {
+      "left": 2.57,
+      "right": 15.03,
+      "top": 0.05,
+      "bottom": 0.88
+     },
+     {
+      "left": 2.57,
+      "right": 15.03,
+      "top": 0.05,
+      "bottom": 0.88
+     }
+    ]
+   },
+   "zoomset_en_02": {
+    "expect": 1660,
+    "tol": 200,
+    "detector_abstained": false,
+    "A_gutter": 1623,
+    "A_hit": true,
+    "B_gutters": [
+     1629,
+     1629,
+     1629
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "detector",
+    "C_gutters": [
+     1623,
+     1623,
+     1623
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": 1.187,
+    "boxes": [
+     [
+      612,
+      600,
+      2587,
+      2567
+     ],
+     [
+      612,
+      600,
+      2587,
+      2567
+     ],
+     [
+      612,
+      600,
+      2587,
+      2567
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": [
+     {
+      "left": 0.4,
+      "right": -1.65,
+      "top": -1.83,
+      "bottom": -8.36
+     },
+     {
+      "left": 0.4,
+      "right": -1.65,
+      "top": -1.83,
+      "bottom": -8.36
+     },
+     {
+      "left": 0.4,
+      "right": -1.65,
+      "top": -1.83,
+      "bottom": -8.36
+     }
+    ]
+   },
+   "paleset_01": {
+    "expect": 1680,
+    "tol": 200,
+    "detector_abstained": true,
+    "A_gutter": 2741,
+    "A_hit": false,
+    "B_gutters": [
+     1697,
+     1697,
+     1697
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     1697,
+     1697,
+     1697
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": 0.0,
+    "boxes": [
+     [
+      4,
+      407,
+      3199,
+      2674
+     ],
+     [
+      4,
+      407,
+      3199,
+      2674
+     ],
+     [
+      4,
+      407,
+      3199,
+      2674
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": [
+     {
+      "left": -0.13,
+      "right": 4.89,
+      "top": -0.3,
+      "bottom": -3.64
+     },
+     {
+      "left": -0.13,
+      "right": 4.89,
+      "top": -0.3,
+      "bottom": -3.64
+     },
+     {
+      "left": -0.13,
+      "right": 4.89,
+      "top": -0.3,
+      "bottom": -3.64
+     }
+    ]
+   },
+   "paleset_02": {
+    "expect": 1778,
+    "tol": 200,
+    "detector_abstained": true,
+    "A_gutter": null,
+    "A_hit": false,
+    "B_gutters": [
+     1749,
+     1749,
+     1749
+    ],
+    "B_hits": [
+     true,
+     true,
+     true
+    ],
+    "B_ok": true,
+    "C_source": "vlm",
+    "C_gutters": [
+     1749,
+     1749,
+     1749
+    ],
+    "C_ok": true,
+    "B_worst_clip_pct": 0.0,
+    "boxes": [
+     [
+      335,
+      539,
+      3191,
+      2390
+     ],
+     [
+      335,
+      539,
+      3191,
+      2390
+     ],
+     [
+      335,
+      539,
+      3191,
+      2390
+     ]
+    ],
+    "read_as": [
+     "norm1000",
+     "norm1000",
+     "norm1000"
+    ],
+    "edge_excess_pct": [
+     {
+      "left": 0.18,
+      "right": 1.46,
+      "top": -2.27,
+      "bottom": -2.07
+     },
+     {
+      "left": 0.18,
+      "right": 1.46,
+      "top": -2.27,
+      "bottom": -2.07
+     },
+     {
+      "left": 0.18,
+      "right": 1.46,
+      "top": -2.27,
+      "bottom": -2.07
+     }
+    ]
+   }
+  }
+ }
+}

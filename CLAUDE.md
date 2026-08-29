@@ -85,12 +85,25 @@ Italian, German**.
   fixtures: OCR post-correction cuts CER 6.72% -> 5.57% (English) and
   1.49% -> 1.16% (Bulgarian) **without altering a single number**, and qwen finds
   a book box on `paleset_01`/`paleset_02` (IoU 0.905/0.940) where the detector
-  abstains. **Read `docs/notes/2026-08-29-local-llm-available.md` before acting
-  on that** — the box carries a ~5-point one-edge excess on `paleset_01`, which
-  is the asymmetry RESULTS 2026-08-28 measured as split-breaking, and IoU is not
-  the load-bearing metric. The experiment that would settle it (VLM box ->
-  `book_box.json` -> Stage 02 -> `split_eval` gutter correctness) has NOT been
-  run.
+  abstains. See `docs/notes/2026-08-29-local-llm-available.md`.
+  **That note's open experiment has since been RUN — `tools/vlm_box_eval`,
+  RESULTS 2026-08-29.** Routed through the same `user_box` path a hand-drawn box
+  takes, qwen's box splits **21/21**: `paleset_01` 2741 -> 1697 and `paleset_02`
+  none -> 1749, within 2 px of the hand-drawn box, **zero gutter regressions** —
+  and the feared one-edge excess proved harmless (a +15 % edge still hit). The
+  real findings are elsewhere. The detector **abstains on 17 of 21 rows**, so 15
+  correct rows had never seen an applied crop before; they survived one, but
+  "where the detector abstains" is therefore NOT a narrow trigger. And the crop
+  **stopped being clip-free**: `de_02` loses 1.89 % and `zoomset_en_02` 1.19 % of
+  the labelled book, because the model's box cuts INTO the book by more than the
+  8 % pad gives back. Adjudicated as **no readable content lost** (cloth, the
+  fanned page-edge block, a coloured tab sliver — checked by connected components
+  and by eye), but the bar is exactly 0.0 %, so a model box is **not** drop-in
+  safe yet. Do NOT retune `search_pad` to rescue it (n = 1, and 0.08 has a
+  recorded dead zone). All three passes returned byte-identical boxes, so the
+  repeatability bar measured determinism, not robustness. Nothing in the pipeline
+  was changed and **`split_eval` stays red at 19/21** — this is a reason to build
+  the fix, not to relabel the rows, and it does not replace the fixture shoot.
 
 ## Architecture: the stage contract (IMPORTANT)
 

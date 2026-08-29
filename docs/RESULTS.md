@@ -6698,3 +6698,96 @@ carries a human's confidence, so:
 
 The re-split button runs **Stage 02 only** — draw, re-split, look at the overlay.
 Stages 03–06 stay a separate explicit run.
+
+---
+
+## 2026-08-29 — A vision model's book box, graded on the split it has to survive
+
+`tools/vlm_box_eval.py` · data: `docs/data/vlm_box_split_20260829.json`
+
+The experiment `docs/notes/2026-08-29-local-llm-available.md` deliberately did
+not run. That note measured a local vision model (`qwen3.6:27b`, Ollama) against
+`testset/gt/book_box.json` and got IoU 0.905/0.940 on the two pale frames the
+detector fails on — then said, correctly, that IoU is not the load-bearing
+metric, because RESULTS 2026-08-28 measured that **asymmetric** box error is what
+breaks the split. So: feed the model's box through the SAME path a hand-drawn one
+takes (`book_boundary.user_box` — validated, refused when degenerate, padded
+`search_pad` outward), run the real `detect_gutter`, grade against
+`testset/gt/gutter.json`.
+
+**This is not a reproduction of the note's numbers, it is a stricter
+re-measurement.** `localLLM/book_box_probe.py` parses the answer under *both*
+coordinate orderings and reports whichever fits the label better — a selection
+made using the ground truth. Here the ordering is fixed a priori to the model's
+documented convention and never chosen per image. All 21 answers parsed under it.
+
+### The bar, pre-registered before the first model call
+
+A row counts as correct only if **all three passes** land within tolerance;
+`paleset_01` must reach [1480, 1880] (shipped: 2741) and `paleset_02`
+[1578, 1978] (shipped: no gutter at all); and the 19 rows correct today must stay
+correct. Clipping was expected to read 0.0 % by construction. It did not — see
+below, that is the finding.
+
+### Result
+
+| arm | what it is | gutters |
+|---|---|---|
+| A | the shipped detector | 19/21 |
+| B | model box on **every** row | **21/21** |
+| C | model box only where the detector abstains | **21/21** |
+
+`paleset_01` 2741 → **1697** (target 1680 ± 200) and `paleset_02` none → **1749**
+(target 1778 ± 200) — within 2 px of what a HAND-DRAWN box produced on the same
+frames (1699 / 1749, RESULTS 2026-08-28). Zero gutter regressions in either arm.
+
+**The unknown this run actually resolved was not the two pale rows.** The
+detector abstains on **17 of the 21** graded rows — all 13 flat fixtures, both
+`de_*`, both `paleset_*` — and abstain hands back the whole frame, which is
+*why* those rows have been correct. So 15 currently-correct rows had never been
+run through an applied crop before today. They all survived one. That also means
+"where the detector abstains" is **not** a narrow trigger: arms B and C differ on
+4 rows only, so C is not the safe subset it sounds like.
+
+### The failure the gutter column hides: the crop is no longer clip-free
+
+`user_box` pads 8 % outward and unions emit with search, so a crop from a
+*hand-drawn* box measured 0.00 % clipping everywhere. A model box does not:
+
+| row | clipped | what is in the lost band |
+|---|---|---|
+| `de_02` | **1.89 %** | 62 px off the left: cloth, the shadow gap, the fanned closed-page block, and the outer sliver of a solid coloured side tab |
+| `zoomset_en_02` | **1.19 %** | 26 px off the bottom: entirely the polka-dot tablecloth (median grey 41 vs page interior 155) — the label runs past the page |
+
+Adjudicated per `book_box.json`'s own instruction (a sub-2 % clip is a finding
+plus an adjudication, and a clip that removes **ink** is a real failure at any
+size). Checked two ways: a connected-component pass found 22 letter-like blobs in
+`de_02`'s lost band against 110 in the 62-px strip immediately inside it, and
+looking at both regions at 3–4× showed those 22 are the coloured page tabs and
+the fanned page-edge texture, not glyphs. **No readable content is lost.** But
+the bar is exactly 0.0 %, and `de_02` is a row arm C would take from the model —
+so a model box is **not** drop-in safe, and this is the thing to fix before any
+of it ships.
+
+The cause is visible in the per-edge table: the model's box cuts *into* the book
+by more than the pad can give back — `de_02` left −8.90 %, `zoomset_en_02` bottom
+−8.36 % of book width/height. The asymmetry the note feared in the other
+direction was harmless here: `paleset_01`'s +4.89 % right-edge excess split fine,
+and `zoomset_en_01` carried **+15.03 %** on one edge and still hit.
+
+### What this does not license
+
+- **Do not raise `search_pad` to rescue `de_02`.** That is fitting a pad to one
+  example, and 0.08 has a recorded dead zone (`zoomset_de_01` passes at 0.00,
+  fails at 0.03, passes at 0.06+). A smaller pad is not safer and a bigger one is
+  not free.
+- **All three passes returned byte-identical boxes on all 21 rows.** At
+  temperature 0 the sampler is deterministic, so the pre-registered "all 3 must
+  hit" bar was satisfied *trivially*: it measured determinism, not robustness.
+  Robustness would need varied inputs, not repeated ones.
+- **`split_eval` stays red at 19/21.** Nothing in the pipeline was changed. A
+  passing experiment is a reason to build the fix, not to relabel the rows.
+- **Two pale frames are two scenes, not two examples.** This says the box source
+  is worth pursuing. It cannot say the pale-background defect is fixed, and it
+  does not replace `docs/plans/pale-background-fixture-shoot.md` — which still
+  needs the tightly-framed **negatives** most of all.

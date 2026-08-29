@@ -726,10 +726,21 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     # why that split, and why a missing Ollama must never fail a scan.
     vlm_params = VLM.resolve_params(cfg)
     vlm_diag: dict = {}
-    if vlm_params["enabled"] and not book.applied and crop_source == "detector":
+    vlm_asked = False
+
+    def _ask_vlm():
+        """Fetch the model's box at most once per page, whichever rung asks."""
+        nonlocal vlm_diag, vlm_asked
+        if vlm_asked:
+            return tuple(vlm_diag["box"]) if vlm_diag.get("box") and not vlm_diag.get("refused") else None
+        vlm_asked = True
         t_vlm = time.perf_counter()
-        vbox, vlm_diag = VLM.find_box(image, vlm_params)
+        box, vlm_diag = VLM.find_box(image, vlm_params)
         vlm_diag["ms"] = round((time.perf_counter() - t_vlm) * 1000.0, 1)
+        return box
+
+    if vlm_params["enabled"] and not book.applied and crop_source == "detector":
+        vbox = _ask_vlm()
         if vbox is not None:
             book = BB.search_only(image, vbox, book, bb_params)
             crop_source = "detector+vlm-search"
@@ -763,6 +774,45 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     t_detect = time.perf_counter()
     gutter_local, diag = detect_gutter(search_gray, params)
     detect_ms = (time.perf_counter() - t_detect) * 1000.0
+
+    # Second rung: the book WAS found, but no spine was. That is a different
+    # failure from the one above and the crop cannot fix it — yet a window drawn
+    # round the book instead of round the detector's blob can, because the ink
+    # ratio is measured against the window's own page reference. Measured on a
+    # real capture (job 20260829-084115, page_002, an imprint page facing a dense
+    # contents page): the detector's window gave ratio 0.589 and no gutter, the
+    # model's window gave 0.281 and a gutter at 1482.
+    #
+    # This can only ever change a page that TODAY emits a single page, so it
+    # cannot move a spread that already splits. What it cannot be graded on is
+    # the opposite error — wrongly splitting a genuinely single page — because
+    # the testset still has no single-page fixture (see the single.png warning
+    # below). Bank one and this rung becomes measurable; until then the accepted
+    # risk is stated, not hidden.
+    if (gutter_local is None and vlm_params["enabled"]
+            and crop_source in ("detector", "operator")):
+        vbox = _ask_vlm()
+        if vbox is not None:
+            retry = BB.search_only(image, vbox, book, bb_params)
+            rx0, ry0, rx1, ry1 = retry.search
+            r_local, r_diag = detect_gutter(
+                cv2.cvtColor(image[ry0:ry1, rx0:rx1], cv2.COLOR_BGR2GRAY), params)
+            if r_local is not None:
+                warnings.append(
+                    f"no spine was found in the {'detected book' if book.applied else 'frame'}, "
+                    f"so the search was retried inside a vision model's box "
+                    f"{tuple(vbox)}: gutter found (ink ratio "
+                    f"{r_diag['ratio']:.3f} vs {diag['ratio']:.3f}). The emitted "
+                    f"pixels are unchanged.")
+                book, gutter_local, diag = retry, r_local, r_diag
+                sx0, sy0, sx1, sy1 = retry.search
+                search_gray = cv2.cvtColor(image[sy0:sy1, sx0:sx1], cv2.COLOR_BGR2GRAY)
+                crop_source = (crop_source + "+vlm-search"
+                               if "vlm-search" not in crop_source else crop_source)
+            else:
+                warnings.append(
+                    "no spine found even inside the vision model's box; "
+                    "emitting a single page as before.")
     # Back to ORIGINAL spread coordinates immediately, so nothing downstream ever
     # sees a search-box coordinate.
     gutter_x = None if gutter_local is None else gutter_local + sx0

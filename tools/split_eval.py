@@ -122,6 +122,19 @@ def main(argv: list[str] | None = None) -> int:
         sx0, sy0, sx1, sy1 = book.search
         gray = cv2.cvtColor(img[sy0:sy1, sx0:sx1], cv2.COLOR_BGR2GRAY)
         gx, diag = detect_gutter(gray, DEFAULTS)
+        # Second rung, same as Stage 02's: the book was found but no spine was.
+        # No row in this set reaches it today (nothing has a crop AND no
+        # gutter), but the harness must run the shipped path, not a subset of
+        # it — otherwise the rung ships ungraded.
+        if args.vlm and gx is None and book.applied:
+            vbox, _ = VLM.find_box(img, VLM.resolve_params({}))
+            if vbox is not None:
+                retry = BB.search_only(img, vbox, book, bb_params)
+                rx0, ry0, rx1, ry1 = retry.search
+                r, _rd = detect_gutter(
+                    cv2.cvtColor(img[ry0:ry1, rx0:rx1], cv2.COLOR_BGR2GRAY), DEFAULTS)
+                if r is not None:
+                    book, gx, sx0, sy0, sx1, sy1 = retry, r, rx0, ry0, rx1, ry1
         gx = None if gx is None else gx + sx0   # -> original spread coordinates
 
         clip = ""

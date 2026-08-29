@@ -78,6 +78,19 @@ Italian, German**.
       note what it needs is **negatives** (tightly framed handheld spreads), not
       more sofas. `split_eval` stays 19/21 until those exist and a precondition
       can be calibrated.
+- **Local vision-language models are now installed on this machine
+  (2026-08-29)** — `qwen3.6:27b` and `gemma4:31b`, served by Ollama on
+  `localhost:11434`. Set up in `M:\claud_projects\localLLM`; **nothing in
+  bookscan was changed and `split_eval` was not run.** Measured on bookscan's own
+  fixtures: OCR post-correction cuts CER 6.72% -> 5.57% (English) and
+  1.49% -> 1.16% (Bulgarian) **without altering a single number**, and qwen finds
+  a book box on `paleset_01`/`paleset_02` (IoU 0.905/0.940) where the detector
+  abstains. **Read `docs/notes/2026-08-29-local-llm-available.md` before acting
+  on that** — the box carries a ~5-point one-edge excess on `paleset_01`, which
+  is the asymmetry RESULTS 2026-08-28 measured as split-breaking, and IoU is not
+  the load-bearing metric. The experiment that would settle it (VLM box ->
+  `book_box.json` -> Stage 02 -> `split_eval` gutter correctness) has NOT been
+  run.
 
 ## Architecture: the stage contract (IMPORTANT)
 

@@ -295,6 +295,7 @@ a device, same caveat as M2-M4.
 | M3 | Sharpness/stability scoring unit tests | Auto-trigger UX | **DONE 2026-08-28 — and it FAILED**, see below |
 | M4 | — | Capture → Stage 01 fuse validation (+ likely pipeline fixes) | **DONE**; 18-image page ran clean, pipeline bug found (RESULTS 2026-08-28) |
 | M5 | Retry/backoff unit tests | Job list / progress UX | **DONE** 2026-08-28: resume, 7/7 progress, retry over a dropped link |
+| M6 | `CaptureQueueTest` + `assembleDebug` | Batch capture UX on a phone | **BUILT** 2026-08-29, device-unverified |
 
 **M3's on-device answer was negative, and the milestone is superseded.** Armed
 over a real spread the burst delivered **one** still, not the four the
@@ -305,6 +306,50 @@ capture is now the default flow and auto-capture is an opt-in toggle (owner's
 call, 2026-08-28). The review screen gained "Add full shot" so several
 whole-spread photographs go up together, which is what Stage 01's anchor
 choice actually wanted from a burst.
+
+## M6 — batch capture: shoot the book, upload at the end (BUILT 2026-08-29)
+
+Until now each spread was uploaded the moment it was reviewed. That ties
+photographing a book to the Wi-Fi being up and the server reachable *at that
+moment*, one page at a time. The owner's actual plan — photograph a whole book
+in one sitting, then process it — makes that the wrong default, so finishing a
+spread now offers three exits instead of one:
+
+* **Save & next page** — queue it and go straight back to the camera. One tap
+  per page, no round trip through the job screen.
+* **Save & stop** — queue it and return to the job screen.
+* **Upload spread now** — the original immediate send, unchanged. It is the
+  path verified on a real phone on 2026-08-28, so the batch was built *beside*
+  it rather than replacing it; both share one `sendSpread`.
+
+The job screen then shows "N page(s) waiting on this phone" with **Upload all**
+and **Discard batch**.
+
+**Order is the deliverable, so a failure stops the batch.**
+`server/routes_jobs.py::upload_page` names each page `page_NNN` **by arrival**.
+Skipping a page that failed its retries would therefore not lose one page — it
+would renumber every page after it. `CaptureQueue.fail()` leaves the failing
+spread at the head with everything behind it untouched, names it to the operator
+("page 17 of 40 failed … Batch stopped"), and **Upload all** resumes at exactly
+that page. Never skip-and-continue.
+
+**Captures moved from `cacheDir` to `filesDir/captures`.** A batch can sit unsent
+for as long as it takes to photograph a book, and Android may evict `cacheDir`
+under storage pressure — deleting pages the operator believes they have. Nothing
+evicts `filesDir`, so the upload path deletes each spread's files once the server
+has it, or the operator discards the batch.
+
+**Known limits, both deliberate.** The queue lives in the ViewModel and is **not
+persisted**: killing the app loses the batch (the photographs stay in
+`filesDir/captures`, but nothing re-adopts them). And a spread whose upload
+failed keeps its files until the batch is retried or discarded. Persisting the
+queue is a second feature — a manifest, restore-on-launch, and reconciliation
+against orphaned files — and was left out on purpose.
+
+Verified here: `:capture:test` (10 new `CaptureQueueTest` cases: capture order,
+advance, stop-on-failure, resume, discard) — 63 JVM tests green across both
+pure-JVM modules — plus `assembleDebug`. **Not verified on a phone**; installing
+and running it is the owner's step, as with every milestone above.
 
 **The remaining blocker for a usable scan is not in this app.** Neither real
 capture split into pages: `pipeline/book_boundary.py` returns the whole frame

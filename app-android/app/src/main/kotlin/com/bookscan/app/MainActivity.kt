@@ -55,6 +55,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel: BookscanViewModel = viewModel()
+            // NOT cacheDir. A batch of spreads can sit unsent for as long as it
+            // takes to photograph a book, and Android is free to evict cacheDir
+            // under storage pressure — which would delete pages the operator
+            // believes they have. filesDir is never evicted; the upload path
+            // deletes each spread once the server has it.
+            val captureDir = remember { File(filesDir, "captures").apply { mkdirs() } }
             val state by viewModel.state.collectAsState()
             var flow by remember { mutableStateOf<CaptureFlow>(CaptureFlow.Hidden) }
             // Auto-capture starts DISARMED, and the choice is session-wide so it
@@ -96,10 +102,12 @@ class MainActivity : ComponentActivity() {
                                 onCapturePage = ::openCapture,
                                 onResumeJob = viewModel::resumeJob,
                                 onRefreshJobs = viewModel::loadJobs,
+                                onUploadAll = viewModel::uploadAll,
+                                onDiscardBatch = viewModel::discardBatch,
                             )
 
                             CaptureFlow.CapturingAnchor -> CaptureScreen(
-                                outputDir = cacheDir,
+                                outputDir = captureDir,
                                 // External files dir, not cacheDir: calibration
                                 // CSVs are meant to be pulled off the device
                                 // (`adb pull /sdcard/Android/data/<pkg>/files/`),
@@ -112,7 +120,7 @@ class MainActivity : ComponentActivity() {
                             )
 
                             is CaptureFlow.CapturingMoreAnchors -> CaptureScreen(
-                                outputDir = cacheDir,
+                                outputDir = captureDir,
                                 logDir = getExternalFilesDir(null) ?: cacheDir,
                                 autoArmed = autoArmed,
                                 onAutoArmedChange = { autoArmed = it },
@@ -129,7 +137,7 @@ class MainActivity : ComponentActivity() {
                             )
 
                             is CaptureFlow.CapturingCloseup -> CloseupScreen(
-                                outputDir = cacheDir,
+                                outputDir = captureDir,
                                 closeupCount = f.closeups.size,
                                 // STAYS on the close-up screen and appends.
                                 // Returning to review after every shot made
@@ -147,8 +155,21 @@ class MainActivity : ComponentActivity() {
                                 closeups = f.closeups,
                                 uploading = s.uploading,
                                 error = s.error,
+                                queued = s.queue.pending.size,
                                 onAddAnchor = { flow = CaptureFlow.CapturingMoreAnchors(f.anchors, f.closeups) },
                                 onAddCloseup = { flow = CaptureFlow.CapturingCloseup(f.anchors, f.closeups) },
+                                // Straight back to the camera, no round trip
+                                // through the job screen: photographing a book
+                                // is one page after another, and a tap between
+                                // each is a tap per page.
+                                onSaveAndNext = {
+                                    viewModel.enqueueSpread(f.anchors, f.closeups)
+                                    flow = CaptureFlow.CapturingAnchor
+                                },
+                                onSaveAndStop = {
+                                    viewModel.enqueueSpread(f.anchors, f.closeups)
+                                    flow = CaptureFlow.Hidden
+                                },
                                 onUpload = {
                                     viewModel.uploadSpread(f.anchors, f.closeups)
                                     flow = CaptureFlow.Hidden

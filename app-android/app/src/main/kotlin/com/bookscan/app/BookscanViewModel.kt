@@ -3,6 +3,8 @@ package com.bookscan.app
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.bookscan.capture.CaptureQueue
+import com.bookscan.capture.PendingSpread
 import com.bookscan.network.BookscanApi
 import com.bookscan.network.BookscanClientFactory
 import com.bookscan.network.JobStatus
@@ -27,6 +29,14 @@ sealed interface UiState {
         val jobs: List<JobSummary> = emptyList(),
         val uploading: Boolean = false,
         val error: String? = null,
+        /**
+         * Spreads captured but not yet sent (see [CaptureQueue]). It lives HERE,
+         * in the state, rather than in a field of its own for a concrete reason:
+         * [startPolling] rewrites this object every 2 s, and only a `copy()` of
+         * the current value carries the batch through. Every writer must go
+         * through [updateReady] for the same reason.
+         */
+        val queue: CaptureQueue = CaptureQueue(),
     ) : UiState
 }
 
@@ -108,14 +118,81 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             updateReady { it.copy(uploading = true, error = null) }
             try {
-                val parts = (anchors + closeups).mapIndexed { index, file -> multipartPart(index, file) }
-                withRetry(maxAttempts = UPLOAD_MAX_ATTEMPTS) { api.uploadPage(jobId, parts) }
+                sendSpread(api, jobId, PendingSpread(anchors, closeups))
                 refreshStatus(jobId)
             } catch (e: Exception) {
                 updateReady { it.copy(error = "upload failed after retries: ${e.message}") }
             } finally {
                 updateReady { it.copy(uploading = false) }
             }
+        }
+    }
+
+    /**
+     * One spread -> one `POST /api/jobs/{id}/pages`, retried over flaky Wi-Fi.
+     * Throws if every attempt failed; the two callers differ only in what they
+     * do about that. Shared so the batch cannot drift from the single-spread
+     * path that was verified on a real phone on 2026-08-28.
+     */
+    private suspend fun sendSpread(api: BookscanApi, jobId: String, spread: PendingSpread) {
+        val parts = spread.files.mapIndexed { index, file -> multipartPart(index, file) }
+        withRetry(maxAttempts = UPLOAD_MAX_ATTEMPTS) { api.uploadPage(jobId, parts) }
+    }
+
+    /** Hold a spread back for [uploadAll] instead of sending it now. */
+    fun enqueueSpread(anchors: List<File>, closeups: List<File>) {
+        updateReady { it.copy(queue = it.queue.add(PendingSpread(anchors, closeups)), error = null) }
+    }
+
+    /**
+     * Send the whole batch, oldest first, one request per spread.
+     *
+     * **Stops at the first page that fails**, leaving that page and everything
+     * behind it queued, because `upload_page` names pages `page_NNN` by arrival
+     * order: skipping a failure would not lose one page, it would renumber every
+     * page after it, and page order is the deliverable. Calling this again
+     * resumes at exactly the page that stopped.
+     *
+     * A spread's files are deleted only once the server has it — captures live
+     * in `filesDir` now (nothing evicts them), so leaving them would fill the
+     * phone over a whole book.
+     */
+    fun uploadAll() {
+        val api = api ?: return
+        val jobId = (_state.value as? UiState.Ready)?.jobId ?: return
+        viewModelScope.launch {
+            updateReady { it.copy(uploading = true, error = null) }
+            try {
+                while (true) {
+                    val next = (_state.value as? UiState.Ready)?.queue?.head() ?: break
+                    try {
+                        sendSpread(api, jobId, next)
+                    } catch (e: Exception) {
+                        updateReady {
+                            it.copy(
+                                queue = it.queue.fail(),
+                                error = "page ${it.queue.uploaded + 1} of ${it.queue.total} " +
+                                    "failed after retries: ${e.message}. Batch stopped — " +
+                                    "nothing after it was sent. Tap Upload all to resume here.",
+                            )
+                        }
+                        return@launch
+                    }
+                    next.files.forEach { it.delete() }
+                    updateReady { it.copy(queue = it.queue.advance()) }
+                }
+                refreshStatus(jobId)
+            } finally {
+                updateReady { it.copy(uploading = false) }
+            }
+        }
+    }
+
+    /** Throw the batch away, files and all. Nothing already uploaded is touched. */
+    fun discardBatch() {
+        updateReady { ready ->
+            ready.queue.files().forEach { it.delete() }
+            ready.copy(queue = CaptureQueue(), error = null)
         }
     }
 

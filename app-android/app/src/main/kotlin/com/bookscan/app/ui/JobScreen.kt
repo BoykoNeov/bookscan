@@ -47,6 +47,8 @@ fun JobScreen(
     onCapturePage: () -> Unit,
     onResumeJob: (String) -> Unit,
     onRefreshJobs: () -> Unit,
+    onUploadAll: () -> Unit,
+    onDiscardBatch: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -93,6 +95,27 @@ fun JobScreen(
             Button(onClick = onCapturePage, enabled = !state.uploading) {
                 Text(if (state.uploading) "Uploading…" else "Capture page")
             }
+
+            // The batch, when there is one. Shown above the per-page progress
+            // because pages waiting on the PHONE are the thing the operator
+            // still has to act on; pages already on the server look after
+            // themselves. See com.bookscan.capture.CaptureQueue.
+            val queue = state.queue
+            if (!queue.isEmpty) {
+                Text("${queue.pending.size} page(s) waiting on this phone" +
+                    if (queue.uploaded > 0) " — ${queue.uploaded} of ${queue.total} sent" else "")
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Button(onClick = onUploadAll, enabled = !state.uploading) {
+                        Text(if (state.uploading) "Uploading…" else "Upload all")
+                    }
+                    OutlinedButton(onClick = onDiscardBatch, enabled = !state.uploading) {
+                        Text("Discard batch")
+                    }
+                }
+            } else if (queue.uploaded > 0) {
+                Text("Batch sent: ${queue.uploaded} page(s).")
+            }
+
             if (state.uploading) CircularProgressIndicator()
 
             state.error?.let { Text(it, color = Color.Red) }

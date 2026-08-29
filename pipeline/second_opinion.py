@@ -96,12 +96,27 @@ from dataclasses import dataclass
 from pathlib import Path
 
 # Keep letters (Latin + Cyrillic) and digits; drop everything else, casefold.
-_NORM_RE = re.compile(r"[^0-9a-zA-Zа-яёА-ЯЁ]+")
+# Strip everything that is not a letter or a digit, IN ANY SCRIPT. The explicit
+# ASCII+Cyrillic class this replaced silently DELETED the accented letters of
+# three of the project's four target languages — "Berücksichtigung" normalized to
+# "bercksichtigung", which is in no German lexicon, so every umlaut word looked
+# invalid to the disagreement gate and to Stage 08's de-hyphenation rule
+# (measured 2026-08-29). ``\W`` is Unicode-aware for str patterns; ``_`` is a word
+# character to ``re`` but not a letter, so it is stripped explicitly.
+_NORM_RE = re.compile(r"[\W_]+", re.UNICODE)
 
 
 def normalize_token(s: str) -> str:
-    """Comparison form: strip punctuation/whitespace, fold case. Latin + Cyrillic."""
-    return _NORM_RE.sub("", s).casefold()
+    """Comparison form: strip punctuation/whitespace, fold case.
+
+    Script-agnostic: keeps letters and digits of ANY script, so German umlauts,
+    Italian accents and Cyrillic all survive. See the note on ``_NORM_RE``.
+    """
+    # ``.lower()``, NOT ``.casefold()``: casefold maps ß -> ss, so "Straße"
+    # became "strasse" — which the German Hunspell REJECTS while accepting
+    # "straße" (measured 2026-08-29). Casefold's extra folding beyond lower()
+    # is essentially German ß and Greek/Turkish, none of which helps here.
+    return _NORM_RE.sub("", s).lower()
 
 
 def _load_overlay(path: Path | str | None) -> frozenset[str]:

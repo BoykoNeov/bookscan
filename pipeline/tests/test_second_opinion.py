@@ -202,3 +202,25 @@ def test_word_assigned_to_single_best_region_on_overlap():
     wide = Region(0, 0, 1000, 100, "Chopmarked", 0.9)  # would flag, loose overlap
     tight = Region(0, 0, 60, 25, "cat", 0.9)           # agrees, tight overlap
     assert find_disagreements(boxes, texts, [wide, tight], 0.30, DICT) == set()
+
+
+def test_normalize_keeps_the_accented_letters_of_the_target_languages():
+    """The old ASCII+Cyrillic character class DELETED them, so every German or
+    Italian word with an accent was out-of-lexicon by construction — it made the
+    disagreement gate and Stage 08's de-hyphenation blind on three of the four
+    target languages (measured 2026-08-29)."""
+    from pipeline.second_opinion import normalize_token as n
+    assert n("Berücksichtigung") == "berücksichtigung"
+    assert n("Tourenvorschläge,") == "tourenvorschläge"
+    assert n("perché") == "perché"
+    assert n("Дедеагач") == "дедеагач"
+    assert n("hello!") == "hello" and n("a_b") == "ab"
+
+
+def test_normalize_keeps_eszett_because_the_lexicon_does():
+    """``casefold()`` maps ß -> ss, so "Straße" became "strasse" — which the
+    German Hunspell rejects while accepting "straße". ``lower()`` is the right
+    fold for these four languages (measured 2026-08-29)."""
+    from pipeline.second_opinion import normalize_token as n
+    assert n("Straße") == "straße"
+    assert n("Größe") == "größe"

@@ -300,6 +300,20 @@ bookscan/
   release VRAM when a stage CLI exits.
 - Accuracy numbers reported by `tools/` scripts go into `docs/RESULTS.md`
   (append a dated row; never overwrite history).
+- **The Android app is installed over Wi-Fi debugging. That is the method this
+  project uses** — not a USB cable, and not sideloading the APK through a
+  browser. Build with `./gradlew assembleDebug` in `app-android/`, then push it
+  to the phone with `adb install -r` over a wireless connection (recipe in
+  **Commands** below). Do not offer the browser-download route as the default;
+  it needs the operator to tap through an "install unknown apps" prompt and
+  leaves a port open on the LAN, and adb reports success or failure of the
+  install itself, which a browser download does not.
+  **The one part Claude cannot do alone:** on Android 11+ a first pairing needs a
+  six-digit code and a *random* pairing port that only exist while the phone's
+  "Pair device with pairing code" dialog is open, and only the operator can read
+  them off the screen. So ASK for the code and `IP:port` and wait — do not fall
+  back to another install method because the phone is not yet visible. Once
+  paired, the phone is remembered and later installs need only `adb connect`.
 
 ## Commands
 
@@ -320,4 +334,16 @@ python -m pipeline.editor jobs/<job>/ [--port 8000]
 
 # Gate 1 harness
 python -m tools.gate1_harness --testset testset/ --report docs/RESULTS.md
+
+# build + install the Android app over Wi-Fi (THE install method here)
+cd app-android && ./gradlew assembleDebug
+#   phone: Settings > Developer options > Wireless debugging > ON
+#   first time only: tap "Pair device with pairing code", read off the 6-digit
+#   code and the IP:PORT it shows (that port is random and dies with the dialog)
+adb pair <ip>:<pairing_port> <code>      # first time on this machine only
+adb connect <ip>:<connect_port>          # the port on the Wireless debugging screen
+adb install -r app-android/app/build/outputs/apk/debug/app-debug.apk
+#   adb lives at M:\claud_projectsndroid-sdk\platform-toolsdb.exe
+#   `adb mdns services` lists the phone when wireless debugging is on; an empty
+#   list means it is OFF, not that the network is broken
 ```

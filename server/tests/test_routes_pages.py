@@ -227,3 +227,20 @@ def test_the_job_list_puts_the_newest_first(client, tmp_path):
         os.utime(root / name, (t, t))
     ids = [j["job_id"] for j in client.get("/api/jobs").json()["jobs"]]
     assert ids == ["aaa_new", "mmm_mid", "zzz_old"]
+
+
+def test_assemble_refuses_with_409_when_the_document_has_edits(client):
+    """The console asks before discarding edits by branching on this STATUS.
+
+    Pinned here because the console must never force blind: if this ever
+    stopped being a 409, the browser would throw the refusal at the user
+    instead of offering the choice.
+    """
+    from pipeline.page_model import DocSettings, Document
+    job_id = client.post("/api/jobs").json()["job_id"]
+    jd = client.app.state.jobs_root / job_id
+    doc = Document(job_id=job_id, document_id=job_id,
+                   settings=DocSettings(target_language="bul"), pages=[])
+    (jd / "document.json").write_text(doc.model_dump_json(), encoding="utf-8")
+    r = client.post(f"/api/jobs/{job_id}/assemble")
+    assert r.status_code == 409 and "detail" in r.json()

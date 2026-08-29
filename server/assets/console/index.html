@@ -160,7 +160,13 @@ async function api(path, opts) {
   const r = await fetch(path, opts);
   if (!r.ok) {
     let d = ""; try { d = (await r.json()).detail || ""; } catch (e) {}
-    throw new Error(d || `${r.status} ${r.statusText}`);
+    const err = new Error(d || `${r.status} ${r.statusText}`);
+    // The status is the durable signal. Callers that branch on a specific
+    // refusal (assemble's 409 clobber guard) must test this, never the wording
+    // of `detail` — a reworded message would silently turn "ask the user" into
+    // "throw an error at them".
+    err.status = r.status;
+    throw err;
   }
   return r.status === 204 ? null : r.json();
 }
@@ -294,7 +300,7 @@ async function runJobAction(what, msg) {
     try {
       r = await api(`/api/jobs/${S.jobId}/${what}`, { method: "POST" });
     } catch (err) {
-      if (what !== "assemble" || !/force=true/.test(err.message)) throw err;
+      if (what !== "assemble" || err.status !== 409) throw err;
       if (!confirm("This document has edits (corrected text, a translation or a "
                  + "reviewed reading order).\n\nRe-assembling from the pipeline "
                  + "will discard them. Continue?")) { toast("Left alone."); return; }

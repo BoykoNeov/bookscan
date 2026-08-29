@@ -7496,3 +7496,142 @@ shipped path. It also means **the German and Italian rows of the disagreement
 trigger were never measurable before**: every accented word was out-of-lexicon by
 construction. If that gate is ever enabled beyond Bulgarian, it must be measured
 fresh; no pre-2026-08-29 number about it applies to those languages.
+
+## 2026-08-29 — Figures that are really text panels: 3 promoted, and the premise of the plan was wrong
+
+**What was asked.** `docs/plans/panorama-and-next-steps.md` §3.1 ranked this
+first: 12.2 % of the owner's book (1607 words in 28 picture blocks) renders as
+**photographs of text** — the route tables, the hut information boxes, the
+English and Italian panels. Not searchable, not correctable, not translatable.
+The proposed fix was the mirror of `figure_surface`: ask a local vision model
+twice whether a "figure" is really text, and promote the ones both answers agree
+on.
+
+### The premise was wrong, and the eye-check is what found it
+
+Adjudicating every candidate crop by eye (18 real text panels, 32 pictures, 3
+upholstery, 2 correct vetoes) and then tracing each one back through the
+pipeline:
+
+| where the block is a FIGURE | how many | who typed it that way |
+|---|---|---|
+| already at Stage 05 | **4** | Stage 04 — a box on a coloured background |
+| only from Stage 07 | **14** | `unreadable_panel`, correctly |
+
+The fourteen are text blocks the whole way through Stage 05. `unreadable_panel`
+turns them into pictures because their OCR is not text a reader could use, and
+it is **right**:
+
+| block | what it is | words | median conf (floor 70.5) | OCR |
+|---|---|---|---|---|
+| `page_017__left` #7 | "English Version" panel | 68 | 19.2 | `Englist Version Crane a Of w wa Z SH Zu SO Saar Aatter` |
+| `page_016__right` #8 | de/en/it glossary | 268 | 32.5 | `) Abılı see plan orm DL Bl \| pbstrigen m sm` |
+| `page_018__left` #4 | English instructions | 29 | 29.3 | `I: Bands needet to fo up For begamers rape beizy reger` |
+| `page_023__left` #2 | hut info box | 18 | 51.4 | `u "Rtugio Lunel- E58 m prnat Man Jam - Ende Sept.` |
+
+So the 1607-word figure counted words that are **not recoverable text at all**,
+and this was never "the cheapest fix in this list". Re-typing those blocks would
+render noise — the exact trade `unreadable_panel` exists to refuse. The largest
+single cause of the bad reading is **language**: the English panel and the
+trilingual glossary are being read as `deu`. That belongs to the multilingual
+work (§2 of the plan), not to typing.
+
+### What shipped, and what it delivers
+
+`pipeline/text_panel.py`, wired into **Stage 05** between caption ejection and
+the starved-block re-read. That position is load-bearing: `block_reocr`'s
+`SKIP_TYPES` is `{FIGURE}`, so a block promoted first is re-read from its own
+crop for free, under that module's own measured acceptance rule, with no change
+to it.
+
+Over the 36 Stage 05 candidates of the owner's 25-spread book:
+
+| | candidates | promoted | correct |
+|---|---|---|---|
+| shipped rule | 36 | **3** | **3 / 3** |
+
+The three are both of the book's route tables (`page_003__left` #7, 328 words at
+median conf 91.8; `page_004__left` #21, 268 at 92.3) and the four-country
+difficulty table (`page_017__right` #10, 87 at 89.9) — 683 words of clean text
+that were locked inside pictures.
+
+### Three guards, each one earned by a measured failure
+
+**1. Two text questions must agree.** Over a wider 21-block set measured through
+the assembled document, the crop arm called 23 blocks text and the context arm
+vetoed 2. Both vetoes were correct: a photographic banner with a table header
+strip, and — exactly as `figure_surface`'s docstring predicted — a photograph of
+a wooden information board.
+
+**2. The surface question, as an *either*-arm veto.** Without it the pass
+promotes the sofa. Blurred upholstery has regular horizontal striations and the
+model calls it TEXT confidently in **both** arms, including one full-width band
+on `page_004__right` carrying **534 words** of weave noise at median OCR
+confidence 19.7. Offering `SURFACE` as a third answer to the text prompt does
+**not** help — measured, it changes not one answer of 55, byte-identical
+decisions. Asking `figure_surface`'s own question and refusing on either arm
+catches 3 of 3 upholstery blocks and costs 0 of 18 real panels.
+
+The asymmetry with `figure_surface` is deliberate and set by which way the
+mistake hurts: to **flag** a block as surface (Stage 08 drops it) both arms must
+agree, because a false positive deletes real content; to **promote** a figure to
+text, neither arm may even suspect it, because abstaining costs only a picture
+that stays a picture.
+
+**3. The wording of the prompt is part of the measurement.** The questions were
+first measured naming the book being scanned ("a printed mountaineering
+guidebook") and then generalised, as they must be — this is a book scanner. The
+generalisation **changed an answer**, and the answer it changed was wrong:
+
+| prompt | photographed warning sign | route table | grade table |
+|---|---|---|---|
+| names the guidebook (as measured) | PICTURE | TEXT | TEXT |
+| generalised to "a printed book" | **TEXT** | TEXT | TEXT |
+| + "a PHOTOGRAPH of a sign … is still a PICTURE" | PICTURE | TEXT | TEXT |
+| + also "printed as part of the page itself" | PICTURE | TEXT | **PICTURE** |
+
+Every cell is 3–5 identical draws. So the model is **deterministic** here at
+temperature 0, an apparent flip between two runs is a changed prompt rather than
+sampling, and the first place to look is your own edit. **An edited prompt is an
+unmeasured prompt** — re-measure after changing one word of these strings,
+exactly as after changing a threshold. The shipped prompt is row 3; row 4's
+extra clause looks harmless and loses a real 87-word table.
+
+### The two passes divide the work, and that is the honest headline
+
+`text_panel` asks *is this worth reading?*; `unreadable_panel` asks *can this be
+read?*; only a block that passes both renders as text. Measured, not asserted:
+under the un-corrected prompt the warning-sign photograph **was** promoted at
+Stage 05 and `unreadable_panel` demoted it straight back to FIGURE at Stage 07
+(median conf 33.9 against a floor of 70.5), while all three good promotions
+stayed text.
+
+**Honest limit: that net only catches false positives whose text is junk.** A
+photograph carrying *readable* burned-in text — a sign shot close up, a
+photographed page — would pass both passes and be deleted from the render. The
+two-questions-must-agree rule, not the net, is the safety argument, and it must
+not be "simplified" to one question.
+
+**And promotion deletes pixels.** Stage 08 renders a PARAGRAPH from its words, so
+a picture wrongly promoted is *gone from the PDF*, not merely mis-labelled. The
+plan's claim that this was a lesser risk than flagging was wrong and is corrected
+in place. It is recoverable — the block keeps its id, bbox, words and reading
+order, `type_promoted` marks the change as automatic, and the editor re-types it
+back — but that is a different thing from harmless.
+
+### Settled by measurement, not inherited
+
+* **`min_words` = 8.** Sweeping to 3 adds 15 candidates on this book and **zero**
+  promotions, at the cost of 15 more model calls.
+* **The promoted type is PARAGRAPH.** Stage 08 maps PARAGRAPH and TABLE to the
+  same `<p>` with a different class, so telling them apart would cost a third
+  model question and change nothing a reader sees.
+
+**Off by default in the module, on in `config.yaml`** — same contract as
+`vlm_box` and `figure_surface`: a missing Ollama, an unreadable answer or an
+arm's objection all leave the block a figure and say so in `meta.json`.
+`--no-text-panel` turns it off for a run. Cost is ~1 s per candidate when the
+first question says "picture" (the rest are skipped) and ~4 s when all four run.
+
+**Still n = 1 book.** Every count here is one 25-spread guide photographed on a
+sofa; the adjudication is by eye, by one reader.

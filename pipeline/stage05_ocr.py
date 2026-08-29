@@ -92,6 +92,7 @@ from pipeline import block_reocr as BR
 from pipeline import rescued_type as RT
 from pipeline import caption_eject as CE
 from pipeline import figure_text as FT
+from pipeline import text_panel as TP
 from pipeline.second_opinion import (
     EasyOCRSecondOpinion, find_disagreements, load_lexicon)
 
@@ -409,7 +410,8 @@ def _ocr_panel(bgr: np.ndarray, page: OCRPage, panel_w: int = 1100) -> np.ndarra
 # --------------------------------------------------------------------------
 
 
-def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
+def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
+        text_panel: bool = True
         ) -> OCRResult:
     t0 = time.perf_counter()
     p = S4.resolve_params(cfg)
@@ -465,6 +467,10 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
     pages: list[OCRPage] = []
     panels: list[np.ndarray] = []
     rescued_meta: list[dict] = []
+    panel_params = TP.resolve_params(cfg)
+    panel_params["enabled"] = bool(
+        text_panel and panel_params.get("enabled", False))
+    panel_meta: list[dict] = []
     tcfg_oem = int((cfg.get("tesseract", {}) or {}).get("oem", 1))
     t_ocr = time.perf_counter()
     for pl in layout.pages:
@@ -498,6 +504,26 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
         # channel today; adding one is a page_model schema change and CLAUDE.md
         # requires that in its own commit, so they are prefixed instead.
         warnings.extend(f"note: {n}" for n in eject_notes)
+
+        # A "figure" that is really a TEXT PANEL — a route table, a hut info
+        # box, an English/Italian translation panel — is re-typed PARAGRAPH so
+        # the reader gets words instead of a photograph of words. Two model
+        # questions must agree and neither surface question may object; see
+        # pipeline/text_panel.py.
+        #
+        # ORDER IS LOAD-BEARING: this runs BEFORE the starved-block re-read,
+        # whose SKIP_TYPES is {FIGURE}. A block promoted here is therefore
+        # re-read from its own crop for free, under that module's own measured
+        # acceptance rule. Do not move it after.
+        ordered, panel_notes = TP.promote_text_panels(ordered, img, panel_params)
+        panel_meta.extend(
+            {"page": pl.name, **vars(n)} for n in panel_notes)
+        # A promotion is an intended outcome, not a problem — same "note:"
+        # prefix and same reason as the ejections above.
+        warnings.extend(
+            f"note: promoted figure block {n.block_id} to text "
+            f"({n.n_words} words; crop={n.crop_answer}, page={n.page_answer})"
+            for n in panel_notes)
 
         # A block the subpage pass STARVED — its words are plainly on the page and
         # the box is right, but psm-3 page segmentation returned a fraction of
@@ -584,6 +610,10 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False
                    if k in BR.DEFAULTS},
                 "rescued": rescued_meta,
             },
+            "text_panel": {
+                **{k: v for k, v in panel_params.items() if k in TP.DEFAULTS},
+                "promoted": panel_meta,
+            },
             "xy_gap_frac": p["xy_gap_frac"],
             "reads": ["04_layout/layout.json", "03_dewarp/<subpage images>"],
             "second_opinion": (
@@ -645,6 +675,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--lang", default=None,
                     help="Tesseract lang code (eng|bul|ita|deu, or eng+bul); "
                          "default from config languages.default")
+    ap.add_argument("--no-text-panel", action="store_true",
+                    help="do not ask the vision model whether a figure is "
+                         "really a text panel (pipeline/text_panel.py)")
     ap.add_argument("--debug", action="store_true")
     args = ap.parse_args(argv)
 
@@ -655,7 +688,8 @@ def main(argv: list[str] | None = None) -> int:
         pass
 
     cfg = S4.load_config(args.config)
-    result = run(args.page_dir, cfg, lang=args.lang, debug=args.debug)
+    result = run(args.page_dir, cfg, lang=args.lang, debug=args.debug,
+                 text_panel=not args.no_text_panel)
     print(f"{args.page_dir}: OCR engine={result.engine}")
     for pg in result.pages:
         print(f"  {pg.name}: {pg.total_words} words in {len(pg.blocks)} blocks "

@@ -179,16 +179,45 @@ hut information boxes, and the English and Italian translation panels — the ow
 items #15 and #19. Rendered as photographs they are not searchable, not
 correctable, not translatable, and not spell-checkable.
 
-This is the largest measured loss in the document **and** the cheapest fix in this
-list: it is the exact mirror of the sofa question, which is shipped and measured at
-16 flagged out of 163 with nothing lost. Same module, same two-questions-must-agree
-rule, new prompt pair: "is this a picture, or is it text in a box?" — asked about
+**THE PREMISE ABOVE IS WRONG, measured 2026-08-29 while building it.** It assumed
+Stage 04 mis-types these boxes as pictures. Only **4** of them are that. The other
+fourteen are text blocks all the way through Stage 05 and are turned into pictures
+at Stage 07 by *our own* `unreadable_panel`, correctly: their OCR is not text a
+reader could use — the English Version panel reads "Englist Version Crane a Of w wa
+Z SH Zu SO Saar Aatter", at median confidence 19.2 against a floor of 70.5. So the
+1607-word figure counted words that are **not recoverable text at all**, and this
+was never "the cheapest fix in this list".
+
+Splitting the item honestly:
+
+* **the 4 mis-typed boxes** — the two big route tables and the four-country grade
+  table, ~683 words at OCR confidence ~90 — are fixed, and shipped, by
+  `pipeline/text_panel.py` (below);
+* **the 14 unreadable ones** need the text to become readable before typing means
+  anything, and the largest single cause is **language**: the English panel and the
+  trilingual glossary are being read as `deu`. That is §2 of this document, not this
+  item. Re-typing them without fixing the reading would render noise, which is
+  exactly the trade `unreadable_panel` was built to refuse.
+
+The original design sketch, kept because the shipped module follows it: it is the
+mirror of the sofa question, which is shipped and measured at 16 flagged out of 163
+with nothing lost. Same module shape, same two-questions-must-agree rule, new
+prompt pair: "is this a picture, or is it text in a box?" — asked about
 the crop alone and about the outlined block on the whole page. A block both
 questions call text gets promoted and re-read by `block_reocr`.
 
-Risk is low and bounded: the failure mode is a *picture* wrongly promoted to text,
-which produces a garbage text block the operator can see and revert — not a
-deletion.
+**CORRECTED 2026-08-29, before building it.** The sentence that stood here said
+the risk was low because a wrongly promoted picture is "a garbage text block the
+operator can see and revert — not a deletion". That is wrong, and a plan that
+understates a failure mode is how a safety rule gets "simplified" later. Stage 08
+renders a PARAGRAPH from its words, so a picture wrongly promoted is **gone from
+the PDF**. This is the same risk class as `figure_surface`, not a lesser one, and
+the two-questions-must-agree rule is the safety argument rather than politeness.
+
+BUILT 2026-08-29 as `pipeline/text_panel.py`, and the build found a third thing
+the design above did not have: without a **surface veto**, 3 of 21 promotions are
+out-of-focus upholstery, which the model calls TEXT in both arms with complete
+confidence. See RESULTS 2026-08-29.
 
 ### 3.2 The four sofa spreads still have the wrong crop — blocked on the owner
 

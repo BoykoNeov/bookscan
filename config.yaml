@@ -258,6 +258,42 @@ figure_surface:
   timeout_s: 180
   min_area_frac: 0.01   # a 21 px sliver is both arms' worst case, and nobody's complaint
 
+# --- Figures that are really text panels (Stage 05; pipeline/text_panel.py) ---
+# The exact inverse of unreadable_panel: a guidebook prints its most valuable
+# data - route tables, hut info boxes, the glossary, the English and Italian
+# translation panels - inside coloured boxes, Stage 04 reasonably calls a box a
+# picture, and Stage 08 then renders a PHOTOGRAPH OF TEXT. On the owner's book
+# that is 21 blocks holding 1436 of 13082 words: not searchable, not
+# correctable, not translatable.
+#
+# Asks the model TWICE (crop alone, whole page with the block outlined) and both
+# must say TEXT; the context arm vetoed 2 of 23 and both vetoes were right (a
+# photo banner, and a photograph of an information board). Then asks
+# figure_surface's OWN question and refuses on EITHER arm - without that veto 3
+# of 21 promotions are out-of-focus upholstery, which the model calls TEXT in
+# both arms with complete confidence (RESULTS 2026-08-29).
+#
+# A promotion re-TYPES the block PARAGRAPH; it keeps its id, bbox, words and
+# reading order, and the editor can re-type it back. It runs BEFORE the
+# starved-block re-read on purpose, so a promoted panel is re-read from its own
+# crop under block_reocr's measured rule.
+#
+# ON here (the module's own default is off), exactly as figure_surface is: a
+# missing Ollama leaves every block a figure, so leaving it on costs a clean
+# book only time - ~1 s per candidate figure when the first question says
+# "picture", ~4 s when all four run, so well under a minute on a 163-figure
+# book. --no-text-panel turns it off for a run.
+text_panel:
+  enabled: true
+  url: "http://127.0.0.1:11434"
+  model: "qwen3.6:27b"
+  crop_max_side: 768    # the sizes the 18/18 result was measured at
+  page_max_side: 1120
+  num_ctx: 4096
+  timeout_s: 180
+  min_words: 8          # sweeping to 3 adds 15 candidates and 0 promotions
+  surface_veto: true    # the switch exists so the 3-of-21 A/B stays runnable
+
 # --- Higher-resolution figure assets (Stage 07; pipeline/figure_hires.py) ---
 # The pictures matter as much as the text, and the anchor is the WHOLE spread in
 # one photograph, so a figure gets whatever pixels are left after the page is

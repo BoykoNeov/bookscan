@@ -169,6 +169,49 @@ Italian, German**.
       the paper band, so the junk is *on* the paper — real content read badly
       because the dewarp ran on a frame containing fabric. That points back at the
       crop, not at a text filter.
+- **A "figure" that is really a text panel is promoted to text — SHIPPED
+      2026-08-29 as `pipeline/text_panel.py`** (Stage 05, between caption ejection
+      and the starved-block re-read; that position is load-bearing because
+      `block_reocr` skips FIGURE blocks, so a promoted panel is re-read for free).
+      **The plan's premise for this item was WRONG and the eye-check is what found
+      it.** Of the 18 blocks that render as photographs of text in the owner's
+      book, only **4** are Stage 04 mis-typing a box; the other **14** are text all
+      the way through Stage 05 and are turned into pictures at Stage 07 by our own
+      `unreadable_panel`, **correctly** — their OCR is not usable text (the
+      English-language panel reads `Englist Version Crane a Of w wa Z SH Zu SO Saar
+      Aatter`, median conf 19.2 against a floor of 70.5). So the "12.2 % of the
+      book's words" figure counted words that are **not recoverable text at all**,
+      and this was never the cheapest item in `docs/plans/panorama-and-next-steps.md`.
+      The 14 need the *reading* fixed first and the largest cause is **language** —
+      that is the multilingual work, not typing. What ships is the 4: **3 of 36
+      Stage 05 candidates promoted, 3/3 correct**, both route tables and the
+      four-country grade table, **683 words at OCR confidence ~90**.
+      Three guards, each earned by a measured failure. (a) **Two text questions
+      must agree** — the context arm vetoed 2 of 23 and both were right (a photo
+      banner; a photograph of an information board). (b) **The surface question as
+      an EITHER-arm veto** — without it the pass promotes the sofa, including a
+      534-word band of weave noise at conf 19.7 that both text arms confidently
+      call TEXT; offering `SURFACE` as a third answer to the text prompt changes
+      **not one answer of 55**. The asymmetry with `figure_surface` is deliberate:
+      to FLAG a block surface both arms must agree (a false positive deletes real
+      content), to PROMOTE one neither arm may even suspect it. (c) **The prompt
+      WORDING is part of the measurement** — measured naming "a mountaineering
+      guidebook", then generalised as it must be, and the generalisation flipped a
+      photographed warning sign from PICTURE to TEXT; one clause fixed it and a
+      second, apparently harmless clause then lost a real 87-word table. All 3-5
+      identical draws, so the model is **deterministic** here and a flip between
+      runs is a changed prompt, not sampling. **An edited prompt is an unmeasured
+      prompt.** The two passes divide the work — `text_panel` asks *is this worth
+      reading?*, `unreadable_panel` asks *can this be read?* — and that net is
+      measured (the wrongly promoted sign was demoted straight back). **Honest
+      limit: the net only catches junk-text false positives**; a photograph with
+      READABLE burned-in text would pass both and be deleted, so the
+      two-questions rule is the safety argument and must not be simplified.
+      **Promotion deletes pixels** (Stage 08 renders a paragraph from its words) —
+      it is recoverable via `type_promoted` in the editor, which is not the same as
+      harmless. `min_words` 8 (sweeping to 3 adds 15 candidates, 0 promotions);
+      PARAGRAPH not TABLE (Stage 08 renders both as `<p>`). OFF in the module, ON
+      in `config.yaml`, `--no-text-panel` per run. n = 1 book, adjudicated by eye.
 - **Three owner proposals measured 2026-08-29, two refused; and two defects found
       behind the German render.** (a) **Reading each close-up separately and merging
       the words is a WASH** — line-aligned over 34 close-ups, a max-confidence merge

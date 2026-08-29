@@ -115,8 +115,23 @@ Italian, German**.
   ~8.4 % inward**. Fix it with an inward-only guard or a union with the
   detector's own paper mask; do NOT retune `search_pad` (n = 1, recorded dead
   zone). All three passes returned byte-identical boxes, so the repeatability bar
-  measured determinism, not robustness. Nothing in the pipeline was changed and
-  **`split_eval` stays red at 19/21** — this is a reason to build the fix, not to
+  measured determinism, not robustness.
+  **SHIPPED 2026-08-29 (`pipeline/vlm_box.py`) — as a search window and nothing
+  else.** The owner's own scan of a book on a pale sofa mis-split on every page,
+  making this the blocker for real work rather than an experiment. Stage 02 now
+  asks the model where the book is **only** when the detector abstained AND no
+  operator box exists, and uses the answer to aim the **spine search** while
+  copying the emitted pixels from the detector untouched
+  (`book_boundary.search_only`). Every frame it fires on is one the detector gave
+  up on, so nothing is cropped at all and the path **cannot clip by
+  construction**: `split_eval --vlm` reads **21/21 with 0.0 % clipping**, better
+  than the cut-to-the-box arm. **It does NOT settle the postponed clipping
+  decision** — whether a model box may ever *cut*, and what the bar should grade
+  — and nothing here depends on the answer. A missing Ollama, an unreadable
+  answer or an implausible box all fall back to the previous behaviour and say so
+  in `split.json`. Still n = 2 scenes, so the fixture shoot stands. The plain
+  `split_eval` guard is untouched and
+  **stays red at 19/21** — this is a reason to build the fix, not to
   relabel the rows, and it does not replace the fixture shoot.
 
 ## Architecture: the stage contract (IMPORTANT)

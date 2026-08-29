@@ -76,6 +76,9 @@ inverts on tight framing, and A10 is still live.
 
 ## The shot list
 
+*Shooting today? Use `pale-fixture-shoot-checklist.md` instead — the same
+list, tickable, sized for a phone screen. This section is the reasoning.*
+
 Aim for **16–24 spreads**. More surfaces beats more pages: two spreads on each of
 many surfaces is worth far more than twenty on one sofa.
 

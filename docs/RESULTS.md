@@ -6749,31 +6749,78 @@ run through an applied crop before today. They all survived one. That also means
 "where the detector abstains" is **not** a narrow trigger: arms B and C differ on
 4 rows only, so C is not the safe subset it sounds like.
 
-### The failure the gutter column hides: the crop is no longer clip-free
+### The gutter column hides one thing: the crop is no longer clip-free
 
 `user_box` pads 8 % outward and unions emit with search, so a crop from a
 *hand-drawn* box measured 0.00 % clipping everywhere. A model box does not:
 
-| row | clipped | what is in the lost band |
-|---|---|---|
-| `de_02` | **1.89 %** | 62 px off the left: cloth, the shadow gap, the fanned closed-page block, and the outer sliver of a solid coloured side tab |
-| `zoomset_en_02` | **1.19 %** | 26 px off the bottom: entirely the polka-dot tablecloth (median grey 41 vs page interior 155) — the label runs past the page |
+| row | clipped | in arm C? | what is in the lost band |
+|---|---|---|---|
+| `de_02` | **1.89 %** | **yes** — the detector abstains here | 62 px off the left: cloth, the shadow gap, the fanned closed-page block, and the outer sliver of a solid coloured side tab |
+| `zoomset_en_02` | 1.19 % | no — the detector crops here, so C never takes the model's box | 26 px off the bottom: entirely the polka-dot tablecloth (median grey 41 vs page interior 155) — the label runs past the page |
+
+So the shippable arm has **one** affected row, not two.
 
 Adjudicated per `book_box.json`'s own instruction (a sub-2 % clip is a finding
-plus an adjudication, and a clip that removes **ink** is a real failure at any
-size). Checked two ways: a connected-component pass found 22 letter-like blobs in
+plus an adjudication; a clip that removes **ink** is a real failure at any size).
+Checked two ways: a connected-component pass found 22 letter-like blobs in
 `de_02`'s lost band against 110 in the 62-px strip immediately inside it, and
 looking at both regions at 3–4× showed those 22 are the coloured page tabs and
-the fanned page-edge texture, not glyphs. **No readable content is lost.** But
-the bar is exactly 0.0 %, and `de_02` is a row arm C would take from the model —
-so a model box is **not** drop-in safe, and this is the thing to fix before any
-of it ships.
+the fanned page-edge texture, not glyphs. **No readable content is lost.**
 
-The cause is visible in the per-edge table: the model's box cuts *into* the book
-by more than the pad can give back — `de_02` left −8.90 %, `zoomset_en_02` bottom
-−8.36 % of book width/height. The asymmetry the note feared in the other
-direction was harmless here: `paleset_01`'s +4.89 % right-edge excess split fine,
-and `zoomset_en_01` carried **+15.03 %** on one edge and still hit.
+### And that is a finding about the METRIC, not only about the model
+
+`split_eval`'s bar is `worst_clip == 0.0`, and until today nothing could produce
+a small non-zero clip: the detector abstains and emits the whole frame (trivially
+0.0 %), and a hand-drawn box measured 0.00 % because a human draws generously.
+The bar has therefore **never had to tell "lost text" apart from "trimmed a
+tab"** — and this run is the first case that separates them. It was resolved by
+hand, correctly, in a way the harness cannot express.
+
+Two readings, and choosing between them is an owner call, not something to settle
+silently:
+
+* the model's box needs a **guard against inward error** before it can be
+  trusted; or
+* the bar should grade **ink lost**, not labelled area lost, in which case this
+  run already passes.
+
+What is NOT in doubt: the box loses no readable content, and `worst_clip == 0.0`
+as written would go red.
+
+### The mechanism, and the threshold it hands the next step
+
+The cause is in the per-edge table (positive = the box sits outside the book,
+negative = it cuts in, as a fraction of book width/height):
+
+| row | left | right | top | bottom | clipped after the 8 % pad |
+|---|---|---|---|---|---|
+| `paleset_01` | −0.13 | **+4.89** | −0.30 | −3.64 | 0.00 % |
+| `paleset_02` | +0.18 | +1.46 | −2.27 | −2.07 | 0.00 % |
+| `de_01` | −2.33 | +0.71 | −0.83 | +0.04 | 0.00 % |
+| `zoomset_de_01` | +0.47 | +2.09 | +0.38 | +2.21 | 0.00 % |
+| `zoomset_de_02` | −0.85 | −1.55 | +0.59 | +0.89 | 0.00 % |
+| `zoomset_en_01` | +2.57 | **+15.03** | +0.05 | +0.88 | 0.00 % |
+| `de_02` | **−8.90** | −3.54 | +0.31 | −0.49 | 1.89 % |
+| `zoomset_en_02` | +0.40 | −1.65 | −1.83 | **−8.36** | 1.19 % |
+
+Read it in two directions:
+
+* **Outward excess was harmless.** The note feared `paleset_01`'s ~5-point
+  one-edge excess; it split fine, and `zoomset_en_01` carried **+15.03 %** on one
+  edge and still hit. That worry can be closed.
+* **Inward error is the whole failure mode, and the pad has a measured ceiling.**
+  −3.64 % survives the 8 % pad; −8.36 % and −8.90 % do not. **The pad stops
+  covering somewhere between ~3.6 % and ~8.4 % of inward error** — that is the
+  design constraint for whatever guard comes next, and it is the number to build
+  against.
+
+### The next move this points at
+
+Stop the box cutting inward, rather than widening the pad: an **inward-only
+guard** (refuse or expand an edge that sits inside the detector's own paper
+mask), or a **union with the detector's mask**, which is available on every row
+because the detector still runs. Both keep one pad concept with one value.
 
 ### What this does not license
 

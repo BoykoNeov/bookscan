@@ -94,16 +94,24 @@ Italian, German**.
   real findings are elsewhere. The detector **abstains on 17 of 21 rows**, so 15
   correct rows had never seen an applied crop before; they survived one, but
   "where the detector abstains" is therefore NOT a narrow trigger. And the crop
-  **stopped being clip-free**: `de_02` loses 1.89 % and `zoomset_en_02` 1.19 % of
-  the labelled book, because the model's box cuts INTO the book by more than the
-  8 % pad gives back. Adjudicated as **no readable content lost** (cloth, the
-  fanned page-edge block, a coloured tab sliver — checked by connected components
-  and by eye), but the bar is exactly 0.0 %, so a model box is **not** drop-in
-  safe yet. Do NOT retune `search_pad` to rescue it (n = 1, and 0.08 has a
-  recorded dead zone). All three passes returned byte-identical boxes, so the
-  repeatability bar measured determinism, not robustness. Nothing in the pipeline
-  was changed and **`split_eval` stays red at 19/21** — this is a reason to build
-  the fix, not to relabel the rows, and it does not replace the fixture shoot.
+  **stopped being clip-free**: `de_02` loses 1.89 % of the labelled book (the one
+  affected row in the shippable arm; `zoomset_en_02`'s 1.19 % never arises there,
+  the detector crops it). Adjudicated as **no readable content lost** — cloth,
+  the fanned page-edge block, a coloured tab sliver, checked by connected
+  components and by eye. **That is a finding about the METRIC too:** until now
+  nothing could produce a small non-zero clip (the detector abstains; a human
+  draws generously), so `worst_clip == 0.0` has never had to tell "lost text"
+  from "trimmed a tab". Whether to guard the box or grade **ink** instead of
+  labelled area is an **owner call** — do not settle it silently. **Mechanism and
+  the number to build against:** outward excess is harmless (a **+15 %** edge
+  still split), inward error is the whole failure mode, and the 8 % pad covers
+  −3.64 % but not −8.36 %/−8.90 % — so it **stops covering between ~3.6 % and
+  ~8.4 % inward**. Fix it with an inward-only guard or a union with the
+  detector's own paper mask; do NOT retune `search_pad` (n = 1, recorded dead
+  zone). All three passes returned byte-identical boxes, so the repeatability bar
+  measured determinism, not robustness. Nothing in the pipeline was changed and
+  **`split_eval` stays red at 19/21** — this is a reason to build the fix, not to
+  relabel the rows, and it does not replace the fixture shoot.
 
 ## Architecture: the stage contract (IMPORTANT)
 

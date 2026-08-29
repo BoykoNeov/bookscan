@@ -36,7 +36,7 @@ def test_both_answers_must_say_surface(page, monkeypatch):
     _answers(monkeypatch, "SURFACE", "SURFACE")
     flagged, diag = FS.is_surface(page, BOX, {**FS.DEFAULTS, "enabled": True})
     assert flagged is True
-    assert diag["crop"] == "SURFACE" and diag["page"] == "SURFACE"
+    assert diag["crop_answer"] == "SURFACE" and diag["page_answer"] == "SURFACE"
 
 
 @pytest.mark.parametrize("crop,page_ans", [

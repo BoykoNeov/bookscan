@@ -146,7 +146,7 @@ def is_surface(page: np.ndarray, bbox: dict,
     t0 = time.perf_counter()
     crop_answer = _ask(page[y:y1, x:x1], CROP_PROMPT,
                        p["crop_max_side"], p)
-    diag["crop"] = crop_answer[:40]
+    diag["crop_answer"] = crop_answer[:40]
     # Short-circuit: the second question costs a second and cannot change a
     # "no" into a "yes" — both arms must agree.
     if "SURFACE" not in crop_answer:
@@ -157,6 +157,6 @@ def is_surface(page: np.ndarray, bbox: dict,
     thickness = max(6, int(min(h, w) * 0.008))
     cv2.rectangle(marked, (x, y), (x1, y1), (255, 0, 255), thickness)
     page_answer = _ask(marked, PAGE_PROMPT, p["page_max_side"], p)
-    diag["page"] = page_answer[:40]
+    diag["page_answer"] = page_answer[:40]
     diag["ms"] = (time.perf_counter() - t0) * 1000.0
     return "SURFACE" in page_answer, diag

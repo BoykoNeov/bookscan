@@ -482,3 +482,61 @@ def test_a_surface_block_is_not_rendered(tmp_path: Path):
     assert "kept text" in kept and "kept text" in dropped
     assert kept.count("<figure") == 1
     assert dropped.count("<figure") == 0
+
+
+# --------------------------------------------------------------------------
+# De-hyphenation: the lexicon is now actually supplied (2026-08-29)
+# --------------------------------------------------------------------------
+
+
+def test_the_lookup_ignores_punctuation_the_emitted_text_keeps_it():
+    """The second half of a broken word carries the line's punctuation
+    ("Tourenvor-" + "schlaege,"), and a trailing comma is in no lexicon. The
+    membership test normalizes; the output must not."""
+    assert S8.join_hyphen("Tourenvor-", "schlaege,", {"tourenvorschlaege"}) \
+        == "Tourenvorschlaege,"
+
+
+def test_the_lookup_folds_case_so_a_german_noun_validates():
+    assert S8.join_hyphen("Beruecksich-", "tigung", {"beruecksichtigung"}) \
+        == "Beruecksichtigung"
+
+
+def test_the_dehyphen_lexicon_is_keyed_on_the_documents_own_language(tmp_path):
+    """A lexicon for the wrong language silently refuses every join, so the key
+    is the language the document was READ in, not the config default."""
+    cfg = {"engines": {"easyocr": {"lexicon": {"deu": "models/lexicons/de.dic",
+                                               "eng": "models/lexicons/en.dic"}}}}
+    seen: list = []
+    orig = S8.load_lexicon
+    S8.load_lexicon = lambda paths: seen.append(paths) or {"x"}
+    try:
+        S8._dehyphen_lexicon(cfg, "deu")
+        assert seen and seen[0][0].name == "de.dic"
+        # a multi-language string takes the first code
+        seen.clear()
+        S8._dehyphen_lexicon(cfg, "deu+ita")
+        assert seen and seen[0][0].name == "de.dic"
+    finally:
+        S8.load_lexicon = orig
+
+
+def test_an_unknown_or_missing_language_stays_conservative():
+    cfg = {"engines": {"easyocr": {"lexicon": {"eng": "models/lexicons/en.dic"}}}}
+    assert S8._dehyphen_lexicon(cfg, "fra") is None
+    assert S8._dehyphen_lexicon(cfg, None) is None
+    assert S8._dehyphen_lexicon({}, "eng") is None
+
+
+def test_a_broken_lexicon_does_not_fail_the_render():
+    """A render must always produce a document; a missing dictionary only costs
+    the joins."""
+    cfg = {"engines": {"easyocr": {"lexicon": {"eng": "models/lexicons/en.dic"}}}}
+    orig = S8.load_lexicon
+    def boom(paths):
+        raise RuntimeError("corrupt .aff")
+    S8.load_lexicon = boom
+    try:
+        assert S8._dehyphen_lexicon(cfg, "eng") is None
+    finally:
+        S8.load_lexicon = orig

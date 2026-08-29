@@ -72,6 +72,7 @@ from pipeline.page_model import (
     BBox, Block, BlockType, Document, DocPage, PairSource, StageMeta, Word,
 )
 from pipeline import stage04_layout as S4
+from pipeline.second_opinion import load_lexicon, normalize_token
 
 STAGE = "stage08_render"
 VERSION = "0.2.0"
@@ -106,6 +107,31 @@ _STRIP = {
 # --------------------------------------------------------------------------
 
 
+def _dehyphen_lexicon(cfg: dict, source_language: str | None):
+    """The per-language lexicon that activates the de-hyphenation rule, or None.
+
+    Same lexicon and same loader as Stage 05's disagreement trigger
+    (``engines.easyocr.lexicon`` in config.yaml, built by tools/setup_lexicons.py
+    into gitignored models/lexicons/). Returning None keeps the conservative
+    behaviour — every line-end hyphen retained — which is what a fresh clone
+    with no downloaded dictionaries gets.
+
+    A multi-language document language (``deu+ita``) takes the FIRST code: the
+    lexicon is per language and a join only has to be right, not exhaustive.
+    """
+    if not source_language:
+        return None
+    paths = (((cfg.get("engines") or {}).get("easyocr") or {}).get("lexicon") or {})
+    path = paths.get(str(source_language).split("+")[0])
+    if not path:
+        return None
+    try:
+        return load_lexicon([REPO_ROOT / path])
+    except Exception:
+        return None                       # a broken lexicon must not fail a render
+
+
+
 def join_hyphen(left: str, right: str, dictionary: set[str] | None) -> str | None:
     """Return the de-hyphenated join of a line-end ``left`` with the next line's
     ``right``, or None to keep them separate (hyphen retained).
@@ -121,7 +147,13 @@ def join_hyphen(left: str, right: str, dictionary: set[str] | None) -> str | Non
     if dictionary is None:
         return None                       # conservative default: keep the hyphen
     candidate = ls[:-1] + right
-    return candidate if candidate.lower() in dictionary else None
+    # The membership test must be on the NORMALIZED token, not ``.lower()``: the
+    # second half of a broken word usually carries the line's punctuation
+    # ("Tourenvor-" + "schlaege,"), and a trailing comma fails every lexicon. The
+    # emitted text keeps the punctuation; only the lookup drops it. This is also
+    # what makes a HunspellLexicon a drop-in here — it keys on normalized tokens.
+    probe = normalize_token(candidate)
+    return candidate if probe and probe in dictionary else None
 
 
 def merge_hyphens(words: list[Word], dictionary: set[str] | None) -> list[Word]:
@@ -622,7 +654,11 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
 
     out_dir = job_dir / "render"
     out_dir.mkdir(parents=True, exist_ok=True)
-    html_str = render_html(doc, job_dir, dictionary=None)  # de-hyphen dict seam
+    # De-hyphenation needs the document's own language, not the config default:
+    # the document records what it was actually read in, and a lexicon for the
+    # wrong language would silently refuse every join.
+    dictionary = _dehyphen_lexicon(cfg, doc.settings.source_language)
+    html_str = render_html(doc, job_dir, dictionary=dictionary)
     html_path = out_dir / "page.html"
     html_path.write_text(html_str, encoding="utf-8")
 
@@ -669,10 +705,15 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
         warnings=[
             pdf_note,
             font_note,
-            "De-hyphenation is a wired seam: no per-language dictionary is loaded, "
-            "so line-end hyphens are conservatively KEPT (join needs next-line "
-            "lowercase AND joined token in dictionary). Supply a dictionary to "
-            "activate joins.",
+            (f"De-hyphenation ACTIVE for {doc.settings.source_language}: a line-end "
+             f"hyphen is joined only when the next line starts lowercase AND the "
+             f"joined token is in that language's lexicon; otherwise the hyphen is "
+             f"kept."
+             if dictionary is not None else
+             "De-hyphenation is INERT: no lexicon for "
+             f"{doc.settings.source_language or 'this document'} "
+             "(engines.easyocr.lexicon), so every line-end hyphen is conservatively "
+             "KEPT. Run `python -m tools.setup_lexicons` to activate joins."),
             "Render is a pure function of document.json + document_assets/ (reads "
             "no per-stage folders); re-run any time after edits. Images inlined as "
             "data URIs -> the HTML is self-contained and portable.",

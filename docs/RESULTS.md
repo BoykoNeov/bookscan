@@ -7438,3 +7438,61 @@ The 2118 unpaired tokens are not a hidden win — they are border fragments
 (a close-up cuts words at its edge and Tesseract reads the fragment confidently)
 plus alignment failures. Counting them as rescues is exactly the error that
 produced the 1.403x figure.
+
+## 2026-08-29 — The de-hyphenation rule was inert, and the word normalizer was deleting umlauts
+
+Verifying the German render surfaced two defects behind one symptom: **138 words
+in the owner's book are split across a line break and left broken** — `Wolf- gang`,
+`Weltge- schichte`, `Berücksich- tigung`.
+
+### 1. The rule was implemented, tested, and never given a dictionary
+
+`stage08_render.join_hyphen` has always implemented CLAUDE.md's rule correctly and
+`load_lexicon`'s own docstring says it is "Shared with the Stage 08 de-hyphenation
+seam". Stage 08 called `render_html(doc, job_dir, dictionary=None)`. The four
+Hunspell dictionaries have been on disk since `tools/setup_lexicons.py` ran.
+
+Now loaded, keyed on **the document's own `source_language`** — not the config
+default, because a lexicon for the wrong language silently refuses every join.
+Two supporting fixes the real data forced:
+
+- the membership test normalizes the candidate. The second half of a broken word
+  carries the line's punctuation (`Tourenvor-` + `schläge,`) and a trailing comma
+  is in no lexicon. The emitted text keeps the punctuation; only the lookup drops it.
+- a multi-language string takes the first code; a broken lexicon returns None
+  rather than failing a render.
+
+**54 of 138 join** (63 after fix 2 below). The 75 refusals are the rule working:
+`An-|chtigkeit`, `Kletter-|stelgset.`, `Höhenkrank-|1eit` are OCR errors in one
+half, and `GPX-|Track` is a real hyphen. Meta now states which case applies
+instead of always claiming no dictionary is loaded.
+
+### 2. `normalize_token` silently deleted the accented letters of 3 of the 4 target languages
+
+```python
+_NORM_RE = re.compile(r"[^0-9a-zA-Zа-яёА-ЯЁ]+")     # before
+"Berücksichtigung" -> "bercksichtigung"             # in no German lexicon
+"è" -> ""                                           # an Italian word, erased
+```
+
+Replaced with a script-agnostic `[\W_]+`, and `.casefold()` replaced by `.lower()`
+— casefold maps ß to ss, so `Straße` became `strasse`, which the German Hunspell
+**rejects** while accepting `straße`.
+
+**Measured effect on shipped behaviour: none.** The disagreement gate is the only
+consumer today and it runs for Bulgarian alone (`engines.easyocr.enabled_for:
+[bul]`), whose alphabet was entirely inside the old class:
+
+| fixture set | tokens | normalize differently |
+|---|---|---|
+| Bulgarian — **the gate actually runs here** | 5604 | **0 (0.00 %)** |
+| German — gate inert | 2446 | 138 (5.64 %) |
+| Italian — gate inert | 4147 | 106 (2.56 %) |
+
+So this is a pure correction for the paths about to use it — Stage 08's
+de-hyphenation, and the per-block language work in
+`docs/plans/panorama-and-next-steps.md` — with a measured zero delta on the one
+shipped path. It also means **the German and Italian rows of the disagreement
+trigger were never measurable before**: every accented word was out-of-lexicon by
+construction. If that gate is ever enabled beyond Bulgarian, it must be measured
+fresh; no pre-2026-08-29 number about it applies to those languages.

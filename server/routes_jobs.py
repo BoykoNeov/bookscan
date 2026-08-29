@@ -33,11 +33,17 @@ def _require_job(request: Request, job_id: str) -> Path:
 
 
 @router.post("")
-def create_job(request: Request, mode: str = "flag") -> dict:
+def create_job(request: Request, mode: str = "flag",
+               lang: str | None = None) -> dict:
     if mode not in J.MODES:
         raise HTTPException(400, f"invalid mode: {mode!r} (choices: {J.MODES})")
-    job_id = J.create_job(_root(request), mode=mode)
-    return {"job_id": job_id, "mode": mode}
+    # Omitted -> the job records no language and Stage 05 uses
+    # ``languages.default``; that is the pre-2026-08-29 behaviour and stays
+    # the default so an existing client that never sends ``lang`` is unchanged.
+    if lang is not None and not J.LANG_RE.match(lang):
+        raise HTTPException(400, f"invalid lang: {lang!r}")
+    job_id = J.create_job(_root(request), mode=mode, lang=lang)
+    return {"job_id": job_id, "mode": mode, "lang": lang}
 
 
 @router.get("")
@@ -47,7 +53,32 @@ def list_jobs(request: Request) -> dict:
 
 @router.get("/{job_id}")
 def get_job_status(job_id: str, request: Request) -> dict:
-    return J.job_status(_require_job(request, job_id))
+    out = J.job_status(_require_job(request, job_id))
+    # The choices an operator may pick from, and what a job with no recorded
+    # language actually gets. Both come from config.yaml, which the job folder
+    # has no way to know about — so they are added here, not in jobs.py.
+    langs = (request.app.state.cfg.get("languages", {}) or {})
+    out["languages"] = [e.get("code") for e in (langs.get("supported") or [])
+                        if isinstance(e, dict) and e.get("code")]
+    out["lang_default"] = langs.get("default", "eng")
+    return out
+
+
+@router.patch("/{job_id}")
+def set_job_lang(job_id: str, request: Request, lang: str | None = None) -> dict:
+    """Change the job's OCR language.
+
+    Applies to pages processed AFTER this call — the per-page trace is
+    immutable, so pages already read in another language keep that reading
+    until they are re-run. The response says how many those are rather than
+    implying the whole job changed.
+    """
+    job_dir = _require_job(request, job_id)
+    if lang is not None and not J.LANG_RE.match(lang):
+        raise HTTPException(400, f"invalid lang: {lang!r}")
+    J.set_job_lang(job_dir, lang)
+    return {"job_id": job_dir.name, "lang": lang,
+            "pages_already_processed": J.count_processed_pages(job_dir)}
 
 
 @router.post("/{job_id}/pages")

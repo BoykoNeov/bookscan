@@ -184,9 +184,17 @@ class Worker:
 
     async def _run_one(self, page_dir: Path) -> None:
         mode = J.job_mode(page_dir.parent)
+        # The job's OCR language, when it has one. Omitting --lang (a job with
+        # no recorded language) is not the same as passing the config default:
+        # it leaves the choice to Stage 05, which is what every job did before
+        # this setting existed. Passing it is the whole point — until
+        # 2026-08-29 the worker never did, so a German book was read as English
+        # on every page the console or the phone submitted.
+        lang = J.job_lang(page_dir.parent)
         proc = await asyncio.create_subprocess_exec(
             sys.executable, "-m", "pipeline.run_all", str(page_dir),
             "--mode", mode,
+            *(("--lang", lang) if lang else ()),
             cwd=self.repo_root,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
             # POSIX only: give the child its own session so shutdown can signal
@@ -196,6 +204,7 @@ class Worker:
         )
         self._current = (page_dir, proc)
         J.write_worker_state(page_dir, "running", pid=proc.pid, mode=mode,
+                             lang=lang,
                              started_at=J.now_iso(), exit_code=None, error=None)
         try:
             stdout, stderr = await proc.communicate()

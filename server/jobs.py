@@ -29,6 +29,11 @@ PAGE_DIR_RE = re.compile(r"^page_(\d+)$")
 # the server's contract with its own job.json, not run_all's CLI surface.
 MODES = ("flag", "best_guess", "patch")
 
+# A Tesseract language code, or a "+"-joined combination of them ("deu+ita").
+# Anchored and narrow because this value is persisted and later handed to a
+# subprocess as an argv element.
+LANG_RE = re.compile(r"^[a-z]{3}(?:\+[a-z]{3})*$")
+
 
 def jobs_root(cfg: dict, repo_root: Path) -> Path:
     rel = (cfg.get("paths", {}) or {}).get("jobs", "jobs")
@@ -44,18 +49,28 @@ def new_job_id() -> str:
     return f"{stamp}-{uuid.uuid4().hex[:8]}"
 
 
-def create_job(root: Path, mode: str = "flag") -> str:
-    """Mint a job dir and persist its uncertainty ``mode`` in ``job.json`` —
-    the one job-level setting the API needs before any page is uploaded
-    (Stage 06 reads it per page, via ``job_mode()`` below, when the worker
-    subprocesses ``run_all`` for each page)."""
+def create_job(root: Path, mode: str = "flag",
+               lang: str | None = None) -> str:
+    """Mint a job dir and persist its uncertainty ``mode`` and OCR ``lang`` in
+    ``job.json`` — the job-level settings the API needs before any page is
+    uploaded (the worker passes both to ``run_all`` for each page: Stage 06
+    reads the mode, Stage 05 the language).
+
+    ``lang`` of ``None`` means "no override": ``run_all`` is called without
+    ``--lang`` and Stage 05 falls back to ``languages.default`` from
+    config.yaml, which is what every job did before this setting existed."""
     if mode not in MODES:
         raise ValueError(f"invalid mode: {mode!r} (choices: {MODES})")
+    if lang is not None and not LANG_RE.match(lang):
+        raise ValueError(f"invalid lang: {lang!r}")
     job_id = new_job_id()
     job_dir = root / job_id
     job_dir.mkdir(parents=True, exist_ok=False)
+    payload: dict = {"mode": mode}
+    if lang is not None:
+        payload["lang"] = lang
     (job_dir / "job.json").write_text(
-        json.dumps({"mode": mode}), encoding="utf-8")
+        json.dumps(payload), encoding="utf-8")
     return job_id
 
 
@@ -70,6 +85,58 @@ def job_mode(job_dir: Path) -> str:
     except Exception:
         return "flag"
     return mode if mode in MODES else "flag"
+
+
+def job_lang(job_dir: Path) -> str | None:
+    """The job's Tesseract language override, or ``None`` for "use the config
+    default" — which is what a job created before this setting existed gets,
+    and what the pipeline did for every job until 2026-08-29.
+
+    Deliberately NOT validated against ``languages.supported``: that list is
+    config's, Tesseract accepts combinations like ``deu+ita`` that the list
+    does not enumerate, and a job's recorded language is history — refusing to
+    read it back because config changed would rewrite that history. The shape
+    is checked (``LANG_RE``) because the value reaches a subprocess argv."""
+    path = job_dir / "job.json"
+    if not path.exists():
+        return None
+    try:
+        lang = json.loads(path.read_text(encoding="utf-8")).get("lang")
+    except Exception:
+        return None
+    if not isinstance(lang, str) or not LANG_RE.match(lang):
+        return None
+    return lang
+
+
+def set_job_lang(job_dir: Path, lang: str | None) -> None:
+    """Persist (or clear, with ``None``) the job's OCR language, merging over
+    whatever else ``job.json`` holds so the uncertainty mode survives."""
+    if lang is not None and not LANG_RE.match(lang):
+        raise ValueError(f"invalid lang: {lang!r}")
+    path = job_dir / "job.json"
+    payload: dict = {}
+    if path.exists():
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            payload = {}
+    if not isinstance(payload, dict):
+        payload = {}
+    if lang is None:
+        payload.pop("lang", None)
+    else:
+        payload["lang"] = lang
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+
+def count_processed_pages(job_dir: Path) -> int:
+    """Pages that have already been through Stage 05 — i.e. pages whose text
+    was read in whatever language was set at the time, and which a language
+    change therefore does NOT retroactively affect."""
+    return sum(1 for p in job_dir.iterdir()
+               if p.is_dir() and PAGE_DIR_RE.match(p.name)
+               and (p / "05_ocr" / "ocr.json").exists())
 
 
 # What the worker has done with a page, recorded by the worker itself in
@@ -152,6 +219,7 @@ def list_jobs(root: Path) -> list[dict]:
             "job_id": p.name,
             "pages": len(pages),
             "mode": job_mode(p),
+            "lang": job_lang(p),
             "mtime": p.stat().st_mtime,
             "has_document": (p / "document.json").exists(),
             "has_render": (p / "render" / "page.html").exists(),
@@ -212,6 +280,8 @@ def job_status(job_dir: Path) -> dict:
     return {
         "job_id": job_dir.name,
         "mode": job_mode(job_dir),
+        # None = "no override recorded"; Stage 05 uses languages.default.
+        "lang": job_lang(job_dir),
         # The canonical stage sequence, so a client can render progress without
         # hard-coding the chain or inferring it from whichever stages happen to
         # have run on the first page it sees.

@@ -260,11 +260,39 @@ function renderJob() {
       <div class="card"><div class="n">${busy}</div><div class="k">in the queue</div></div>
       <div class="card"><div class="n">${failed.length}</div><div class="k">failed</div></div>
       <div class="card"><div class="n">${esc(S.job.mode)}</div><div class="k">uncertainty mode</div></div>
+      <div class="card"><div class="n"><select id="joblang" style="font:inherit;background:#1b2334;color:inherit;border:1px solid #33415c;border-radius:4px;padding:1px 4px">
+        ${["", ...(S.job.languages || [])].map(c => `<option value="${esc(c)}"${(S.job.lang || "") === c ? " selected" : ""}>${
+            c ? esc(c) : esc((S.job.lang_default || "") + " (default)")}</option>`).join("")}
+      </select></div><div class="k">OCR language</div></div>
     </div>
+    <p class="muted" id="langnote">A change applies to pages processed after it &mdash;
+      the per-page trace is immutable, so already-read pages keep their reading
+      until you re-run them.</p>
     ${failed.length ? `<p class="muted">Failed: ${failed.map(p =>
         `<a href="#/${esc(S.jobId)}/${esc(p.name)}">${esc(p.name)}</a>`).join(", ")}</p>` : ""}
     <h3>Pages</h3>
     <div id="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px"></div>`;
+
+  const sel = document.getElementById("joblang");
+  if (sel) sel.onchange = async () => {
+    const v = sel.value;
+    const note = document.getElementById("langnote");
+    sel.disabled = true;
+    try {
+      const r = await fetch(`/api/jobs/${encodeURIComponent(S.jobId)}` +
+                            (v ? `?lang=${encodeURIComponent(v)}` : ""),
+                            { method: "PATCH" });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.detail || r.statusText);
+      S.job.lang = d.lang;
+      note.textContent = d.pages_already_processed
+        ? `Set to ${d.lang || "the config default"}. ${d.pages_already_processed} page(s) were already read in the previous language — re-run them to apply it.`
+        : `Set to ${d.lang || "the config default"}.`;
+    } catch (e) {
+      note.textContent = `Could not change the language: ${e.message}`;
+      sel.value = S.job.lang || "";
+    } finally { sel.disabled = false; }
+  };
 
   const grid = document.getElementById("grid");
   for (const p of pages) {

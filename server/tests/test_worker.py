@@ -181,6 +181,64 @@ async def test_defaults_to_flag_mode_without_job_json(tmp_path, monkeypatch):
     assert args[args.index("--mode") + 1] == "flag"
 
 
+@pytest.mark.asyncio
+async def test_the_jobs_language_is_passed_to_run_all(tmp_path, monkeypatch):
+    """Until 2026-08-29 the worker never passed --lang, so a German book
+    submitted through the console or the phone was read as English on every
+    page (config's languages.default decided for all of them)."""
+    captured: dict = {}
+
+    async def fake_exec(*args, **kwargs):
+        captured["args"] = args
+        return _FakeProc(0, b"ok", b"")
+
+    monkeypatch.setattr(asyncio, "create_subprocess_exec", fake_exec)
+
+    job_dir = tmp_path / "job1"
+    job_dir.mkdir()
+    (job_dir / "job.json").write_text('{"mode": "flag", "lang": "deu"}',
+                                      encoding="utf-8")
+    page_dir = job_dir / "page_001"
+    page_dir.mkdir()
+
+    worker = Worker(tmp_path)
+    worker.enqueue(page_dir)
+    await worker.start()
+    await asyncio.wait_for(worker.queue.join(), timeout=5)
+    await worker.stop()
+
+    args = captured["args"]
+    assert args[args.index("--lang") + 1] == "deu"
+
+
+@pytest.mark.asyncio
+async def test_a_job_without_a_language_passes_no_lang_flag(tmp_path, monkeypatch):
+    """Not the same as passing the config default: omitting the flag leaves
+    the choice to Stage 05, which is what every job did before the setting
+    existed. Passing `--lang eng` here would pin old jobs to today's config."""
+    captured: dict = {}
+
+    async def fake_exec(*args, **kwargs):
+        captured["args"] = args
+        return _FakeProc(0, b"ok", b"")
+
+    monkeypatch.setattr(asyncio, "create_subprocess_exec", fake_exec)
+
+    job_dir = tmp_path / "job1"
+    job_dir.mkdir()
+    (job_dir / "job.json").write_text('{"mode": "flag"}', encoding="utf-8")
+    page_dir = job_dir / "page_001"
+    page_dir.mkdir()
+
+    worker = Worker(tmp_path)
+    worker.enqueue(page_dir)
+    await worker.start()
+    await asyncio.wait_for(worker.queue.join(), timeout=5)
+    await worker.stop()
+
+    assert "--lang" not in captured["args"]
+
+
 # --------------------------------------------------------------------------
 # worker.json — the state file that makes a dead page distinguishable from an
 # untouched one (server/jobs.py's WORKER_STATES).

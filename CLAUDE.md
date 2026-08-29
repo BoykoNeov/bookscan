@@ -209,9 +209,25 @@ Italian, German**.
       two-questions rule is the safety argument and must not be simplified.
       **Promotion deletes pixels** (Stage 08 renders a paragraph from its words) —
       it is recoverable via `type_promoted` in the editor, which is not the same as
-      harmless. `min_words` 8 (sweeping to 3 adds 15 candidates, 0 promotions);
-      PARAGRAPH not TABLE (Stage 08 renders both as `<p>`). OFF in the module, ON
-      in `config.yaml`, `--no-text-panel` per run. n = 1 book, adjudicated by eye.
+      harmless. `min_words` 8 (sweeping to 3 adds 15 candidates, 0 promotions).
+      **TURNED OFF the same day, and this is the part to read.** The classifier
+      survives its own re-check — the shipped prompts over all 36 candidates
+      return the same 3, all 3 really are panels of text, the sofa still refused
+      — but classification was never the deliverable. **Read as rendered, the
+      text is worse than the photograph it replaces.** All three are
+      multi-column TABLES and Stage 08 emits a promoted block as one `<p>`, so
+      the columns collapse: the seven-column route table loses every time from
+      its route (`7 Std. 9 Std. 2½ Std. 6½ Std.` in a row, page numbers
+      stranded) and the grade table interleaves four countries (`Österreich
+      Deutschland I [| 1eatien ] Frankreich A KI F F A/B leicht facile facile`).
+      Median confidence ~90, so neither this pass nor `unreadable_panel`'s 70.5
+      floor can see it — the **fourth** time here a confidence number rose while
+      the text got worse. Promotion deletes pixels, so that is a loss.
+      `enabled: false` in `config.yaml`; code, guards and tests stay. **The real
+      blocker is Stage 08 rendering a TABLE as a table** (these three blocks are
+      the fixture), then per-block language. A single-column panel of running
+      text would probably win today — this book has none, so that is a guess.
+      n = 1 book, adjudicated by eye.
 - **Three owner proposals measured 2026-08-29, two refused; and two defects found
       behind the German render.** (a) **Reading each close-up separately and merging
       the words is a WASH** — line-aligned over 34 close-ups, a max-confidence merge

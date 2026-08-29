@@ -7635,3 +7635,39 @@ first question says "picture" (the rest are skipped) and ~4 s when all four run.
 
 **Still n = 1 book.** Every count here is one 25-spread guide photographed on a
 sofa; the adjudication is by eye, by one reader.
+
+### Postscript, same day — the pass is turned OFF, because the render is worse than the photograph
+
+Everything above grades the **classifier**. It holds up: re-running the decision
+over all 36 candidates with the prompts exactly as they ship returns the *same 3
+promotions*, all 3 genuinely panels of text, with the 534-word band of sofa weave
+refused by the surface veto. That was checked because the 25-page run predates
+the final prompt edit, and a changed prompt is an unmeasured prompt.
+
+Then the 683 words were read as rendered, which had never been done.
+
+| block | words | median conf | rendered text (start) |
+|---|---|---|---|
+| `page_003__left` #7 | 328 | 91.8 | `Tourenübersi B _ Ampezzaner Dolomiten ton ivieri/Gianni Aglio @ Bil Ferrata Maria …` |
+| `page_004__left` #21 | 268 | 92.4 | `@ )! Via ferrata Bolver-Lugli @ 2? Sent. N. Gusella u. Ferrata del Velo …` |
+| `page_017__right` #10 | 87 | 89.9 | `äÄ A x ! m A Österreich Deutschland I [\| 1eatien ] Frankreich A KI F F A/B leicht facile facile …` |
+
+All three are **multi-column tables**, and Stage 08 renders a promoted block as
+one `<p>`. So the columns collapse into a single run of words. In the
+seven-column route table (route / seriousness / time / difficulty / metres /
+ascent / page) every time is detached from its route — `… 7 Std. 9 Std. 2½ Std.
+6½ Std. 5½ Std. …` in a row — and the page numbers are stranded. In the grade
+table all four countries interleave. The photographs are perfectly legible; the
+text is not. Promotion deletes pixels, so this is a **loss**, not a downgrade.
+
+Median confidence ~90 on all three, which is why nothing saw it: `unreadable_panel`'s
+floor is 70.5 and these sail over it. **Fourth time in this project a confidence
+number rose while the text got worse** — the rule is *no accuracy claim without a
+text diff*, and this row exists because the diff was run late rather than not at all.
+
+`text_panel.enabled` is therefore **false** in `config.yaml`. The code, the guards
+and the tests stay; the pass is opt-in, like `vlm_box` and `figure_surface`. What
+must exist before it pays: **Stage 08 rendering a TABLE as a table** — these three
+blocks are the fixture — and per-block language, since the grade table is German,
+Italian and French at once. A single-column panel of running text would probably
+win today; this book contains none, so that is a guess, recorded as one.

@@ -88,6 +88,33 @@ photograph carrying *readable* burned-in text — a sign shot close up, a
 photographed page of another document — would pass both passes and be deleted
 from the render. Do not treat the net as general cover.
 
+**OFF by default, and that is the outcome of an eye-check the accuracy numbers
+could not do.** The classifier works: the sweep over all 36 candidates on the
+owner's book with the prompts exactly as they ship returns the same 3
+promotions, all 3 genuinely panels of text, and the sofa refused by the surface
+veto. But classification was never the deliverable — the rendered page is, and
+on this book the render is *worse than the photograph it replaces*. All three
+are multi-column TABLES. Stage 08 renders a promoted block as a single ``<p>``,
+so the columns collapse into one run of words: the seven-column route table
+loses every time from its route (``... 7 Std. 9 Std. 2½ Std. 6½ Std. ...`` in a
+row, page numbers stranded), and the four-country grade table interleaves all
+four countries (``Österreich Deutschland I [| 1eatien ] Frankreich A KI F F A/B
+leicht facile facile``). The photograph is legible; that is not.
+
+Median OCR confidence on those blocks is ~90, which is why nothing upstream
+sees the damage — neither this pass nor ``unreadable_panel``'s floor of 70.5.
+That is the **fourth** time in this project a confidence number rose while the
+text got worse, and the reason the rule is *no accuracy claim without a text
+diff*. Since promotion deletes pixels, a mis-rendered promotion is a loss, not
+a downgrade.
+
+Two things have to exist before turning it on is worth it. First and mainly,
+**Stage 08 must be able to render a TABLE as a table**; these three blocks are
+the fixture for that work. Second, per-block language — the grade table is
+German, Italian and French at once. A *single-column* panel of running text
+would very likely be a win as things stand, but this book contains none, so
+that is a guess and it is written here as one.
+
 **Order matters: this runs BEFORE ``block_reocr``.** That module's
 ``SKIP_TYPES`` is ``{FIGURE}`` — words inside artwork are labels, not prose — so
 a block promoted first is re-read from its own crop for free, under

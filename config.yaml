@@ -278,13 +278,33 @@ figure_surface:
 # starved-block re-read on purpose, so a promoted panel is re-read from its own
 # crop under block_reocr's measured rule.
 #
-# ON here (the module's own default is off), exactly as figure_surface is: a
-# missing Ollama leaves every block a figure, so leaving it on costs a clean
-# book only time - ~1 s per candidate figure when the first question says
-# "picture", ~4 s when all four run, so well under a minute on a 163-figure
-# book. --no-text-panel turns it off for a run.
+# OFF here, and that is a MEASURED reversal of the same day's decision - read
+# this before turning it on. The classifier is right: all 3 promotions on the
+# owner's book really are panels of text, and the sweep over all 36 candidates
+# with the SHIPPED prompts returns exactly those 3. But the classification was
+# never the deliverable; the RENDER is, and the render is worse than the
+# photograph it replaces. All three are multi-column TABLES, and Stage 08 emits
+# a promoted block as a single <p>, so every column collapses into one run of
+# words: the seven-column route table comes out with its times detached from
+# their routes ("7 Std. 9 Std. 2 1/2 Std. 6 1/2 Std." in a row), and the
+# four-country grade table interleaves all four countries ("Osterreich
+# Deutschland I [| 1eatien ] Frankreich A KI F F A/B leicht facile facile").
+# A reader could read the photograph. Nobody can read that.
+#
+# Median OCR confidence on those blocks is ~90, so neither this pass nor
+# unreadable_panel's floor (70.5) can see the damage - the FOURTH time in this
+# project a confidence number rose while the text got worse. Promotion deletes
+# pixels, so on this book the pass is a net loss and stays off.
+#
+# What has to exist before it is worth turning on: (1) Stage 08 able to render
+# a TABLE as a table rather than a paragraph - that is the real blocker, and
+# these three blocks are the fixture for it; (2) per-block language, since the
+# grade table is German/Italian/French at once. A single-column panel of
+# running text would very likely be a win today, but this book has none, so
+# that is a guess, not a measurement. --text-panel is not a flag; set this to
+# true (with Ollama up) to re-run the experiment.
 text_panel:
-  enabled: true
+  enabled: false
   url: "http://127.0.0.1:11434"
   model: "qwen3.6:27b"
   crop_max_side: 768    # the sizes the 18/18 result was measured at

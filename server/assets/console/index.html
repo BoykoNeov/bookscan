@@ -1,0 +1,564 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>bookscan</title>
+<!--
+  The console: one page for everything an operator does between "the phone
+  finished uploading" and "the PDF is right".
+
+  Deliberately one self-contained file with no CDN and no build step. The
+  server it talks to runs on a laptop on a home LAN, sometimes with no route to
+  the internet at all (that is the whole point of the local pipeline), so a
+  <script src="https://..."> would turn "the console is blank" into a network
+  diagnosis. Everything below is plain DOM + fetch.
+
+  It is a READ-ONLY view of the per-page trace. The only calls that change
+  anything are the three explicit buttons (re-run a page, assemble, render), and
+  each of those goes through an existing server route that subprocesses the
+  pipeline. Nothing here writes an artifact.
+
+  Routing is by hash so the browser Back button works and a page view can be
+  bookmarked:  #/            job list
+               #/<job>       one job, its pages, its outputs
+               #/<job>/<pg>  one page's trace
+-->
+<style>
+  :root {
+    --bg: #12151a; --panel: #1a1f27; --panel2: #222834; --line: #2e3646;
+    --fg: #e6eaf2; --dim: #97a2b6; --accent: #5aa9ff; --ok: #3fbf7f;
+    --warn: #e8b33c; --bad: #e8635a; --pad: 12px;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--fg); font: 14px/1.45 system-ui, "Segoe UI", sans-serif;
+    display: grid; grid-template-columns: 290px 1fr; grid-template-rows: 46px 1fr;
+    grid-template-areas: "brand top" "side main";
+  }
+  header { grid-area: top; display: flex; align-items: center; gap: 14px;
+           padding: 0 var(--pad); border-bottom: 1px solid var(--line); background: var(--panel); }
+  #brand { grid-area: brand; display: flex; align-items: center; padding: 0 var(--pad);
+           border-bottom: 1px solid var(--line); border-right: 1px solid var(--line);
+           background: var(--panel); font-weight: 650; letter-spacing: .3px; }
+  #brand a { color: var(--fg); text-decoration: none; }
+  aside { grid-area: side; overflow-y: auto; border-right: 1px solid var(--line);
+          background: var(--panel); }
+  main { grid-area: main; overflow-y: auto; padding: var(--pad) 18px 60px; }
+
+  h2 { font-size: 16px; margin: 18px 0 8px; }
+  h3 { font-size: 13px; margin: 16px 0 6px; color: var(--dim);
+       text-transform: uppercase; letter-spacing: .6px; font-weight: 600; }
+  a { color: var(--accent); }
+  .dim { color: var(--dim); }
+  .muted { color: var(--dim); font-size: 12.5px; }
+
+  button, .btn {
+    background: var(--panel2); color: var(--fg); border: 1px solid var(--line);
+    border-radius: 6px; padding: 6px 11px; cursor: pointer; font: inherit;
+    text-decoration: none; display: inline-block;
+  }
+  button:hover, .btn:hover { border-color: var(--accent); }
+  button:disabled { opacity: .45; cursor: default; border-color: var(--line); }
+  button.primary { background: #244a72; border-color: #35618f; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+  .item { display: block; padding: 7px 12px; border-bottom: 1px solid var(--line);
+          cursor: pointer; color: var(--fg); text-decoration: none; }
+  .item:hover { background: var(--panel2); }
+  .item.sel { background: #26324a; border-left: 3px solid var(--accent); padding-left: 9px; }
+  .item .sub { font-size: 12px; color: var(--dim); }
+
+  .chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11.5px;
+          border: 1px solid var(--line); background: var(--panel2); color: var(--dim); }
+  .chip.ok { color: var(--ok); border-color: #26543f; }
+  .chip.warn { color: var(--warn); border-color: #5a4a1e; }
+  .chip.bad { color: var(--bad); border-color: #5e2e2b; }
+
+  .cards { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 4px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+          padding: 9px 13px; min-width: 130px; }
+  .card .n { font-size: 21px; font-weight: 650; }
+  .card .k { font-size: 11.5px; color: var(--dim); text-transform: uppercase; letter-spacing: .5px; }
+
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; margin: 12px 0 10px;
+          border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .tab { padding: 5px 10px; border-radius: 6px; cursor: pointer; border: 1px solid transparent;
+         font-size: 13px; color: var(--dim); }
+  .tab:hover { background: var(--panel2); color: var(--fg); }
+  .tab.sel { background: var(--panel2); color: var(--fg); border-color: var(--line); }
+
+  .stagebar { display: flex; gap: 3px; margin-top: 4px; }
+  .pip { width: 15px; height: 5px; border-radius: 2px; background: #333c4c; }
+  .pip.done { background: var(--ok); }
+  .pip.warn { background: var(--warn); }
+
+  .viewwrap { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+  @media (max-width: 1100px) { .viewwrap { grid-template-columns: 1fr; } }
+  .stage { position: relative; display: inline-block; max-width: 100%;
+           background: #0b0d11; border: 1px solid var(--line); border-radius: 6px; }
+  .stage img { display: block; max-width: 100%; height: auto; border-radius: 6px; }
+  .ov { position: absolute; pointer-events: none; }
+  .wbox { position: absolute; border: 1px solid rgba(63,191,127,.75); border-radius: 1px;
+          pointer-events: auto; cursor: pointer; }
+  .wbox.flag { border-color: rgba(232,179,60,.95); background: rgba(232,179,60,.16); }
+  .wbox.patch { border-color: rgba(232,99,90,.95); background: rgba(232,99,90,.16); }
+  .wbox.sel { outline: 2px solid var(--accent); }
+  .bbox { position: absolute; border: 1.5px dashed rgba(90,169,255,.8); border-radius: 2px; }
+  .blabel { position: absolute; transform: translateY(-100%); background: rgba(90,169,255,.9);
+            color: #06121f; font-size: 10.5px; padding: 0 4px; border-radius: 3px 3px 0 0;
+            white-space: nowrap; font-weight: 600; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  td, th { text-align: left; padding: 3px 8px 3px 0; vertical-align: top; }
+  th { color: var(--dim); font-weight: 600; }
+  .kv td:first-child { color: var(--dim); white-space: nowrap; width: 1%; padding-right: 14px; }
+
+  .side { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+          padding: 10px 12px; position: sticky; top: 0; max-height: calc(100vh - 90px);
+          overflow-y: auto; }
+  .wlist div { padding: 2px 4px; border-radius: 4px; cursor: pointer; font-size: 13px;
+               display: flex; justify-content: space-between; gap: 8px; }
+  .wlist div:hover { background: var(--panel2); }
+  .wlist div.sel { background: #26324a; }
+  .wlist .c { color: var(--dim); font-variant-numeric: tabular-nums; font-size: 12px; }
+  #toast { position: fixed; right: 16px; bottom: 16px; background: var(--panel2);
+           border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px;
+           display: none; max-width: 460px; }
+  code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+</style>
+
+<div id="brand"><a href="#/">bookscan</a></div>
+<header><div id="crumbs" class="muted"></div><div style="flex:1"></div>
+  <div id="headact" class="row"></div></header>
+<aside id="side"></aside>
+<main id="main">loading…</main>
+<div id="toast"></div>
+
+<script>
+"use strict";
+const $ = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d; };
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => (
+  { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (a, b) => b ? (100 * a / b) : 0;
+const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+function ago(epochSeconds) {
+  if (!epochSeconds) return "";
+  const m = (Date.now() / 1000 - epochSeconds) / 60;
+  if (m < 60) return `${Math.max(0, Math.round(m))} min ago`;
+  if (m < 60 * 36) return `${Math.round(m / 60)} h ago`;
+  return `${Math.round(m / 1440)} d ago`;
+}
+
+let toastTimer = null;
+function toast(msg, ms = 3500) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.style.display = "block";
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.style.display = "none", ms);
+}
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  if (!r.ok) {
+    let d = ""; try { d = (await r.json()).detail || ""; } catch (e) {}
+    throw new Error(d || `${r.status} ${r.statusText}`);
+  }
+  return r.status === 204 ? null : r.json();
+}
+
+// ---------------------------------------------------------------- state
+const S = { jobs: [], job: null, jobId: null, page: null, inspect: null,
+            words: null, tab: null, sub: 0, show: "words", onlyUncertain: false,
+            selWord: null, poll: null };
+
+// ---------------------------------------------------------------- routing
+function route() {
+  const h = location.hash.replace(/^#\/?/, "");
+  const [job, page] = h.split("/").filter(Boolean);
+  return { job: job || null, page: page || null };
+}
+window.addEventListener("hashchange", render);
+
+// ---------------------------------------------------------------- helpers
+function stageState(st, name) {
+  // Green = this stage ran. Deliberately NOT "green unless it warned": stages
+  // use meta.json's `warnings` for provenance notes as much as for problems
+  // ("v0.2: UVDoc", "v0.1: Tesseract 5 backbone"), so every stage of every page
+  // carries one. Colouring from that painted all 25 pages amber and told the
+  // operator nothing. The notes are still shown, verbatim, in the page panel.
+  const s = st.stages?.[name];
+  if (!s) return "";
+  return s.ok ? "done" : "bad";
+}
+
+function pageChip(st) {
+  const w = st.worker;
+  const state = w?.state;
+  if (state === "running") return '<span class="chip warn">running</span>';
+  if (state === "queued") return '<span class="chip">queued</span>';
+  if (state === "failed") return '<span class="chip bad">failed</span>';
+  if (state === "interrupted") return '<span class="chip bad">interrupted</span>';
+  const done = Object.values(st.stages || {}).filter(Boolean).length;
+  const total = Object.keys(st.stages || {}).length;
+  if (done === total && total) return '<span class="chip ok">done</span>';
+  return `<span class="chip">${done}/${total}</span>`;
+}
+
+function stagePips(st, order) {
+  return `<div class="stagebar">` + order.map(n =>
+    `<div class="pip ${stageState(st, n)}" title="${esc(n)}"></div>`).join("") + `</div>`;
+}
+
+// ---------------------------------------------------------------- sidebar
+function renderSidebar() {
+  const side = document.getElementById("side");
+  if (!S.jobId) {
+    side.innerHTML = `<div style="padding:10px 12px" class="muted">
+      ${S.jobs.length} job${S.jobs.length === 1 ? "" : "s"}</div>` +
+      S.jobs.map(j => `<a class="item" href="#/${esc(j.job_id)}">
+        <div>${esc(j.job_id)}</div>
+        <div class="sub">${plural(j.pages ?? 0, "page")} · ${esc(j.mode || "")}
+          · ${ago(j.mtime)}</div></a>`).join("");
+    return;
+  }
+  const pages = S.job?.pages || [];
+  side.innerHTML =
+    `<a class="item" href="#/${esc(S.jobId)}" ${!S.page ? 'style="background:#26324a"' : ""}>
+       <div>&larr; ${esc(S.jobId)}</div>
+       <div class="sub">${plural(pages.length, "page")} · ${esc(S.job?.mode || "")}</div></a>` +
+    pages.map(p => `<a class="item ${p.name === S.page ? "sel" : ""}" href="#/${esc(S.jobId)}/${esc(p.name)}">
+      <div style="display:flex;justify-content:space-between;gap:8px">
+        <span>${esc(p.name)}</span>${pageChip(p)}</div>
+      ${stagePips(p, S.job.stage_order || Object.keys(p.stages || {}))}</a>`).join("");
+}
+
+// ---------------------------------------------------------------- job view
+function renderJob() {
+  const m = document.getElementById("main");
+  const pages = S.job.pages || [];
+  const done = pages.filter(p => Object.values(p.stages || {}).every(Boolean)).length;
+  const busy = pages.filter(p => ["queued", "running"].includes(p.worker?.state)).length;
+  const failed = pages.filter(p => ["failed", "interrupted"].includes(p.worker?.state));
+
+  document.getElementById("headact").innerHTML =
+    `<button id="b-assemble">Assemble document</button>
+     <button id="b-render" class="primary">Render</button>` +
+    (S.job.has_render ? `<a class="btn" href="/jobs/${esc(S.jobId)}/render/page.html" target="_blank">Preview</a>` : "") +
+    (S.job.has_document ? `<a class="btn" href="/jobs/${esc(S.jobId)}/" target="_blank">Edit text</a>` : "") +
+    (S.job.has_render ? `<a class="btn" href="/api/jobs/${esc(S.jobId)}/render/pdf" target="_blank">PDF</a>` : "");
+
+  m.innerHTML = `
+    <h2>${esc(S.jobId)}</h2>
+    <div class="cards">
+      <div class="card"><div class="n">${pages.length}</div><div class="k">spreads</div></div>
+      <div class="card"><div class="n">${done}</div><div class="k">fully processed</div></div>
+      <div class="card"><div class="n">${busy}</div><div class="k">in the queue</div></div>
+      <div class="card"><div class="n">${failed.length}</div><div class="k">failed</div></div>
+      <div class="card"><div class="n">${esc(S.job.mode)}</div><div class="k">uncertainty mode</div></div>
+    </div>
+    ${failed.length ? `<p class="muted">Failed: ${failed.map(p =>
+        `<a href="#/${esc(S.jobId)}/${esc(p.name)}">${esc(p.name)}</a>`).join(", ")}</p>` : ""}
+    <h3>Pages</h3>
+    <div id="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px"></div>`;
+
+  const grid = document.getElementById("grid");
+  for (const p of pages) {
+    const hasImg = p.stages?.["02_split"];
+    const card = $(`<a class="item" style="border:1px solid var(--line);border-radius:8px;overflow:hidden;padding:0"
+        href="#/${esc(S.jobId)}/${esc(p.name)}">
+      <div style="aspect-ratio:4/3;background:#0b0d11;display:flex;align-items:center;justify-content:center">
+        ${hasImg ? `<img loading="lazy" style="max-width:100%;max-height:100%"
+             src="/api/jobs/${esc(S.jobId)}/pages/${esc(p.name)}/image?path=debug/02_split.png&w=320">`
+          : `<span class="muted">no preview</span>`}
+      </div>
+      <div style="padding:7px 10px;display:flex;justify-content:space-between;gap:6px">
+        <span>${esc(p.name)}</span>${pageChip(p)}</div>
+      <div style="padding:0 10px 8px">${stagePips(p, S.job.stage_order || [])}</div>
+    </a>`).firstChild;
+    grid.appendChild(card);
+  }
+
+  document.getElementById("b-assemble").onclick = () => runJobAction("assemble", "Assembling…");
+  document.getElementById("b-render").onclick = () => runJobAction("render", "Rendering (this can take a minute)…");
+}
+
+async function runJobAction(what, msg) {
+  const btns = document.querySelectorAll("#headact button");
+  btns.forEach(b => b.disabled = true);
+  toast(msg, 120000);
+  try {
+    // Never force blind. Assemble refuses (409) when document.json already
+    // carries corrections, translations or a reviewed order — the server's
+    // clobber guard. Ask, then retry, rather than shipping a button that
+    // silently throws away someone's afternoon.
+    let r;
+    try {
+      r = await api(`/api/jobs/${S.jobId}/${what}`, { method: "POST" });
+    } catch (err) {
+      if (what !== "assemble" || !/force=true/.test(err.message)) throw err;
+      if (!confirm("This document has edits (corrected text, a translation or a "
+                 + "reviewed reading order).\n\nRe-assembling from the pipeline "
+                 + "will discard them. Continue?")) { toast("Left alone."); return; }
+      r = await api(`/api/jobs/${S.jobId}/assemble?force=true`, { method: "POST" });
+    }
+    toast(what === "assemble"
+      ? `Document built: ${r.pages ?? "?"} pages, ${r.words ?? "?"} words.`
+      : `Rendered ${r.pages ?? "?"} pages${r.wrote_pdf ? ", PDF included" : " (HTML only)"}.`);
+    await render();
+  } catch (e) {
+    toast(`${what} failed: ${e.message}`, 12000);
+  } finally {
+    btns.forEach(b => b.disabled = false);
+  }
+}
+
+// ---------------------------------------------------------------- page view
+function renderPage() {
+  const m = document.getElementById("main");
+  const ins = S.inspect;
+  const u = ins.uncertainty, sp = ins.split, fu = ins.fuse, la = ins.layout;
+  const tabs = ins.overlays.map(o => ({ key: o.path, label: o.label }));
+  tabs.push({ key: "__words", label: "Text & certainty" });
+  if (!S.tab || !tabs.some(t => t.key === S.tab)) S.tab = tabs[tabs.length - 1].key;
+
+  document.getElementById("headact").innerHTML =
+    `<button id="b-rerun">Re-run this page</button>`;
+
+  const flagRate = u ? pct(u.counts?.flag || 0, u.scored_words || 0) : null;
+  m.innerHTML = `
+    <h2>${esc(S.page)} <span class="muted" style="font-weight:400">${esc(S.jobId)}</span></h2>
+    <div class="cards">
+      ${u ? `<div class="card"><div class="n">${u.scored_words ?? "–"}</div><div class="k">words</div></div>
+      <div class="card"><div class="n" style="color:${flagRate > 30 ? "var(--warn)" : "var(--fg)"}">${flagRate.toFixed(0)}%</div>
+        <div class="k">uncertain</div></div>` : ""}
+      ${la ? `<div class="card"><div class="n">${la.n_blocks}</div><div class="k">blocks</div></div>` : ""}
+      ${sp ? `<div class="card"><div class="n">${(sp.pages || []).length || "?"}</div>
+        <div class="k">pages from spread</div></div>` : ""}
+      ${fu ? `<div class="card"><div class="n">${fu.closeups_used}/${fu.closeups_total}</div>
+        <div class="k">close-ups used</div></div>` : ""}
+    </div>
+    <div class="tabs">${tabs.map(t =>
+      `<div class="tab ${t.key === S.tab ? "sel" : ""}" data-k="${esc(t.key)}">${esc(t.label)}</div>`).join("")}</div>
+    <div id="view"></div>`;
+
+  m.querySelectorAll(".tab").forEach(el => el.onclick = () => {
+    S.tab = el.dataset.k; S.selWord = null; renderPage();
+  });
+  document.getElementById("b-rerun").onclick = async () => {
+    try {
+      await api(`/api/jobs/${S.jobId}/pages/${S.page}/rerun`, { method: "POST" });
+      toast("Queued. The worker runs one page at a time; this view refreshes itself.");
+      startPolling();
+    } catch (e) { toast(`Could not queue: ${e.message}`, 8000); }
+  };
+
+  if (S.tab === "__words") renderWordsTab();
+  else renderOverlayTab();
+}
+
+function factsPanel() {
+  const ins = S.inspect, sp = ins.split, fu = ins.fuse, la = ins.layout, u = ins.uncertainty;
+  const rows = [];
+  if (sp) {
+    rows.push(["spine at", sp.gutter_x == null ? "not found" :
+      `x = ${sp.gutter_x}${sp.confident ? "" : " (not confident)"}`]);
+    rows.push(["split by", esc(sp.method || "–")]);
+    rows.push(["book found", sp.book_crop_applied ? `yes (${esc(sp.book_crop_source || "")})`
+      : `no — ${esc(sp.book_crop_reason || "detector abstained")}`]);
+  }
+  if (fu) {
+    rows.push(["frames shot", `${fu.n_frames} (${fu.closeups_total} close-up)`]);
+    rows.push(["frame used", esc(fu.anchor_source || "–")]);
+    rows.push(["close-ups merged", `${fu.closeups_used} of ${fu.closeups_total}`]);
+    for (const [k, v] of Object.entries(fu.rejections || {}))
+      rows.push([`&nbsp;&nbsp;rejected`, `${v} × ${esc(k)}`]);
+  }
+  if (la) rows.push(["block types", Object.entries(la.types)
+    .map(([k, v]) => `${esc(k)} ${v}`).join(", ") || "–"]);
+  if (u) {
+    rows.push(["mode", esc(u.mode || "")]);
+    rows.push(["certainty cutoff", `${u.threshold} (clamped to ${u.conf_floor}–${u.conf_ceiling})`]);
+  }
+  const warns = [];
+  for (const [name, s] of Object.entries(ins.status.stages || {}))
+    for (const w of (s?.warnings || [])) warns.push(`${name}: ${w}`);
+  // "Notes", not "Warnings": most of these are each stage's own provenance
+  // line. Calling them warnings would cry wolf on every page ever processed.
+  return `<div class="side"><h3 style="margin-top:0">What happened</h3>
+    <table class="kv">${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table>
+    ${warns.length ? `<details style="margin-top:14px"><summary class="dim"
+        style="cursor:pointer">Stage notes (${warns.length})</summary>
+      <div class="muted" style="margin-top:6px">` +
+      warns.map(w => `<div style="margin-bottom:5px">${esc(w)}</div>`).join("") +
+      `</div></details>` : ""}</div>`;
+}
+
+function renderOverlayTab() {
+  const v = document.getElementById("view");
+  const url = `/api/jobs/${S.jobId}/pages/${S.page}/image?path=${encodeURIComponent(S.tab)}&w=1600`;
+  v.innerHTML = `<div class="viewwrap">
+    <div><div class="stage"><img src="${url}" alt=""></div>
+      <p class="muted">Full-resolution original: <code>${esc(S.tab)}</code></p></div>
+    ${factsPanel()}</div>`;
+}
+
+function renderWordsTab() {
+  const v = document.getElementById("view");
+  if (!S.words) { v.innerHTML = `<p class="muted">loading words…</p>`; return; }
+  const subs = S.words.pages || [];
+  if (!subs.length) { v.innerHTML = `<p class="muted">No text was read from this page.</p>`; return; }
+  if (S.sub >= subs.length) S.sub = 0;
+  const sub = subs[S.sub];
+
+  const uncertain = [];
+  for (const b of sub.blocks) for (const w of b.words)
+    if (w.decision && w.decision !== "keep") uncertain.push({ ...w, block: b.id });
+
+  v.innerHTML = `
+    <div class="row" style="margin-bottom:10px">
+      ${subs.length > 1 ? subs.map((s, i) =>
+        `<button class="${i === S.sub ? "primary" : ""}" data-sub="${i}">${esc(s.name)}</button>`).join("") : ""}
+      <span style="flex:1"></span>
+      <label class="row" style="gap:5px"><input type="checkbox" id="c-blocks"
+        ${S.show === "blocks" ? "checked" : ""}> blocks</label>
+      <label class="row" style="gap:5px"><input type="checkbox" id="c-only"
+        ${S.onlyUncertain ? "checked" : ""}> only uncertain words</label>
+    </div>
+    <div class="viewwrap">
+      <div><div class="stage" id="stage">
+        <img id="pimg" src="/api/jobs/${S.jobId}/pages/${S.page}/image?path=${encodeURIComponent(sub.image)}&w=1600">
+        <div class="ov" id="ov" style="inset:0"></div></div>
+        <p class="muted">Green = confident, amber = uncertain, red = replaced by a picture of the word.
+          Boxes are drawn on the flattened page, which is the image the reader OCR'd.</p>
+      </div>
+      <div class="side">
+        <h3 style="margin-top:0">Uncertain words (${uncertain.length} of ${
+          sub.blocks.reduce((n, b) => n + b.words.length, 0)})</h3>
+        <div class="wlist" id="wlist">${uncertain.slice(0, 400).map((w, i) =>
+          `<div data-i="${i}"><span>${esc(w.text) || "<i>·</i>"}</span>
+             <span class="c">${(w.conf ?? 0).toFixed(0)}</span></div>`).join("")
+          || '<div class="muted">none — every word cleared the cutoff</div>'}</div>
+        <h3>Blocks in reading order</h3>
+        <table>${sub.blocks.map(b =>
+          `<tr><td class="dim">${b.reading_order ?? "–"}</td><td>${esc(b.type)}</td>
+             <td class="dim">${b.words.length}w</td></tr>`).join("")}</table>
+      </div>
+    </div>`;
+
+  v.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => {
+    S.sub = +b.dataset.sub; S.selWord = null; renderWordsTab();
+  });
+  document.getElementById("c-blocks").onchange = (e) => {
+    S.show = e.target.checked ? "blocks" : "words"; drawOverlay(sub);
+  };
+  document.getElementById("c-only").onchange = (e) => {
+    S.onlyUncertain = e.target.checked; drawOverlay(sub);
+  };
+  v.querySelectorAll("#wlist div[data-i]").forEach(el => el.onclick = () => {
+    const w = uncertain[+el.dataset.i];
+    S.selWord = w; drawOverlay(sub);
+    v.querySelectorAll("#wlist div").forEach(d => d.classList.remove("sel"));
+    el.classList.add("sel");
+    const box = document.querySelector(".wbox.sel");
+    if (box) box.scrollIntoView({ block: "center", behavior: "smooth" });
+  });
+
+  const img = document.getElementById("pimg");
+  if (img.complete) drawOverlay(sub); else img.onload = () => drawOverlay(sub);
+}
+
+function drawOverlay(sub) {
+  const ov = document.getElementById("ov");
+  if (!ov) return;
+  // Percent coordinates, so the overlay tracks the image at any zoom or window
+  // width without recomputing on resize.
+  const W = sub.width, H = sub.height;
+  const bits = [];
+  if (S.show === "blocks") {
+    for (const b of sub.blocks) {
+      const x = b.bbox;
+      if (!x) continue;
+      bits.push(`<div class="bbox" style="left:${pct(x.x, W)}%;top:${pct(x.y, H)}%;
+        width:${pct(x.w, W)}%;height:${pct(x.h, H)}%"></div>
+        <div class="blabel" style="left:${pct(x.x, W)}%;top:${pct(x.y, H)}%">${
+          b.reading_order ?? "?"} · ${esc(b.type)}</div>`);
+    }
+  } else {
+    for (const b of sub.blocks) for (const w of b.words) {
+      const d = w.decision || "keep";
+      if (S.onlyUncertain && d === "keep") continue;
+      const x = w.bbox; if (!x) continue;
+      const sel = S.selWord && S.selWord.bbox && S.selWord.bbox.x === x.x
+        && S.selWord.bbox.y === x.y ? " sel" : "";
+      bits.push(`<div class="wbox ${esc(d)}${sel}" title="${esc(w.text)} — ${
+        (w.conf ?? 0).toFixed(1)}" style="left:${pct(x.x, W)}%;top:${pct(x.y, H)}%;
+        width:${pct(x.w, W)}%;height:${pct(x.h, H)}%"></div>`);
+    }
+  }
+  ov.innerHTML = bits.join("");
+}
+
+// ---------------------------------------------------------------- polling
+function startPolling() {
+  stopPolling();
+  S.poll = setInterval(async () => {
+    if (!S.jobId) return stopPolling();
+    try {
+      const j = await api(`/api/jobs/${S.jobId}`);
+      const busy = (j.pages || []).some(p => ["queued", "running"].includes(p.worker?.state));
+      S.job = j;
+      renderSidebar();
+      if (!S.page) renderJob();
+      if (!busy) { stopPolling(); if (S.page) await render(); }
+    } catch (e) { stopPolling(); }
+  }, 2500);
+}
+function stopPolling() { if (S.poll) { clearInterval(S.poll); S.poll = null; } }
+
+// ---------------------------------------------------------------- render
+async function render() {
+  const r = route();
+  S.jobId = r.job; S.page = r.page;
+  const crumbs = document.getElementById("crumbs");
+  const main = document.getElementById("main");
+  document.getElementById("headact").innerHTML = "";
+
+  try {
+    if (!S.jobId) {
+      const d = await api("/api/jobs");
+      S.jobs = d.jobs || d;
+      crumbs.textContent = "all jobs";
+      renderSidebar();
+      main.innerHTML = `<h2>Jobs</h2>` + (S.jobs.length
+        ? `<div id="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">`
+          + S.jobs.map(j => `<a class="item" style="border:1px solid var(--line);border-radius:8px"
+              href="#/${esc(j.job_id)}"><div style="font-size:15px">${esc(j.job_id)}</div>
+              <div class="sub">${plural(j.pages ?? 0, "page")} · ${esc(j.mode || "")}
+                · ${ago(j.mtime)}${j.has_render ? " · rendered" : ""}</div></a>`).join("")
+          + `</div>`
+        : `<p class="muted">No jobs yet. Shoot a book with the phone app and it will appear here.</p>`);
+      return;
+    }
+    S.job = await api(`/api/jobs/${S.jobId}`);
+    crumbs.innerHTML = `<a href="#/">jobs</a> / ${esc(S.jobId)}` +
+      (S.page ? ` / ${esc(S.page)}` : "");
+    renderSidebar();
+    if (!S.page) { S.inspect = S.words = null; renderJob(); }
+    else {
+      S.inspect = await api(`/api/jobs/${S.jobId}/pages/${S.page}/inspect`);
+      S.words = null;
+      renderPage();
+      if (S.inspect.uncertainty) {
+        S.words = await api(`/api/jobs/${S.jobId}/pages/${S.page}/words`);
+        if (S.tab === "__words") renderWordsTab();
+      }
+    }
+    if ((S.job.pages || []).some(p => ["queued", "running"].includes(p.worker?.state)))
+      startPolling();
+  } catch (e) {
+    main.innerHTML = `<h2>Something went wrong</h2><p class="muted">${esc(e.message)}</p>
+      <p><a href="#/">back to jobs</a></p>`;
+  }
+}
+
+render();
+</script>

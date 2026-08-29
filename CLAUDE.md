@@ -134,6 +134,40 @@ Italian, German**.
   **stays red at 19/21** — this is a reason to build the fix, not to
   relabel the rows, and it does not replace the fixture shoot.
 
+- **The operator console SHIPPED 2026-08-29** (`server/assets/console/index.html`
+      + `server/routes_pages.py`, launched by `bookscan.bat`). One browser page
+      for the whole job: the job list, a thumbnail grid, a per-page view with all
+      seven stage overlays, and a text view drawing every word box on the
+      flattened page coloured by Stage 06's verdict, with the uncertain words
+      listed and clickable. The page views are **read-only over the immutable
+      trace** — the only writing button is "re-run this page", which enqueues on
+      the existing worker (`run_all` has no single-stage flag, so "re-run from
+      stage N" would be a promise the pipeline cannot keep). Assemble asks before
+      discarding edits rather than forcing. Previews are downscaled on the fly
+      (~80 ms; a debug overlay is a 5-15 MB PNG) and never cached to disk.
+      One deliberate call: a stage pip is green when the stage **ran**, not
+      "green unless it warned" — stages put provenance notes in `meta.json`'s
+      `warnings` ("v0.2: UVDoc"), so warning-colouring painted all 25 pages amber
+      and meant nothing. The notes are still shown verbatim, called notes.
+- **Close-up stitching is measured as NOT WORKING on real captures, and this is
+      a replication, not a new bug (2026-08-29).** Over the owner's own 25-spread
+      book, **6 of 317 close-ups registered** onto their anchor. 283 were
+      rejected for too few inliers (clustered at 3-7 against a threshold of 8),
+      28 registered but were refused by the do-no-harm gate for being *softer*
+      than the anchor, 11 for a degenerate homography or photometric
+      disagreement. `stage01_fuse.py`'s own docstring already diagnosed this at
+      n = 11 ("a capture-guidance and/or dewarp-before-stitch problem, not a
+      matcher problem") and `min_inliers` was already corrected once, 25 -> 8.
+      **Do NOT lower `min_inliers` again** — 5 inliers is noise, not a weak
+      homography, and the recorded measurement says loosening it adds a false
+      positive. The actionable half is the operator's: the extra taps per spread
+      currently buy nothing, and the 28 "located but softer" close-ups are a
+      capture problem (too close, motion blur, focus hunting), not a code one.
+- **Importing a PDF and re-typesetting it is PLANNED, not built** —
+      `docs/plans/pdf-import.md`. Import fills `00_ingest/` and nothing
+      downstream changes; the PDF's own text layer is a second opinion routed
+      through `second_opinion.py`, never the text source.
+
 ## Architecture: the stage contract (IMPORTANT)
 
 The pipeline is a chain of stages. **Every stage obeys the same contract:**
@@ -332,6 +366,15 @@ bookscan/
 
 ## Commands
 
+**The console is the interface. Start here, not with a Python command.**
+Double-click `bookscan.bat` (or `python -m uvicorn server.app:app --host 0.0.0.0
+--port 8000`) and everything the operator does lives at `http://127.0.0.1:8000/`:
+the job list, a per-page view of every stage overlay, the block and per-word
+certainty inspector, re-run a page, assemble, render, and the text editor. The
+CLIs below still exist and are still the contract — the console calls exactly
+them, through `server/worker.py`'s subprocess — but they are for development and
+measurement, not for processing a book.
+
 ```
 # run one stage on one page
 python -m pipeline.stage05_ocr jobs/demo/page_001/
@@ -346,6 +389,9 @@ python -m tools.book_box_editor jobs/<job>/ [--port 8011]
 # open the visual editor on an assembled job (edit OCR/type/order/translation,
 # then Preview / re-render). Reads+writes ONLY document.json + document_assets/.
 python -m pipeline.editor jobs/<job>/ [--port 8000]
+
+# the console (the operator interface for everything above)
+bookscan.bat            # or: python -m uvicorn server.app:app --host 0.0.0.0 --port 8000
 
 # Gate 1 harness
 python -m tools.gate1_harness --testset testset/ --report docs/RESULTS.md

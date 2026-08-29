@@ -135,7 +135,34 @@ def resolve_job_dir(root: Path, job_id: str) -> Path | None:
 
 
 def list_jobs(root: Path) -> list[dict]:
-    return [{"job_id": p.name} for p in sorted(root.iterdir()) if p.is_dir()]
+    """Every job, NEWEST FIRST, with the few facts a chooser needs.
+
+    Deliberately cheap — a directory count and one small read per job, never
+    ``job_status`` (which stats every stage of every page). The console shows
+    dozens of jobs at once; the phone shows the same list to pick a job to
+    resume. Extra keys beyond ``job_id`` are additive: the Android
+    ``JobSummary`` DTO ignores fields it does not declare.
+    """
+    out = []
+    for p in sorted(root.iterdir()):
+        if not p.is_dir():
+            continue
+        pages = [d for d in p.iterdir() if d.is_dir() and PAGE_DIR_RE.match(d.name)]
+        out.append({
+            "job_id": p.name,
+            "pages": len(pages),
+            "mode": job_mode(p),
+            "mtime": p.stat().st_mtime,
+            "has_document": (p / "document.json").exists(),
+            "has_render": (p / "render" / "page.html").exists(),
+        })
+    # Newest first. `jobs/` accumulates every harness and tool run alongside real
+    # scans — 100+ of them here — and an alphabetical list buries the book someone
+    # photographed an hour ago under fixtures named `bg_01`. Sorting by the folder's
+    # own mtime rather than by the id keeps hand-named jobs (`demo`, `floor_de_01`)
+    # in the same ordering as the timestamp-named ones, which a name sort cannot.
+    out.sort(key=lambda j: j["mtime"], reverse=True)
+    return out
 
 
 def next_page_dir(job_dir: Path) -> Path:
@@ -185,6 +212,10 @@ def job_status(job_dir: Path) -> dict:
     return {
         "job_id": job_dir.name,
         "mode": job_mode(job_dir),
+        # The canonical stage sequence, so a client can render progress without
+        # hard-coding the chain or inferring it from whichever stages happen to
+        # have run on the first page it sees.
+        "stage_order": list(STAGE_ORDER),
         "pages": [page_status(p) for p in pages],
         "has_document": (job_dir / "document.json").exists(),
         "has_render": (job_dir / "render" / "page.html").exists(),

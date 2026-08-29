@@ -35,7 +35,11 @@ def test_create_and_list_job(client: TestClient):
 
     r = client.get("/api/jobs")
     assert r.status_code == 200
-    assert {"job_id": job_id} in r.json()["jobs"]
+    # Match on the id, not on the whole row: the list carries extra facts for
+    # the console and the phone's job picker (page count, mode, mtime), and
+    # adding one must not be a breaking change.
+    row = next(j for j in r.json()["jobs"] if j["job_id"] == job_id)
+    assert row["pages"] == 0 and row["mode"] == "flag"
 
 
 def test_status_404_for_unknown_job(client: TestClient):

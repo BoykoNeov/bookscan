@@ -22,7 +22,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse
 
 from pipeline.stage04_layout import load_config
 from server import jobs as J
@@ -30,10 +30,12 @@ from server import reconcile as R
 from server.routes_assemble import router as assemble_router
 from server.routes_editor import router as editor_router
 from server.routes_jobs import router as jobs_router
+from server.routes_pages import router as pages_router
 from server.routes_render import router as render_router
 from server.worker import Worker
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+CONSOLE_DIR = Path(__file__).resolve().parent / "assets" / "console"
 
 
 @asynccontextmanager
@@ -64,6 +66,7 @@ def create_app(config_path: Path | None = None) -> FastAPI:
     app.state.upload_lock = asyncio.Lock()
 
     app.include_router(jobs_router)
+    app.include_router(pages_router)
     app.include_router(assemble_router)
     app.include_router(render_router)
     app.include_router(editor_router)
@@ -73,14 +76,14 @@ def create_app(config_path: Path | None = None) -> FastAPI:
         return {"ok": True, "jobs_root": str(app.state.jobs_root),
                 "resumed_pages": getattr(app.state, "resumed_pages", [])}
 
-    @app.get("/", response_class=HTMLResponse)
-    def landing() -> str:
-        jobs = J.list_jobs(app.state.jobs_root)
-        items = "".join(
-            f'<li><a href="/jobs/{j["job_id"]}/">{j["job_id"]}</a></li>'
-            for j in jobs
-        ) or "<li>(no jobs yet — POST /api/jobs to create one)</li>"
-        return f"<!doctype html><title>bookscan</title><h1>bookscan jobs</h1><ul>{items}</ul>"
+    @app.get("/")
+    def console() -> FileResponse:
+        """The operator console — the one interface for the whole pipeline.
+
+        Everything it needs it fetches from the API routers above; it is a
+        static file, so there is no template state to keep in sync with them.
+        """
+        return FileResponse(CONSOLE_DIR / "index.html")
 
     return app
 

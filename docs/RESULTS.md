@@ -6928,3 +6928,77 @@ The model is deterministic at temperature 0 (three passes returned byte-identica
 boxes on 2026-08-29), so nothing here measures robustness to a re-ask.
 
 Suite: 588 passed.
+
+
+---
+
+## 2026-08-29 — Close-up stitching, measured on a whole real book: 6 of 317
+
+**Question.** The Android app captures a full-spread anchor plus multi-zoom
+close-ups per spread, and Stage 01 is supposed to register the close-ups onto the
+anchor so the sharper pixels reach OCR. Does that happen on real captures?
+
+**Population.** Every close-up in `jobs/20260829-084115-de3c20d3` — the owner's
+own 25-spread book, shot handheld on 2026-08-29 and uploaded in one batch. 24 of
+the 25 spreads carried close-ups (page_001 is a closed cover, one frame). Read
+straight out of each page's `01_fuse/fuse.json`, which records every gate's input
+per close-up, not just the verdict.
+
+| | close-ups | share |
+|---|---:|---:|
+| **registered and blended** | **6** | **1.9 %** |
+| rejected — too few inliers (needs 8) | 283 | 89.3 % |
+| rejected — located, but softer than the anchor (do-no-harm gate) | 28 | 8.8 % |
+| rejected — degenerate homography | 8 | 2.5 % |
+| rejected — warped close-up disagrees photometrically | 3 | 0.9 % |
+| **total** | **317** | |
+
+Per page: 22 of 25 spreads used the sharpest single frame and merged nothing
+(`method: "sharpest"`); 3 merged at least one close-up (`"sharpest+stitch"`).
+
+The inlier counts of the rejected majority cluster at **3–7** against a threshold
+of 8: 93 at five, 51 at six, 44 at four, 42 at three, 20 at seven.
+
+### This replicates a recorded finding at 29× the sample size
+
+`pipeline/stage01_fuse.py`'s docstring already states the diagnosis, measured on
+the 11 close-ups in `testset/zoomset_*` (RESULTS 2026-08-19): the failure "is a
+capture-guidance and/or dewarp-before-stitch problem, not a matcher problem", and
+`min_inliers` had already been corrected once, from 25 down to 8, after that run
+showed the old gate was throwing away five *correct* registrations. Nothing here
+is new behaviour. What is new is the sample: 317 close-ups over two dozen
+spreads, in place of 11 over four.
+
+**Do not lower `min_inliers` again.** The cluster at 3–7 is the shape that tempts
+it, and the 2026-08-19 run measured what happens: raising the budget to 20k
+inliers-worth of matching adds a false positive, and a five-inlier homography is
+noise rather than a weak-but-real fit. A false stitch paints wrong pixels onto
+the page the OCR then reads, which is a worse failure than not stitching.
+
+### The actionable half is the capture, not the code
+
+Two operator-facing facts fall out:
+
+* **The close-up taps currently buy nothing.** 311 of 317 extra photographs were
+  discarded, and the anchor frame was used alone on 22 of 25 spreads. Whatever
+  the close-ups cost in time and battery, they are not reaching the OCR.
+* **The 28 "located but softer" rejections are the interesting sub-population**,
+  because those *did* register — the matcher found them, and the do-no-harm gate
+  refused them for being less sharp than the frame they would have replaced.
+  That is a photography problem (phone too close to hold focus, motion blur,
+  focus hunting between shots), and it is the only rejection family an operator
+  can act on directly.
+
+### What this does not say
+
+It does not say multi-zoom capture is worthless — it says this capture technique
+did not produce registrable close-ups. Nothing here measures what a close-up shot
+differently would do, and no fixture exists for that; the 317 rejected frames are
+one book, one session, one photographer.
+
+It also does not touch `per_page_source` (off by default, RESULTS 2026-08-26),
+which is the other route by which a close-up could reach a page. That route was
+measured null on its own terms and is unaffected by this.
+
+Recorded per page in `01_fuse/fuse.json`, and now surfaced per page in the
+console ("close-ups used", with the rejection families counted).

@@ -343,7 +343,7 @@ cd app-android && ./gradlew assembleDebug
 adb pair <ip>:<pairing_port> <code>      # first time on this machine only
 adb connect <ip>:<connect_port>          # the port on the Wireless debugging screen
 adb install -r app-android/app/build/outputs/apk/debug/app-debug.apk
-#   adb lives at M:\claud_projectsndroid-sdk\platform-toolsdb.exe
+#   adb lives at M:\claud_projects\android-sdk\platform-tools\adb.exe
 #   `adb mdns services` lists the phone when wireless debugging is on; an empty
 #   list means it is OFF, not that the network is broken
 ```

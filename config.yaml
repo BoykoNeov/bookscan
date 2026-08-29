@@ -241,10 +241,15 @@ vlm_box:
 # lost nothing (RESULTS 2026-08-29).
 #
 # Nothing is deleted: the block is marked and Stage 08 skips it, so the editor
-# can put it back. OFF by default - it needs a local service that may not be
-# running, and it costs ~1.1 s per figure.
+# can put it back.
+#
+# ON here (the module's own default is off), exactly as vlm_box is: if Ollama is
+# not running the request fails and the block is kept, so leaving it on costs a
+# clean book only time. That time is real - ~0.7 s per figure when the first
+# question says "page" (the second is then skipped), ~1.1 s when both run, so
+# ~2 min on a 163-figure book. --no-figure-surface turns it off for a run.
 figure_surface:
-  enabled: false
+  enabled: true
   url: "http://127.0.0.1:11434"
   model: "qwen3.6:27b"
   crop_max_side: 768    # the sizes the 16/16 result was measured at

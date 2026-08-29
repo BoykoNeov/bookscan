@@ -7194,3 +7194,79 @@ covered.
 again here: the first "misregistered" reading of the seam was correct, but only
 the checkerboard could tell it from the sharper picture merely revealing text the
 blurry one hid).
+
+
+## 2026-08-29 — Enlarging the page works; pasting the close-ups into it does not
+
+The owner's proposal for the text half: rather than shrink a close-up to fit the
+anchor (which is where its resolution dies), **enlarge the anchor so the close-up
+fits**. The physics is right and the first two measurements supported it. The
+third refutes it, and the refutation is specific rather than a shrug.
+
+**1. The registration failure was the DESCRIPTOR, not the task.** Stage 01 uses
+ORB(4000) and located 6 of 317 close-ups on this book, the failures clustered at
+3-7 inliers against a threshold of 8. Asking the identical question - whole
+close-up onto whole anchor - with SIFT + ratio 0.75 + RANSAC 4px:
+
+| matcher | registered (inliers >= 20 AND photometric agreement >= 0.45) |
+|---|---|
+| ORB 4000 (shipped) | **6 / 317** |
+| SIFT | **227 / 317** |
+
+Median scale of an accepted close-up 1.72x the anchor over ~17 % of the spread;
+median agreement 0.73, which sits in the band Stage 01's own docstring calls
+correct (0.50-0.77) and far above what it calls wrong (-0.23 to 0.28).
+
+**2. The per-block alternative is not available.** Re-cutting individual TEXT
+blocks would have needed no canvas change at all. Measured on 3 spreads: text
+blocks match the wrong paragraph. Agreement against close-up frames comes back
+0.04-0.36 where a correct match reads 0.6+, while the same blocks match the
+full-spread frames at 0.7-0.9 but at scale 0.8-0.9 (no extra resolution). A
+paragraph is not locally unique; a photograph is. So the only registration that
+works is the whole-frame one, and the only way to spend it is a bigger canvas.
+
+**3. And the bigger canvas does not survive its own control.** `page_013`,
+stages 02-05, same Tesseract language on every arm:
+
+| arm | words | high-confidence | mean conf |
+|---|---|---|---|
+| baseline (today's anchor, 1378x2142 per page) | 345 | 324 | 91.4 |
+| **enlarged 1.58x, NO close-ups pasted** | 360 | **336** | 91.8 |
+| enlarged 1.58x **with** close-ups | 431 | **270** | 88.8 |
+
+The enlargement alone is harmless. Pasting the close-ups in costs **66
+high-confidence words** against that control, and total words RISE while confident
+words fall - the signature of a page that has become harder to read, not easier.
+Looking at the pixels says why immediately: the text comes out **doubled**, two
+copies of each line tens of pixels apart, at every boundary between sources.
+
+**Why, measured, and it is not fixable by tuning.** For one well-registered
+close-up (243 inliers, agreement 0.745) the leftover displacement between it and
+the anchor over its own footprint is a median **6.5 px** and up to **59 px** at
+anchor scale — and it is **not smooth**: neighbouring 128 px tiles disagree by a
+median 5.3 px and a 95th percentile of **45 px**. A homography assumes a plane and
+the page is a cylinder seen off-axis; over a 17 % footprint the model error is
+already larger than an x-height. The same local-bend correction that fixed the
+figure seams was tried at three resolutions (12 tiles, 48 tiles, none) and the
+doubling is identical in all three, so it is the placement, not the correction.
+
+This is the mechanism Stage 01's docstring already named for the six close-ups no
+setting registers: *"outside the model rather than badly matched... fixing that
+means capture guidance or registering after dewarp, not matcher tuning."* It
+applies to the ones that DO register too. **Not shipped.** The route that could
+work is registering AFTER Stage 03 flattens both images, which is a different and
+larger piece of work; nothing here should be read as ruling it out.
+
+**A larger effect found on the way, and it is free.** This book is German and
+every job the console or the phone submits is read as **`eng`** — `server/worker.py`
+passes `--mode` to `run_all` and never `--lang`, so `languages.default` in
+config.yaml decides, and it is `eng`. Same page, same pixels, `deu` instead:
+
+| language | words | high-confidence | mean conf |
+|---|---|---|---|
+| eng | 345 | 324 | 91.4 |
+| **deu** | 345 | **335** | **94.2** |
+
++11 high-confidence words and +2.8 mean confidence for nothing, on the arm that
+every other measurement here is a fraction of. The operator has no way to choose
+a language today; that gap is worth more than the canvas was.

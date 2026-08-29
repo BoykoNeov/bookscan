@@ -173,6 +173,36 @@ Italian, German**.
       region), so blending stays off and `min_sharpness_ratio` stays at 1.0.
       The resolution is real (median 1.30x linear) and is now collected where it
       survives — see the figure pass below.
+- **Enlarging the page so close-ups land at their own size was MEASURED and NOT
+      shipped (2026-08-29).** The owner's proposal — stop shrinking a close-up
+      into the anchor, enlarge the anchor instead — is right about the physics,
+      and two of its three premises hold. **Stage 01's matcher is the reason
+      registration fails:** the identical question asked with SIFT registers
+      **227 of 317** close-ups where shipped ORB(4000) registers **6**
+      (`feature_engine: sift` already exists; the fixtures only showed 6/11 vs
+      5/11, this book shows the real gap). **The per-block alternative is dead:**
+      an individual TEXT block matches the WRONG paragraph (agreement 0.04-0.36
+      against a correct 0.6+), because a paragraph is not locally unique and a
+      photograph is — so a bigger canvas is the only way to spend those
+      registrations. **But the canvas fails its own control.** On `page_013`,
+      same language on every arm: baseline 324 high-confidence words, enlarged
+      1.58x with NO close-ups pasted **336**, enlarged 1.58x **with** them
+      **270**. The enlargement is harmless; the close-ups cost 66 confident
+      words, and the pixels show why — the text comes out **doubled**. The
+      leftover displacement of a well-registered close-up is a median **6.5 px**
+      and up to **59 px**, and it is **not smooth** (neighbouring tiles disagree
+      by up to 45 px), because a homography assumes a plane and a page is a
+      cylinder seen off-axis. Tried at three mesh resolutions, identical every
+      time. This is exactly the mechanism `stage01_fuse`'s docstring already
+      named — *outside the model rather than badly matched* — and the route that
+      could work is registering **after Stage 03 flattens both images**, which is
+      a different and larger piece of work. See RESULTS 2026-08-29.
+      **The bigger lever found on the way is free and unbuilt:** this German book
+      is read as **`eng`**, because `server/worker.py` passes `--mode` to
+      `run_all` and never `--lang`, so `languages.default` decides for every job
+      the console or the phone submits. Same page in `deu`: 335 high-confidence
+      words vs 324 and +2.8 mean confidence. **The operator cannot choose a
+      language today.**
 - **Pictures are re-cut at the close-ups' own scale (`pipeline/figure_hires.py`),
       SHIPPED 2026-08-29.** The owner's requirement is pictures at the highest
       available detail. Stage 01 cannot deliver that (see above), so Stage 07

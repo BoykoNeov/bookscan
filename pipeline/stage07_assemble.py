@@ -57,6 +57,7 @@ Usage:
     python -m pipeline.stage07_assemble jobs/<job>/ [--force] [--debug]
                                         [--order-mode auto|review]
                                         [--no-group-figures] [--no-figure-hires]
+                                        [--no-figure-surface]
 """
 
 from __future__ import annotations
@@ -75,6 +76,7 @@ from pipeline.page_model import (
 )
 from pipeline import figure_grouping as FG
 from pipeline import figure_hires as FH
+from pipeline import figure_surface as FS
 from pipeline import unreadable_panel as UP
 from pipeline import stage04_layout as S4
 from pipeline import stage06_uncertainty as S6
@@ -259,7 +261,8 @@ def _assemble_panel(bgr: np.ndarray, page: DocPage, panel_w: int = 1100) -> np.n
 
 def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
         order_mode: str = "auto", group_figures: bool = True,
-        figure_hires: bool = True) -> Document:
+        figure_hires: bool = True,
+        figure_surface: bool = True) -> Document:
     t0 = time.perf_counter()
     warnings: list[str] = []
 
@@ -310,6 +313,10 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
 
     hires_params = FH.resolve_params(cfg)
     hires_on = bool(figure_hires and hires_params.get("enabled", True))
+    surface_params = FS.resolve_params(cfg)
+    surface_on = bool(figure_surface and surface_params.get("enabled", False))
+    surface_log: list[dict] = []
+    n_surface = 0
     n_hires = 0
     hires_log: list[dict] = []
 
@@ -388,6 +395,23 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                         continue
                     n_hires += 1
                     hires_log.append({"page": page_id, "block": blk.id, **up})
+
+            # --- blocks that are not the book (pipeline/figure_surface.py) ---
+            # AFTER the hires pass, so a block that is about to be dropped has
+            # not also been rebuilt at close-up resolution first.
+            if surface_on:
+                page_bgr_s = cv2.imread(str(src_img), cv2.IMREAD_COLOR)
+                for blk in blocks:
+                    if blk.type is not BlockType.FIGURE or page_bgr_s is None:
+                        continue
+                    flagged, sdiag = FS.is_surface(
+                        page_bgr_s, blk.bbox.model_dump(), surface_params)
+                    if not flagged:
+                        continue
+                    blk.is_surface = True
+                    n_surface += 1
+                    surface_log.append({"page": page_id, "block": blk.id,
+                                        **sdiag})
 
             n_blocks += len(blocks)
             n_words += sum(bool(w.text.strip()) for blk in blocks for w in blk.words)
@@ -472,6 +496,11 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             # wrong picture can be traced to the frame it came from without
             # re-running anything.
             "figure_hires": hires_on,
+            # Blocks the vision model twice called the surface the book was
+            # lying on. Flagged, not deleted — see pipeline/figure_surface.py.
+            "figure_surface": surface_on,
+            "figure_surface_flagged": n_surface,
+            "figure_surface_log": surface_log,
             "figures_upgraded": n_hires,
             "figure_hires_sources": hires_log,
             "captions_promoted": n_promoted,
@@ -523,6 +552,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--no-figure-hires", action="store_true",
                     help="skip the higher-resolution figure pass; every figure is "
                          "then cropped from the dewarped page, as before it existed")
+    ap.add_argument("--no-figure-surface", action="store_true",
+                    help="skip the 'is this block the sofa?' pass, even if "
+                         "config enables it; every block is then kept, as "
+                         "before it existed")
     ap.add_argument("--no-group-figures", action="store_true",
                     help="skip the caption<->figure grouping pass (caption typing + "
                          "printed-number/geometry pairing). Diagnostic escape hatch: "
@@ -541,7 +574,8 @@ def main(argv: list[str] | None = None) -> int:
     cfg = S4.load_config(args.config)
     doc = run(args.job_dir, cfg, force=args.force, debug=args.debug,
               order_mode=args.order_mode, group_figures=not args.no_group_figures,
-              figure_hires=not args.no_figure_hires)
+              figure_hires=not args.no_figure_hires,
+              figure_surface=not args.no_figure_surface)
     nword = sum(bool(w.text.strip()) for pg in doc.pages for blk in pg.blocks
                 for w in blk.words)
     nflag = sum(w.flag_visible for pg in doc.pages for blk in pg.blocks

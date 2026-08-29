@@ -134,6 +134,41 @@ Italian, German**.
   **stays red at 19/21** — this is a reason to build the fix, not to
   relabel the rows, and it does not replace the fixture shoot.
 
+- **The operator can choose the OCR language, and the sofa stops rendering as a
+      picture — both SHIPPED 2026-08-29**, prompted by the owner reading the
+      rendered PDF of their own book and listing ~15 defects. **Ten of the
+      fifteen have one cause: the book was photographed on a pale sofa.**
+      `server/worker.py` now passes `--lang` (job-level, `job.json`, a
+      `PATCH /api/jobs/{id}` and a picker in the console); a job with no recorded
+      language passes NO flag, which is deliberately not the same as passing the
+      config default. **The sofa defect is localised to the FIRST FOUR SPREADS**,
+      and neither branch of the `vlm_box` path shipped earlier the same day can
+      remove it: on spreads 1/3 the detector abstained and the model's box only
+      *aims* the spine search so nothing is cut; on spreads 2/4 the detector did
+      NOT abstain — it returned "cropped to detected book" with a box keeping the
+      **full frame height**, so the model was never asked. The trigger is
+      `abstained`; this book's failure mode is *confidently wrong in one axis*.
+      `pipeline/figure_surface.py` removes the visible symptom without cutting a
+      pixel: it asks a local vision model whether a figure is the surface the
+      book is lying on, **twice** — about the crop alone, and about the whole page
+      with the block outlined — and flags it only when both agree. **Each single
+      question discards real book content** (the crop arm a printed photo of an
+      information board, the page arm a tilted chapter banner), for the same
+      reason: a via-ferrata guide is full of printed photographs of rock, and a
+      picture of a rough surface looks like a rough surface. Their intersection
+      flagged **16 of 163 and lost nothing**; **0 of 93** figures flagged across 26
+      assembled testset jobs from other books. `Block.is_surface` is a FLAG, not a
+      deletion — Stage 08 skips it and the editor can clear it. OFF by default,
+      same contract as `vlm_box`. **It does NOT fix the crop** and must not be read
+      as fixing the detector: spreads 1-4 still have wrong margins and their dewarp
+      still ran on a frame containing fabric, and cutting to a model box is still
+      the owner's postponed decision. **The garbage text is NOT a dictionary
+      problem — measured and REFUSED:** the zero-dictionary-word blocks on those
+      spreads are the guide's ROUTE TABLES (`840 Hm 1450 Hm`, `4 5td. 6% Std.`),
+      the most valuable data in it; and **0 of 150** text blocks there sit outside
+      the paper band, so the junk is *on* the paper — real content read badly
+      because the dewarp ran on a frame containing fabric. That points back at the
+      crop, not at a text filter.
 - **The operator console SHIPPED 2026-08-29** (`server/assets/console/index.html`
       + `server/routes_pages.py`, launched by `bookscan.bat`). One browser page
       for the whole job: the job list, a thumbnail grid, a per-page view with all

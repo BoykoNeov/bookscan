@@ -388,6 +388,13 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
         if strip_key and getattr(doc.settings, strip_key):
             i += 1
             continue
+        if blk.is_surface:
+            # Not part of the book: a band of the surface it was photographed
+            # on, which Stage 02's crop failed to exclude (see
+            # pipeline/figure_surface.py). The block is still in the document
+            # and the editor can clear the flag; it just does not render.
+            i += 1
+            continue
         if blk.id in bound_caps:
             i += 1                                  # rendered inside its figure below
             continue

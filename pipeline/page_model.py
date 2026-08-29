@@ -244,6 +244,20 @@ class Block(BaseModel):
     figure_asset_scale: float | None = None  # linear scale vs the page crop
     figure_asset_source: str | None = None   # capture frame it came from
 
+    # --- not the book at all (Stage 07; see figure_surface.py) ---------------
+    # True when a local vision model was asked twice - about the crop alone and
+    # about the whole page with this block outlined - and BOTH answered that
+    # this is the surface the book is lying on, not the printed page. Stage 02
+    # cannot always find the book on a pale surface, so a band of upholstery
+    # can reach Stage 04, which then correctly reports a large picture-shaped
+    # region that is a sofa.
+    #
+    # A FLAG, never a deletion. The block keeps its id, bbox, words and place in
+    # reading order; Stage 08 skips it and the editor can clear the flag. At one
+    # book of evidence a wrongly-flagged chapter banner the operator can restore
+    # is a different risk class from one that silently vanished.
+    is_surface: bool = False
+
     def order_review_visible(self, order_mode: str) -> bool:
         """Reading-order analogue of ``Word.flag_visible``: in REVIEW mode a block's
         proposed order stays 'needs review' until the user clears it, and — like

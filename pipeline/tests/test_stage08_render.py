@@ -464,3 +464,21 @@ def test_pdf_chromium_produces_valid_pdf_with_flag_background(tmp_path: Path):
 
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
+
+
+def test_a_surface_block_is_not_rendered(tmp_path: Path):
+    """A block the vision model twice called the surface the book was lying on
+    (pipeline/figure_surface.py) stays in the document but leaves the page."""
+    def html_for(is_surface: bool) -> str:
+        page, root = _page_with([
+            Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 200, "h": 50},
+                  reading_order=0, text="kept text"),
+            Block(id=1, type="figure", bbox={"x": 0, "y": 60, "w": 200, "h": 100},
+                  reading_order=1, is_surface=is_surface),
+        ], tmp_path)
+        return S8.render_html(_doc(page), root)
+
+    kept, dropped = html_for(False), html_for(True)
+    assert "kept text" in kept and "kept text" in dropped
+    assert kept.count("<figure") == 1
+    assert dropped.count("<figure") == 0

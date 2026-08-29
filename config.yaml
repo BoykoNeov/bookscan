@@ -228,6 +228,31 @@ vlm_box:
   num_ctx: 8192        # Ollama truncates the image SILENTLY at its 4096 default
   timeout_s: 180
 
+# --- Blocks that are not the book (Stage 07; pipeline/figure_surface.py) ---
+# When the book detector cannot find the book on a pale surface, Stage 02 emits
+# page images that still contain a band of the sofa - and Stage 04 correctly
+# reports it as a large picture-shaped region. On the owner's 25-spread book, 16
+# of 163 "figures" were the upholstery or the shadow behind it.
+#
+# Asks a local vision model TWICE - about the crop alone, and about the whole
+# page with the block outlined - and flags the block only when both answers
+# agree. Each single question discards real content (a printed photo of an
+# information board; a tilted chapter banner); their intersection flagged 16 and
+# lost nothing (RESULTS 2026-08-29).
+#
+# Nothing is deleted: the block is marked and Stage 08 skips it, so the editor
+# can put it back. OFF by default - it needs a local service that may not be
+# running, and it costs ~1.1 s per figure.
+figure_surface:
+  enabled: false
+  url: "http://127.0.0.1:11434"
+  model: "qwen3.6:27b"
+  crop_max_side: 768    # the sizes the 16/16 result was measured at
+  page_max_side: 1120
+  num_ctx: 4096
+  timeout_s: 180
+  min_area_frac: 0.01   # a 21 px sliver is both arms' worst case, and nobody's complaint
+
 # --- Higher-resolution figure assets (Stage 07; pipeline/figure_hires.py) ---
 # The pictures matter as much as the text, and the anchor is the WHOLE spread in
 # one photograph, so a figure gets whatever pixels are left after the page is

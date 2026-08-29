@@ -7281,3 +7281,85 @@ config.yaml decides, and it is `eng`. Same page, same pixels, `deu` instead:
 +11 high-confidence words and +2.8 mean confidence for nothing, on the arm that
 every other measurement here is a fraction of. The operator has no way to choose
 a language today; that gap is worth more than the canvas was.
+
+---
+
+## 2026-08-29 — The operator can choose the language, and the sofa stops being a picture
+
+Two shipped changes, both prompted by the owner reading the rendered PDF of
+their own 25-spread book and listing ~15 defects. Ten of the fifteen have one
+cause.
+
+### The language gap from the previous row is closed
+
+`server/worker.py` now passes `--lang` (`server/jobs.py`'s `job_lang`,
+`PATCH /api/jobs/{id}`, and a picker in the console job view). A job with no
+recorded language passes **no** `--lang` flag, which is deliberately not the
+same as passing the config default: omitting it leaves the choice to Stage 05,
+so jobs created before this setting are unchanged rather than retroactively
+pinned to whatever config says today. The value is validated by shape, not
+against `languages.supported` — Tesseract takes `deu+ita`, which that list does
+not enumerate.
+
+### Ten of the fifteen defects: the book was photographed on a sofa
+
+The owner's PDF renders full-width photographs of upholstery, with Stage 05's
+reading of the weave underneath them. **All of them come from the first four
+spreads**, and neither branch of the vision-model book box shipped earlier the
+same day can remove them:
+
+| spread | what Stage 02 did | was the model asked? |
+|---|---|---|
+| 1, 3 | detector abstained; model found the book correctly | **yes** — but its box only *aims* the spine search, so nothing is cut |
+| 2, 4 | detector said "cropped to detected book", keeping the **full frame height** | **no** — it is only asked when the detector abstains |
+
+The trigger is `abstained`; this book's failure mode is *confidently wrong in
+one axis*. 25 of 163 figures are full-width bands at a page edge; 16 of those
+are fabric or the shadow behind it.
+
+### `pipeline/figure_surface.py` — asked twice, and both must agree
+
+A local vision model is asked whether a figure block is the surface the book is
+lying on. Each single form of the question **discards real book content**, and
+for the same reason: a guide to via ferratas is full of printed photographs of
+rock, and a picture of a rough surface looks like a rough surface.
+
+| arm | flagged | wrong |
+|---|---|---|
+| the crop alone | 24 | a real printed photo of an information board, + 6 slivers of real photos |
+| the whole page, block outlined | 18 | a real tilted chapter banner |
+| **both must agree** | **16** | **none** |
+
+Non-regression on other books — 26 assembled jobs from the committed testset
+(`floor_*`, `sole_*`, the real-capture jobs), clean backgrounds: **0 of 93
+figures flagged**.
+
+Cost 1.1 s per figure; the second question is skipped when the first says no, so
+a clean book pays ~0.7 s per figure. **OFF by default** (`figure_surface.enabled`),
+same contract as `vlm_box`: a missing Ollama, an unreadable answer, or a
+disagreement all keep the block exactly as before.
+
+**Nothing is deleted.** `Block.is_surface` is a flag; Stage 08 skips the block
+and the editor can clear it. At one book of evidence, a wrongly-flagged chapter
+banner the operator can restore is a different risk class from one that
+vanished.
+
+**This does not fix the crop, and must not be read as fixing the detector.**
+Spreads 1–4 still have wrong margins and their dewarp still ran on a frame
+containing fabric. Cutting to a model's box remains the owner's postponed
+decision.
+
+### The garbage text is NOT a dictionary problem — measured, and the rule is refused
+
+The obvious cheap fix for the meaningless letters is "drop a text block with no
+dictionary words". **Do not build it.** On the four affected spreads, the
+zero-dictionary-word blocks with 4+ words are the guide's **route tables** —
+`840 Hm 1450 Hm 1400 Hm`, `4 5td. 6% Std. 7 Std.` — which are the most valuable
+data in a via-ferrata guide, correctly read. On the clean spreads the same rule
+picks `Kletterhohenmeter/Zeit Climbing altitude diff./time`, which is real.
+
+The geometric alternative was measured too and is also dead: **0 of 150** text
+blocks on the affected spreads sit outside the paper band implied by the flagged
+surface figures. The junk is *on* the paper — it is real content read badly,
+because the dewarp ran on a frame containing fabric. That points back at the
+crop, not at a text filter.

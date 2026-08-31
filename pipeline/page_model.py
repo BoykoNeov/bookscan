@@ -124,6 +124,25 @@ class Word(BaseModel):
     # THIS word), exactly like a confidence flag — no separate un-clearable marker.
     engine_disagree: bool = False
 
+    # --- table cell membership (Stage 05; see pipeline/table_grid.py) ---
+    # WHICH CELL OF ITS TABLE THIS WORD SITS IN. Only ever set inside a block
+    # typed TABLE, and only when the grid pass did not abstain; None everywhere
+    # else, which is the normal case and renders exactly as before.
+    #
+    # It has to live on the WORD rather than as a grid on the Block. The document
+    # is mutable: a user deletes a word, edits another, splits a block. A grid
+    # holding word INDICES would be silently wrong after any of that, whereas a
+    # word that carries its own (row, col) keeps it. Stage 08 groups by these two
+    # fields, so a deleted word simply vacates its cell.
+    #
+    # NOT derivable at render time, which is the whole reason it is stored: the
+    # row correspondence of a staggered table is not recoverable from word
+    # geometry (measured — shifting a column by a full row pitch scores BETTER
+    # than the truth, 7.4 px vs 8.1 px), so it is computed where the pixels still
+    # are and carried forward.
+    table_row: int | None = None
+    table_col: int | None = None
+
     # --- editable layer (Stage 07 assemble onward; None/False until then) ---
     text_ocr: str | None = None    # original Tesseract read, kept as provenance
     edited: bool = False           # True once `text` diverges from `text_ocr`
@@ -318,7 +337,10 @@ class StageMeta(BaseModel):
 # 1.1 adds the caption<->figure grouping fields on Block (caption_number /
 # figure_number / figure_ref / pair_source / type_promoted). Purely additive with
 # safe defaults, so a 1.0 document still validates and simply carries no pairs.
-DOCUMENT_SCHEMA_VERSION = "1.1"
+# 1.2 adds Word.table_row / Word.table_col (pipeline/table_grid.py). Also purely
+# additive: a 1.0 or 1.1 document validates and carries no cells, and Stage 08
+# renders a cell-less TABLE block exactly the way it did before — as a paragraph.
+DOCUMENT_SCHEMA_VERSION = "1.2"
 
 
 class DocSettings(BaseModel):

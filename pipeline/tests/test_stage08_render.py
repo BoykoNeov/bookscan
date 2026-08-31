@@ -540,3 +540,92 @@ def test_a_broken_lexicon_does_not_fail_the_render():
         assert S8._dehyphen_lexicon(cfg, "eng") is None
     finally:
         S8.load_lexicon = orig
+
+
+# ---- TABLE blocks render as a real table ---------------------------------
+#
+# The cells come from Stage 05 (pipeline/table_grid.py) on Word.table_row /
+# table_col. Stage 08 is deliberately a dumb renderer here — it groups by those
+# two fields and lays them out — because the row correspondence of a staggered
+# table is NOT a function of word geometry and cannot be recovered at this point.
+# So what these tests pin is the fallback and the per-word contract, not layout
+# cleverness.
+
+
+def _cell_w(text: str, row: int, col: int, x: int = 0, y: int = 0,
+            **kw) -> Word:
+    w = _w(text, x=x, **kw)
+    w.bbox.y = y
+    w.table_row, w.table_col = row, col
+    return w
+
+
+def _table_block(words) -> Block:
+    return Block(id=1, type=BlockType.TABLE,
+                 bbox={"x": 0, "y": 0, "w": 500, "h": 200},
+                 reading_order=0, words=words)
+
+
+def test_table_with_cells_renders_a_table(tmp_path: Path):
+    blk = _table_block([
+        _cell_w("Route", 0, 0, x=0, y=0), _cell_w("3 Std.", 0, 1, x=300, y=0),
+        _cell_w("Other", 1, 0, x=0, y=50), _cell_w("8 Std.", 1, 1, x=300, y=50),
+    ])
+    page, jd = _page_with([blk], tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "<table" in html
+    assert "<tr><td>Route</td><td>3 Std.</td></tr>" in html
+    assert "<tr><td>Other</td><td>8 Std.</td></tr>" in html
+
+
+def test_table_without_cells_renders_exactly_as_before(tmp_path: Path):
+    """The normal case for every document written before the grid pass existed,
+    and for every table it abstained on. It must be the OLD paragraph render —
+    half a table would be worse than none."""
+    blk = _table_block([_w("Route", x=0), _w("3", x=300), _w("Other", x=0)])
+    page, jd = _page_with([blk], tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "<table" not in html
+    assert '<p class="table">Route 3 Other</p>' in html
+
+
+def test_table_text_override_supersedes_the_grid(tmp_path: Path):
+    """A human's (or a translator's) copy of the whole block wins, exactly as it
+    does for a paragraph. Re-gridding it into stale cells would contradict it."""
+    blk = _table_block([_cell_w("Route", 0, 0), _cell_w("3 Std.", 0, 1)])
+    blk.text = "translated table"
+    page, jd = _page_with([blk], tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "<table" not in html and "translated table" in html
+
+
+def test_uncertainty_marker_survives_inside_a_cell(tmp_path: Path):
+    """Cells go through the same per-word path as a paragraph, so a still-visible
+    marker is highlighted inside the cell rather than silently flattened."""
+    blk = _table_block([
+        _cell_w("Route", 0, 0, x=0), _cell_w("8%", 0, 1, x=300, conf=20.0,
+                                             decision="flag"),
+    ])
+    page, jd = _page_with([blk], tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert '<td><span class="flag"' in html and "8%" in html
+
+
+def test_table_never_drops_a_word(tmp_path: Path):
+    """A word with no cell means the grid does not cover the block; rendering the
+    covered part would silently lose the rest, so the whole block falls back."""
+    blk = _table_block([_cell_w("Route", 0, 0), _cell_w("3 Std.", 0, 1),
+                        _w("orphan", x=400)])
+    page, jd = _page_with([blk], tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert "<table" not in html and "orphan" in html
+
+
+def test_cell_order_is_visual_lines_then_left_to_right():
+    """Neither document order nor a plain y-sort. Document order puts the tail of
+    a split line first; a y-sort scrambles one line into "Std. 7%"."""
+    tail = _w("Aglio", x=520); tail.bbox.y = 8      # same printed line, skewed up
+    head = _w("Ferrata", x=300); head.bbox.y = 20
+    wrapped = _w("Pegna", x=300); wrapped.bbox.y = 60
+    assert [w.text for w in S8.cell_order([tail, head, wrapped])] == [
+        "Ferrata", "Aglio", "Pegna"]

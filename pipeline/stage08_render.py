@@ -62,6 +62,7 @@ from __future__ import annotations
 import argparse
 import base64
 import html
+import statistics as st
 import time
 from pathlib import Path
 
@@ -75,7 +76,7 @@ from pipeline import stage04_layout as S4
 from pipeline.second_opinion import load_lexicon, normalize_token
 
 STAGE = "stage08_render"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -319,6 +320,98 @@ def _block_body_html(blk: Block, mode: str, job_dir: Path,
     return " ".join(_word_html(w, mode, job_dir) for w in words)
 
 
+def cell_order(words: list[Word]) -> list[Word]:
+    """The words of one table cell, in the order a human reads them.
+
+    Neither document order nor a plain y-sort is right. Document order fails when
+    the page pass broke ONE printed line into two — the tail carries the lower
+    ``line_id`` and comes out first ("ivieri/Gianni Aglio @ B10 Ferrata Giuseppe
+    Ol"). A plain y-sort fails the other way, scrambling words of the same line
+    whose boxes differ by a pixel ("Std. 7%" for "7% Std."). So: group into
+    visual lines by vertical overlap, order the lines down the cell, and each
+    line left to right.
+    """
+    if len(words) < 2:
+        return list(words)
+    # 0.9 of a word height, not the 0.6 a clean page would want: a dewarped page
+    # keeps a few degrees of skew, so the two halves of ONE printed line can sit
+    # 12 px apart vertically when they are 250 px apart horizontally. At 0.6 they
+    # split into two "lines" and the right-hand half sorts FIRST. A genuinely
+    # wrapped cell still separates, because its line pitch is 1.3x a height or more.
+    tol = 0.9 * (st.median([w.bbox.h for w in words]) or 1)
+    lines: list[list[Word]] = []
+    mids: list[float] = []
+    for w in sorted(words, key=lambda w: w.bbox.y + w.bbox.h / 2):
+        mid = w.bbox.y + w.bbox.h / 2
+        # against the running mean of the line, not its first word, so a long
+        # skewed line does not shed its tail once the drift exceeds the tolerance
+        if lines and abs(mid - mids[-1] / len(lines[-1])) <= tol:
+            lines[-1].append(w)
+            mids[-1] += mid
+        else:
+            lines.append([w])
+            mids.append(mid)
+    return [w for line in lines for w in sorted(line, key=lambda w: w.bbox.x)]
+
+
+def _table_html(blk: Block, mode: str, job_dir: Path,
+                dictionary: set[str] | None) -> str | None:
+    """A TABLE block as a real ``<table>``, or None when it has no cells.
+
+    The cells come from ``Word.table_row`` / ``Word.table_col``, worked out at
+    Stage 05 where the pixels still are (pipeline/table_grid.py) — they cannot be
+    recovered here, because the row correspondence of a staggered table is not a
+    function of word geometry. So this is deliberately a DUMB renderer: it groups
+    by the two fields and lays the result out. No geometry, no guessing.
+
+    Returning None is the normal case and not a failure: a table the grid pass
+    abstained on, an older document written before the fields existed, or a block
+    a user re-typed TABLE by hand. The caller then renders the paragraph it always
+    did, so nothing is ever lost by this path.
+
+    A block-level ``text`` override still wins — that is a human's (or a
+    translator's) copy of the whole block, and re-gridding it into stale cells
+    would contradict it.
+    """
+    if blk.text is not None:
+        return None
+    cells: dict[tuple[int, int], list[Word]] = {}
+    for w in blk.words:
+        if w.table_row is None or w.table_col is None or not w.text.strip():
+            continue
+        cells.setdefault((w.table_row, w.table_col), []).append(w)
+    if not cells:
+        return None
+    # Every word must be in a cell, or the table would silently drop text. The
+    # grid pass places every word by construction; this is the check that says so
+    # at the point where the loss would happen.
+    if sum(len(v) for v in cells.values()) != len([w for w in blk.words
+                                                   if w.text.strip()]):
+        return None
+    n_rows = max(r for r, _ in cells) + 1
+    n_cols = max(c for _, c in cells) + 1
+    rows_html: list[str] = []
+    for r in range(n_rows):
+        tds: list[str] = []
+        for c in range(n_cols):
+            got = cells.get((r, c))
+            if not got:
+                tds.append("<td></td>")
+                continue
+            got_words = cell_order(got)
+            # De-hyphenation runs PER CELL. merge_hyphens keys on a line_id
+            # change, and inside a table two cells of the same column are two
+            # different line_ids — so run over the whole block it would happily
+            # join the end of one cell to the start of the one below it.
+            body = " ".join(_word_html(w, mode, job_dir)
+                            for w in merge_hyphens(got_words, dictionary)
+                            if w.text.strip())
+            tds.append(f"<td>{body}</td>")
+        rows_html.append("<tr>" + "".join(tds) + "</tr>")
+    return ('<div class="table-wrap"><table class="table">'
+            + "".join(rows_html) + "</table></div>")
+
+
 _TAG = {
     BlockType.TITLE: ("h1", "title"),
     BlockType.HEADING: ("h2", "heading"),
@@ -451,6 +544,14 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
                                       dictionary, blocks))
             i += 1
             continue
+        if blk.type is BlockType.TABLE:
+            tbl = _table_html(blk, mode, job_dir, dictionary)
+            if tbl is not None:
+                parts.append(tbl)
+                i += 1
+                continue
+            # else: no cells — fall through to the paragraph render, which is
+            # exactly what this block got before the grid pass existed.
         tag, cls = _TAG.get(blk.type, ("p", "other"))
         body = _block_body_html(blk, mode, job_dir, dictionary)
         if body.strip():
@@ -509,6 +610,14 @@ figure.figure-block {{ margin: 1em 0; text-align: center; page-break-inside: avo
 img.figure {{ max-width: 100%; height: auto; }}
 figcaption.caption {{ font-size: .9em; color: #333; margin-top: .3em; }}
 .figure-missing {{ color: #999; font-style: italic; }}
+/* A wide table must scroll inside its own box rather than push the page
+   sideways; in print it simply shrinks with the type. */
+div.table-wrap {{ overflow-x: auto; margin: 0 0 .8em; }}
+table.table {{ border-collapse: collapse; width: 100%; font-size: .88em;
+               page-break-inside: avoid; }}
+table.table td {{ border: 1px solid #ccc; padding: .18em .4em;
+                  vertical-align: top; text-align: left; }}
+table.table tr:nth-child(odd) td {{ background: #fafafa; }}
 section.page + section.page {{ margin-top: 1.4em; }}
 @media print {{ section.page {{ break-before: page; }}
                 section.page:first-child {{ break-before: auto; }} }}

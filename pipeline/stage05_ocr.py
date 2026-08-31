@@ -89,6 +89,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import BBox, Block, BlockType, StageMeta, Word
 from pipeline import stage04_layout as S4
 from pipeline import block_reocr as BR
+from pipeline import table_grid as TG
 from pipeline import rescued_type as RT
 from pipeline import caption_eject as CE
 from pipeline import figure_text as FT
@@ -467,6 +468,7 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
     pages: list[OCRPage] = []
     panels: list[np.ndarray] = []
     rescued_meta: list[dict] = []
+    grid_meta: list[dict] = []
     panel_params = TP.resolve_params(cfg)
     panel_params["enabled"] = bool(
         text_panel and panel_params.get("enabled", False))
@@ -548,6 +550,29 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
         rescued_meta.append({"page": pl.name,
                              "blocks": [vars(r) for r in rescues]})
 
+        # A TABLE block's words arrive from the page pass in COLUMN order, which
+        # Stage 08 renders as one run of words with every value detached from its
+        # row. Work out the cell each word sits in, using a uniform-block re-read
+        # of the same crop purely as a ROW ORACLE — its text is measurably worse
+        # than the page pass's and is thrown away. See pipeline/table_grid.py.
+        #
+        # ORDER: last of the block-creating passes, so it sees the words that
+        # actually ship — including a block block_reocr just replaced, and a
+        # block the editor may later re-type. It changes no word, so it cannot
+        # disturb the conservation check below.
+        ordered, grids, grid_skips = TG.grid_table_blocks(
+            ordered, img, binary, resolve_tessdata_dir(cfg), lang_code_used,
+            int(tcfg_oem), scale, p=(cfg.get("table_grid", {}) or {}))
+        grid_meta.append({"page": pl.name,
+                          "gridded": [vars(g) for g in grids],
+                          "skipped": [vars(g) for g in grid_skips]})
+        # An intended outcome, same "note:" prefix and same reason as the
+        # ejections and rescues above.
+        warnings.extend(
+            f"note: gridded table block {g.block_id}: {g.n_rows}x{g.n_cols} "
+            f"over {g.n_words} words (line span {g.span_page} -> {g.span_oracle})"
+            for g in grids)
+
         # Word-conservation invariant, AMENDED for the rescue. Every recognized
         # word still ends up in exactly one block — except in a rescued block,
         # where a fresh read of the same pixels REPLACES the routed words. So the
@@ -604,6 +629,12 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
             "psm": int(tcfg.get("psm", 3)),
             "upscale_median_px": UPSCALE_MEDIAN_PX,
             "upscale_factor": UPSCALE_FACTOR,
+            "table_grid": {
+                **{k: v for k, v in TG.DEFAULTS.items()},
+                **{k: v for k, v in (cfg.get("table_grid", {}) or {}).items()
+                   if k in TG.DEFAULTS},
+                "blocks": grid_meta,
+            },
             "block_reocr": {
                 **{k: v for k, v in BR.DEFAULTS.items()},
                 **{k: v for k, v in (cfg.get("block_reocr", {}) or {}).items()

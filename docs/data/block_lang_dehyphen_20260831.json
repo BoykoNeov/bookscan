@@ -1,0 +1,463 @@
+{
+ "generated": "2026-08-31",
+ "params": {
+  "enabled": true,
+  "min_len": 3,
+  "min_tokens": 8,
+  "min_distinct": 6,
+  "min_rate": 0.65,
+  "min_margin": 0.25
+ },
+ "jobs": {
+  "owner_20260829-084115-de3c20d3": {
+   "blocks": 708,
+   "labels": [
+    {
+     "page": "page_002",
+     "subpage": "right.png",
+     "block_id": 7,
+     "block_type": "footnote",
+     "language": "ita",
+     "doc_language": "deu",
+     "n_tokens": 8,
+     "rate": 0.875,
+     "margin": 0.75
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block_id": 4,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 52,
+     "rate": 0.827,
+     "margin": 0.692
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block_id": 6,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 44,
+     "rate": 0.727,
+     "margin": 0.545
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block_id": 8,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 34,
+     "rate": 0.853,
+     "margin": 0.706
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block_id": 9,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 46,
+     "rate": 0.783,
+     "margin": 0.674
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block_id": 10,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 51,
+     "rate": 0.784,
+     "margin": 0.686
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block_id": 11,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 55,
+     "rate": 0.764,
+     "margin": 0.655
+    },
+    {
+     "page": "page_017",
+     "subpage": "right.png",
+     "block_id": 4,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 46,
+     "rate": 0.913,
+     "margin": 0.87
+    },
+    {
+     "page": "page_017",
+     "subpage": "right.png",
+     "block_id": 6,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 63,
+     "rate": 0.794,
+     "margin": 0.683
+    },
+    {
+     "page": "page_017",
+     "subpage": "right.png",
+     "block_id": 7,
+     "block_type": "paragraph",
+     "language": "deu",
+     "doc_language": "eng",
+     "n_tokens": 26,
+     "rate": 0.769,
+     "margin": 0.654
+    },
+    {
+     "page": "page_019",
+     "subpage": "right.png",
+     "block_id": 5,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 37,
+     "rate": 0.703,
+     "margin": 0.405
+    },
+    {
+     "page": "page_020",
+     "subpage": "right.png",
+     "block_id": 5,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 29,
+     "rate": 0.793,
+     "margin": 0.483
+    },
+    {
+     "page": "page_020",
+     "subpage": "right.png",
+     "block_id": 10,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 77,
+     "rate": 0.857,
+     "margin": 0.545
+    },
+    {
+     "page": "page_022",
+     "subpage": "right.png",
+     "block_id": 8,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 84,
+     "rate": 0.905,
+     "margin": 0.774
+    },
+    {
+     "page": "page_022",
+     "subpage": "right.png",
+     "block_id": 10,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 24,
+     "rate": 0.833,
+     "margin": 0.542
+    },
+    {
+     "page": "page_024",
+     "subpage": "right.png",
+     "block_id": 4,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 79,
+     "rate": 0.772,
+     "margin": 0.608
+    },
+    {
+     "page": "page_024",
+     "subpage": "right.png",
+     "block_id": 6,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 40,
+     "rate": 0.775,
+     "margin": 0.65
+    }
+   ],
+   "joins_gained": [
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block": 8,
+     "language": "deu",
+     "joined": "untrainierte,"
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block": 9,
+     "language": "deu",
+     "joined": "Selbstsicherung."
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block": 10,
+     "language": "deu",
+     "joined": "Kraftanstrengung"
+    },
+    {
+     "page": "page_017",
+     "subpage": "left.png",
+     "block": 11,
+     "language": "deu",
+     "joined": "Eisenklammer."
+    },
+    {
+     "page": "page_017",
+     "subpage": "right.png",
+     "block": 4,
+     "language": "deu",
+     "joined": "senkrechten,"
+    },
+    {
+     "page": "page_017",
+     "subpage": "right.png",
+     "block": 6,
+     "language": "deu",
+     "joined": "meistern"
+    },
+    {
+     "page": "page_019",
+     "subpage": "right.png",
+     "block": 5,
+     "language": "eng",
+     "joined": "loneliness"
+    },
+    {
+     "page": "page_019",
+     "subpage": "right.png",
+     "block": 5,
+     "language": "eng",
+     "joined": "Starting"
+    },
+    {
+     "page": "page_020",
+     "subpage": "right.png",
+     "block": 5,
+     "language": "eng",
+     "joined": "attractive"
+    },
+    {
+     "page": "page_020",
+     "subpage": "right.png",
+     "block": 10,
+     "language": "eng",
+     "joined": "distinctive"
+    },
+    {
+     "page": "page_020",
+     "subpage": "right.png",
+     "block": 10,
+     "language": "eng",
+     "joined": "descent"
+    },
+    {
+     "page": "page_022",
+     "subpage": "right.png",
+     "block": 8,
+     "language": "eng",
+     "joined": "impressing"
+    },
+    {
+     "page": "page_022",
+     "subpage": "right.png",
+     "block": 8,
+     "language": "eng",
+     "joined": "increased"
+    },
+    {
+     "page": "page_024",
+     "subpage": "right.png",
+     "block": 4,
+     "language": "eng",
+     "joined": "routes"
+    },
+    {
+     "page": "page_024",
+     "subpage": "right.png",
+     "block": 6,
+     "language": "eng",
+     "joined": "beginning"
+    }
+   ],
+   "joins_lost": []
+  },
+  "floor_bg_01": {
+   "blocks": 15,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_bg_02": {
+   "blocks": 7,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_bg_03": {
+   "blocks": 11,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_de_01": {
+   "blocks": 19,
+   "labels": [
+    {
+     "page": "page_001",
+     "subpage": "right.png",
+     "block_id": 6,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 77,
+     "rate": 0.883,
+     "margin": 0.727
+    },
+    {
+     "page": "page_001",
+     "subpage": "right.png",
+     "block_id": 7,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 28,
+     "rate": 0.75,
+     "margin": 0.464
+    }
+   ],
+   "joins_gained": [
+    {
+     "page": "page_001",
+     "subpage": "right.png",
+     "block": 6,
+     "language": "eng",
+     "joined": "walking"
+    }
+   ],
+   "joins_lost": []
+  },
+  "floor_de_02": {
+   "blocks": 36,
+   "labels": [
+    {
+     "page": "page_001",
+     "subpage": "right.png",
+     "block_id": 13,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 59,
+     "rate": 0.831,
+     "margin": 0.593
+    },
+    {
+     "page": "page_001",
+     "subpage": "right.png",
+     "block_id": 14,
+     "block_type": "paragraph",
+     "language": "eng",
+     "doc_language": "deu",
+     "n_tokens": 33,
+     "rate": 0.939,
+     "margin": 0.697
+    }
+   ],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_en_coins_01": {
+   "blocks": 26,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_en_coins_02": {
+   "blocks": 28,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_en_coins_03": {
+   "blocks": 23,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_it_geo_01": {
+   "blocks": 17,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_it_geo_02": {
+   "blocks": 20,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_it_geo_03": {
+   "blocks": 23,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_it_geo_04": {
+   "blocks": 22,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_it_geo_05": {
+   "blocks": 17,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_it_geo_06": {
+   "blocks": 19,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  },
+  "floor_it_geo_07": {
+   "blocks": 41,
+   "labels": [],
+   "joins_gained": [],
+   "joins_lost": []
+  }
+ },
+ "total": {
+  "blocks": 1032,
+  "labels": 21,
+  "joins_gained": 16,
+  "joins_lost": 0
+ }
+}

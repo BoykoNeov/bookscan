@@ -644,3 +644,54 @@ def test_table_rows_are_the_ones_present_not_a_range(tmp_path: Path):
     html = S8.render_html(_doc(page), jd)
     assert html.count("<tr>") == 2
     assert "<tr><td>Route</td><td>3 Std.</td></tr>" in html
+
+
+# ---- per-block language (pipeline/block_lang.py -> Block.language) ---------
+
+
+def test_a_labelled_block_dehyphenates_against_its_own_language(tmp_path: Path):
+    """The deliverable of the per-block language pass. In a German document an
+    English paragraph keeps "rou- tes" broken, because the German lexicon does
+    not contain "routes" — measured 15 such words in the owner's book."""
+    words = [_w("rou-", line_id=0), _w("tes", line_id=1)]
+    blk = Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 50},
+                reading_order=0, words=words, language="eng")
+    deu, eng = {"strassen"}, {"routes"}
+    # without the label the document lexicon decides and the hyphen is kept
+    plain = Block(**{**blk.model_dump(), "language": None})
+    assert "rou-" in S8._block_body_html(plain, "flag", tmp_path, deu, {"eng": eng})
+    # with it, the block's own lexicon joins
+    assert "routes" in S8._block_body_html(blk, "flag", tmp_path, deu, {"eng": eng})
+
+
+def test_an_unlabelled_block_is_unchanged_by_the_new_argument(tmp_path: Path):
+    """None means "use the document's language" — which is what every document
+    written before Block.language existed says, so the render must be identical."""
+    words = [_w("compara-", line_id=0), _w("tive", line_id=1)]
+    blk = Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 50},
+                reading_order=0, words=words)
+    doc_lex = {"comparative"}
+    assert (S8._block_body_html(blk, "flag", tmp_path, doc_lex)
+            == S8._block_body_html(blk, "flag", tmp_path, doc_lex, {"eng": set()}))
+
+
+def test_the_block_lexicon_is_a_union_with_the_documents(tmp_path: Path):
+    """A book that prints one language inside another is full of the other's
+    proper nouns. Measured: block-language-ONLY loses de_02's "Rosen- garten",
+    a German massif named in an English paragraph. The union loses nothing."""
+    blk = Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 50},
+                reading_order=0, language="eng",
+                words=[_w("Rosen-", line_id=0), _w("garten", line_id=1)])
+    out = S8._block_body_html(blk, "flag", tmp_path, {"rosengarten"},
+                              {"eng": {"routes"}})
+    assert "Rosengarten" in out          # the document's language still counts
+
+
+def test_a_label_with_no_installed_dictionary_falls_back(tmp_path: Path):
+    """A missing lexicon must keep the hyphen (the conservative default), never
+    silently apply another language's rules."""
+    blk = Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 50},
+                reading_order=0, language="ita",
+                words=[_w("compara-", line_id=0), _w("tive", line_id=1)])
+    out = S8._block_body_html(blk, "flag", tmp_path, {"comparative"}, {"eng": set()})
+    assert "comparative" in out          # falls back to the document lexicon

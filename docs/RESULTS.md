@@ -7841,3 +7841,150 @@ renderer now iterates the row and column values actually present.
 Inputs and per-block output: `docs/data/table_grid_census_20260831.json`,
 `docs/data/table_grid_census_20260831.txt`. n = 2 books, one of them by one
 reader's eye.
+
+## 2026-08-31 — Per-block language: the LABEL ships, the re-read is REFUSED
+
+**The plan said the fix was to re-read a foreign-language block in its own
+language. Measured first, and that half is dead.** What ships instead is a label
+(`Block.language`, `pipeline/block_lang.py`), whose single consumer is Stage 08's
+de-hyphenation — and it is worth **16 broken words rejoined across the corpus,
+0 lost**.
+
+### Does a dictionary vote even find the foreign blocks? (yes)
+
+`tools/block_lang_census.py` scores every text block's already-read words against
+the four installed Hunspell dictionaries. On the owner's 25-spread via-ferrata
+guide, 209 scorable text blocks: **153 stay on the page language, 42 vote English,
+14 vote Italian**. The clean English route descriptions are unmistakable — a
+99-word block scores **0.92 against English and 0.13 against German**.
+
+Reproducibility note: this job is **not uniformly German**. 22 spreads were read
+as `deu` and three (`page_003`, `page_004`, `page_017`) as `eng`, left over from
+the day the language picker shipped. So the corpus contains gains in **both**
+directions, which is a feature of the evidence and a fact anyone re-running these
+numbers needs.
+
+### The re-read: measured over all 36 nominated blocks, and refused
+
+Every nominated block was re-read from its own crop — the same crop-and-read path
+`block_reocr` ships — in the page language and in the voted language.
+
+**On blocks that read WELL, the language is a wash.** Word counts come back
+identical (101/101, 103/103, 87/87, 56/56, 45/45, 42/42, 32/32), confidence moves
+under a point, and the text diff has fixes and regressions in the same breath:
+
+| block | English fixes | English breaks |
+|---|---|---|
+| `page_024/right` #4 | `interestin` → `interesting`, `„Giro` → `Giro` | `Ferrata Roghel` → `Ferrara Roghe!`, `can` → `an` |
+| `page_024/right` #6 | `yalley` → `valley` | `10\|` → `[0]`, `Fischleintal` → `fischleintal` |
+| `page_020/right` #10 | — | `From` → `from`, `15` → `[5` |
+| `page_019/right` #9 | `Rif,` → `Rif.` | `Ferrata` → `Ferrara` |
+| `page_022/right` #8 | — | — (**byte-identical**, 99 words) |
+
+**On blocks that read BADLY — the translation panels this work was aimed at — the
+other language returns DIFFERENT garbage, not better garbage.** `page_018/left` #9
+reads `Beside the technacz! 68- Kcules (1-6 and dam- Ding` under German and
+`wana! 6 ficunes (A-€ ... dim- bag` under English; the German read is if anything
+closer to the printed `technical 6 figures (1-6 ... damping`. `page_016/right` #14
+returns 158 words of noise under German and 112 under English.
+
+**So the premise in `docs/plans/panorama-and-next-steps.md` §2 — "the largest
+single cause is language" for the fourteen unreadable panels — is wrong.** Those
+panels are unreadable because of the pixels: a coloured banner, small type, and
+the four bad-crop spreads whose dewarp ran on a frame containing sofa. No language
+setting recovers them, and none of them is fixed today.
+
+### What the label is actually for
+
+Stage 08 joins a line-end hyphen only when the joined token is in the document's
+dictionary (CLAUDE.md's rule). In a German document every English paragraph
+therefore keeps its broken words, and they are in the shipped PDF: `rou- tes`,
+`at- tractive`, `distinc- tive`, `lone- liness`, `inc- reased`.
+
+Applying the shipped pass over the whole corpus — the owner's book plus all
+fifteen single-language testset fixtures, 1032 blocks:
+
+| | blocks | labelled | joins gained | joins lost |
+|---|---|---|---|---|
+| owner's book (25 spreads) | 708 | 17 | 15 | 0 |
+| `de_01`, `de_02` (same guide) | 55 | 4 | 1 | 0 |
+| the other 13 fixtures (bg, en, it) | 269 | **0** | 0 | 0 |
+| **total** | **1032** | **21** | **16** | **0** |
+
+Thirteen of fifteen fixtures label nothing at all. The two that do are the two
+spreads of this same German guide, and all four labelled blocks really are
+English.
+
+### The union, which one measurement forced
+
+De-hyphenating a labelled block against its own dictionary **alone** gains 16 and
+**loses one**: `de_02`'s English paragraph names the `Rosen- garten`, a German
+massif, which the German lexicon joins and the English one cannot. A book that
+prints one language inside another is exactly a book full of the other's proper
+nouns — Italian route names in German text, German mountains in English text — so
+the block's language is the **extra** authority, not the only one. Shipped as a
+union with the document's lexicon: 16 gained, 0 lost.
+
+### Graded on the RENDER, not on the label
+
+The numbers above are counted on `05_ocr/ocr.json`; the PDF is built from
+`document.json`, with assemble in between. So the same six spreads were taken
+through the shipped path end to end — Stage 05, 06, assemble, render — and
+rendered **twice from one document**: once as Stage 05 labelled it, once with
+every label stripped, which is exactly what the document looked like before this
+pass existed. Everything else is identical (3921 words, 33 figures, 505 flagged
+in both arms).
+
+The label survives assemble — 12 labelled blocks reach `document.json` — and in
+the rendered HTML:
+
+* broken words in the **unlabelled** render: **38**
+* broken words in the **labelled** render: **26**
+* **joined only with the label (12): `Star- ting`, `at- tractive`, `be- ginning`,
+  `belay- ing`, `dif- ficult`, `distinc- tive`, `expe- rienced`, `inc- reased`,
+  `lone- liness`, `rou- tes`, `sec- tions`, `verti- cal`**
+* **newly broken with the label: 0**
+
+Twelve rather than the eight this subset predicts, because these six spreads were
+all re-run as `deu` here; in the archived job `page_017` had been read as `eng`,
+so its four English blocks were invisible to the vote. The 26 that remain broken
+are words no installed dictionary contains at all (proper nouns, and garbled
+tokens) — the conservative default, unchanged.
+
+### The guards, each one a measured false positive
+
+* **`min_len` 3 — the one that matters.** English Hunspell accepts a long tail of
+  two-letter forms (`la ir at do av se vs fa is cr`), so a block of pure noise
+  scores **0.61 against English on two-letter tokens alone**. At `min_len` 2 the
+  junk block of `it_geo_05` (median confidence 24, text `I nia pica ian na n PE
+  aaa EEE`) is nominated; at 3 it is not, and **no real paragraph is lost
+  anywhere in the corpus**.
+* **`min_distinct` 6** — three blocks of route heights (`840 Hm 1450 Hm 1400 Hm
+  ...`) score Italian at **1.00** off one repeated token, `hm`.
+* **`min_rate` 0.65** — real prose scores 0.70–0.91; a mixed German/English
+  caption scores 0.33.
+* **`min_margin` 0.25** — `Sehr gut versicherter Steig / Very good secured route`
+  ties at **0.00** and is correctly refused: it has no single language.
+
+### Honest limits
+
+* **One consumer, deliberately.** The EasyOCR disagreement gate and Stage 06's
+  threshold also key on a lexicon, and neither is wired to this. They are
+  unmeasured here, and wiring them on the strength of this row would make the row
+  unfalsifiable.
+* **The label is not a translation and not a re-read.** Nothing about the block's
+  text changes; word conservation is untouched and an abstain costs nothing.
+* **16 words is 16 words.** This is a small, visible correctness win on a defect
+  the owner can see in the PDF, not a fix for the book's big remaining problems
+  (the four bad-crop spreads, the fourteen unreadable panels, the wrong numbers
+  in the route tables).
+* **n = 2 books**, one of them supplying 17 of the 21 labels.
+* Loading all four Hunspell dictionaries costs **3.7 s** once per Stage 05 run.
+
+Inputs and per-block output: `docs/data/block_lang_census_20260831.json` (the
+vote over every text block), `docs/data/block_lang_reread_20260831.json` (both
+readings of all 36 nominated blocks, with their text), and
+`docs/data/block_lang_dehyphen_20260831.json` (every label and every join gained
+or lost, per job) and `docs/data/block_lang_render_ab_20260831.json` (the two
+renders' hyphen sets). The census tool is `tools/block_lang_census.py`; its
+`--reread` and `--all-langs` arms are the refused experiment, kept runnable.

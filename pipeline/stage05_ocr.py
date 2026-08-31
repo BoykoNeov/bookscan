@@ -88,6 +88,7 @@ from pydantic import BaseModel, Field
 
 from pipeline.page_model import BBox, Block, BlockType, StageMeta, Word
 from pipeline import stage04_layout as S4
+from pipeline import block_lang as BL
 from pipeline import block_reocr as BR
 from pipeline import table_grid as TG
 from pipeline import rescued_type as RT
@@ -473,6 +474,14 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
     panel_params["enabled"] = bool(
         text_panel and panel_params.get("enabled", False))
     panel_meta: list[dict] = []
+    lang_meta: list[dict] = []
+    # Every installed Hunspell dictionary, loaded ONCE for the whole run: the
+    # per-block language vote scores each block against all of them, and the
+    # German pair alone is 4.3 MB through spylls. Missing pairs are simply absent
+    # (a fresh clone has no models/lexicons/, so the pass is inert there).
+    lang_params = BL.resolve_params(cfg)
+    lang_lexicons = (BL.load_lexicons(BL.lexicon_paths(cfg))
+                     if lang_params["enabled"] else {})
     tcfg_oem = int((cfg.get("tesseract", {}) or {}).get("oem", 1))
     t_ocr = time.perf_counter()
     for pl in layout.pages:
@@ -549,6 +558,27 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
             f"{r.conf_after}" for r in rescues)
         rescued_meta.append({"page": pl.name,
                              "blocks": [vars(r) for r in rescues]})
+
+        # Which language is each block actually PRINTED in? A book carries
+        # several on one page — this corpus's guide prints the German route
+        # description, the English one and the Italian one each in its own box —
+        # and the page is read in only one of them. This writes Block.language
+        # and NOTHING else: no word is added, dropped or edited, so it cannot
+        # disturb the conservation check below.
+        #
+        # ORDER: after the starved-block re-read, because a starved block has too
+        # few words to vote on its own language. Re-reading a block in the voted
+        # language was measured and REFUSED (the text is a wash where it reads
+        # well, and different garbage where it does not) — see block_lang.py.
+        lang_notes = BL.label_blocks(ordered, lang_code_used, lang_lexicons,
+                                     lang_params)
+        lang_meta.append({"page": pl.name, "labelled": [vars(n) for n in lang_notes]})
+        # An intended outcome, not a problem — same "note:" prefix and same
+        # reason as the ejections, rescues and grids around it.
+        warnings.extend(
+            f"note: block {n.block_id} reads as {n.language}, not "
+            f"{n.doc_language} ({n.n_tokens} tokens, rate {n.rate}, "
+            f"margin {n.margin})" for n in lang_notes)
 
         # A TABLE block's words arrive from the page pass in COLUMN order, which
         # Stage 08 renders as one run of words with every value detached from its
@@ -644,6 +674,11 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
             "text_panel": {
                 **{k: v for k, v in panel_params.items() if k in TP.DEFAULTS},
                 "promoted": panel_meta,
+            },
+            "block_lang": {
+                **{k: v for k, v in lang_params.items() if k in BL.DEFAULTS},
+                "lexicons": sorted(lang_lexicons),
+                "labelled": lang_meta,
             },
             "xy_gap_frac": p["xy_gap_frac"],
             "reads": ["04_layout/layout.json", "03_dewarp/<subpage images>"],

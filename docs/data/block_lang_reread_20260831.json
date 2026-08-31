@@ -1,0 +1,6131 @@
+{
+ "job": "jobs\\20260829-084115-de3c20d3",
+ "langs": [
+  "eng",
+  "deu",
+  "ita",
+  "bul"
+ ],
+ "min_tokens": 8,
+ "min_margin": 0.1,
+ "blocks": [
+  {
+   "page": "page_001",
+   "subpage": "left.png",
+   "block_id": 1,
+   "block_type": "paragraph",
+   "n_words": 49,
+   "n_tokens": 24,
+   "conf": 68.5,
+   "rates": {
+    "eng": 0.292,
+    "deu": 0.458,
+    "ita": 0.042,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 11,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "n Palagruppe - See 252 [x Gvettagruppe - Seine 3/2 || Schiara-Gruppe",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 22,
+   "n_tokens": 22,
+   "conf": 83.3,
+   "rates": {
+    "eng": 0.5,
+    "deu": 0.682,
+    "ita": 0.273,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 11,
+    "deu": 15,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "teige in den Dolomiten, in Südtirol, All tters Se tohnen SE ta",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 18,
+   "n_tokens": 13,
+   "conf": 93.4,
+   "rates": {
+    "eng": 0.462,
+    "deu": 0.615,
+    "ita": 0.231,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 8,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "© 2022 Printed in Austria - Copyright d, Fiona Aschenbrenner, Dieter Wissekal",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "left.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 49,
+   "n_tokens": 44,
+   "conf": 80.0,
+   "rates": {
+    "eng": 0.159,
+    "deu": 0.795,
+    "ita": 0.205,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 35,
+    "ita": 9,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "r Fragen zu den in diesem Buch vor, SS S S ag",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "left.png",
+   "block_id": 12,
+   "block_type": "paragraph",
+   "n_words": 35,
+   "n_tokens": 32,
+   "conf": 93.1,
+   "rates": {
+    "eng": 0.281,
+    "deu": 0.875,
+    "ita": 0.094,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 9,
+    "deu": 28,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Touren-App-Zugang: Die Daten werden ab Erscheinen dieses Buches mind. 3 Jahre lang",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "left.png",
+   "block_id": 13,
+   "block_type": "paragraph",
+   "n_words": 40,
+   "n_tokens": 40,
+   "conf": 92.9,
+   "rates": {
+    "eng": 0.4,
+    "deu": 0.625,
+    "ita": 0.2,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 16,
+    "deu": 25,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Danke für die Unterstützung an: Ernst Riha, Daniel Rieser, Peter Schlögel, Sebastian",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "left.png",
+   "block_id": 14,
+   "block_type": "paragraph",
+   "n_words": 52,
+   "n_tokens": 47,
+   "conf": 77.1,
+   "rates": {
+    "eng": 0.149,
+    "deu": 0.83,
+    "ita": 0.128,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 39,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Das gesamte Werk und die Daten in der App sind urheberrechtlich geschützt.",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "left.png",
+   "block_id": 16,
+   "block_type": "paragraph",
+   "n_words": 113,
+   "n_tokens": 113,
+   "conf": 93.6,
+   "rates": {
+    "eng": 0.062,
+    "deu": 0.947,
+    "ita": 0.035,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 107,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Haftungsausschluss: Das vorliegende Buch und alle darin beschriebenen Tourenvor- schläge, GPS-Daten, Techniken",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 30,
+   "n_tokens": 19,
+   "conf": 94.8,
+   "rates": {
+    "eng": 0.105,
+    "deu": 0.842,
+    "ita": 0.053,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 16,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "3 Inhalt und Tourenübersicht Klettersteige 9 Vorwort der Autoren 10 Tourenplanung 14",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 19,
+   "n_tokens": 19,
+   "conf": 94.5,
+   "rates": {
+    "eng": 0.105,
+    "deu": 0.842,
+    "ita": 0.053,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 16,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Inhalt und Tourenübersicht Klettersteige Vorwort der Autoren Tourenplanung Ausrüstung Am Klettersteig Alpine",
+   "reread": null
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "footnote",
+   "n_words": 9,
+   "n_tokens": 9,
+   "conf": 64.7,
+   "rates": {
+    "eng": 0.222,
+    "deu": 0.333,
+    "ita": 0.556,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 3,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.222,
+   "page_lang": "deu",
+   "sample": "AI Arzalpenturm- Klettersteig Il A2 Via ferrata Mario Zandonella",
+   "reread": {
+    "page_words": 9,
+    "page_conf": 64.7,
+    "page_hits": 3,
+    "page_tokens": 9,
+    "crop_deu": {
+     "words": 8,
+     "conf": 73.7,
+     "hits": 3,
+     "tokens": 6,
+     "text": "Al Arzalpenturm-Klettersteig N A? Via ferrata Mario Zandonella"
+    },
+    "crop_ita": {
+     "words": 8,
+     "conf": 83.9,
+     "hits": 4,
+     "tokens": 6,
+     "text": "AI Arzalpenturm-Klettersteig i A? Via ferrata Mario Zandonella"
+    }
+   }
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "footnote",
+   "n_words": 10,
+   "n_tokens": 10,
+   "conf": 92.5,
+   "rates": {
+    "eng": 0.1,
+    "deu": 0.1,
+    "ita": 0.7,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 1,
+    "deu": 1,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.6,
+   "page_lang": "deu",
+   "sample": "A3 Ferrata Roghel, Ferrata Gabriella A4 Via Ferrata Severino Casara",
+   "reread": {
+    "page_words": 10,
+    "page_conf": 92.5,
+    "page_hits": 1,
+    "page_tokens": 10,
+    "crop_deu": {
+     "words": 10,
+     "conf": 92.9,
+     "hits": 1,
+     "tokens": 10,
+     "text": "A3 Ferrata Roghel, Ferrata Gabriella A4 Via Ferrata Severino Casara"
+    },
+    "crop_ita": {
+     "words": 10,
+     "conf": 93.4,
+     "hits": 7,
+     "tokens": 10,
+     "text": "A3 Ferrata Roghel, Ferrata Gabriella A4 Via Ferrata Severino Casara"
+    }
+   }
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 11,
+   "block_type": "footnote",
+   "n_words": 9,
+   "n_tokens": 8,
+   "conf": 84.2,
+   "rates": {
+    "eng": 0.25,
+    "deu": 0.125,
+    "ita": 0.375,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 1,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.25,
+   "page_lang": "deu",
+   "sample": "ABS Innerkoflersteig u. Schartenweg A9 Via ferrata Ceria Merlone",
+   "reread": {
+    "page_words": 9,
+    "page_conf": 84.2,
+    "page_hits": 1,
+    "page_tokens": 8,
+    "crop_deu": {
+     "words": 9,
+     "conf": 88.8,
+     "hits": 1,
+     "tokens": 8,
+     "text": "ABS Innerkoflersteig u. Schartenweg A9 Via ferrata Ceria Merlone"
+    },
+    "crop_ita": {
+     "words": 9,
+     "conf": 85.7,
+     "hits": 3,
+     "tokens": 8,
+     "text": "AB8 Innerkoflersteig u. Schartenweg A9 Via ferrata Ceria Merlone"
+    }
+   }
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 15,
+   "block_type": "footnote",
+   "n_words": 10,
+   "n_tokens": 10,
+   "conf": 65.2,
+   "rates": {
+    "eng": 0.6,
+    "deu": 0.3,
+    "ita": 0.6,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 3,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.3,
+   "page_lang": "deu",
+   "sample": "ZZ nr id dd BI Via ferrata Rene de Pol",
+   "reread": {
+    "page_words": 10,
+    "page_conf": 65.2,
+    "page_hits": 3,
+    "page_tokens": 10,
+    "crop_deu": {
+     "words": 10,
+     "conf": 65.2,
+     "hits": 3,
+     "tokens": 10,
+     "text": "ZZ nr id dd BI Via ferrata Rene de Pol"
+    },
+    "crop_eng": {
+     "words": 9,
+     "conf": 68.7,
+     "hits": 4,
+     "tokens": 8,
+     "text": "I RE AA Bl Yia ferrata Rene de Pol"
+    }
+   }
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 43,
+   "block_type": "other",
+   "n_words": 24,
+   "n_tokens": 12,
+   "conf": 90.7,
+   "rates": {
+    "eng": 0.0,
+    "deu": 0.0,
+    "ita": 1.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 0,
+    "ita": 12,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 1.0,
+   "page_lang": "deu",
+   "sample": "840 Hm 1450 Hm 1400 Hm 550 Hm 1300 Hm 100 Hm",
+   "reread": {
+    "page_words": 24,
+    "page_conf": 90.7,
+    "page_hits": 0,
+    "page_tokens": 12,
+    "crop_deu": {
+     "words": 24,
+     "conf": 89.8,
+     "hits": 0,
+     "tokens": 12,
+     "text": "840 Hm 1450 Hm 1400 Hm 550 Hm 1300 Hm 100 Hm 760 Hm 800 Hm 100 Hm 750 Hm 1050 Hm 750 Hm"
+    },
+    "crop_ita": {
+     "words": 24,
+     "conf": 90.0,
+     "hits": 12,
+     "tokens": 12,
+     "text": "840 Hm 1450 Hm 1400 Hm 550 Hm 1300 Hm 100 Hm 760 Hm 800 Hm 1100 Hm 750 Hm 1050 Hm 750 Hm"
+    }
+   }
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 44,
+   "block_type": "other",
+   "n_words": 16,
+   "n_tokens": 8,
+   "conf": 95.4,
+   "rates": {
+    "eng": 0.0,
+    "deu": 0.0,
+    "ita": 1.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 0,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 1.0,
+   "page_lang": "deu",
+   "sample": "1200 Hm 1720 Hm 1050 Hm 650 Hm 1400 Hm 2200 Hm",
+   "reread": {
+    "page_words": 16,
+    "page_conf": 95.4,
+    "page_hits": 0,
+    "page_tokens": 8,
+    "crop_deu": {
+     "words": 16,
+     "conf": 94.7,
+     "hits": 0,
+     "tokens": 8,
+     "text": "1200 Hm 1720 Hm 1050 Hm 650 Hm 1400 Hm 2200 Hm 1050 Hm 870 Hm"
+    },
+    "crop_ita": {
+     "words": 16,
+     "conf": 94.2,
+     "hits": 8,
+     "tokens": 8,
+     "text": "1200 Hm 1720 Hm 1050 Hm 650 Hm 1400 Hm 2200 Hm 1050 Hm 870 Hm"
+    }
+   }
+  },
+  {
+   "page": "page_002",
+   "subpage": "right.png",
+   "block_id": 46,
+   "block_type": "other",
+   "n_words": 22,
+   "n_tokens": 11,
+   "conf": 94.4,
+   "rates": {
+    "eng": 0.0,
+    "deu": 0.0,
+    "ita": 1.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 0,
+    "ita": 11,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 1.0,
+   "page_lang": "deu",
+   "sample": "300 Hm 1000 Hm 120 Hm 300 Hm 570 Hm 100 Hm",
+   "reread": {
+    "page_words": 22,
+    "page_conf": 94.4,
+    "page_hits": 0,
+    "page_tokens": 11,
+    "crop_deu": {
+     "words": 22,
+     "conf": 94.2,
+     "hits": 0,
+     "tokens": 11,
+     "text": "300 Hm 1000 Hm 120 Hm 300 Hm 570 Hm 100 Hm 300 Hm 290 Hm 700 Hm 80 Hm 210 Hm"
+    },
+    "crop_ita": {
+     "words": 22,
+     "conf": 94.7,
+     "hits": 11,
+     "tokens": 11,
+     "text": "300 Hm 1000 Hm 120 Hm 300 Hm 570 Hm 100 Hm 300 Hm 290 Hm 700 Hm 80 Hm 210 Hm"
+    }
+   }
+  },
+  {
+   "page": "page_003",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "other",
+   "n_words": 15,
+   "n_tokens": 12,
+   "conf": 87.3,
+   "rates": {
+    "eng": 0.167,
+    "deu": 0.167,
+    "ita": 0.5,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 2,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.333,
+   "page_lang": "eng",
+   "sample": "@ EI2 Via ferrata Bepi Zac - Cima Uomo @ EIB Via",
+   "reread": {
+    "page_words": 15,
+    "page_conf": 87.3,
+    "page_hits": 2,
+    "page_tokens": 12,
+    "crop_eng": {
+     "words": 15,
+     "conf": 84.0,
+     "hits": 2,
+     "tokens": 12,
+     "text": "© EI2 Via ferrata Bepi Zac - Cima Uomo ® E13 Via ferrata Paolin Piccolin"
+    },
+    "crop_ita": {
+     "words": 15,
+     "conf": 82.8,
+     "hits": 5,
+     "tokens": 12,
+     "text": "© EI2 Via ferrata Bepi Zac - Cima Vomo @ El3 Via ferrata Paolin Piccolin"
+    }
+   }
+  },
+  {
+   "page": "page_003",
+   "subpage": "right.png",
+   "block_id": 8,
+   "block_type": "other",
+   "n_words": 14,
+   "n_tokens": 8,
+   "conf": 81.6,
+   "rates": {
+    "eng": 0.75,
+    "deu": 0.0,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 0,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "4 5td. 6% Std. 7 Std. 5V4 Std. 8 Std. 9 Std.",
+   "reread": null
+  },
+  {
+   "page": "page_003",
+   "subpage": "right.png",
+   "block_id": 11,
+   "block_type": "table",
+   "n_words": 73,
+   "n_tokens": 49,
+   "conf": 75.8,
+   "rates": {
+    "eng": 0.265,
+    "deu": 0.245,
+    "ita": 0.163,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 13,
+    "deu": 12,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "F Sellagruppe/Langkofelgruppe @ Fl Pisciadu Klettersteig @ F2Boeseekofel Klettersteig @ F2 Boéseekofel",
+   "reread": null
+  },
+  {
+   "page": "page_003",
+   "subpage": "right.png",
+   "block_id": 12,
+   "block_type": "other",
+   "n_words": 25,
+   "n_tokens": 17,
+   "conf": 71.9,
+   "rates": {
+    "eng": 0.059,
+    "deu": 0.118,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 1,
+    "deu": 2,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.059,
+   "page_lang": "eng",
+   "sample": "G Geisler-/Puez-Gruppe @ Gl Kleine Cirspitze @ Gl Grobe Cirspitze @ G2",
+   "reread": null
+  },
+  {
+   "page": "page_003",
+   "subpage": "right.png",
+   "block_id": 17,
+   "block_type": "other",
+   "n_words": 11,
+   "n_tokens": 8,
+   "conf": 73.1,
+   "rates": {
+    "eng": 0.125,
+    "deu": 0.375,
+    "ita": 0.125,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 1,
+    "deu": 3,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.25,
+   "page_lang": "eng",
+   "sample": "@ H3 Kesselkoge! Uberschreitung @ Ha santnerpass Klettersteig @ HS Rotwandklettersteig",
+   "reread": null
+  },
+  {
+   "page": "page_004",
+   "subpage": "left.png",
+   "block_id": 1,
+   "block_type": "other",
+   "n_words": 18,
+   "n_tokens": 13,
+   "conf": 20.8,
+   "rates": {
+    "eng": 0.462,
+    "deu": 0.077,
+    "ita": 0.231,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 1,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "Ly LM IAAL y | h Tw MA Ui ALAN ’ Late",
+   "reread": null
+  },
+  {
+   "page": "page_004",
+   "subpage": "right.png",
+   "block_id": 11,
+   "block_type": "other",
+   "n_words": 33,
+   "n_tokens": 23,
+   "conf": 90.1,
+   "rates": {
+    "eng": 0.478,
+    "deu": 0.174,
+    "ita": 0.652,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 11,
+    "deu": 4,
+    "ita": 15,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.174,
+   "page_lang": "eng",
+   "sample": "02 Fennberg-Klettersteig 03 Via ferrata Burrone Giovanelli 4 Std. 04 Via attrezzata",
+   "reread": {
+    "page_words": 33,
+    "page_conf": 90.1,
+    "page_hits": 11,
+    "page_tokens": 23,
+    "crop_eng": {
+     "words": 56,
+     "conf": 82.2,
+     "hits": 12,
+     "tokens": 32,
+     "text": "02 Fennberg-Klettersteig 2 271 IL. wd 1 BS Ad LALLA, 03 Via ferrata Burrone Giovanelli 1,3 4 Std. B 730 Hm 04 Via attrezzata Rio Secco 1,3 3 Std. C| 450 Hm 05 Ferrata dei Laghi Cermis Skyline 1,3 2'% Std. B/C 550 Hm 06 Ferrata Val di Scala 1,2 | 1% Std. B| 150 Hm"
+    },
+    "crop_ita": {
+     "words": 56,
+     "conf": 82.8,
+     "hits": 20,
+     "tokens": 33,
+     "text": "02 Fennberg-Klettersteig 1,2 3/1 SU. rt | ez sia 03 Via ferrata Burrone Giovanelli 1,3 4 Std. B 730 Hm 04 Via attrezzata Rio Secco 1,3 3 Std. C | 450 Hm 05 Ferrata dei Laghi Cermis Skyline 1,3 LUA Std. B/C 550 Hm 06 Ferrata Val di Scala 12 | VM Std. B| 150 Hm"
+    }
+   }
+  },
+  {
+   "page": "page_004",
+   "subpage": "right.png",
+   "block_id": 14,
+   "block_type": "table",
+   "n_words": 219,
+   "n_tokens": 135,
+   "conf": 85.4,
+   "rates": {
+    "eng": 0.259,
+    "deu": 0.111,
+    "ita": 0.615,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 35,
+    "deu": 15,
+    "ita": 83,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.356,
+   "page_lang": "eng",
+   "sample": "Pl Sentiero Gustavo Vidi 3 Std. 400 Hm 100 Hm P2 Sentiero",
+   "reread": {
+    "page_words": 219,
+    "page_conf": 85.4,
+    "page_hits": 35,
+    "page_tokens": 135,
+    "crop_eng": {
+     "words": 277,
+     "conf": 78.9,
+     "hits": 39,
+     "tokens": 158,
+     "text": "@ Pl Sentiero Gustavo Vidi 1,4 3 Std. A/B| 400 Hm 100 Hm Pll) @ P2 Sentiero delle Palete 2,0 | 8Std A/B| 400 Hm | 100 Hm FC} @ P3 Sentiero Claudio Costanzi 2,8 10% Std. B/C,1| 1500 Hm | 1000 Hm BCC} @ P4 Sentiero di Val Gelada 1,7 6/4 Std. B/C 420 Hm 100 Hm | Cll @ PS Sentiero SOSAT 1,6 3 Std. B/C 300 Hm 160 Hm FC il @ P6 Sentiero Osvaldo Orsi 1,5 5% Std. A/B, |- 1140 Hm 120 Hm | 274 @ P7 Sentiero"
+    },
+    "crop_ita": {
+     "words": 292,
+     "conf": 77.0,
+     "hits": 96,
+     "tokens": 165,
+     "text": "@ ‘PI Sentiero Gustavo Vidi 1,4 3 Std. A/B | 400 Hm 100 Hm FPC 1[1) @ P2 Sentiero delle Palete 2,0 | 8 Std. AB | 400 Hm | 100 Hm PZ]: @ P3 Sentiero Claudio Costanzi 2,8 I0'A Std. B/C, 1 | 1500 Hm | 1000 Hm FPC) @ P4 Sentiero di Val Gelada 1,7 6'A Std. B/C 420 Hm 100 Hm FP Z1Y/ @ P5 Sentiero SOSAT 1,6 3 Std. B/C 300 Hm 160 Hm FP Z11:) @ P6 Sentiero Osvaldo Orsi 1,5 5A Std. AB, |- 1140 Hm 120 Hm FP "
+    }
+   }
+  },
+  {
+   "page": "page_004",
+   "subpage": "right.png",
+   "block_id": 16,
+   "block_type": "table",
+   "n_words": 48,
+   "n_tokens": 42,
+   "conf": 86.7,
+   "rates": {
+    "eng": 0.405,
+    "deu": 0.262,
+    "ita": 0.5,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 17,
+    "deu": 11,
+    "ita": 21,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.095,
+   "page_lang": "eng",
+   "sample": "Ql Via ferrata Rino Pisetta 5i5td. Q2 Via ferrata Ernesto Che Guevara",
+   "reread": null
+  },
+  {
+   "page": "page_005",
+   "subpage": "left.png",
+   "block_id": 1,
+   "block_type": "table",
+   "n_words": 164,
+   "n_tokens": 77,
+   "conf": 75.0,
+   "rates": {
+    "eng": 0.299,
+    "deu": 0.156,
+    "ita": 0.558,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 23,
+    "deu": 12,
+    "ita": 43,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.403,
+   "page_lang": "deu",
+   "sample": "Q © 8 Via ferrata Susati 12 | 5% Std. B ©",
+   "reread": {
+    "page_words": 164,
+    "page_conf": 75.0,
+    "page_hits": 12,
+    "page_tokens": 77,
+    "crop_deu": {
+     "words": 247,
+     "conf": 60.7,
+     "hits": 22,
+     "tokens": 128,
+     "text": "Tourenübersicht Klettersteige 7?\" z /N Set lift, AZ} 7 Page Q Gardasteberge © Q8 Via ferrata Susati | 1,2 | 5% Std. B| 400Hm| 150 Hm DA © 08 Via ferrata Foletti 1,0 | 5% Std. B| 100Hm| 60Hm @ 08 Sent. dei Camminamenti | 1,0 | 5% Std. AB | 850Hm | 200 Hm | LA @ 08 Sent. delle Laste | 10 | 5Std. AB | 400Hm| 130 Hm (LA @ 9 Sentiero Contrabbandieri 2,5 | 3Std. cm | 450Hm| 100 Hm [AL @ Q0 Ferrata Signo"
+    },
+    "crop_ita": {
+     "words": 276,
+     "conf": 62.7,
+     "hits": 82,
+     "tokens": 146,
+     "text": "Tourenibersicht Klettersteige =\" ; PA Seite Dirt, 4) 7 Page L] Cardaseeherge @ Via fermata Susat | 12 | sv Std. B| 400Hm | Iso Hm ELA © Via ferrata Foletti 10 | 5% Std. B| i00Hm | 6oHm LAI @ Sent. dei Camminamenti 10 | SU Std. AB ssoHm | 200 Hm PAIA @ Q$ Sent. delle Laste | 40 | sStd. AB | 400Hm | 130 Hm PALA @ Q5 Sentiero Contrabbandieri | 25 | 3std. cp | asonm | 100 Hm PALA @ Quo Ferrata Signora"
+    }
+   }
+  },
+  {
+   "page": "page_005",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "other",
+   "n_words": 115,
+   "n_tokens": 69,
+   "conf": 75.3,
+   "rates": {
+    "eng": 0.232,
+    "deu": 0.116,
+    "ita": 0.522,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 16,
+    "deu": 8,
+    "ita": 36,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.406,
+   "page_lang": "deu",
+   "sample": "A Yu Kerrata Sass BA 5% Std. 950 Hm | 350 Hm",
+   "reread": {
+    "page_words": 115,
+    "page_conf": 75.3,
+    "page_hits": 8,
+    "page_tokens": 69,
+    "crop_deu": {
+     "words": 133,
+     "conf": 65.6,
+     "hits": 9,
+     "tokens": 77,
+     "text": "RI Via ferrata Sass Brusai 1,5 | 5%Std. | C/Du.l-| 950Hm | 350 Hm R2 Yıa ferrata Carlo Guzzella |\" 15 | esta: CD 1200 Hm | 380 Hm R3 Ferrata A. Viali/ Ferrata E. Ferrari | 18 | 3% Std. | D| 600 Hm | 400 Hm R4 Via ferrata Carlo Campalani 18 | dust D 950Hm | 100 Hm RS Yi2 ferrata Giancarlo Biasin | 12 | Std. | Du.l| 300Hm| 80Hm R6 Sent. Alpinistico Angelo Pojesi | 45) | este. | C 900Hm | 650 Hm R7 Y"
+    },
+    "crop_ita": {
+     "words": 148,
+     "conf": 67.5,
+     "hits": 48,
+     "tokens": 82,
+     "text": "RI Via ferrata Sass Brusai 15 | 54std. | cEuI- | 950 Hm | 350 Hm R2 Via ferrata Carlo Guzzella | usi sta. | cp | 1200 Hm | 380 Hm R3 Ferrata A Vali/ Ferrata E. Ferrari | 18 | 3n std. | D| 600 Hm | 400 Hm R4 Via ferrata Cario Campalani | 18 | asta. | D | 950 Hm | 100 Hm RS Via ferrata Giancarlo Biasin | 2 | Std. | Du I | 300Hm | 80 Hm Ré Sent. Aipinistico Angelo Pojesi | usi | asta. CC 900 Hm | 650"
+    }
+   }
+  },
+  {
+   "page": "page_005",
+   "subpage": "right.png",
+   "block_id": 1,
+   "block_type": "paragraph",
+   "n_words": 90,
+   "n_tokens": 90,
+   "conf": 95.0,
+   "rates": {
+    "eng": 0.2,
+    "deu": 0.933,
+    "ita": 0.122,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 18,
+    "deu": 84,
+    "ita": 11,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "In Italien werden Klettersteige „vie ferrate“ genannt und das Angebot an herrlichen",
+   "reread": null
+  },
+  {
+   "page": "page_005",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 68,
+   "n_tokens": 68,
+   "conf": 95.4,
+   "rates": {
+    "eng": 0.147,
+    "deu": 0.956,
+    "ita": 0.044,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 10,
+    "deu": 65,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Viele der Klettersteige in den Dolomiten erinnern aber auch an ein dunkles",
+   "reread": null
+  },
+  {
+   "page": "page_005",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 75,
+   "n_tokens": 75,
+   "conf": 95.2,
+   "rates": {
+    "eng": 0.133,
+    "deu": 0.973,
+    "ita": 0.093,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 10,
+    "deu": 73,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Dank moderner Ausrüstung und guter Wettervorhersagen liegt der große Reiz heute nicht",
+   "reread": null
+  },
+  {
+   "page": "page_005",
+   "subpage": "right.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 30,
+   "n_tokens": 30,
+   "conf": 93.8,
+   "rates": {
+    "eng": 0.167,
+    "deu": 0.933,
+    "ita": 0.033,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 28,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Trotz der Fülle an genauen Informationen in diesem Buch bleibt am Ende",
+   "reread": null
+  },
+  {
+   "page": "page_006",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 103,
+   "n_tokens": 103,
+   "conf": 94.8,
+   "rates": {
+    "eng": 0.175,
+    "deu": 0.971,
+    "ita": 0.087,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 18,
+    "deu": 100,
+    "ita": 9,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ein wesentlicher Popularitätsfaktor beim Klettersteiggehen ist die Unkompliziertheit einer derartigen Tour, man",
+   "reread": null
+  },
+  {
+   "page": "page_006",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 34,
+   "n_tokens": 34,
+   "conf": 96.0,
+   "rates": {
+    "eng": 0.176,
+    "deu": 0.971,
+    "ita": 0.059,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 33,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Natürlich sind Schwierigkeit, Routenlänge und Schönheit die wichtigsten Merkmale, anhand derer wir",
+   "reread": null
+  },
+  {
+   "page": "page_006",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 28,
+   "n_tokens": 28,
+   "conf": 95.3,
+   "rates": {
+    "eng": 0.143,
+    "deu": 0.893,
+    "ita": 0.071,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 25,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Wir schreiben hier bewusst Höhenmeter und nicht die tatsächlichen Klettermeter, unter Berücksich-",
+   "reread": null
+  },
+  {
+   "page": "page_006",
+   "subpage": "right.png",
+   "block_id": 1,
+   "block_type": "caption",
+   "n_words": 10,
+   "n_tokens": 8,
+   "conf": 93.9,
+   "rates": {
+    "eng": 0.25,
+    "deu": 0.875,
+    "ita": 0.375,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 7,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Meist eine heiße Angelegenheit - Ferrata E, Che Guevara, Gardasee",
+   "reread": null
+  },
+  {
+   "page": "page_006",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 12,
+   "n_tokens": 12,
+   "conf": 94.8,
+   "rates": {
+    "eng": 0.25,
+    "deu": 0.917,
+    "ita": 0.083,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 11,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "lich angegebene Klettersteiglänge (in Höhenmetern) und die reine Steigbegehungszeit erleichtern die Auswahl.",
+   "reread": null
+  },
+  {
+   "page": "page_006",
+   "subpage": "right.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 49,
+   "n_tokens": 49,
+   "conf": 95.3,
+   "rates": {
+    "eng": 0.245,
+    "deu": 1.0,
+    "ita": 0.082,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 12,
+    "deu": 49,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Die Ausrichtung der Wand gewinnt in Verbindung mit der Meereshöhe und der",
+   "reread": null
+  },
+  {
+   "page": "page_006",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 28,
+   "n_tokens": 28,
+   "conf": 95.4,
+   "rates": {
+    "eng": 0.0,
+    "deu": 1.0,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 28,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Auch Südwände sind nicht unbedingt zu jeder Jahreszeit zu empfehlen. Im Hochsommer",
+   "reread": null
+  },
+  {
+   "page": "page_006",
+   "subpage": "right.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 31,
+   "n_tokens": 31,
+   "conf": 92.0,
+   "rates": {
+    "eng": 0.161,
+    "deu": 0.839,
+    "ita": 0.226,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 26,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Die Zu- und Abstiege sind bei Klettersteigen in der Regel einfach, es",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 69,
+   "n_tokens": 69,
+   "conf": 94.6,
+   "rates": {
+    "eng": 0.159,
+    "deu": 0.928,
+    "ita": 0.116,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 11,
+    "deu": 64,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "bei der Tourenauswahl berücksichtigen und nicht unterschätzen. Das Gelände wird bei einigen",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "other",
+   "n_words": 15,
+   "n_tokens": 15,
+   "conf": 96.0,
+   "rates": {
+    "eng": 0.267,
+    "deu": 0.867,
+    "ita": 0.067,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 13,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Schon bevor man unterhalb der Wand steht bzw. sich im Einzugsb befindet,",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 19,
+   "n_tokens": 17,
+   "conf": 89.7,
+   "rates": {
+    "eng": 0.235,
+    "deu": 0.941,
+    "ita": 0.059,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 16,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "| Schon bevor man unterhalb der Wand steht bzw. sich im Einzugsbereich",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 58,
+   "n_tokens": 54,
+   "conf": 93.2,
+   "rates": {
+    "eng": 0.259,
+    "deu": 0.852,
+    "ita": 0.13,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 14,
+    "deu": 46,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Die Zeitplanung wird vom Wetter und Tageslicht bzw. von der Schwierigkeit und",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "left.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 25,
+   "n_tokens": 25,
+   "conf": 90.8,
+   "rates": {
+    "eng": 0.16,
+    "deu": 0.96,
+    "ita": 0.04,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 24,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Die Lebensversicherung beim Klettersteiggehen ist Erfahrung und die richtige Einschätzung der ei-",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "right.png",
+   "block_id": 1,
+   "block_type": "paragraph",
+   "n_words": 29,
+   "n_tokens": 27,
+   "conf": 90.8,
+   "rates": {
+    "eng": 0.185,
+    "deu": 0.889,
+    "ita": 0.111,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 24,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Erfahrung sammeln. Hinsichtlich Selbstein j i schätzung empfehlen wir, die Sache ganz",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 19,
+   "n_tokens": 18,
+   "conf": 90.2,
+   "rates": {
+    "eng": 0.222,
+    "deu": 0.944,
+    "ita": 0.056,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 17,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "+ Klettersteigneulinge sollten sich langsam an die Routenlängen und Zustiege gewöhnen, die",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 55,
+   "n_tokens": 54,
+   "conf": 95.3,
+   "rates": {
+    "eng": 0.148,
+    "deu": 0.907,
+    "ita": 0.111,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 49,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Eine 50 m-Tour in der in Hüttennähe kann bereits mit den ersten",
+   "reread": null
+  },
+  {
+   "page": "page_007",
+   "subpage": "right.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 77,
+   "n_tokens": 77,
+   "conf": 95.1,
+   "rates": {
+    "eng": 0.221,
+    "deu": 0.922,
+    "ita": 0.156,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 17,
+    "deu": 71,
+    "ita": 12,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Klettersteige kann man grundsätzlich alleine begehen, denn die fixierten Seile ermöglichen eine",
+   "reread": null
+  },
+  {
+   "page": "page_008",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 17,
+   "n_tokens": 17,
+   "conf": 94.8,
+   "rates": {
+    "eng": 0.059,
+    "deu": 0.941,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 1,
+    "deu": 16,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Gehe nie alleine einen Klettersteig und verlasse dich nicht darauf, dass du",
+   "reread": null
+  },
+  {
+   "page": "page_008",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 63,
+   "n_tokens": 61,
+   "conf": 93.7,
+   "rates": {
+    "eng": 0.197,
+    "deu": 0.885,
+    "ita": 0.115,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 12,
+    "deu": 54,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Noch einmal für jene, die sich für gute und erfahrene Klettersteiggeher halten:",
+   "reread": null
+  },
+  {
+   "page": "page_008",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 21,
+   "n_tokens": 21,
+   "conf": 95.6,
+   "rates": {
+    "eng": 0.238,
+    "deu": 1.0,
+    "ita": 0.095,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 21,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Frei nach dem Motto „Es gibt kein schlechtes Wetter, sondern nur schlechte",
+   "reread": null
+  },
+  {
+   "page": "page_008",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 12,
+   "n_tokens": 11,
+   "conf": 89.7,
+   "rates": {
+    "eng": 0.0,
+    "deu": 0.818,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 9,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Entsprechendes Schuhwerk Hüftgurt (evtl. Kombigurt) Klettersteighandschuhe Klettersteigset Kurze Bandschlinge u. Karabiner Kletterheim",
+   "reread": null
+  },
+  {
+   "page": "page_008",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 16,
+   "n_tokens": 16,
+   "conf": 91.5,
+   "rates": {
+    "eng": 0.125,
+    "deu": 0.875,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 14,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ergänzende Ausrüstung: Rucksack, Erste Hilfe, Jacke, Biwaksack, Seil, Pickel, lange Bandschlinge, Handy,",
+   "reread": null
+  },
+  {
+   "page": "page_008",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 74,
+   "n_tokens": 74,
+   "conf": 95.1,
+   "rates": {
+    "eng": 0.176,
+    "deu": 0.986,
+    "ita": 0.108,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 13,
+    "deu": 73,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Gerade dem Schuhwerk kommt bei zunehmender Steigschwierigkeit erhöhte Bedeutung zu, da die",
+   "reread": null
+  },
+  {
+   "page": "page_008",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 42,
+   "n_tokens": 42,
+   "conf": 95.3,
+   "rates": {
+    "eng": 0.119,
+    "deu": 0.952,
+    "ita": 0.095,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 40,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Wir empfehlen für schwere Klettersteige einen Leicht- bergschuh mit guter Profilsoh- le,",
+   "reread": null
+  },
+  {
+   "page": "page_008",
+   "subpage": "right.png",
+   "block_id": 5,
+   "block_type": "caption",
+   "n_words": 14,
+   "n_tokens": 14,
+   "conf": 93.0,
+   "rates": {
+    "eng": 0.214,
+    "deu": 0.571,
+    "ita": 0.286,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 8,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Abbildung: Links der La Sportiva TX-Guide und rechts der ganz hohe Hawag",
+   "reread": null
+  },
+  {
+   "page": "page_009",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 41,
+   "n_tokens": 39,
+   "conf": 88.8,
+   "rates": {
+    "eng": 0.205,
+    "deu": 0.923,
+    "ita": 0.026,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 36,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Der Hüfgurt hat sich in den letzten Jahren beim Klettersteigsport durchgesetzt —",
+   "reread": null
+  },
+  {
+   "page": "page_009",
+   "subpage": "left.png",
+   "block_id": 9,
+   "block_type": "paragraph",
+   "n_words": 50,
+   "n_tokens": 47,
+   "conf": 82.3,
+   "rates": {
+    "eng": 0.128,
+    "deu": 0.83,
+    "ita": 0.043,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 39,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "& besteht aus zwei Klettersteigkarabinern, die eine Versc kssScherung haben, zwei Bandschlin-",
+   "reread": null
+  },
+  {
+   "page": "page_009",
+   "subpage": "left.png",
+   "block_id": 11,
+   "block_type": "paragraph",
+   "n_words": 13,
+   "n_tokens": 13,
+   "conf": 80.2,
+   "rates": {
+    "eng": 0.385,
+    "deu": 0.308,
+    "ita": 0.231,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 4,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.077,
+   "page_lang": "deu",
+   "sample": "Klexersteig-Sets mit Bandfalldamper von li.: Petzl Scorpio Eashook und Stubai Summit Light",
+   "reread": null
+  },
+  {
+   "page": "page_009",
+   "subpage": "left.png",
+   "block_id": 13,
+   "block_type": "footnote",
+   "n_words": 16,
+   "n_tokens": 14,
+   "conf": 71.1,
+   "rates": {
+    "eng": 0.214,
+    "deu": 0.643,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 9,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "keier anımer wieder - nur zwei Schlingen OHNE Bandfalldampfer und KEIN Helm",
+   "reread": null
+  },
+  {
+   "page": "page_009",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 33,
+   "n_tokens": 33,
+   "conf": 93.1,
+   "rates": {
+    "eng": 0.121,
+    "deu": 0.939,
+    "ita": 0.061,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 31,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Kurze Bandschlinge und Karabiner (Kurzfixierung) Sollte die kurze Bandschlinge nicht schon im",
+   "reread": null
+  },
+  {
+   "page": "page_009",
+   "subpage": "right.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 33,
+   "n_tokens": 33,
+   "conf": 94.6,
+   "rates": {
+    "eng": 0.182,
+    "deu": 0.97,
+    "ita": 0.121,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 32,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Es gibt unzählige Modelle, die alle geprüft und auch belüftet sind (wenn",
+   "reread": null
+  },
+  {
+   "page": "page_009",
+   "subpage": "right.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 30,
+   "n_tokens": 30,
+   "conf": 95.5,
+   "rates": {
+    "eng": 0.233,
+    "deu": 0.9,
+    "ita": 0.1,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 27,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Sie sind bei schweren Steigen ein Muss und schützen die Hände vor",
+   "reread": null
+  },
+  {
+   "page": "page_009",
+   "subpage": "right.png",
+   "block_id": 12,
+   "block_type": "caption",
+   "n_words": 14,
+   "n_tokens": 13,
+   "conf": 77.5,
+   "rates": {
+    "eng": 0.0,
+    "deu": 0.615,
+    "ita": 0.231,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 8,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Schwere Klettersteige Zur Sicherheit nur mit Rastschlinge - D/E Varlante Ferrata Anel",
+   "reread": null
+  },
+  {
+   "page": "page_010",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 31,
+   "n_tokens": 28,
+   "conf": 94.8,
+   "rates": {
+    "eng": 0.179,
+    "deu": 0.964,
+    "ita": 0.036,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 27,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "In der Regel reicht ein 30 — 35 Liter großer Rucksack aus.",
+   "reread": null
+  },
+  {
+   "page": "page_010",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 16,
+   "n_tokens": 16,
+   "conf": 89.3,
+   "rates": {
+    "eng": 0.062,
+    "deu": 0.875,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 1,
+    "deu": 14,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Die Rucksackapotheke gehört zu jeder Bergsteigerausrüstung dazu und sollte Verbandszeug, Pflaster und",
+   "reread": null
+  },
+  {
+   "page": "page_010",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 28,
+   "n_tokens": 28,
+   "conf": 89.6,
+   "rates": {
+    "eng": 0.179,
+    "deu": 0.75,
+    "ita": 0.143,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 21,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Mit einer leichten, funktionellen Softshelljacke und einer leichten Überhose übersteht man so",
+   "reread": null
+  },
+  {
+   "page": "page_010",
+   "subpage": "left.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 20,
+   "n_tokens": 20,
+   "conf": 94.7,
+   "rates": {
+    "eng": 0.35,
+    "deu": 0.95,
+    "ita": 0.2,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 19,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ein Muss bei den langen alpinen Steigen. Ideal ist ein Zwei-Personen-Biwaksack in",
+   "reread": null
+  },
+  {
+   "page": "page_010",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 47,
+   "n_tokens": 47,
+   "conf": 94.5,
+   "rates": {
+    "eng": 0.17,
+    "deu": 0.936,
+    "ita": 0.085,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 44,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Für den Notfall oder zur Sicherung von schwächeren Klettersteiggehern kann ein Kletterseil",
+   "reread": null
+  },
+  {
+   "page": "page_010",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 19,
+   "n_tokens": 18,
+   "conf": 93.7,
+   "rates": {
+    "eng": 0.056,
+    "deu": 0.833,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 1,
+    "deu": 15,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Klettergurt, Helm, Klettersteigset, Seil, Sicherungsgeräte und | Karabiner gelten als persönliche Schutzausrüstung",
+   "reread": null
+  },
+  {
+   "page": "page_010",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 51,
+   "n_tokens": 51,
+   "conf": 94.3,
+   "rates": {
+    "eng": 0.078,
+    "deu": 0.941,
+    "ita": 0.02,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 48,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Abb.: Ablauf beim Sichern an einem Klettersteig. Oben ist der „Sichernde“ an",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 20,
+   "n_tokens": 20,
+   "conf": 94.5,
+   "rates": {
+    "eng": 0.1,
+    "deu": 0.95,
+    "ita": 0.05,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 19,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Die Mitnahme eines Leichtpickels und Leichtsteigeisens kann im Frühjahr zur sicheren Überwindung",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "left.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 14,
+   "n_tokens": 14,
+   "conf": 71.2,
+   "rates": {
+    "eng": 0.143,
+    "deu": 0.714,
+    "ita": 0.143,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 10,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "En dere unverzichtharer kleiner Retter im Gebirge. Siehe dazu zuch Notruf bei",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "left.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 33,
+   "n_tokens": 33,
+   "conf": 70.4,
+   "rates": {
+    "eng": 0.212,
+    "deu": 0.697,
+    "ita": 0.152,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 23,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Die Mitnahme derarager Ornenterungshilfen ist insbesondere bei langen, alpinen Steigen ratsam (Nebel,",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "left.png",
+   "block_id": 12,
+   "block_type": "paragraph",
+   "n_words": 17,
+   "n_tokens": 15,
+   "conf": 63.6,
+   "rates": {
+    "eng": 0.267,
+    "deu": 0.467,
+    "ita": 0.067,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 7,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Abe. Toren m unserer Touren-App auf dem Smartphone und der GPX- Track",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "right.png",
+   "block_id": 1,
+   "block_type": "caption",
+   "n_words": 8,
+   "n_tokens": 8,
+   "conf": 87.0,
+   "rates": {
+    "eng": 0.0,
+    "deu": 0.5,
+    "ita": 0.25,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 4,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Mit Lampen im Goiginger-Stollen (Zustieg Ferrata Sottotenente Fusetti]",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 32,
+   "n_tokens": 31,
+   "conf": 93.9,
+   "rates": {
+    "eng": 0.226,
+    "deu": 0.871,
+    "ita": 0.065,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 27,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ein wichtiges Ausrüstungsstück bei vielen Dolomitensteigen ist die Stirnlampe. Die Vorteile sind",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 35,
+   "n_tokens": 34,
+   "conf": 95.9,
+   "rates": {
+    "eng": 0.294,
+    "deu": 0.941,
+    "ita": 0.088,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 10,
+    "deu": 32,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Je nach Tourlänge sollte auch auf die regelmäßige Zufuhr von Flüssigkeit (mind.",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "right.png",
+   "block_id": 9,
+   "block_type": "paragraph",
+   "n_words": 29,
+   "n_tokens": 29,
+   "conf": 96.3,
+   "rates": {
+    "eng": 0.241,
+    "deu": 1.0,
+    "ita": 0.103,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 29,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Endlich hat man den lästigen Zustieg hinter sich und die Versicherungen sind",
+   "reread": null
+  },
+  {
+   "page": "page_011",
+   "subpage": "right.png",
+   "block_id": 11,
+   "block_type": "paragraph",
+   "n_words": 30,
+   "n_tokens": 30,
+   "conf": 96.5,
+   "rates": {
+    "eng": 0.167,
+    "deu": 1.0,
+    "ita": 0.067,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 30,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Wie bereits erläutert, sofort den Helm aufsetzen, noch bevor man unter der",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 16,
+   "n_tokens": 16,
+   "conf": 95.4,
+   "rates": {
+    "eng": 0.312,
+    "deu": 1.0,
+    "ita": 0.188,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 16,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Partnercheck durchzuführen, bei dem man gegenseitig überprüft, ob das Klettersteigset richtig in",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 29,
+   "n_tokens": 29,
+   "conf": 89.5,
+   "rates": {
+    "eng": 0.276,
+    "deu": 0.897,
+    "ita": 0.207,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 26,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Das Klettersteigset wird in der Regel mit einer vorhandenen Seil- oder Schlingen-",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 17,
+   "n_tokens": 17,
+   "conf": 95.4,
+   "rates": {
+    "eng": 0.118,
+    "deu": 1.0,
+    "ita": 0.059,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 17,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Handschuhe anziehen, zuletzt noch darauf achten, dass die Schuhsohlen nicht erdig sind",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "left.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 39,
+   "n_tokens": 39,
+   "conf": 95.7,
+   "rates": {
+    "eng": 0.077,
+    "deu": 1.0,
+    "ita": 0.026,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 39,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Wie beim Klettern liegt das Erfolgsgeheimnis im sauberen Steigen unter optimaler Ausnützung",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "left.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 34,
+   "n_tokens": 32,
+   "conf": 94.4,
+   "rates": {
+    "eng": 0.156,
+    "deu": 0.75,
+    "ita": 0.188,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 24,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ein Blick auf das Topo bezüglich der Steiglänge sollte die Frage der",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "left.png",
+   "block_id": 12,
+   "block_type": "caption",
+   "n_words": 13,
+   "n_tokens": 12,
+   "conf": 92.1,
+   "rates": {
+    "eng": 0.25,
+    "deu": 0.75,
+    "ita": 0.417,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 9,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Das Tempo hang vor allem vom persönlichen Trainingszustand ab - Ferrata Fiamme",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 28,
+   "n_tokens": 28,
+   "conf": 94.1,
+   "rates": {
+    "eng": 0.25,
+    "deu": 0.929,
+    "ita": 0.107,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 26,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "oben kommt, zu ökonomischem und kontinuierlichem Klettern veranlassen. Denn jede Showeinlage und",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "right.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 21,
+   "n_tokens": 21,
+   "conf": 95.2,
+   "rates": {
+    "eng": 0.143,
+    "deu": 0.905,
+    "ita": 0.143,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 19,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ein ganz zentraler Punkt, bei dem man viel Zeit und Sicherheit gewinnen",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 35,
+   "n_tokens": 35,
+   "conf": 95.1,
+   "rates": {
+    "eng": 0.2,
+    "deu": 1.0,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 35,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ins Sicherungsseil werden stets beide Karabiner eingehängt. An den Verankerungen wird zuerst",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 26,
+   "n_tokens": 26,
+   "conf": 95.7,
+   "rates": {
+    "eng": 0.154,
+    "deu": 0.962,
+    "ita": 0.077,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 25,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Es sollten auch immer beide Karabiner eingehängt sein, weil im Falle eines",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "right.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 43,
+   "n_tokens": 43,
+   "conf": 95.0,
+   "rates": {
+    "eng": 0.163,
+    "deu": 0.93,
+    "ita": 0.07,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 40,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Bei ungesicherten Gehpassagen sind die Karabiner so einzuhängen, dass die Seilschlaufen nicht",
+   "reread": null
+  },
+  {
+   "page": "page_012",
+   "subpage": "right.png",
+   "block_id": 9,
+   "block_type": "paragraph",
+   "n_words": 17,
+   "n_tokens": 17,
+   "conf": 95.5,
+   "rates": {
+    "eng": 0.118,
+    "deu": 1.0,
+    "ita": 0.118,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 17,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Die Begehungszeit wird auch durch das intelligente Mitführen der Karabiner bestimmt, wobei",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 30,
+   "n_tokens": 29,
+   "conf": 94.6,
+   "rates": {
+    "eng": 0.241,
+    "deu": 0.931,
+    "ita": 0.069,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 27,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "- Das Nachziehen, bei dem die Hände sich ungestört dem Kraftakt am",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 28,
+   "n_tokens": 27,
+   "conf": 94.7,
+   "rates": {
+    "eng": 0.222,
+    "deu": 0.963,
+    "ita": 0.037,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 26,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "- Beim Vornewegschieben werden die Karabiner vor den Händen am Sicherungsseil geschoben,",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 25,
+   "n_tokens": 25,
+   "conf": 95.4,
+   "rates": {
+    "eng": 0.16,
+    "deu": 0.96,
+    "ita": 0.04,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 24,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Der Erfolg liegt darin, die Karabiner stets im Auge zu behalten, um",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 102,
+   "n_tokens": 100,
+   "conf": 95.4,
+   "rates": {
+    "eng": 0.17,
+    "deu": 1.0,
+    "ita": 0.12,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 17,
+    "deu": 100,
+    "ita": 12,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ein Sturz sollte tunlichst vermieden werden, denn dieser ist im Gegensatz zum",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 22,
+   "n_tokens": 22,
+   "conf": 89.6,
+   "rates": {
+    "eng": 0.045,
+    "deu": 0.909,
+    "ita": 0.091,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 1,
+    "deu": 20,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "achten, damit der Vorauskletternde bei einem Sturz nicht auf.den Nachkommenden fällt. Es",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "right.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 33,
+   "n_tokens": 33,
+   "conf": 94.4,
+   "rates": {
+    "eng": 0.303,
+    "deu": 0.879,
+    "ita": 0.152,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 10,
+    "deu": 29,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Sollte in der Wand Steinschlaggefahr durch Schuttbä empfiehlt es sich für die",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "right.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 31,
+   "n_tokens": 31,
+   "conf": 92.6,
+   "rates": {
+    "eng": 0.161,
+    "deu": 0.968,
+    "ita": 0.097,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 30,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "ist gut möglich, sollte aber nach gegenseitiger Absprache und unter Berücksichtigung der",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "right.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 37,
+   "n_tokens": 37,
+   "conf": 91.7,
+   "rates": {
+    "eng": 0.162,
+    "deu": 0.946,
+    "ita": 0.027,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 35,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Das Sprichwort ‚Wer rastet, der rostet“ gilt nur für die Verankerungen und",
+   "reread": null
+  },
+  {
+   "page": "page_013",
+   "subpage": "right.png",
+   "block_id": 12,
+   "block_type": "caption",
+   "n_words": 9,
+   "n_tokens": 9,
+   "conf": 85.3,
+   "rates": {
+    "eng": 0.0,
+    "deu": 0.667,
+    "ita": 0.222,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 6,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Massenandrang und Stau auf der Ferrata degli Alpin), Fanes",
+   "reread": null
+  },
+  {
+   "page": "page_014",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 76,
+   "n_tokens": 76,
+   "conf": 91.3,
+   "rates": {
+    "eng": 0.171,
+    "deu": 0.934,
+    "ita": 0.079,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 13,
+    "deu": 71,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Was ist. wenn man nicht mehr weiter kann? Ein Rückzug am Klettersteig",
+   "reread": null
+  },
+  {
+   "page": "page_014",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 27,
+   "n_tokens": 27,
+   "conf": 94.8,
+   "rates": {
+    "eng": 0.148,
+    "deu": 0.963,
+    "ita": 0.111,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 26,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Einige der in diesem Buch beschriebenen Klettersteige sind aufgrund der hohen Schwierigkeiten",
+   "reread": null
+  },
+  {
+   "page": "page_014",
+   "subpage": "left.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 31,
+   "n_tokens": 31,
+   "conf": 90.1,
+   "rates": {
+    "eng": 0.161,
+    "deu": 0.903,
+    "ita": 0.065,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 28,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Je Enger die Klexzersteigtour, desto stabiler muss das Wetter sein. Neben Schnee",
+   "reread": null
+  },
+  {
+   "page": "page_014",
+   "subpage": "right.png",
+   "block_id": 1,
+   "block_type": "paragraph",
+   "n_words": 49,
+   "n_tokens": 48,
+   "conf": 95.6,
+   "rates": {
+    "eng": 0.312,
+    "deu": 0.979,
+    "ita": 0.146,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 15,
+    "deu": 47,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "überdimensionalen Blitzableiter. Man sollte daher nicht in ein Gewitter kommen. Sollte es",
+   "reread": null
+  },
+  {
+   "page": "page_014",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 17,
+   "n_tokens": 14,
+   "conf": 87.8,
+   "rates": {
+    "eng": 0.0,
+    "deu": 0.786,
+    "ita": 0.071,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 0,
+    "deu": 11,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Wetterberichte: * Südtirol: Wettervorhersage unter www.provinz.bz.it/wetter * Trentino Gardasee: Wettervorhersage unter www.meteotrentino.it",
+   "reread": null
+  },
+  {
+   "page": "page_014",
+   "subpage": "right.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 73,
+   "n_tokens": 73,
+   "conf": 94.1,
+   "rates": {
+    "eng": 0.178,
+    "deu": 0.918,
+    "ita": 0.082,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 13,
+    "deu": 67,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Nässe macht den Steig unter Umständen um einen Grad schwerer. Klammern und",
+   "reread": null
+  },
+  {
+   "page": "page_015",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 90,
+   "n_tokens": 90,
+   "conf": 94.8,
+   "rates": {
+    "eng": 0.233,
+    "deu": 0.956,
+    "ita": 0.111,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 21,
+    "deu": 86,
+    "ita": 10,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Er bildet für den Klettersteiggeher eine ganz besondere Herausforderung, da dieser in",
+   "reread": null
+  },
+  {
+   "page": "page_015",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 54,
+   "n_tokens": 52,
+   "conf": 95.2,
+   "rates": {
+    "eng": 0.173,
+    "deu": 0.923,
+    "ita": 0.096,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 9,
+    "deu": 48,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Am Steig selbst wird es dann spannend, wenn das Seil einmal tief",
+   "reread": null
+  },
+  {
+   "page": "page_015",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 25,
+   "n_tokens": 25,
+   "conf": 95.2,
+   "rates": {
+    "eng": 0.2,
+    "deu": 1.0,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 25,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Wer im Winter auf Teilbereichen von Klettersteigen unterwegs ist, sollte unbedingt die",
+   "reread": null
+  },
+  {
+   "page": "page_015",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 27,
+   "n_tokens": 27,
+   "conf": 94.4,
+   "rates": {
+    "eng": 0.259,
+    "deu": 1.0,
+    "ita": 0.074,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 27,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Lauert dem Bergsteiger fast überall auf, besonders in Rinnen und am Wandfuß,",
+   "reread": null
+  },
+  {
+   "page": "page_015",
+   "subpage": "left.png",
+   "block_id": 14,
+   "block_type": "footnote",
+   "n_words": 13,
+   "n_tokens": 11,
+   "conf": 76.3,
+   "rates": {
+    "eng": 0.182,
+    "deu": 0.727,
+    "ita": 0.182,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 8,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "/ Oft liegen auch recht große, lose Steine heruı - Ferrata Gianni",
+   "reread": null
+  },
+  {
+   "page": "page_015",
+   "subpage": "right.png",
+   "block_id": 1,
+   "block_type": "paragraph",
+   "n_words": 53,
+   "n_tokens": 53,
+   "conf": 94.4,
+   "rates": {
+    "eng": 0.189,
+    "deu": 0.962,
+    "ita": 0.057,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 10,
+    "deu": 51,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "heißt es Augen auf (von wo kommt was) und das mögliche Aufschlaggebiet",
+   "reread": null
+  },
+  {
+   "page": "page_015",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 109,
+   "n_tokens": 108,
+   "conf": 92.1,
+   "rates": {
+    "eng": 0.167,
+    "deu": 0.907,
+    "ita": 0.111,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 18,
+    "deu": 98,
+    "ita": 12,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ab einer Höhe von 2500 Metern über dem Meeresspiegel kann man höhenkrank",
+   "reread": null
+  },
+  {
+   "page": "page_015",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "caption",
+   "n_words": 10,
+   "n_tokens": 10,
+   "conf": 79.0,
+   "rates": {
+    "eng": 0.2,
+    "deu": 0.8,
+    "ita": 0.1,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 8,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ein aufgeladenes Handy mit der digitalen TourenInfo sollte man 0abellabel",
+   "reread": null
+  },
+  {
+   "page": "page_016",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 44,
+   "n_tokens": 40,
+   "conf": 87.3,
+   "rates": {
+    "eng": 0.275,
+    "deu": 0.775,
+    "ita": 0.125,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 11,
+    "deu": 31,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "fang, sollte man die internationale hbaren Netzen (auch in ausländi- enenfalls wird",
+   "reread": null
+  },
+  {
+   "page": "page_016",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 28,
+   "n_tokens": 24,
+   "conf": 94.9,
+   "rates": {
+    "eng": 0.25,
+    "deu": 1.0,
+    "ita": 0.167,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 24,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ich brauche Hilfe: 6 x in der Minute ein akustisches oder sichtbares",
+   "reread": null
+  },
+  {
+   "page": "page_016",
+   "subpage": "left.png",
+   "block_id": 12,
+   "block_type": "paragraph",
+   "n_words": 45,
+   "n_tokens": 45,
+   "conf": 94.1,
+   "rates": {
+    "eng": 0.178,
+    "deu": 0.911,
+    "ita": 0.089,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 41,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "In der Touren-App werden die Infos zu den Klettersteigen aktualisiert! Sper- rung,",
+   "reread": null
+  },
+  {
+   "page": "page_016",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "other",
+   "n_words": 48,
+   "n_tokens": 18,
+   "conf": 24.8,
+   "rates": {
+    "eng": 0.611,
+    "deu": 0.056,
+    "ita": 0.333,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 11,
+    "deu": 1,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.556,
+   "page_lang": "deu",
+   "sample": "= a ı N eP\\ALG ih % x ir „X SE) -",
+   "reread": {
+    "page_words": 48,
+    "page_conf": 24.8,
+    "page_hits": 1,
+    "page_tokens": 18,
+    "crop_deu": {
+     "words": 20,
+     "conf": 22.1,
+     "hits": 2,
+     "tokens": 6,
+     "text": "W — $ CR & x f m“ « | 74 HA A .. ]ß AUT a Te. ua Jana"
+    },
+    "crop_eng": {
+     "words": 22,
+     "conf": 16.1,
+     "hits": 6,
+     "tokens": 8,
+     "text": "3 SS - . \"Ch = 'y y ~~ : Yr Cs FAN h >. . Ne EX RR a a —"
+    }
+   }
+  },
+  {
+   "page": "page_016",
+   "subpage": "right.png",
+   "block_id": 8,
+   "block_type": "other",
+   "n_words": 268,
+   "n_tokens": 199,
+   "conf": 35.0,
+   "rates": {
+    "eng": 0.407,
+    "deu": 0.201,
+    "ita": 0.276,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 81,
+    "deu": 40,
+    "ita": 55,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.206,
+   "page_lang": "deu",
+   "sample": ") Abılı see plan orm DL Bl | pbstrigen m sm ('",
+   "reread": {
+    "page_words": 268,
+    "page_conf": 35.0,
+    "page_hits": 40,
+    "page_tokens": 199,
+    "crop_deu": {
+     "words": 268,
+     "conf": 35.0,
+     "hits": 40,
+     "tokens": 199,
+     "text": ") Abılı see plan orm DL Bl | pbstrigen m sm (' deseend ana zcendere HE 1sce1a abwärts | dowawardt verso |] basso (7 ARE re Ed allenzione F Almhürte sm | (corage, ab mm capanna, caser langer | deginner m | prmciplante aM SeNZa neve aufstergen | a1cend Em yalıre BA PP antwartı T upward Sm m | _verso Talto auspeeut [exposed] esposto Ta | equipment... | equipaggiamer ın | wuLesape | usata Band | shell"
+    },
+    "crop_eng": {
+     "words": 231,
+     "conf": 33.7,
+     "hits": 59,
+     "tokens": 178,
+     "text": "1 ABs Cm Lp orm SR Ne FC TT E— scendere SE Tscera aban | dower) Se verso || basso AE i] ein allentiont Fimbarte__ | comgeabn | panna, caser planger Deginner | principiante a Te senza neve aufsteigen FEE The el aghwarns Fupward | wnoTalte agspesett Caposed | epesto BSTUsTUR Cequipment | equipaggiamer sh [oiLesape [ua Band (shell Tedge | cnga Ferehung Cascent | ascensione Eos Eo ee Derk ng [mountain"
+    }
+   }
+  },
+  {
+   "page": "page_016",
+   "subpage": "right.png",
+   "block_id": 13,
+   "block_type": "other",
+   "n_words": 35,
+   "n_tokens": 31,
+   "conf": 28.5,
+   "rates": {
+    "eng": 0.29,
+    "deu": 0.194,
+    "ita": 0.419,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 9,
+    "deu": 6,
+    "ita": 13,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.226,
+   "page_lang": "deu",
+   "sample": "WAL Cresta nn 1eh009 ME Ca3C0 dulvello mad Caverna, grotta elcottero nlugıo",
+   "reread": {
+    "page_words": 35,
+    "page_conf": 28.5,
+    "page_hits": 6,
+    "page_tokens": 31,
+    "crop_deu": {
+     "words": 35,
+     "conf": 28.5,
+     "hits": 6,
+     "tokens": 31,
+     "text": "WAL Cresta nn 1eh009 ME Ca3C0 dulvello mad Caverna, grotta elcottero nlugıo Da350 CAMInO cresta $pigolo Circo Carla geogralica \"oa UT”. 7 Wocco Tncastrato | Imbragatura Tara part via lerrata c er vu di »"
+    },
+    "crop_ita": {
+     "words": 34,
+     "conf": 41.7,
+     "hits": 21,
+     "tokens": 31,
+     "text": "LL cresta DI LU Mo00 ZZZ (Casco dislivello il Caverna, grotta “elicottero rnilugio passo camino cresta spigolo Circo (art geogralica {PEZZI Titolo \"Hocco incastrato imbagatua aummpiare E) via lerrata cÌ e Va li ’"
+    }
+   }
+  },
+  {
+   "page": "page_016",
+   "subpage": "right.png",
+   "block_id": 14,
+   "block_type": "table",
+   "n_words": 24,
+   "n_tokens": 9,
+   "conf": 31.5,
+   "rates": {
+    "eng": 0.667,
+    "deu": 0.222,
+    "ita": 0.333,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 2,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.444,
+   "page_lang": "deu",
+   "sample": "| | = Sl a ‚ A = SI | a A",
+   "reread": {
+    "page_words": 24,
+    "page_conf": 31.5,
+    "page_hits": 2,
+    "page_tokens": 9,
+    "crop_deu": {
+     "words": 158,
+     "conf": 26.2,
+     "hits": 20,
+     "tokens": 97,
+     "text": "Deutsch — m English Italiano KO 0 EEE N DE nr were | GE Pa za | Hardtarit—————— [map [ ara 1pegrafia a le lhdler nn | gay ra | Tal 1 EZ 1 a T— AGIEUT = nr yafid men an | nal WE IE a SZ PDT m nm | JO, Al me |’ pad den se nl | Mn | a az = K-— —— a (-— — CE 0 ya a — [A a 1 SD En Ct ———— En [MV IN or — a Of | rt VAN EN AAN Meile m [0000 dest Sn | 0 dl VIII DA Or a ta a az KA FE JA LEE DE AT A a PA An "
+    },
+    "crop_eng": {
+     "words": 112,
+     "conf": 23.8,
+     "hits": 37,
+     "tokens": 82,
+     "text": "Deutsch > 2 English Italiano | ET fT ep pT Godart [mg [armenia HF TT EE {1 TS 7Y. \"1 SS £7 VT hn a grr ET Ee a LET Ee Lee EEE Bi I Ta A —— J I PR 5 rg mere ad 18 r——p ee yy ae Te eee ee Teoh A Tr [eee | opp — i Te pe | Fda be re I EEE ye, es Egy pe TE RR ah) Ler TEE ee Twang Taio | Er Hh err] TET I — TT — EE pm OY — ET PR TY Li RT, a Ll ee LF. a] PE TES | analy —— Mherschis OE TE"
+    }
+   }
+  },
+  {
+   "page": "page_017",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 55,
+   "n_tokens": 49,
+   "conf": 42.7,
+   "rates": {
+    "eng": 0.51,
+    "deu": 0.082,
+    "ita": 0.143,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 25,
+    "deu": 4,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "Te wa ofcely of 2 roam comssy of the axe 6 fcity.",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 64,
+   "n_tokens": 58,
+   "conf": 88.1,
+   "rates": {
+    "eng": 0.19,
+    "deu": 0.81,
+    "ita": 0.121,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 11,
+    "deu": 47,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.621,
+   "page_lang": "eng",
+   "sample": "Schwierigkeit Die Gesamtschwierigkeit eines Klettersteiges setzt sich aus der reinen (kletter)techni= schen",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 64,
+   "n_tokens": 54,
+   "conf": 72.3,
+   "rates": {
+    "eng": 0.241,
+    "deu": 0.667,
+    "ita": 0.148,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 13,
+    "deu": 36,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.426,
+   "page_lang": "eng",
+   "sample": "e Schw Derzeit gibt es noch keine international einheitlich verwendete Schwierigkeitsbe re,",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 71,
+   "n_tokens": 64,
+   "conf": 34.0,
+   "rates": {
+    "eng": 0.422,
+    "deu": 0.109,
+    "ita": 0.141,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 27,
+    "deu": 7,
+    "ita": 9,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "Crate of eficalty wm way 2 ape Soom a Sm wy Sor",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "left.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 43,
+   "n_tokens": 37,
+   "conf": 85.7,
+   "rates": {
+    "eng": 0.216,
+    "deu": 0.838,
+    "ita": 0.027,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 31,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.622,
+   "page_lang": "eng",
+   "sample": "* = leicht (deutsche K-Bewertung |): Oft Wanderungen, die an pa Stellen",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "left.png",
+   "block_id": 9,
+   "block_type": "paragraph",
+   "n_words": 48,
+   "n_tokens": 46,
+   "conf": 86.6,
+   "rates": {
+    "eng": 0.109,
+    "deu": 0.783,
+    "ita": 0.022,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 36,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.674,
+   "page_lang": "eng",
+   "sample": "= maBig schwierig (deutsche K-Bewertung 2): Steileres Felsgelande mit Trittstiften, Stzhlseilen und",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "left.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 58,
+   "n_tokens": 54,
+   "conf": 84.1,
+   "rates": {
+    "eng": 0.111,
+    "deu": 0.796,
+    "ita": 0.056,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 43,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.685,
+   "page_lang": "eng",
+   "sample": "= schwierig (deutsche K-Bewertung 3 - 4): Da wird es bereits ernst.",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "left.png",
+   "block_id": 11,
+   "block_type": "paragraph",
+   "n_words": 60,
+   "n_tokens": 58,
+   "conf": 82.5,
+   "rates": {
+    "eng": 0.138,
+    "deu": 0.776,
+    "ita": 0.052,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 45,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.638,
+   "page_lang": "eng",
+   "sample": "= sehr schwierig (deutsche K-Bewertung 5): Fast durchgehend senkrechter Fels mit wenigen",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "right.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 50,
+   "n_tokens": 48,
+   "conf": 90.0,
+   "rates": {
+    "eng": 0.042,
+    "deu": 0.896,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 43,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.854,
+   "page_lang": "eng",
+   "sample": "= extrem schwierig (deutsche K-Bewertung 6): Lange Passagen im senk- rechten, glatten",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "right.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 12,
+   "n_tokens": 11,
+   "conf": 91.0,
+   "rates": {
+    "eng": 0.818,
+    "deu": 0.182,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 9,
+    "deu": 2,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "power. Belaying is a must for everybody. Not appro- priate for beginners.",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 75,
+   "n_tokens": 70,
+   "conf": 89.9,
+   "rates": {
+    "eng": 0.143,
+    "deu": 0.8,
+    "ita": 0.014,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 10,
+    "deu": 56,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.657,
+   "page_lang": "eng",
+   "sample": "= extremst schwierig (deutsche K-Bewertung 7): Lingere uberhangende Passagen, welche lang andauern,",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 31,
+   "n_tokens": 27,
+   "conf": 93.0,
+   "rates": {
+    "eng": 0.148,
+    "deu": 0.778,
+    "ita": 0.074,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 21,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.63,
+   "page_lang": "eng",
+   "sample": "= hochste Schwierigkeit (deutsche K-Bewertung 8): Athletische Kletterei, die nur von gut",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "right.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 26,
+   "n_tokens": 24,
+   "conf": 88.6,
+   "rates": {
+    "eng": 0.917,
+    "deu": 0.25,
+    "ita": 0.208,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 22,
+    "deu": 6,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "D (very difficult): Long sections with verti- al rock without any rest.",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "right.png",
+   "block_id": 11,
+   "block_type": "paragraph",
+   "n_words": 33,
+   "n_tokens": 31,
+   "conf": 83.6,
+   "rates": {
+    "eng": 0.806,
+    "deu": 0.129,
+    "ita": 0.097,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 25,
+    "deu": 4,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "E (extremely dif- ficult): Only vertical rock with fixed ropes or very",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "right.png",
+   "block_id": 12,
+   "block_type": "paragraph",
+   "n_words": 27,
+   "n_tokens": 25,
+   "conf": 86.8,
+   "rates": {
+    "eng": 0.84,
+    "deu": 0.16,
+    "ita": 0.12,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 21,
+    "deu": 4,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "F (most extreme difficult): At the mo- ment the highest grade. Overhanging",
+   "reread": null
+  },
+  {
+   "page": "page_017",
+   "subpage": "right.png",
+   "block_id": 13,
+   "block_type": "paragraph",
+   "n_words": 13,
+   "n_tokens": 11,
+   "conf": 88.3,
+   "rates": {
+    "eng": 0.727,
+    "deu": 0.364,
+    "ita": 0.182,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 4,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "eng",
+   "sample": "G (highest difficul- ty; 2019); There is one route in Gran Canaria",
+   "reread": null
+  },
+  {
+   "page": "page_018",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "other",
+   "n_words": 21,
+   "n_tokens": 20,
+   "conf": 81.9,
+   "rates": {
+    "eng": 0.3,
+    "deu": 0.75,
+    "ita": 0.05,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 15,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "47 English Version Schwierigkeitsbewertung von Kletterstellen (UIAA Skala) ‚ust=“ Climbing grade: Bei",
+   "reread": null
+  },
+  {
+   "page": "page_018",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 29,
+   "n_tokens": 23,
+   "conf": 35.1,
+   "rates": {
+    "eng": 0.478,
+    "deu": 0.217,
+    "ita": 0.217,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 11,
+    "deu": 5,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.261,
+   "page_lang": "deu",
+   "sample": "I: Bands needet to fo up For begamers rape beizy reger. 2:",
+   "reread": {
+    "page_words": 29,
+    "page_conf": 35.1,
+    "page_hits": 5,
+    "page_tokens": 23,
+    "crop_deu": {
+     "words": 28,
+     "conf": 44.1,
+     "hits": 7,
+     "tokens": 24,
+     "text": "I: Bands needed to go up. For beginmers rap belzy er. 2: Rack dimbing san. Everybody © belayıng. 3: Verscal exposed nach. Kooks far zddinenal pro- texzOR needed."
+    },
+    "crop_eng": {
+     "words": 27,
+     "conf": 44.0,
+     "hits": 14,
+     "tokens": 21,
+     "text": "I: Bands ended (0 65. For begmners rope belzy required. L: Rack dmbey ss. Everybody u belzyng. 3: Vernal exposed mock. Books for 2démemal pro- tecmion needed."
+    }
+   }
+  },
+  {
+   "page": "page_018",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 118,
+   "n_tokens": 110,
+   "conf": 82.4,
+   "rates": {
+    "eng": 0.155,
+    "deu": 0.755,
+    "ita": 0.036,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 17,
+    "deu": 83,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Bei den Touren werden nur die ersten drei Schwierigkeitsgrade bey Felsk weise",
+   "reread": null
+  },
+  {
+   "page": "page_018",
+   "subpage": "left.png",
+   "block_id": 9,
+   "block_type": "paragraph",
+   "n_words": 36,
+   "n_tokens": 31,
+   "conf": 32.6,
+   "rates": {
+    "eng": 0.613,
+    "deu": 0.258,
+    "ita": 0.097,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 19,
+    "deu": 8,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.355,
+   "page_lang": "deu",
+   "sample": "Beside the technacz! 68- Kcules (1-6 and dam- Ding grade) this grade",
+   "reread": {
+    "page_words": 36,
+    "page_conf": 32.6,
+    "page_hits": 8,
+    "page_tokens": 31,
+    "crop_deu": {
+     "words": 36,
+     "conf": 32.6,
+     "hits": 8,
+     "tokens": 31,
+     "text": "Beside the technacz! 68- Kcules (1-6 and dam- Ding grade) this grade (1-3) shows the wel seroesmen ef the dam, ConsIng of Che rau hempeh, alpine surmaumd- mg (snow, k, EnposurE amd altıtude), OrENTEON A em."
+    },
+    "crop_eng": {
+     "words": 38,
+     "conf": 40.5,
+     "hits": 19,
+     "tokens": 35,
+     "text": "Beside the wana! 6 ficunes (A-€ and dim- bag grade) Bis pate (13) dows te wal senvesness of Oe cmd, consstng of Ot rome lend, sipme somoent- my (show, ir, expose and alutade), onentanon and meng emerpexy ey"
+    }
+   }
+  },
+  {
+   "page": "page_018",
+   "subpage": "left.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 46,
+   "n_tokens": 45,
+   "conf": 89.3,
+   "rates": {
+    "eng": 0.111,
+    "deu": 0.844,
+    "ita": 0.067,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 38,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Dieser setzt sich neben der klettertechnischen Schwierigkeit aus Steighge, Zustiegslänge, Abstiegslänge, alpine",
+   "reread": null
+  },
+  {
+   "page": "page_018",
+   "subpage": "left.png",
+   "block_id": 11,
+   "block_type": "paragraph",
+   "n_words": 38,
+   "n_tokens": 38,
+   "conf": 82.9,
+   "rates": {
+    "eng": 0.132,
+    "deu": 0.684,
+    "ita": 0.132,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 26,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "kır Kurzer Zu- und Abstieg, ringe Steiglänge, kein unversichertes alpines (Absturz-)Gelände, gute",
+   "reread": null
+  },
+  {
+   "page": "page_018",
+   "subpage": "left.png",
+   "block_id": 12,
+   "block_type": "paragraph",
+   "n_words": 50,
+   "n_tokens": 49,
+   "conf": 86.1,
+   "rates": {
+    "eng": 0.102,
+    "deu": 0.796,
+    "ita": 0.102,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 39,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "» Bereits ernstere und länger Touren, die im Gelände weiter entfernt vom",
+   "reread": null
+  },
+  {
+   "page": "page_018",
+   "subpage": "left.png",
+   "block_id": 13,
+   "block_type": "paragraph",
+   "n_words": 67,
+   "n_tokens": 65,
+   "conf": 86.4,
+   "rates": {
+    "eng": 0.185,
+    "deu": 0.723,
+    "ita": 0.185,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 12,
+    "deu": 47,
+    "ita": 12,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "HM } = honer Gesamtanspruch: Sehr ernste und lange Kletterstetour, gekenn- zeichnet",
+   "reread": null
+  },
+  {
+   "page": "page_018",
+   "subpage": "right.png",
+   "block_id": 10,
+   "block_type": "other",
+   "n_words": 31,
+   "n_tokens": 29,
+   "conf": 84.5,
+   "rates": {
+    "eng": 0.655,
+    "deu": 0.483,
+    "ita": 0.172,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 19,
+    "deu": 14,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.172,
+   "page_lang": "deu",
+   "sample": "Route faces (north, west,...) Kindereignung mit Altersangabe % For children at the",
+   "reread": {
+    "page_words": 31,
+    "page_conf": 84.5,
+    "page_hits": 14,
+    "page_tokens": 29,
+    "crop_deu": {
+     "words": 34,
+     "conf": 76.6,
+     "hits": 13,
+     "tokens": 30,
+     "text": "PP | Koute faces (norch, West,...) Kindereignung mit Altersangabe y. N For children at the age of... aa Beste Jahreszeit Best season NN Höchste Höhe der Tour 4) The highest point of the Tour"
+    },
+    "crop_eng": {
+     "words": 33,
+     "conf": 84.7,
+     "hits": 21,
+     "tokens": 31,
+     "text": "hd Route faces (north, west,...) Kindereignung mit Altersangabe gp J for children at the age of... WAY Beste Jahreszeit Best season AM Hochste Hohe der Tour 0) The highest point of the Tour"
+    }
+   }
+  },
+  {
+   "page": "page_018",
+   "subpage": "right.png",
+   "block_id": 14,
+   "block_type": "other",
+   "n_words": 8,
+   "n_tokens": 8,
+   "conf": 95.7,
+   "rates": {
+    "eng": 0.625,
+    "deu": 0.625,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 5,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Sehr gut versicherter Steig Very good secured route",
+   "reread": null
+  },
+  {
+   "page": "page_018",
+   "subpage": "right.png",
+   "block_id": 17,
+   "block_type": "other",
+   "n_words": 8,
+   "n_tokens": 8,
+   "conf": 95.9,
+   "rates": {
+    "eng": 0.75,
+    "deu": 0.5,
+    "ita": 0.125,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 4,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.25,
+   "page_lang": "deu",
+   "sample": "Zustiegszeit zur Route Approach time to the route",
+   "reread": {
+    "page_words": 8,
+    "page_conf": 95.9,
+    "page_hits": 4,
+    "page_tokens": 8,
+    "crop_deu": {
+     "words": 8,
+     "conf": 95.9,
+     "hits": 4,
+     "tokens": 8,
+     "text": "Zustiegszeit zur Route Approach time to the route"
+    },
+    "crop_eng": {
+     "words": 8,
+     "conf": 94.8,
+     "hits": 6,
+     "tokens": 8,
+     "text": "Lustiegszeit zur Route Approach time to the route"
+    }
+   }
+  },
+  {
+   "page": "page_018",
+   "subpage": "right.png",
+   "block_id": 18,
+   "block_type": "other",
+   "n_words": 22,
+   "n_tokens": 13,
+   "conf": 89.9,
+   "rates": {
+    "eng": 0.385,
+    "deu": 0.154,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 2,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.231,
+   "page_lang": "deu",
+   "sample": "E | GPS coordinates parkingplace N | GPS Koordinaten Einstieg E |",
+   "reread": {
+    "page_words": 22,
+    "page_conf": 89.9,
+    "page_hits": 2,
+    "page_tokens": 13,
+    "crop_deu": {
+     "words": 17,
+     "conf": 89.2,
+     "hits": 2,
+     "tokens": 13,
+     "text": "| E | GPS coordinates parkingplace GPS Koordinaten Einstieg GPS coordinates beginning of climt © Gehzeiten/Abschnitte Walkingtime/sections"
+    },
+    "crop_eng": {
+     "words": 18,
+     "conf": 75.7,
+     "hits": 5,
+     "tokens": 15,
+     "text": "nm E | GPS coordinates parkingplace GPS Koordinaten Einstieg GPS coordinates beginning of climb FS) | Gehzeiten/Abschnitte Walkingtime/sections"
+    }
+   }
+  },
+  {
+   "page": "page_019",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 16,
+   "n_tokens": 12,
+   "conf": 57.1,
+   "rates": {
+    "eng": 0.25,
+    "deu": 0.5,
+    "ita": 0.167,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 6,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Tourismusbüro: Sexten Web: www.drei-zinnen. ze Toersmesverein Sexten Dolommtenstraße 45 1-39030 Sexten Tel.",
+   "reread": null
+  },
+  {
+   "page": "page_019",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 17,
+   "n_tokens": 13,
+   "conf": 53.9,
+   "rates": {
+    "eng": 0.308,
+    "deu": 0.231,
+    "ita": 0.308,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 3,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.077,
+   "page_lang": "deu",
+   "sample": "Cortina d’Ampezzo Wei www. dolomiti.org Fremdenverkehrsamt Corn Corse kalz Tel +39 0436",
+   "reread": null
+  },
+  {
+   "page": "page_019",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 206,
+   "n_tokens": 200,
+   "conf": 94.2,
+   "rates": {
+    "eng": 0.19,
+    "deu": 0.875,
+    "ita": 0.13,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 38,
+    "deu": 175,
+    "ita": 26,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Besonderheiten: Nirgendwo sonst prallen die Gegensätze so stark aufeinander wie in den",
+   "reread": null
+  },
+  {
+   "page": "page_019",
+   "subpage": "right.png",
+   "block_id": 1,
+   "block_type": "paragraph",
+   "n_words": 42,
+   "n_tokens": 41,
+   "conf": 92.6,
+   "rates": {
+    "eng": 0.22,
+    "deu": 0.829,
+    "ita": 0.098,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 9,
+    "deu": 34,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Anreise mit öffentlichen Verkehrsmitteln: Mit der Bahn nach Toblach oder Innichen und",
+   "reread": null
+  },
+  {
+   "page": "page_019",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 10,
+   "n_tokens": 10,
+   "conf": 96.6,
+   "rates": {
+    "eng": 0.3,
+    "deu": 1.0,
+    "ita": 0.2,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 10,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Anreise mit dem Auto: Siehe Beschreibung bei den jeweiligen Touren.",
+   "reread": null
+  },
+  {
+   "page": "page_019",
+   "subpage": "right.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 45,
+   "n_tokens": 43,
+   "conf": 90.9,
+   "rates": {
+    "eng": 0.744,
+    "deu": 0.279,
+    "ita": 0.186,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 32,
+    "deu": 12,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.465,
+   "page_lang": "deu",
+   "sample": "The region of contrasts. Hurly-burly and jet set at Drei Zinnen and",
+   "reread": {
+    "page_words": 45,
+    "page_conf": 90.9,
+    "page_hits": 12,
+    "page_tokens": 43,
+    "crop_deu": {
+     "words": 45,
+     "conf": 89.4,
+     "hits": 12,
+     "tokens": 43,
+     "text": "The region of contrasts. Hurly-burly and jet set at Drei Zinnen and lone- liness in Vallon Popera. Many war paths remind you of the First World War (1915-1917). Star- ting points are Cortina d’Ampezzo and Sexten. Cadini di Misurina is also a quiet inside tip."
+    },
+    "crop_eng": {
+     "words": 45,
+     "conf": 87.2,
+     "hits": 32,
+     "tokens": 43,
+     "text": "The region of contrasts. Hurly-burly and jet set at Drei Zinnen and lone- liness in Vallon Popera. Many war paths remind you of the First World War (1915-1917). Star- ting points are Cortina d'Ampezzo and Sexten. Cadini di Misurina is also a quiet inside tip."
+    }
+   }
+  },
+  {
+   "page": "page_019",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 95,
+   "n_tokens": 76,
+   "conf": 92.3,
+   "rates": {
+    "eng": 0.158,
+    "deu": 0.579,
+    "ita": 0.197,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 12,
+    "deu": 44,
+    "ita": 15,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Zinnen — Rotwand Runde (2 Tage) ohne den Massentourismus beim Rifu- gio",
+   "reread": null
+  },
+  {
+   "page": "page_019",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 40,
+   "n_tokens": 27,
+   "conf": 84.7,
+   "rates": {
+    "eng": 0.407,
+    "deu": 0.296,
+    "ita": 0.259,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 11,
+    "deu": 8,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.111,
+   "page_lang": "deu",
+   "sample": "Tour combinations: Zinnen — Rotwand round (2 days): Day |: Fischleinboden —",
+   "reread": {
+    "page_words": 40,
+    "page_conf": 84.7,
+    "page_hits": 8,
+    "page_tokens": 27,
+    "crop_deu": {
+     "words": 40,
+     "conf": 84.6,
+     "hits": 8,
+     "tokens": 27,
+     "text": "Tour combinations: Zinnen — Rotwand round (2 days): Day |: Fischleinboden — Drei- Tinnen-Hütte — L. Inner- kafler-Steig — Scharten- weg — Büllelejochhütte. Day 2: Büllelejochhütte — Zwölferscharte — Alpi- nisteig — Fischleinboden. 4 days ferrata- round see route Nuava-Ferrata"
+    },
+    "crop_eng": {
+     "words": 40,
+     "conf": 79.1,
+     "hits": 11,
+     "tokens": 27,
+     "text": "Tour combinations: Zinnen — Rotwand round (2 days): Day |: Fischleinboden — Drei Tinnen-Hiitte — L. Inner- kafler-Steig — Scharten- weg — Billelejochhiitte. Day 2: Billelejochhitte — Iwilferscharte — Alpi- nisteig — Fischleinboden. 4 days ferrata- round see route Nuova-ferata"
+    }
+   }
+  },
+  {
+   "page": "page_019",
+   "subpage": "right.png",
+   "block_id": 9,
+   "block_type": "paragraph",
+   "n_words": 38,
+   "n_tokens": 29,
+   "conf": 89.4,
+   "rates": {
+    "eng": 0.483,
+    "deu": 0.172,
+    "ita": 0.448,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 14,
+    "deu": 5,
+    "ita": 13,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.31,
+   "page_lang": "deu",
+   "sample": "Giro del Gruppo Popera (2 days): Day I: Rif. Berti — Ferrata",
+   "reread": {
+    "page_words": 38,
+    "page_conf": 89.4,
+    "page_hits": 5,
+    "page_tokens": 29,
+    "crop_deu": {
+     "words": 38,
+     "conf": 89.0,
+     "hits": 5,
+     "tokens": 29,
+     "text": "Giro del Gruppo Popera (2 days): Day I: Rif. Berti — Ferrata Roghel — Ferrata Gabri- ella — Rif, Carducci. Day 2: Alpinisteig — Senti- nellascharte — Rif. Berti — one of the best rounds in this book!"
+    },
+    "crop_eng": {
+     "words": 38,
+     "conf": 90.2,
+     "hits": 14,
+     "tokens": 29,
+     "text": "Giro del Gruppo Popera (2 days): Day I: Rif. Berti — Ferrata Roghel — Ferrara Gabri- ella — Rif. Carducci. Day 2: Alpinisteig — Senti- nellascharte — Rif. Berti — one of the best rounds in this book!"
+    }
+   }
+  },
+  {
+   "page": "page_020",
+   "subpage": "left.png",
+   "block_id": 1,
+   "block_type": "caption",
+   "n_words": 21,
+   "n_tokens": 15,
+   "conf": 46.9,
+   "rates": {
+    "eng": 0.2,
+    "deu": 0.2,
+    "ita": 0.067,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 3,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "X) Gehzeiten/Time Areazbergp. - Emsteg: | Sid. Emstaeg - Azsstieg: 2 Std.",
+   "reread": null
+  },
+  {
+   "page": "page_020",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "other",
+   "n_words": 23,
+   "n_tokens": 10,
+   "conf": 55.5,
+   "rates": {
+    "eng": 0.5,
+    "deu": 0.2,
+    "ita": 0.5,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 2,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.3,
+   "page_lang": "deu",
+   "sample": "bir Yar. CD ak Std Wa: Hm AB © 0,50 5] ab",
+   "reread": {
+    "page_words": 23,
+    "page_conf": 55.5,
+    "page_hits": 2,
+    "page_tokens": 10,
+    "crop_deu": {
+     "words": 60,
+     "conf": 54.1,
+     "hits": 4,
+     "tokens": 29,
+     "text": "A Schön Bi“ lift. C, Var. C/ 4% Std. J/ 840 Hm ® 350 Hm 2 Std. | | Std. 1% Std. Ed To,s0 [| 5] ab 14). m Okt. 2370 m m TTN 46.657736 SE 12.416479 = N 46.648868 SE 12.4114919 X Gehzeiten/Time Lreurbergp. - Emsteg: | Sid. Emstweg - Azısteg: 2 Sad. Abneg Arzalpenscharte (Seullen): 2 Sad. Abstieg"
+    },
+    "crop_eng": {
+     "words": 61,
+     "conf": 52.6,
+     "hits": 10,
+     "tokens": 37,
+     "text": "Ba Schon B- oir C, Var. ¢ 4% Std. 7) 840 Hm (2 350 Hm 2 Std. Pd | Std. 1% Std kd Feo so hd iN ab ld). ay Juni- Okt. B70 m 4 \"N 46.657T36 JIE L4i6479 w N 46.64/8868 SEI414919 0) Gehzeiten/Time Lresterpp. - Emste | $14 Emsti - haute; 2 1d. Resuey Aralpemscharne (Vea): 1 $2d. bsoeg"
+    }
+   }
+  },
+  {
+   "page": "page_020",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 87,
+   "n_tokens": 84,
+   "conf": 94.3,
+   "rates": {
+    "eng": 0.155,
+    "deu": 0.893,
+    "ita": 0.095,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 13,
+    "deu": 75,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "t Der Klettersteig am Arzalpenturm ist einer der neueren Dolomiten- Ferratas und",
+   "reread": null
+  },
+  {
+   "page": "page_020",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 15,
+   "n_tokens": 10,
+   "conf": 92.7,
+   "rates": {
+    "eng": 0.2,
+    "deu": 0.4,
+    "ita": 0.1,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 4,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "ıkt: Parkplatz Kreuzbergpass, 1636 m 1: Tabacco WK 010, Sextener Dolomiten; Kompass",
+   "reread": null
+  },
+  {
+   "page": "page_020",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 43,
+   "n_tokens": 40,
+   "conf": 95.3,
+   "rates": {
+    "eng": 0.175,
+    "deu": 0.975,
+    "ita": 0.075,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 39,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Über Lienz oder Brixen nach Innichen. Dort nach Süden abbiegen und der",
+   "reread": null
+  },
+  {
+   "page": "page_020",
+   "subpage": "right.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 92,
+   "n_tokens": 89,
+   "conf": 94.7,
+   "rates": {
+    "eng": 0.247,
+    "deu": 0.899,
+    "ita": 0.18,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 22,
+    "deu": 80,
+    "ita": 16,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Zustieg: Vom Kreuzbergpass zuerst auf dem Weg Nr. 15 bis auf die",
+   "reread": null
+  },
+  {
+   "page": "page_020",
+   "subpage": "right.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 42,
+   "n_tokens": 42,
+   "conf": 90.2,
+   "rates": {
+    "eng": 0.857,
+    "deu": 0.31,
+    "ita": 0.214,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 36,
+    "deu": 13,
+    "ita": 9,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.548,
+   "page_lang": "deu",
+   "sample": "The via ferrata at the arzalpentower is an at- tractive route, At",
+   "reread": {
+    "page_words": 42,
+    "page_conf": 90.2,
+    "page_hits": 13,
+    "page_tokens": 42,
+    "crop_deu": {
+     "words": 42,
+     "conf": 92.1,
+     "hits": 13,
+     "tokens": 42,
+     "text": "The via ferrata at the arzalpentower is an at- tractive route, At the top there is another exposed variant to the tower. On the way down, there is an old war tunnel to explore. An ideal Ferrata tour in the Sextener Dolomites."
+    },
+    "crop_eng": {
+     "words": 42,
+     "conf": 93.5,
+     "hits": 36,
+     "tokens": 42,
+     "text": "The via ferrata at the arzalpentower is an at- tractive route. At the top there is another exposed variant to the tower. On the way down, there is an old war tunnel to explore. An ideal Ferrata tour in the Sextener Dolomites."
+    }
+   }
+  },
+  {
+   "page": "page_020",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 91,
+   "n_tokens": 87,
+   "conf": 95.0,
+   "rates": {
+    "eng": 0.31,
+    "deu": 0.908,
+    "ita": 0.172,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 27,
+    "deu": 79,
+    "ita": 15,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Route: Siehe Topo. Bis zur kleinen Scharte vor dem Arzalpenturm Stellen bis",
+   "reread": null
+  },
+  {
+   "page": "page_020",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 33,
+   "n_tokens": 30,
+   "conf": 94.6,
+   "rates": {
+    "eng": 0.2,
+    "deu": 0.967,
+    "ita": 0.133,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 29,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Abstieg: Vom Ende des Klettersteiges folgt man waagrecht der roten Punktmarkierung in",
+   "reread": null
+  },
+  {
+   "page": "page_020",
+   "subpage": "right.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 103,
+   "n_tokens": 94,
+   "conf": 90.0,
+   "rates": {
+    "eng": 0.872,
+    "deu": 0.287,
+    "ita": 0.277,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 82,
+    "deu": 27,
+    "ita": 26,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.585,
+   "page_lang": "deu",
+   "sample": "Route: From Kreuzberg Pass first on path no. 15 up to the",
+   "reread": {
+    "page_words": 103,
+    "page_conf": 90.0,
+    "page_hits": 27,
+    "page_tokens": 94,
+    "crop_deu": {
+     "words": 103,
+     "conf": 90.2,
+     "hits": 27,
+     "tokens": 94,
+     "text": "Route: From Kreuzberg Pass first on path no. 15 up to the level of Lake Bä- rensee (moorland). There turn left on path 124 until Forcella Pian della Biscia. On the saddle, follow the old war road a bit in the direction of Opera 10 (old bunker). After a distinc- tive bend, turn left at a Cain to the start point. Route see Topo. Especially in the lower part of the via ferrata, watch out for falling "
+    },
+    "crop_eng": {
+     "words": 103,
+     "conf": 89.9,
+     "hits": 82,
+     "tokens": 94,
+     "text": "Route: from Kreuzberg Pass first on path no. [5 up to the level of Lake Ba- rensee (moorland). There turn left on path 124 until Forcella Pian della Biscia. On the saddle, follow the old war road a bit in the direction of Opera 10 (old bunker). After a distinc- tive bend, turn left at a aim to the start point. Route see Topo. Especially in the lower part of the via ferrata, watch out for falling r"
+    }
+   }
+  },
+  {
+   "page": "page_021",
+   "subpage": "left.png",
+   "block_id": 1,
+   "block_type": "paragraph",
+   "n_words": 71,
+   "n_tokens": 65,
+   "conf": 73.6,
+   "rates": {
+    "eng": 0.215,
+    "deu": 0.692,
+    "ita": 0.138,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 14,
+    "deu": 45,
+    "ita": 9,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "(V Sed.): Man folgt dem Weg nach Westen hinunter zur Arzalpen- euweise",
+   "reread": null
+  },
+  {
+   "page": "page_021",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "other",
+   "n_words": 30,
+   "n_tokens": 25,
+   "conf": 71.8,
+   "rates": {
+    "eng": 0.32,
+    "deu": 0.6,
+    "ita": 0.24,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 15,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "auf dem bereits 2: Salastelg (I Std.): Man steigt VOM Wegweiserlauf eim",
+   "reread": null
+  },
+  {
+   "page": "page_021",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "other",
+   "n_words": 14,
+   "n_tokens": 12,
+   "conf": 76.3,
+   "rates": {
+    "eng": 0.333,
+    "deu": 0.5,
+    "ita": 0.583,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 6,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "ita",
+   "margin": 0.083,
+   "page_lang": "deu",
+   "sample": "_ Berti ab, bi ck zur Forcella Pian della Biscia gehen und",
+   "reread": null
+  },
+  {
+   "page": "page_021",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 58,
+   "n_tokens": 51,
+   "conf": 80.9,
+   "rates": {
+    "eng": 0.196,
+    "deu": 0.725,
+    "ita": 0.157,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 10,
+    "deu": 37,
+    "ita": 8,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Vor allem im unteren Teil des Kle ttersteiges | Für Klettersteig-Einstelger ist",
+   "reread": null
+  },
+  {
+   "page": "page_021",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "caption",
+   "n_words": 19,
+   "n_tokens": 15,
+   "conf": 84.7,
+   "rates": {
+    "eng": 0.333,
+    "deu": 0.6,
+    "ita": 0.4,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 9,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "X’ Rifugio Anto- nio Berti al Pope- ra, 1950 m, (Al; Ende",
+   "reread": null
+  },
+  {
+   "page": "page_022",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "other",
+   "n_words": 70,
+   "n_tokens": 35,
+   "conf": 48.2,
+   "rates": {
+    "eng": 0.4,
+    "deu": 0.286,
+    "ita": 0.257,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 14,
+    "deu": 10,
+    "ita": 9,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.114,
+   "page_lang": "deu",
+   "sample": "Sehr schön A“ on 76 Std, N 1450 Hm Wi 300 Km",
+   "reread": {
+    "page_words": 70,
+    "page_conf": 48.2,
+    "page_hits": 10,
+    "page_tokens": 35,
+    "crop_deu": {
+     "words": 70,
+     "conf": 48.2,
+     "hits": 10,
+     "tokens": 35,
+     "text": "Sehr schön A“ on 76 Std, N 1450 Hm Wi 300 Km N 3 Std. x $ x Sa Juli - Sept. N 2936 m ® UN46.63352 U | E12.41834_— = N 46.64206 | = € 238253 ©) Gehzeiten/Tim 1A Lmeß + AZ Bez | Sud AZ Bern) - Emmy 2 Sat Emzeg - Cape: 14 Sad Tape - Mika Bern: 24 Sad MA Ber - RZ Lamel X Je"
+    },
+    "crop_eng": {
+     "words": 66,
+     "conf": 50.9,
+     "hits": 12,
+     "tokens": 33,
+     "text": "Sehr schon B- ping 7 sd | /) 1450 Hm [ Qin) 300 Hm 3 3 Std \\ Ny 4 Say Juli Sept. 2) 2936 m o. Nan Li E4184 = N 46.64206 | = EN38)53 1) Gehzeiten/Tim 1A Loe - ML Bex | Sd. 1 ber - Emp 2 Ema - Cle 1 Sed Ge - Nap ber A LL Bern - A Lome 4"
+    }
+   }
+  },
+  {
+   "page": "page_022",
+   "subpage": "left.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 30,
+   "n_tokens": 27,
+   "conf": 91.1,
+   "rates": {
+    "eng": 0.222,
+    "deu": 0.815,
+    "ita": 0.111,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 22,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "A se: Von Norden: Über Lienz oder Brixen nach Innichen. Dort nach",
+   "reread": null
+  },
+  {
+   "page": "page_022",
+   "subpage": "left.png",
+   "block_id": 9,
+   "block_type": "paragraph",
+   "n_words": 108,
+   "n_tokens": 104,
+   "conf": 94.4,
+   "rates": {
+    "eng": 0.077,
+    "deu": 0.904,
+    "ita": 0.048,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 94,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Besonderheiten: Die Via ferrata Zandonella besteht genau genommen aus zwei Klettersteigen. Die",
+   "reread": null
+  },
+  {
+   "page": "page_022",
+   "subpage": "left.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 20,
+   "n_tokens": 14,
+   "conf": 92.5,
+   "rates": {
+    "eng": 0.214,
+    "deu": 0.429,
+    "ita": 0.143,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 6,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Ausgangspunkt: Kreuzbergpass, 1636 m oder Rifugio Lunelli (Selvapiana), 1568 m Karten: Tabacco",
+   "reread": null
+  },
+  {
+   "page": "page_022",
+   "subpage": "right.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 48,
+   "n_tokens": 47,
+   "conf": 94.4,
+   "rates": {
+    "eng": 0.085,
+    "deu": 0.766,
+    "ita": 0.085,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 36,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Nach den letzten Kehren rechts abzweigen und auf der schmaler werdenden Straße",
+   "reread": null
+  },
+  {
+   "page": "page_022",
+   "subpage": "right.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 56,
+   "n_tokens": 53,
+   "conf": 94.4,
+   "rates": {
+    "eng": 0.226,
+    "deu": 0.849,
+    "ita": 0.208,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 12,
+    "deu": 45,
+    "ita": 11,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Zustieg: Auf dem Weg 101 in zahlreichen Serpentinen zum Rifugio Berti (al",
+   "reread": null
+  },
+  {
+   "page": "page_022",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 101,
+   "n_tokens": 92,
+   "conf": 95.2,
+   "rates": {
+    "eng": 0.174,
+    "deu": 0.946,
+    "ita": 0.152,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 16,
+    "deu": 87,
+    "ita": 14,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Route: Vom Einstieg bei einer alten Kaverne nach rechts (A) zu einem",
+   "reread": null
+  },
+  {
+   "page": "page_022",
+   "subpage": "right.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 101,
+   "n_tokens": 99,
+   "conf": 90.1,
+   "rates": {
+    "eng": 0.919,
+    "deu": 0.131,
+    "ita": 0.141,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 91,
+    "deu": 13,
+    "ita": 14,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.788,
+   "page_lang": "deu",
+   "sample": "This ferrata is strictly speaking two ferratas. The two variants south and",
+   "reread": {
+    "page_words": 101,
+    "page_conf": 90.1,
+    "page_hits": 13,
+    "page_tokens": 99,
+    "crop_deu": {
+     "words": 101,
+     "conf": 90.1,
+     "hits": 13,
+     "tokens": 99,
+     "text": "This ferrata is strictly speaking two ferratas. The two variants south and southeast have the same name but have no shared climbing sections. Both ferratas have in common that they offer - partly quite exposed - impressing views on the fascinating rock scenery of Vallon Popera and end directly at the cross on the summit. Like many other dolomite ferratas the routes run on ledges along war paths fr"
+    },
+    "crop_eng": {
+     "words": 101,
+     "conf": 89.6,
+     "hits": 92,
+     "tokens": 99,
+     "text": "This ferrata is strictly speaking two ferratas. The two variants south and southeast have the same name but have no shared climbing sections. Both ferratas have in common that they offer - partly quite exposed - impressing views on the fascinating rock scenery of Vallon Popera and end directly at the cross on the summit. Like many other dolomite ferratas the routes run on ledges along war paths fr"
+    }
+   }
+  },
+  {
+   "page": "page_022",
+   "subpage": "right.png",
+   "block_id": 10,
+   "block_type": "paragraph",
+   "n_words": 32,
+   "n_tokens": 29,
+   "conf": 90.1,
+   "rates": {
+    "eng": 0.828,
+    "deu": 0.241,
+    "ita": 0.207,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 24,
+    "deu": 7,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.586,
+   "page_lang": "deu",
+   "sample": "Route: Ascend via Ri- fugio Berti on trail 101 towards Sentinella gap.",
+   "reread": {
+    "page_words": 32,
+    "page_conf": 90.1,
+    "page_hits": 7,
+    "page_tokens": 29,
+    "crop_deu": {
+     "words": 32,
+     "conf": 89.9,
+     "hits": 7,
+     "tokens": 29,
+     "text": "Route: Ascend via Ri- fugio Berti on trail 101 towards Sentinella gap. At 2640 m turn right and ascend to the beginning of the climb. Route see topo! Descend via variant. southeast."
+    },
+    "crop_eng": {
+     "words": 32,
+     "conf": 89.5,
+     "hits": 24,
+     "tokens": 29,
+     "text": "Route: Ascend via Ri- fugio Berti on trail 101 towards Sentinella gap. At 2640 m turn right and ascend to the beginning of the climb. Route see topo! Descend via variant southeast."
+    }
+   }
+  },
+  {
+   "page": "page_023",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 18,
+   "n_tokens": 12,
+   "conf": 44.9,
+   "rates": {
+    "eng": 0.417,
+    "deu": 0.333,
+    "ita": 0.167,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 4,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.083,
+   "page_lang": "deu",
+   "sample": "u \"Rtugio Lunel- E58 m prnat Man Jam - Ende Sept. dew.",
+   "reread": null
+  },
+  {
+   "page": "page_023",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 22,
+   "n_tokens": 15,
+   "conf": 45.1,
+   "rates": {
+    "eng": 0.333,
+    "deu": 0.333,
+    "ita": 0.133,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 5,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "x‘ Rfugio Anto- nic Berii al Pope- rz 5 (Ak Ende daum",
+   "reread": null
+  },
+  {
+   "page": "page_023",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 46,
+   "n_tokens": 38,
+   "conf": 81.1,
+   "rates": {
+    "eng": 0.158,
+    "deu": 0.763,
+    "ita": 0.079,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 29,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Gehgelände) und quert einige Rinnen (Vorsicht bei Altschnee!). Durch gefüllte Schlucht (B,",
+   "reread": null
+  },
+  {
+   "page": "page_023",
+   "subpage": "left.png",
+   "block_id": 7,
+   "block_type": "paragraph",
+   "n_words": 113,
+   "n_tokens": 103,
+   "conf": 82.6,
+   "rates": {
+    "eng": 0.214,
+    "deu": 0.825,
+    "ita": 0.175,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 22,
+    "deu": 85,
+    "ita": 18,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Über die Variante Südost abklettern: Vom Gipfel ein Stück. IN der Versicherungen",
+   "reread": null
+  },
+  {
+   "page": "page_023",
+   "subpage": "left.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 19,
+   "n_tokens": 18,
+   "conf": 84.3,
+   "rates": {
+    "eng": 0.167,
+    "deu": 0.611,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 11,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "A Komplette Klertersteigausrüstung, Helm. „Ede mn Lässt sich mit dem Sextener Rotwandsteig",
+   "reread": null
+  },
+  {
+   "page": "page_024",
+   "subpage": "left.png",
+   "block_id": 2,
+   "block_type": "other",
+   "n_words": 37,
+   "n_tokens": 13,
+   "conf": 66.6,
+   "rates": {
+    "eng": 0.615,
+    "deu": 0.308,
+    "ita": 0.231,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 4,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.308,
+   "page_lang": "deu",
+   "sample": "10% Std. = S Ss = 3 1000 Hm 6 Std. A",
+   "reread": {
+    "page_words": 37,
+    "page_conf": 66.6,
+    "page_hits": 4,
+    "page_tokens": 13,
+    "crop_deu": {
+     "words": 43,
+     "conf": 63.6,
+     "hits": 5,
+     "tokens": 16,
+     "text": "a Schön A“ Dit. CD u. I 10% Std. AN 1400 Hm ® 1000 Hm t 6 Std. | 1% Std. % x 2% Std. m Div. | ab I5J. N II Sept. 2570 m ) N 46.63352 E12.41834 N 46.62292 E 12.40141"
+    },
+    "crop_eng": {
+     "words": 41,
+     "conf": 63.7,
+     "hits": 9,
+     "tokens": 17,
+     "text": "poy Schon &- if Cul 10% Std. /) 1400 Hm >, 1000 Hm t 6 Std. Pd 1% Std. V | 2% Std. 0 Div. Bs abl5). Say Juli- Sept. 2570 m 4 N 46.63352 E 2.41834 N 46.6292 E 12.4014]"
+    }
+   }
+  },
+  {
+   "page": "page_024",
+   "subpage": "left.png",
+   "block_id": 3,
+   "block_type": "paragraph",
+   "n_words": 25,
+   "n_tokens": 19,
+   "conf": 51.7,
+   "rates": {
+    "eng": 0.211,
+    "deu": 0.105,
+    "ita": 0.158,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 4,
+    "deu": 2,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.105,
+   "page_lang": "deu",
+   "sample": "7%) Gehzeiten/Time Wal Lunefl - Einstg. Ferrata Kaghet: IM Sad; Ferrata Roghe!",
+   "reread": {
+    "page_words": 25,
+    "page_conf": 51.7,
+    "page_hits": 2,
+    "page_tokens": 19,
+    "crop_deu": {
+     "words": 25,
+     "conf": 51.7,
+     "hits": 2,
+     "tokens": 19,
+     "text": "7%) Gehzeiten/Time Wal Lunefl - Einstg. Ferrata Kaghet: IM Sad; Ferrata Roghe! - Emstg, Ferrata Gabrielle 2% Sad, Ferrazz Gabrwila - Ki. Cardeco: 3% Sid."
+    },
+    "crop_eng": {
+     "words": 25,
+     "conf": 54.7,
+     "hits": 3,
+     "tokens": 18,
+     "text": "1°) Gehzeiten/Time Vl Lomeli - Eistg Fema Raphet 1% Sed Ferrata hoghe! - Emstg, Ferrata Gabriel 24 Sud, Ferrata Gabreela - Rd. (artace 3% $id."
+    }
+   }
+  },
+  {
+   "page": "page_024",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 71,
+   "n_tokens": 69,
+   "conf": 92.5,
+   "rates": {
+    "eng": 0.203,
+    "deu": 0.768,
+    "ita": 0.13,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 14,
+    "deu": 53,
+    "ita": 9,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "erti mit dem Rif. Carducci Rotwand Überschreitung ruppo Popera“ ausbauen der Ferrata",
+   "reread": null
+  },
+  {
+   "page": "page_024",
+   "subpage": "left.png",
+   "block_id": 5,
+   "block_type": "paragraph",
+   "n_words": 21,
+   "n_tokens": 13,
+   "conf": 92.2,
+   "rates": {
+    "eng": 0.231,
+    "deu": 0.308,
+    "ita": 0.154,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 4,
+    "ita": 2,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Padola, 1215 m Kreuzbergpass, 1636 m oder Rifugio Lunelli (Selvapiana), 1568 m",
+   "reread": null
+  },
+  {
+   "page": "page_024",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 63,
+   "n_tokens": 61,
+   "conf": 92.1,
+   "rates": {
+    "eng": 0.148,
+    "deu": 0.77,
+    "ita": 0.098,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 9,
+    "deu": 47,
+    "ita": 6,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Süden abbie- Von Norden: Über Lienz oder Brixen nach Innichen. Dort nach",
+   "reread": null
+  },
+  {
+   "page": "page_024",
+   "subpage": "right.png",
+   "block_id": 1,
+   "block_type": "paragraph",
+   "n_words": 60,
+   "n_tokens": 50,
+   "conf": 93.3,
+   "rates": {
+    "eng": 0.26,
+    "deu": 0.88,
+    "ita": 0.18,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 13,
+    "deu": 44,
+    "ita": 9,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Zustieg: Auf dem Weg 101 zum Rifugio Berti al Popera (I Std.)",
+   "reread": null
+  },
+  {
+   "page": "page_024",
+   "subpage": "right.png",
+   "block_id": 2,
+   "block_type": "paragraph",
+   "n_words": 179,
+   "n_tokens": 165,
+   "conf": 94.7,
+   "rates": {
+    "eng": 0.218,
+    "deu": 0.83,
+    "ita": 0.188,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 36,
+    "deu": 137,
+    "ita": 31,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Route: Via ferrata Aldo Roghel: Vom Einstieg (oft noch etwas Restschnee) über",
+   "reread": null
+  },
+  {
+   "page": "page_024",
+   "subpage": "right.png",
+   "block_id": 4,
+   "block_type": "paragraph",
+   "n_words": 87,
+   "n_tokens": 87,
+   "conf": 90.8,
+   "rates": {
+    "eng": 0.793,
+    "deu": 0.149,
+    "ita": 0.207,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 69,
+    "deu": 13,
+    "ita": 18,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.644,
+   "page_lang": "deu",
+   "sample": "Two great fixed rope rou- tes connecting Rif. Berti and Rif. Carducci,",
+   "reread": {
+    "page_words": 87,
+    "page_conf": 90.8,
+    "page_hits": 13,
+    "page_tokens": 87,
+    "crop_deu": {
+     "words": 87,
+     "conf": 89.6,
+     "hits": 13,
+     "tokens": 87,
+     "text": "Two great fixed rope rou- tes connecting Rif. Berti and Rif. Carducci, which together with Alpini route and Rotwand traverse can be extended to one of the most beautiful routes of the Dolomites, the so-called „Giro del Gruppo Popera“ on the following day. Ferrata Roghel contains the most demanding passages. The Gabriella ledge proceeds along Monte Giralba and besides the many paths with interestin"
+    },
+    "crop_eng": {
+     "words": 87,
+     "conf": 87.8,
+     "hits": 68,
+     "tokens": 87,
+     "text": "Two great fixed rope rou- tes connecting Rif. Berti and Rif. Carducci, which together with Alpini route and Rotwand traverse an be extended to one of the most beautiful routes of the Dolomites, the so-called Giro del Gruppo Popera® on the following day. Ferrara Roghe! contains the most demanding passages. The Gabriella ledge proceeds along Monte Giralba and besides the many paths with interesting "
+    }
+   }
+  },
+  {
+   "page": "page_024",
+   "subpage": "right.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 56,
+   "n_tokens": 48,
+   "conf": 86.1,
+   "rates": {
+    "eng": 0.812,
+    "deu": 0.104,
+    "ita": 0.083,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 39,
+    "deu": 5,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.708,
+   "page_lang": "deu",
+   "sample": "Route: Take path 10| to Rif. Berti (I hour) and then follow",
+   "reread": {
+    "page_words": 56,
+    "page_conf": 86.1,
+    "page_hits": 5,
+    "page_tokens": 48,
+    "crop_deu": {
+     "words": 56,
+     "conf": 87.0,
+     "hits": 5,
+     "tokens": 47,
+     "text": "Route: Take path 10| to Rif. Berti (I hour) and then follow path 152 for about 200 m until path 109 leads you to the be- ginning of climb past a scree field. For the fixed rope route see topos. To descend take path 101 from Rif. Carducci to Fischleintal or path 103 to Ansiei yalley."
+    },
+    "crop_eng": {
+     "words": 56,
+     "conf": 89.6,
+     "hits": 40,
+     "tokens": 47,
+     "text": "Route: Take path [0] to Rif. Berti (I hour) and then follow path 152 for about 200 m until path 109 leads you to the be- ginning of climb past a scree field. For the fixed rope route see topos. To descend take path 101 from Rif. Carducci to fischleintal or path 103 to Ansiei valley."
+    }
+   }
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 4,
+   "block_type": "caption",
+   "n_words": 15,
+   "n_tokens": 10,
+   "conf": 50.4,
+   "rates": {
+    "eng": 0.3,
+    "deu": 0.5,
+    "ita": 0.3,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 3,
+    "deu": 5,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "SE Rifugio Lunel- I, 1588 m, provzt. Mütze Jemi - Ende Sept.",
+   "reread": null
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 6,
+   "block_type": "paragraph",
+   "n_words": 150,
+   "n_tokens": 130,
+   "conf": 94.1,
+   "rates": {
+    "eng": 0.208,
+    "deu": 0.9,
+    "ita": 0.138,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 27,
+    "deu": 117,
+    "ita": 18,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "versichert (A u. A/B) wird die Felsstufe zur Cengia Gabriella überwunden. Auf",
+   "reread": null
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 8,
+   "block_type": "paragraph",
+   "n_words": 24,
+   "n_tokens": 22,
+   "conf": 88.1,
+   "rates": {
+    "eng": 0.227,
+    "deu": 0.773,
+    "ita": 0.045,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 17,
+    "ita": 1,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Über Weg 101 ins Fischleintal oder Weg 103 ins Ansiei Tal abstei",
+   "reread": null
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 9,
+   "block_type": "paragraph",
+   "n_words": 21,
+   "n_tokens": 16,
+   "conf": 58.8,
+   "rates": {
+    "eng": 0.5,
+    "deu": 0.5,
+    "ita": 0.438,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 8,
+    "ita": 7,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "nio Berti al Pope- ra. 1950 m, (Al Ende Jam - Minze",
+   "reread": null
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 11,
+   "block_type": "paragraph",
+   "n_words": 12,
+   "n_tokens": 11,
+   "conf": 79.3,
+   "rates": {
+    "eng": 0.182,
+    "deu": 0.818,
+    "ita": 0.0,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 2,
+    "deu": 9,
+    "ita": 0,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Klettersteig- a ausrüstung und Helm (evtl. Pickel und Steigeisen für die chneefelder).",
+   "reread": null
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 15,
+   "block_type": "paragraph",
+   "n_words": 19,
+   "n_tokens": 12,
+   "conf": 54.4,
+   "rates": {
+    "eng": 0.5,
+    "deu": 0.25,
+    "ita": 0.25,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 3,
+    "ita": 3,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.25,
+   "page_lang": "deu",
+   "sample": "X‘ Rifugio Car- ducci, 2257 m. (A, Ma- — Ende Sept. bew",
+   "reread": {
+    "page_words": 19,
+    "page_conf": 54.4,
+    "page_hits": 3,
+    "page_tokens": 12,
+    "crop_deu": {
+     "words": 17,
+     "conf": 56.4,
+     "hits": 5,
+     "tokens": 10,
+     "text": "ducai, 2257 m, (4, Ma- 1 Juni — Ende Sept. ben. We +39 3476861580 Anles: wewrbep Erde"
+    },
+    "crop_eng": {
+     "words": 17,
+     "conf": 50.3,
+     "hits": 5,
+     "tokens": 10,
+     "text": "ducd, 1257 m, (A, Ma t= Joni — Ende Sept. bow. Tet +39 3476861580 Inde www rikegiocarta"
+    }
+   }
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 17,
+   "block_type": "paragraph",
+   "n_words": 24,
+   "n_tokens": 21,
+   "conf": 85.2,
+   "rates": {
+    "eng": 0.333,
+    "deu": 1.0,
+    "ita": 0.19,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 7,
+    "deu": 21,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "n S In den west seitigen Schluchten und Rinnen am Ende der",
+   "reread": null
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 18,
+   "block_type": "paragraph",
+   "n_words": 34,
+   "n_tokens": 30,
+   "conf": 84.0,
+   "rates": {
+    "eng": 0.267,
+    "deu": 0.667,
+    "ita": 0.133,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 8,
+    "deu": 20,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "; ss sich mit dem Alpinisteig zum „Giro del Gruppo Popera“ -",
+   "reread": null
+  },
+  {
+   "page": "page_025",
+   "subpage": "left.png",
+   "block_id": 23,
+   "block_type": "other",
+   "n_words": 152,
+   "n_tokens": 61,
+   "conf": 30.5,
+   "rates": {
+    "eng": 0.393,
+    "deu": 0.18,
+    "ita": 0.197,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 24,
+    "deu": 11,
+    "ita": 12,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.213,
+   "page_lang": "deu",
+   "sample": "‚Pi cf er 1 | Pjtansst tttannrE TG Kreuzbergpass N x Sn",
+   "reread": {
+    "page_words": 152,
+    "page_conf": 30.5,
+    "page_hits": 11,
+    "page_tokens": 61,
+    "crop_deu": {
+     "words": 152,
+     "conf": 30.5,
+     "hits": 11,
+     "tokens": 61,
+     "text": "‚Pi cf er 1 | Pjtansst tttannrE TG Kreuzbergpass N x Sn TE = „ he r „ I DN 0 168 : A m Wr 122 ABA SA.124 = ‚xtener Rotwa A en + Eos 12 Yy2siem 8 z a X: 5 Arzalpenkopf /A N 2 % 0 JE = A D\\ \"Senunella 2, ) Ss A A: AD N zz : a Ag KEiforkofel Zah RM Lunelli i % gitor- A apos2m » ll A E* turm Ca . 101-8 A iD al 3 7 A Z ° a :\"Rıt. Bert! % Z ib “1950m 4351 ne M. Giralba . ©4050 1 x 107 7 BY A M 3 lterkof"
+    },
+    "crop_eng": {
+     "words": 151,
+     "conf": 36.1,
+     "hits": 23,
+     "tokens": 69,
+     "text": "Ph NL FE SEs Jit) i PORCLR Kreuzbergpass { Fd 3 iio Su % . PF o Lar 2 3 ° “158 3 rr fo) Fd 122 “nell, 15A SA.124 ¢ xtener Rotwa 4 i § Eferscharh 12 Beem 0%, 1 “, L$ 0 Arzalpenkopf JA » % x, = So —T = H 2\\ \"Sentinels, ) N : B\\i og mee N& Eo. : “\\% “\\¢ WE irorkofe Surah RitLunell : © por A B92 2 jet, | a rr rm \\ 9 . 101.8 % Sh wif . Ph) “5 7) o i TRI. Bert] Z Iba _ “qpsom «1 je M.Glralba eso 18 7 IA"
+    }
+   }
+  },
+  {
+   "page": "page_025",
+   "subpage": "right.png",
+   "block_id": 7,
+   "block_type": "other",
+   "n_words": 15,
+   "n_tokens": 8,
+   "conf": 74.7,
+   "rates": {
+    "eng": 0.625,
+    "deu": 0.625,
+    "ita": 0.625,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 5,
+    "deu": 5,
+    "ita": 5,
+    "bul": 0
+   },
+   "winner": "eng",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "Via ferrata Aldo Roghei N A/B A AB A A Höhle B",
+   "reread": null
+  },
+  {
+   "page": "page_025",
+   "subpage": "right.png",
+   "block_id": 8,
+   "block_type": "other",
+   "n_words": 30,
+   "n_tokens": 17,
+   "conf": 60.8,
+   "rates": {
+    "eng": 0.353,
+    "deu": 0.588,
+    "ita": 0.235,
+    "bul": 0.0
+   },
+   "hits": {
+    "eng": 6,
+    "deu": 10,
+    "ita": 4,
+    "bul": 0
+   },
+   "winner": "deu",
+   "margin": 0.0,
+   "page_lang": "deu",
+   "sample": "A BIC A/B Trittstifte g Platten = EX ZA > Ss stollo",
+   "reread": null
+  }
+ ]
+}

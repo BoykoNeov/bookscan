@@ -310,13 +310,59 @@ def _word_html(w: Word, mode: str, job_dir: Path) -> str:
     return f'<span class="flag" title="uncertain (conf {w.conf:.0f})">{txt}</span>'
 
 
+class _EitherLexicon:
+    """Membership in EITHER of two lexicons, for a block printed in one language
+    inside a document written in another.
+
+    This is a UNION and not a replacement, and the reason is measured. Over the
+    whole corpus, de-hyphenating a labelled block against its own dictionary
+    ALONE gains 16 joins and loses one: ``de_02``'s English paragraph names the
+    ``Rosen- garten``, a German massif, which the German lexicon joins and the
+    English one cannot. A book that prints one language inside another is exactly
+    a book full of the other's proper nouns — Italian route names in German text,
+    German mountains in English text — so the block's language must be the extra
+    authority, not the only one. With the union: 16 gained, 0 lost.
+    """
+
+    __slots__ = ("_a", "_b")
+
+    def __init__(self, a, b) -> None:
+        self._a, self._b = a, b
+
+    def __contains__(self, token: str) -> bool:
+        return token in self._a or token in self._b
+
+
+def block_dictionary(blk: Block, dictionary: set[str] | None,
+                     lexicons: dict[str, object] | None):
+    """The lexicon to de-hyphenate THIS block with.
+
+    ``Block.language`` is set only where a block's words clearly fit a different
+    dictionary from the document's (pipeline/block_lang.py). None — the normal
+    case, and what every document written before that field existed says — means
+    "use the document's language", so this returns the document lexicon unchanged
+    and the render is byte-identical to what it was before.
+
+    A label naming a language whose dictionary is not installed also falls back:
+    a missing lexicon must keep the hyphen, never drop the join silently to some
+    other language's rules.
+    """
+    if lexicons and blk.language:
+        got = lexicons.get(blk.language)
+        if got is not None:
+            return got if dictionary is None else _EitherLexicon(got, dictionary)
+    return dictionary
+
+
 def _block_body_html(blk: Block, mode: str, job_dir: Path,
-                     dictionary: set[str] | None) -> str:
+                     dictionary: set[str] | None,
+                     lexicons: dict[str, object] | None = None) -> str:
     """Inline HTML for a text block: the translated override if present, else the
     words rendered with de-hyphenation + per-word markers."""
     if blk.text is not None:                       # translation / block-level edit
         return html.escape(blk.text)
-    words = [w for w in merge_hyphens(blk.words, dictionary) if w.text.strip()]
+    words = [w for w in merge_hyphens(blk.words, block_dictionary(
+        blk, dictionary, lexicons)) if w.text.strip()]
     return " ".join(_word_html(w, mode, job_dir) for w in words)
 
 
@@ -355,7 +401,8 @@ def cell_order(words: list[Word]) -> list[Word]:
 
 
 def _table_html(blk: Block, mode: str, job_dir: Path,
-                dictionary: set[str] | None) -> str | None:
+                dictionary: set[str] | None,
+                lexicons: dict[str, object] | None = None) -> str | None:
     """A TABLE block as a real ``<table>``, or None when it has no cells.
 
     The cells come from ``Word.table_row`` / ``Word.table_col``, worked out at
@@ -410,7 +457,9 @@ def _table_html(blk: Block, mode: str, job_dir: Path,
             # different line_ids — so run over the whole block it would happily
             # join the end of one cell to the start of the one below it.
             body = " ".join(_word_html(w, mode, job_dir)
-                            for w in merge_hyphens(got_words, dictionary)
+                            for w in merge_hyphens(
+                                got_words,
+                                block_dictionary(blk, dictionary, lexicons))
                             if w.text.strip())
             tds.append(f"<td>{body}</td>")
         rows_html.append("<tr>" + "".join(tds) + "</tr>")
@@ -440,6 +489,7 @@ _TAG = {
 def _figure_html(blk: Block, page_bgr: np.ndarray | None,
                  caption: Block | None, mode: str, job_dir: Path,
                  dictionary: set[str] | None,
+                 lexicons: dict[str, object] | None = None,
                  siblings: list[Block] | None = None) -> str:
     """A FIGURE block: crop from the full-res page image at its bbox (NOT its OCR
     words), optionally with the following CAPTION grouped in the same <figure>.
@@ -455,7 +505,9 @@ def _figure_html(blk: Block, page_bgr: np.ndarray | None,
     else:
         inner += '<div class="figure-missing">[figure]</div>'
     if caption is not None:
-        inner += f'<figcaption class="caption">{_block_body_html(caption, mode, job_dir, dictionary)}</figcaption>'
+        inner += ('<figcaption class="caption">'
+                  + _block_body_html(caption, mode, job_dir, dictionary, lexicons)
+                  + '</figcaption>')
     return f'<figure class="figure-block">{inner}</figure>'
 
 
@@ -503,7 +555,8 @@ def _caption_bindings(page: DocPage, blocks: list[Block]
 
 
 def _page_html(page: DocPage, doc: Document, job_dir: Path,
-               dictionary: set[str] | None) -> str:
+               dictionary: set[str] | None,
+               lexicons: dict[str, object] | None = None) -> str:
     """One physical page: blocks in reading order, stripped/figured/typed."""
     mode = doc.settings.uncertainty_mode
     page_bgr = cv2.imread(str(job_dir / page.image_asset), cv2.IMREAD_COLOR)
@@ -547,11 +600,11 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
                     cap = nxt
                     i += 1                          # consume the grouped caption
             parts.append(_figure_html(blk, page_bgr, cap, mode, job_dir,
-                                      dictionary, blocks))
+                                      dictionary, lexicons, blocks))
             i += 1
             continue
         if blk.type is BlockType.TABLE:
-            tbl = _table_html(blk, mode, job_dir, dictionary)
+            tbl = _table_html(blk, mode, job_dir, dictionary, lexicons)
             if tbl is not None:
                 parts.append(tbl)
                 i += 1
@@ -559,7 +612,7 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
             # else: no cells — fall through to the paragraph render, which is
             # exactly what this block got before the grid pass existed.
         tag, cls = _TAG.get(blk.type, ("p", "other"))
-        body = _block_body_html(blk, mode, job_dir, dictionary)
+        body = _block_body_html(blk, mode, job_dir, dictionary, lexicons)
         if body.strip():
             parts.append(f'<{tag} class="{cls}">{body}</{tag}>')
         i += 1
@@ -631,13 +684,14 @@ section.page + section.page {{ margin-top: 1.4em; }}
 
 
 def render_html(doc: Document, job_dir: Path,
-                dictionary: set[str] | None = None) -> str:
+                dictionary: set[str] | None = None,
+                lexicons: dict[str, object] | None = None) -> str:
     title = html.escape(doc.document_id)
     body = []
     for pi, page in enumerate(doc.pages):
         if pi:
             body.append('<hr class="section-sep">')
-        body.append(_page_html(page, doc, job_dir, dictionary))
+        body.append(_page_html(page, doc, job_dir, dictionary, lexicons))
     lang = doc.settings.target_language or doc.settings.source_language
     return (
         f'<!doctype html>\n<html lang="{html.escape(lang)}">\n<head>\n'
@@ -773,7 +827,17 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
     # the document records what it was actually read in, and a lexicon for the
     # wrong language would silently refuse every join.
     dictionary = _dehyphen_lexicon(cfg, doc.settings.source_language)
-    html_str = render_html(doc, job_dir, dictionary=dictionary)
+    # A block printed in another language de-hyphenates against ITS OWN
+    # dictionary (Block.language, written by pipeline/block_lang.py). Only the
+    # languages this document actually labels are loaded — a document with no
+    # labels loads nothing extra and renders exactly as it did before.
+    block_langs = {b.language for p_ in doc.pages for b in p_.blocks
+                   if b.language} - {str(doc.settings.source_language or "").split("+")[0]}
+    lexicons = {lc: lex for lc, lex in
+                ((lc, _dehyphen_lexicon(cfg, lc)) for lc in sorted(block_langs))
+                if lex is not None}
+    html_str = render_html(doc, job_dir, dictionary=dictionary,
+                           lexicons=lexicons)
     html_path = out_dir / "page.html"
     html_path.write_text(html_str, encoding="utf-8")
 
@@ -810,6 +874,9 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
             "order_mode": order_mode,
             "order_unreviewed": n_order_unreviewed,
             "source_language": doc.settings.source_language,
+            "block_languages": {lc: sum(1 for p_ in doc.pages for b in p_.blocks
+                                        if b.language == lc)
+                                for lc in sorted(block_langs)},
             "target_language": doc.settings.target_language,
             "pdf_backend": backend,
             "wrote_pdf": wrote_pdf,

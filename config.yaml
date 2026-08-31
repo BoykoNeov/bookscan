@@ -303,6 +303,41 @@ figure_surface:
 # running text would very likely be a win today, but this book has none, so
 # that is a guess, not a measurement. --text-panel is not a flag; set this to
 # true (with Ollama up) to re-run the experiment.
+# --- Per-block language (Stage 05, pipeline/block_lang.py) ----------------
+# A book carries several languages on one page - this corpus's guide prints the
+# German route description, the English one and the Italian one each in its own
+# box - but a page is READ in one language, because Stage 05 takes one --lang.
+# This pass scores each block's already-read words against every installed
+# Hunspell dictionary and writes Block.language when one clearly wins.
+#
+# It is a LABEL and nothing else: no word is added, dropped, re-read or edited.
+# Re-reading a block in the voted language was MEASURED FIRST AND REFUSED
+# (RESULTS 2026-08-31) - where a block reads well the language changes almost
+# nothing (one 99-word English paragraph comes back byte-identical under German,
+# and English breaks "Ferrata Roghel" into "Ferrara Roghe!" as often as it fixes
+# "interestin"), and where a block reads badly the other language returns
+# DIFFERENT garbage, not better ("technacz! 68- Kcules" -> "wana! 6 ficunes").
+# Those panels are unreadable because of the pixels, not the dictionary.
+#
+# The one consumer today is Stage 08's de-hyphenation, which joins a line-end
+# hyphen only when the joined token is a real word - so without this, an English
+# paragraph in a German book keeps "rou- tes" and "at- tractive" broken in the
+# PDF. Measured on the owner's 25-spread book: 15 broken words rejoined that the
+# document language cannot rejoin, 0 joins lost.
+#
+# min_len is the guard that matters and it is NOT taste: English Hunspell accepts
+# a long tail of two-letter forms ("la ir at do av se vs fa is cr"), so at 2 a
+# block of pure noise scores 0.61 against English on that alone and it_geo_05's
+# junk block is nominated. At 3 it is not, and no real paragraph is lost.
+block_lang:
+  enabled: true
+  min_len: 3          # tokens shorter than this do not vote (see above)
+  min_tokens: 8       # a block needs this many voting tokens at all
+  min_distinct: 6     # ...and this many DIFFERENT ones ("840 Hm 1450 Hm" -> ita 1.00)
+  min_rate: 0.65      # the winner must fit its own dictionary this well
+  min_margin: 0.25    # ...and beat the document language by this much
+                      # (a bilingual line ties at 0.00 and correctly abstains)
+
 # --- Table cells (Stage 05, pipeline/table_grid.py) -----------------------
 # Works out which cell of its table each word of a TABLE block sits in, so
 # Stage 08 can emit a real <table> instead of one run of words.

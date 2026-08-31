@@ -144,6 +144,43 @@ Re-run OCR on the composite page and compare with the plain flattened page.
 **Gate: more confident words AND a text diff showing no degradation** — per
 section 0, the word count alone is not allowed to decide this.
 
+#### RUN 2026-08-31 — NO VERDICT, and the reason reshapes Phase 1
+
+Pre-registration `docs/data/panorama_phase2_prereg_20260831.md`, tool
+`tools/panorama_phase2.py`, RESULTS 2026-08-31. **Of 40 close-ups that register
+onto their flattened subpage, 5 are admitted** at the pre-registered 10 px bar,
+4 of them onto one topographic map, so the statistic has almost no text to
+count and the gate gets no verdict. It is reported as a no-verdict, not patched
+into a pass. **Phase 1 is therefore NOT licensed, and the route is not refused
+either** — it was never given a fair text page.
+
+Four things this settled that Phase 1 must be built against:
+
+* **The blocker is the TAIL within a source, not which sources.** Even the
+  well-placed subpages run a 1.2–1.5 px median against a 10–27 px
+  worst-twentieth. A whole-source admission rule therefore throws away sources
+  that are typically fine. **Phase 1 needs per-REGION admission** — paint where
+  the local displacement is small, drop the rest of the same source. This is a
+  redesign of the rule, not a retune of its threshold, and it is the same shape
+  as Phase 0's sub-window diagnostic.
+* **The seam must be word-aligned.** Measured: of the genuine word losses on the
+  one painted text page, two of three sit within 3 word-heights of a paint
+  boundary. Cut around word boxes, never through them.
+* **Two tempting explanations are dead.** "The good close-ups are the ones aimed
+  at pictures" is refuted (35 of 37 footprints are figure-heavy, including every
+  bad one). "Tighter framing places better" does not survive its confound (it
+  reverses once the one spread carrying it is removed) — **so this run does NOT
+  confirm Phase 3's capture loop as the precondition**, in either direction.
+* **Per-source numbers are seed-dependent** and that includes Phase 0's. Nine of
+  40 sources flip across the bar depending on the random draw. Admission is the
+  worst of three seeded draws; never threshold a single-draw residual again.
+
+One encouraging observation, on one page of one book and claiming nothing: the
+single text subpage that did paint **ties on the confident-word count (102 vs
+102) and wins on the text diff**, rejoining two hyphen-broken words and
+recovering three more. The count could not see it because the improvement was
+two words becoming one.
+
 ### Phase 3 — the capture loop (the large build, Android)
 
 Only if 0–2 pass. The phone keeps a live coverage-and-sharpness map of the spread
@@ -359,15 +396,16 @@ one flagged defect with no diagnosis yet.
    not a language one either (see §2's 2026-08-31 note) — they belong to 3.2.
 2. ~~**Section 2 per-block language**~~ — DONE 2026-08-31 as a LABEL; the re-read
    half is refused by measurement.
-3. ~~**Panorama Phase 0**~~ — DONE 2026-08-31. The plan's reorder is refused;
-   "flatten the target only" passes on placement, under a tail constraint. Next
-   here is **Phase 2 first** — a render comparison on `page_021` (25 of 27
-   placed, 13 with a usable tail) *and* `page_013` for continuity with the
-   recorded 324 / 336 / 270, with `page_024` as the negative control (nothing
-   paintable) — before Phase 1 is built, because Phase 2 is what says whether any
-   of it reads better. `page_013` alone would paint 3 sources and return a null
-   nobody could interpret.
-4. **3.3 picture continuity** — removes a whole family of visible defects.
+3. ~~**Panorama Phase 0**~~ and ~~**Phase 2**~~ — both DONE 2026-08-31. Phase 0
+   refused the plan's reorder and passed a narrower one on *placement*. Phase 2
+   then asked whether any of it **reads** better and returned **no verdict**:
+   only 5 of 40 registered close-ups clear the bar and 4 of those land on a map.
+   **Phase 1 stays unbuilt** — not refused, but it must be redesigned first,
+   around per-REGION admission and word-aligned seams (see the Phase 2 note
+   above). The panorama thread is therefore **parked**, and the items below are
+   now the top of the list.
+4. **3.3 picture continuity** — removes a whole family of visible defects, and
+   with panorama parked this is now the next thing to build.
 5. **3.2 the crop** — as soon as the owner settles the clipping question.
 
 3.4 costs a line and can ride along with any of them.

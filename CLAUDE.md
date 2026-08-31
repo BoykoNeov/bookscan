@@ -498,6 +498,34 @@ Italian, German**.
       AND a text diff) is the next thing to do — before Phase 1 is built. The
       four sofa spreads are worse under every arm and are not covered. See
       RESULTS 2026-08-31.
+      **Phase 2 is now MEASURED 2026-08-31 (`tools/panorama_phase2.py`) and
+      returns NO VERDICT — which parks the whole panorama thread.** Of 40
+      close-ups that register onto their flattened subpage, only **5 clear the
+      pre-registered 10 px bar and 4 of those land on one topographic map**, so
+      the statistic has almost no text under it. Reported as a no-verdict, not
+      patched into a pass. **Phase 1 is NOT licensed and the route is NOT
+      refused** — it was never given a fair text page. Four things it settled.
+      (a) **The blocker is the TAIL inside a source, not which sources**: even
+      well-placed subpages run a 1.2–1.5 px median against a 10–27 px
+      worst-twentieth, so a whole-source rule discards sources that are typically
+      fine. Phase 1 needs **per-REGION** admission — a redesign, not a retune.
+      (b) The seam must be **word-aligned** (2 of 3 genuine word losses sit within
+      3 word-heights of a paint boundary). (c) **Two explanations are dead, and the
+      first draft of the row asserted one of them**: "the good close-ups are aimed
+      at pictures" is refuted (35 of 37 footprints are figure-heavy, including
+      every badly-placed one), and "tighter framing places better" reverses once
+      the single spread carrying it is removed — so this does **not** confirm the
+      capture loop as the precondition, in either direction. (d) **Per-source
+      residuals are seed-dependent, Phase 0's included**: `cv::theRNG()` feeds
+      RANSAC and FLANN, one source reads 9.76 / 10.25 / 14.34 px across draws, and
+      **9 of 40 flip across the bar** — admission is now the worst of three seeded
+      draws and no single-draw residual should ever be thresholded again. The
+      control fires (painting the REJECTED sources loses 35 confident words while
+      total words RISE 200 -> 242, the recorded doubling signature), so the null
+      is real. One encouraging note that claims nothing: the single text subpage
+      that did paint **ties on confident words (102 vs 102) and wins on the text
+      diff**, rejoining two hyphen-broken words — the count was blind to it because
+      the improvement was two words becoming one. n = 1 book, 3 spreads.
 - **Importing a PDF and re-typesetting it is PLANNED, not built** —
       `docs/plans/pdf-import.md`. Import fills `00_ingest/` and nothing
       downstream changes; the PDF's own text layer is a second opinion routed

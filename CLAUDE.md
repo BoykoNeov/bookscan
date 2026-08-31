@@ -228,6 +228,44 @@ Italian, German**.
       the fixture), then per-block language. A single-column panel of running
       text would probably win today — this book has none, so that is a guess.
       n = 1 book, adjudicated by eye.
+- **Each block is labelled with the language it is PRINTED in, and the re-read the
+      plan asked for is REFUSED — both 2026-08-31 (`pipeline/block_lang.py`).**
+      This was the last blocker `text_panel` named. **The plan's item was to
+      re-read a foreign-language block with that language's OCR, and measuring it
+      first killed that half.** Over all 36 blocks a dictionary vote nominates in
+      the owner's book, read twice from the same crop: where a block reads WELL
+      the language is a **wash** — word counts identical (101/101, 103/103, 87/87,
+      56/56, 45/45, 42/42, 32/32), confidence within a point, and the text diff
+      cuts both ways (`interestin` -> `interesting` against `Ferrata Roghel` ->
+      `Ferrara Roghe!`), with one 99-word English paragraph **byte-identical**
+      read as German. Where a block reads BADLY — the fourteen translation panels
+      this work was aimed at — the other language returns **different garbage, not
+      better** (`technacz! 68- Kcules (1-6` becomes `wana! 6 ficunes (A-€`). So
+      **`docs/plans/panorama-and-next-steps.md` §2's premise is wrong: those
+      panels are unreadable because of the PIXELS, not the dictionary**, and they
+      are NOT fixed — do not re-attempt this from language.
+      What ships is a **label and nothing else**: `Block.language`, written from a
+      Hunspell vote over the words already read. No word is added, dropped,
+      re-read or edited, so word conservation is untouched and an abstain is free.
+      **The single consumer is Stage 08's de-hyphenation** — which joins a line-end
+      hyphen only when the joined token is a real word, so without this an English
+      paragraph in a German book keeps `rou- tes` and `at- tractive` broken in the
+      PDF. Over the owner's book plus all fifteen fixtures, 1032 blocks: **21
+      labelled, 16 joins gained, 0 lost**; thirteen of fifteen single-language
+      fixtures label **nothing**. Graded on the **render** as well as the label —
+      six spreads through Stage 05/06/assemble/render, rendered twice from one
+      document: **38 broken words become 26, 0 newly broken**. Four guards, each
+      earned by a measured false positive; **`min_len` 3 is the load-bearing one**
+      (English Hunspell accepts a long tail of two-letter forms, so a block of pure
+      noise scores 0.61 against English on `la ir at do av se vs fa is cr` alone —
+      at 2 `it_geo_05`'s junk block is nominated, at 3 it is not and no real
+      paragraph is lost anywhere). The block's lexicon is a **union** with the
+      document's, also measured: alone it loses `de_02`'s `Rosen- garten`, a German
+      massif named in an English paragraph, because a book printing one language
+      inside another is full of the other's proper nouns. **Deliberately ONE
+      consumer** — the EasyOCR disagreement gate and Stage 06's threshold also key
+      on a lexicon and are NOT wired to this, because neither is measured. n = 2
+      books, one supplying 17 of the 21 labels. See RESULTS 2026-08-31.
 - **Stage 08 renders a TABLE as a table — SHIPPED 2026-08-31 as
       `pipeline/table_grid.py` (Stage 05) + a `<table>` path in Stage 08.** This is
       the blocker yesterday's row named. **The interesting part is that the rows
@@ -524,7 +562,7 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
 | 02 | `stage02_split` | book-boundary crop (`book_boundary.py`) → gutter detection → left/right pages; optional per-page frame source (`page_source.py`, off by default) | OpenCV (projection profile, GrabCut) |
 | 03 | `stage03_dewarp` | flatten page curvature | UVDoc (default), DocTr++ (partial crops) |
 | 04 | `stage04_layout` | block detection + reading order | DocLayout-YOLO + XY-Cut++ |
-| 05 | `stage05_ocr` | word-level text + bbox + confidence; caption ejection (`caption_eject.py`) + starved-block re-read (`block_reocr.py`) + figure-edge text absorption (`figure_text.py`) + table cell assignment (`table_grid.py`) | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |
+| 05 | `stage05_ocr` | word-level text + bbox + confidence; caption ejection (`caption_eject.py`) + starved-block re-read (`block_reocr.py`) + figure-edge text absorption (`figure_text.py`) + per-block language label (`block_lang.py`) + table cell assignment (`table_grid.py`) | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |
 | 06 | `stage06_uncertainty` | per-word decision using user mode a/b/c | own code |
 | 07 | `stage07_assemble` | job-level: build editable `document.json` + self-contained `document_assets/`; higher-resolution figure assets (`figure_hires.py`) | own code; OpenCV (SIFT + RANSAC + ECC) |
 | 08 | `stage08_render` | `document.json` → re-typeset HTML (always, incl. real `<table>` from `Word.table_row`/`table_col`) → PDF (re-runnable) | own code; WeasyPrint/headless-Chromium (PDF, TBD), Noto fonts |

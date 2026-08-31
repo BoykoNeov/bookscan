@@ -133,6 +133,27 @@ it gets chosen *and scored higher*: `Überholende` -> `Uberholende`,
 `Berücksichtigung` -> `Beriicksichtigung`. `Via` — an Italian word — got worse
 when Italian was added. Full numbers in `docs/RESULTS.md`.
 
+### MEASURED AND HALF-REFUSED, 2026-08-31 — read this before building anything here
+
+The design below was built and measured, and **its central mechanism — re-reading
+the block in the winning language — is refused.** Over all 36 blocks a dictionary
+vote nominates in the owner's book, read twice from the same crop: where a block
+reads WELL the language is a wash (word counts identical, one 99-word English
+paragraph byte-identical read as German, fixes and regressions in the same diff),
+and where a block reads BADLY the other language returns DIFFERENT garbage
+(`technacz! 68- Kcules (1-6` -> `wana! 6 ficunes (A-€`).
+
+**So the claim below that "the largest single cause is language" for the fourteen
+unreadable panels is WRONG.** They are unreadable because of the pixels — a
+coloured banner, small type, and the four spreads whose dewarp ran on a frame
+containing sofa. Item 3.1's second half is therefore still open and belongs to
+3.2 (the crop), not here.
+
+What shipped is the LABEL alone (`pipeline/block_lang.py`, `Block.language`),
+consumed by Stage 08's de-hyphenation: 21 blocks labelled over 1032, **16 joins
+gained, 0 lost**, and 38 broken words become 26 in a rendered A/B. See RESULTS
+2026-08-31. The rest of this section is kept as the record of what was proposed.
+
 ### The right shape: language per block, not per page
 
 This book's foreign-language content is **physically separated into panels** —
@@ -284,9 +305,11 @@ one flagged defect with no diagnosis yet.
 
 ## 4. Suggested order
 
-1. **3.1 text-panels-as-pictures** — biggest measured loss, cheapest fix, and it
-   unblocks the multilingual work.
-2. **Section 2 per-block language** — extends shipped machinery, no new models.
+1. ~~**3.1 text-panels-as-pictures**~~ — DONE for the 4 mis-typed boxes
+   (`text_panel.py` + `table_grid.py`); the other 14 are not a typing problem and
+   not a language one either (see §2's 2026-08-31 note) — they belong to 3.2.
+2. ~~**Section 2 per-block language**~~ — DONE 2026-08-31 as a LABEL; the re-read
+   half is refused by measurement.
 3. **Panorama Phase 0** — one day, decides a large build either way.
 4. **3.3 picture continuity** — removes a whole family of visible defects.
 5. **3.2 the crop** — as soon as the owner settles the clipping question.

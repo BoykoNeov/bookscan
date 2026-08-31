@@ -177,3 +177,65 @@ the two is to be reported.
   run; both arms get exactly the same treatment, so the comparison is valid and
   the absolute numbers are instrument numbers. A full stages 02–05 confirmation
   is owed only if the frozen-layout arm passes.
+
+---
+
+## 9. Amendment, 2026-08-31 — made BEFORE any composite or word count existed
+
+Building the tool surfaced a property of the instrument that the gate above
+cannot survive unamended, so it is fixed here rather than discovered afterwards.
+**No OCR arm had been run when this was written**; the only numbers that existed
+were the Phase 0 data quoted in §4 and the reproducibility probe below.
+
+### The finding: placement is not reproducible run to run
+
+The same close-up (`page_013/frame_08.png` onto its dewarped right page),
+registered three times in one process with no input changed, returns:
+
+| draw | inliers | ratio-test matches | worst-twentieth (dewarped px) |
+|---|---|---|---|
+| 1 | 76 | 174 | **9.76** |
+| 2 | 81 | 168 | **10.25** |
+| 3 | 82 | 171 | **14.34** |
+
+The cause is `cv::theRNG()` state, which both RANSAC and FLANN's randomised
+kd-tree index consume and advance. Seeding it (`cv2.setRNGSeed`) **and**
+rebuilding the matcher makes a draw byte-reproducible, so this is fixable — but
+fixing it by picking one seed would only hide the problem, because the three
+draws straddle §4's 10 px bar. **A single-draw admission rule is a coin flip for
+any source near the threshold.**
+
+This is also a fact about **Phase 0**: its per-source residuals are one draw
+each. Its published *population medians* over 317 sources are not materially
+at risk from this, but no per-source number in
+`docs/data/panorama_phase0_20260831.json` should be treated as exact, and the
+coverage estimate in §4 that fixed the threshold is one draw as well. The
+threshold choice survives that — 5 px admits zero sources by a wide margin under
+any draw — but *which* sources 10 px admits does not.
+
+### The amendment
+
+Admission (§4 rule 3) is now measured over **three seeded draws, 0 / 1 / 2**, and
+a source is admitted only if **the WORST of the three** is at or under 10
+anchor-equivalent px. Painting uses draw 0's homography; all three residuals are
+recorded.
+
+Two rejected alternatives, stated so the choice is auditable:
+
+* **One fixed seed** — reproducible but arbitrary, and it would let a source
+  whose placement is a coin flip into the paint on the strength of its lucky
+  draw.
+* **Best of three by inliers** — the estimator's own criterion, and independent
+  of the flow statistic, so not circular. Rejected on the evidence above: the
+  draw with the *most* inliers (82) had the *worst* placement (14.34 px). Inlier
+  count does not predict placement quality here, which is itself worth recording.
+
+Worst-of-three is chosen because the failure mode is one-directional. Phase 0
+established that leftover displacement is what doubles text; a source that is
+only *sometimes* well placed will *sometimes* double it, and a paint is not
+re-rolled per reader.
+
+**Consequence accepted in advance:** this is strictly stricter than §4 as
+written, so fewer sources will paint, and an all-null result is a possible
+outcome. If no source is *reliably* under the bar, that is the finding — not a
+reason to relax the rule to three-draw median or to draw 0.

@@ -8199,11 +8199,40 @@ close-ups that register onto their flattened subpage across the three spreads,
 
 `page_021` is the spread the plan named as primary **because** it has the most
 well-placed close-ups. It does — and **149 of its right page's 170 words sit
-inside FIGURE blocks**. Those close-ups are close-ups of the map. Where the
-running text is, not one source is reliably placed: `page_021`-left runs
-**56.6–108.2** anchor px of leftover displacement against a 10 px bar,
-`page_024`-left **25.4–166.8**. The well-placed sources are not spread thinly
-over the book; they are concentrated on one picture.
+inside FIGURE blocks**, so almost nothing the paint covers is text the
+deliverable would render as text. Where the running text is, not one source is
+reliably placed: `page_021`-left runs **56.6–108.2** anchor px of leftover
+displacement against a 10 px bar, `page_024`-left **25.4–166.8**.
+
+**Why that happens is NOT established, and three explanations were checked
+rather than assumed.** A first draft of this row asserted the first of them; it
+is wrong.
+
+* **Content — "the good close-ups are close-ups of the pictures": REFUTED.**
+  Overlaying every source's footprint on Stage 04's blocks, **35 of 37 footprints
+  are figure-heavy** (>= 0.49 of their area on a FIGURE block) — including every
+  badly-placed one. `page_021`-left's sources sit at 0.67–0.84 figure share and
+  place at 57–108 px. The figure/text split does not discriminate at all.
+* **Framing — "the tight close-ups place better": does not survive the
+  confound.** Within `page_021` it looks decisive (median residual **10.06 ->
+  1.64 -> 1.55** anchor px across own-scale bands 1.0–1.5 / 1.5–2.0 / 2.0–3.5).
+  Excluding `page_021` it **reverses** (1.55 px at 1.0–1.5 against 3.35 at
+  1.5–2.0). The apparent effect is one spread; tight framing and that spread's
+  right page are the same 13 sources.
+* **What actually separates the population is the SUBPAGE.** Four of six place
+  well at the median (1.18–1.54 anchor px) and two are catastrophic:
+  `page_021`-left **9.91** and `page_024`-left **6.13**. Both are left pages —
+  and `page_013`-left is fine at 1.18, so "left page" is not it either. At n = 3
+  spreads this is a description, not a cause.
+
+**And the binding constraint is the TAIL, not the median.** Even the well-placed
+subpages sit at a median 1.2–1.5 px with a worst-twentieth of **10–27** px:
+`page_013`-right is 1.38 median against 13.9 p95. The admission rule is
+therefore rejecting sources whose *typical* placement is a pixel and a half and
+whose worst twentieth is ten times that. This reconciles with Phase 0's "flat
+across zoom" rather than contradicting it — **that was the median** (1.90 / 1.87
+/ 2.19), and the medians here are flat too outside the two bad subpages. Phase 0
+warned about the tail; the tail is now the thing that decides.
 
 The pre-registered statistic needs a TEXT BLOCK **fully inside** the painted
 union. At 65–80 % coverage no block qualifies, so the primary is undefined
@@ -8251,8 +8280,18 @@ Arm **X** paints the sources the rule *rejects*. Required to lose, and it does:
 `page_024`-left reproduces the recorded doubling signature exactly — **total
 words RISE while confident words FALL** (the 2026-08-29 run: 360 -> 431 total,
 336 -> 270 confident). So a null here is a real null, not a blind instrument.
-And the bar is not obviously loose: `page_024`-right's single source, at 10.28 px
-just *over* it, does no damage at all (364 -> 365).
+These two are the clean controls: both ran on an ENLARGED canvas (S = 1.48 and
+1.43).
+
+**Two subpages ran at S < 1 and nothing should be read off them.** On a
+control-only subpage the canvas rule falls back to the median own-scale of the
+*rejected* set, and on `page_013`-left (S = 0.90) and `page_024`-right (S = 0.88)
+that shrank the page. The E-vs-X comparison there is still internally consistent
+— both arms are the same canvas — but `page_024`-right's harmless-looking
+364 -> 365 is **not** evidence that a source just over the bar is safe: that
+source is also below the own-scale floor (0.88), so it fails admission on a
+second rule, and it was painted onto a shrunken page. No claim is made about how
+tight the 10 px bar is.
 
 ### The instrument was not reproducible, and it is now
 
@@ -8278,13 +8317,20 @@ individual row there is exact, and nothing should threshold one.
 * **Phase 1 is NOT licensed.** The pre-registered pass never happened. This is
   not a refusal of the panorama route either — the route was never given a fair
   text page to work on.
-* **The precondition is the capture, not the code.** Phase 0 already suspected
-  this ("a capture loop that frames tighter becomes the precondition rather than
-  the follow-on"); Phase 2 makes it concrete and specific: on this book the
-  operator shot close-ups **of the pictures**, and the pictures are where the
-  paint is admissible. A capture loop (plan Phase 3) that covers the *text* at
-  the same framing is what would produce a population this measurement could
-  read. **Do not build Phase 1 first.**
+* **Phase 0's capture-loop hint is NOT confirmed here, and a first draft of this
+  row wrongly said it was.** Phase 0 suspected tighter framing was the
+  precondition. This population cannot support that: the framing effect
+  disappears when the one spread carrying it is removed. Shooting more close-ups
+  is not licensed by this measurement, in either direction.
+* **What the data does point at is a change of GRANULARITY in Phase 1.** The
+  rule that produced this null admits or refuses a **whole source**, and it
+  refuses sources whose median placement is 1.4 px because their worst twentieth
+  is 14. A per-**region** rule — paint only where the local displacement is
+  small, drop the rest of the same source — is the design this measurement
+  argues for, and it is the same shape as Phase 0's own diagnostic (a sub-window
+  re-fit reaches 1.60 px with no field at all, but 30–43 % of windows cannot
+  answer). That is a redesign of the admission rule, not a retune of its
+  threshold.
 * If Phase 1 is ever built, the seam must be **word-aligned** — measured above,
   not assumed.
 

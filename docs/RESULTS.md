@@ -8169,3 +8169,131 @@ Tool: `tools/panorama_phase0.py` (all seven arms plus the `--control` floor).
 Data: `docs/data/panorama_phase0_20260831.json` (every close-up, every arm),
 `docs/data/panorama_phase0_control_20260831.json`, pre-registration
 `docs/data/panorama_phase0_prereg_20260831.md`.
+
+---
+
+## 2026-08-31 — Panorama Phase 2: the paint lands where the text isn't
+
+`docs/plans/panorama-and-next-steps.md` §1 Phase 2, pre-registered in
+`docs/data/panorama_phase2_prereg_20260831.md`, measured by
+`tools/panorama_phase2.py`, data `docs/data/panorama_phase2_20260831.json`.
+
+Phase 0 (yesterday) measured **placement** and passed. Phase 2 asks the question
+that matters — **does a page assembled that way read better** — on the gate the
+plan set: more confident words **and** a text diff.
+
+**It returns NO VERDICT on that gate, and the reason is the result.** Of 40
+close-ups that register onto their flattened subpage across the three spreads,
+**5 are admitted** to the paint. **Four of the five land on a topographic map.**
+
+### The structural finding
+
+| subpage | registered | admitted | union | text under the paint |
+|---|---|---|---|---|
+| `page_021` right | 18 | **4** | 65.5 % | **1** confident word |
+| `page_013` right | 3 | **1** | 80.2 % | 102 confident words |
+| `page_021` left | 7 | 0 | — | (98 conf. words, nothing admitted) |
+| `page_013` left | 3 | 0 | — | (185) |
+| `page_024` left | 8 | 0 | — | (177) |
+| `page_024` right | 1 | 0 | — | (364) |
+
+`page_021` is the spread the plan named as primary **because** it has the most
+well-placed close-ups. It does — and **149 of its right page's 170 words sit
+inside FIGURE blocks**. Those close-ups are close-ups of the map. Where the
+running text is, not one source is reliably placed: `page_021`-left runs
+**56.6–108.2** anchor px of leftover displacement against a 10 px bar,
+`page_024`-left **25.4–166.8**. The well-placed sources are not spread thinly
+over the book; they are concentrated on one picture.
+
+The pre-registered statistic needs a TEXT BLOCK **fully inside** the painted
+union. At 65–80 % coverage no block qualifies, so the primary is undefined
+everywhere — on `page_021`-right for the substantive reason above, on
+`page_013`-right on a technicality. Both are reported as no-verdict rather than
+patched after the fact.
+
+### The one text subpage that did paint — count tied, text better
+
+`page_013`-right, one source, 80.2 % of the page, word-granularity and therefore
+**secondary and post-hoc**:
+
+| arm | words in union | confidence >= 80 |
+|---|---|---|
+| E (enlarged 1.27x, unpainted) | 104 | **102** |
+| P (painted) | 104 | **102** |
+
+A dead tie — and the text diff is not a tie. P **rejoins two hyphen-broken
+words** (`Schuttbänd` + `er` -> `Schuttbänder`, `mög` + `lichst` ->
+`möglichst`) and recovers `Wandstelle`, `damit`, `überholende`; it loses
+`wird.`, and two words off a figure (`Am Klettersteig`). The count cannot see
+this **because the improvement is two words becoming one** — which is the §0
+warning running the other way for once: here the number is blind to a real gain,
+where four previous times it rose while the text got worse.
+
+**The seam check the pre-registration promised** (run only because P lost words),
+measuring each lost word's depth inside the painted region in units of its own
+height: the four hyphen halves are **14–35 word-heights** deep, i.e. not seam
+artifacts but the merge described above. Of the three genuine losses, **two are
+within 3 word-heights of a seam** (`Klettersteig` 1.0, `»Wer` 2.9) and one is not
+(`wird.`, 20.6). That is the evidence that would license a **word-aligned seam**
+in Phase 1 — cut the paint boundary around word boxes, never through them.
+
+### The control fires — the instrument can see the failure
+
+Arm **X** paints the sources the rule *rejects*. Required to lose, and it does:
+
+| subpage | words | confidence >= 80 | mean conf |
+|---|---|---|---|
+| `page_024`-left E | 200 | **172** | 86.5 |
+| `page_024`-left X | **242** | **137** | 66.9 |
+| `page_021`-left E | 126 | **98** | 80.9 |
+| `page_021`-left X | 113 | **77** | 72.6 |
+
+`page_024`-left reproduces the recorded doubling signature exactly — **total
+words RISE while confident words FALL** (the 2026-08-29 run: 360 -> 431 total,
+336 -> 270 confident). So a null here is a real null, not a blind instrument.
+And the bar is not obviously loose: `page_024`-right's single source, at 10.28 px
+just *over* it, does no damage at all (364 -> 365).
+
+### The instrument was not reproducible, and it is now
+
+Found while building, amended in the pre-registration **before any composite
+existed** (§9). The same close-up registered three times with nothing changed
+returns **9.76 / 10.25 / 14.34** px — `cv::theRNG()` feeds both RANSAC and
+FLANN's randomised index and advances between calls. Over the whole population
+the seed moves a source's residual by a median **34 %** of its own value, p90
+**107 %**, max **188 %**.
+
+> **9 of the 40 sources flip across the 10 px bar depending on the seed** —
+> best-draw admits **14**, worst-draw admits **5**.
+
+Admission is therefore the **worst of three seeded draws**. Best-of-three by
+inliers was considered and refused on the evidence: the draw with the **most**
+inliers (82) had the **worst** placement (14.34 px). **This is also a fact about
+Phase 0** — every per-source number in `panorama_phase0_20260831.json` is one
+draw. Its population medians over 317 sources are not materially at risk; no
+individual row there is exact, and nothing should threshold one.
+
+### What this licenses
+
+* **Phase 1 is NOT licensed.** The pre-registered pass never happened. This is
+  not a refusal of the panorama route either — the route was never given a fair
+  text page to work on.
+* **The precondition is the capture, not the code.** Phase 0 already suspected
+  this ("a capture loop that frames tighter becomes the precondition rather than
+  the follow-on"); Phase 2 makes it concrete and specific: on this book the
+  operator shot close-ups **of the pictures**, and the pictures are where the
+  paint is admissible. A capture loop (plan Phase 3) that covers the *text* at
+  the same framing is what would produce a population this measurement could
+  read. **Do not build Phase 1 first.**
+* If Phase 1 is ever built, the seam must be **word-aligned** — measured above,
+  not assumed.
+
+### Honest limits
+
+n = **1 book**, 3 spreads, 6 subpages, one operator. The single painted text
+subpage rests on **one source** whose worst draw (9.59 anchor px) sits just
+inside the bar; a fourth seed could put it outside. The tie-with-a-better-diff is
+one page of one book and is **not** a claim that painting helps. `page_013`-right
+is not comparable to the 2026-08-29 `324 / 336 / 270` row (that was `eng`, onto
+the anchor, at 1.58x, painting every registered source) and no arithmetic
+relating them is offered.

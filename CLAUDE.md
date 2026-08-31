@@ -463,9 +463,13 @@ Italian, German**.
       (`docs/data/panorama_phase0_prereg_20260831.md`). **Flattening the close-up
       too — "flatten first, stitch second", the plan's stated reorder — is worse
       than leaving it raw on EVERY statistic and places 62 fewer close-ups
-      (154 vs 216); do not re-attempt it.** UVDoc flattens a borderless close-up
-      fine, so this is not a capability gap: flattening the source destroys the
-      features the matcher needs and adds a second deformation to undo. What
+      (154 vs 216).** UVDoc flattens a borderless close-up fine, so this is not a
+      capability gap. **Read the refusal precisely: what was measured is a
+      SEPARATE UVDoc pass on the close-up, registered against Stage 03's separate
+      pass on the page — two neural dewarps of differently-framed content, which
+      cannot agree by construction.** That variant is refused and should not be
+      re-attempted; flattening the source by resampling the PAGE's own
+      displacement field is a different thing and was not tested. What
       survives is **flatten the TARGET only** — raw close-up onto the dewarped
       page, then `mesh_align` over the source's own footprint — which passes at
       **1.39 px / 1.27 px** on the pre-registered statistic and 1.67 px on an
@@ -480,7 +484,11 @@ Italian, German**.
       against 1.55 px over the footprint on the same target. **The median passes
       and the TAIL does not, and the tail is what doubles text:** only 16 of 172
       placed close-ups have a worst-twentieth under 5 px and **72 (42 %) are at
-      30 px or worse** — a word width. So Phase 1 is licensed **only** as a design
+      30 px or worse** — a word width. Over every close-up SHOT, not just the
+      placed ones, that is **5 %** paintable at a 5 px rule and 18 % at 10 px —
+      which reorders the plan, because a capture loop that frames tighter becomes
+      the precondition rather than the follow-on (placement is flat across zoom,
+      so tighter costs nothing). So Phase 1 is licensed **only** as a design
       that paints hard narrow seams and skips a source by its own local error,
       never as "paint every registered source". A sub-window re-fit reaches the
       same accuracy with no field at all (1.60 px) but 30–43 % of windows cannot

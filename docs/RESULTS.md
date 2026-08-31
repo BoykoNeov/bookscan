@@ -8050,7 +8050,8 @@ D on the pre-registered statistic (1.39 / 1.27) and on the independent one
 On the **120 close-ups every arm placed** — the only strictly like-for-like set,
 which also answers the objection that C/D dropped the 44 hard ones — the ordering
 is unchanged: A 2.88, B **1.29**, B0 3.00, C 3.79, D **1.51**, E 6.48, F 2.57.
-Here B beats D on the median; it loses badly on the tail (below).
+Here B beats D on the median and loses on the tail, on this same set: worst-
+twentieth 54.9 px against D's 25.8.
 
 ### The headline is the refutation, not the pass
 
@@ -8103,6 +8104,13 @@ Per close-up, out of D's 172:
 * **110** have a median under 2 px, but only **16** have a worst-twentieth under
   5 px, and **72 — 42 %** have a worst-twentieth of **30 px or more**.
 * B is worse (151 of 216, 70 %, at ≥ 30 px), F worse still (100 of 154, 65 %).
+* **Against every non-sofa close-up shot, not just the placed ones, that is 16 of
+  303 = 5 %** at a 5 px tail rule and 56 of 303 = **18 %** at 10 px. This is the
+  number that says whether Phase 1 is worth building, and it **reorders the
+  plan**: if only 5-18 % of the close-ups the operator actually takes are
+  paintable, the capture loop (Phase 3, tighter framing) is the *precondition*
+  rather than the follow-on. D's residual is flat across zoom (1.90 / 1.87 /
+  2.19), so framing tighter does not cost placement.
 
 So the median passes and the tail does not, on four close-ups in ten even in the
 best arm. **A pass therefore licenses Phase 1 only under a design that paints hard
@@ -8137,10 +8145,25 @@ every registered source.
   the pre-registration, a pass licenses **Phase 1 and Phase 2 and nothing else**,
   and Phase 2 is decided by more confident words **and** a text diff.
 
+**Ties to the row it replaces.** The old figure (6.5 px median for one close-up)
+is recorded **at anchor scale**, the same unit as arm A's population median of
+4.13 px, and it sits between that median and A's 95th percentile of 33.3 - which
+is what one close-up drawn from the upper half of this distribution should look
+like. It is *not* to be reconciled by dividing by the 1.58x canvas; 6.5 / 1.58 =
+4.11 lands on 4.13 by coincidence and would be a false confirmation. The old row
+also reports the correction tried at three resolutions with the doubling
+identical - consistent with B0 here, where whole-page scope scores what no
+correction scores.
+
 **Recommended next step, not started here:** re-run the exact `page_013`
 comparison that produced 324 / 336 / 270 confident words, under D's placement with
 a hard-seam sharpest-first paint. That is the cheapest link from this number to
-the book.
+the book - **but not on `page_013` alone.** Of its 6 placed close-ups, **0** have a
+worst-twentieth under 5 px and **3** under 10 px, so a paint that correctly skips
+the rest paints almost nothing and returns an uninterpretable null. Run it on
+`page_021` as well (25 of 27 placed; 6 under 10 px, 13 under 20 px), which is the
+only spread in the book with enough paintable sources to show a difference either
+way. `page_024` is the negative control: 10 placed, **none** paintable.
 
 Tool: `tools/panorama_phase0.py` (all seven arms plus the `--control` floor).
 Data: `docs/data/panorama_phase0_20260831.json` (every close-up, every arm),

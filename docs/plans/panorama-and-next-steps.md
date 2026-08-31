@@ -90,8 +90,11 @@ before building anything here; four things in it change this plan.
 1. **"Flatten first, stitch second" — the premise written above — is REFUSED.**
    Flattening the close-up *too* (UVDoc, which does the job fine) is worse than
    leaving it raw on **every** statistic **and** places 62 fewer close-ups
-   (154 vs 216). Do not re-attempt it. What survives is **flatten the TARGET
-   only**: register the raw close-up onto the dewarped page, then `mesh_align`.
+   (154 vs 216). What was measured is a **separate** UVDoc pass on the close-up
+   against Stage 03's separate pass on the page — two neural dewarps of
+   differently-framed content, which cannot agree by construction. That is what is
+   refused; resampling the source through the **page's own** displacement field is
+   a different idea and is untested. What survives is **flatten the TARGET only**: register the raw close-up onto the dewarped page, then `mesh_align`.
    That arm passes the gate at **1.39 px / 1.27 px**, against a measured floor of
    **0.09 px** (the target's own pixels through the identical machinery).
 2. **The old failure was largely correction SCOPE, not the target.** Estimating
@@ -101,7 +104,10 @@ before building anything here; four things in it change this plan.
    target. Whatever Phase 1 builds, the field is estimated per source footprint.
 3. **The median passes and the TAIL does not.** Only **16 of 172** placed
    close-ups have a worst-twentieth under 5 px; **72 — 42 %** are at 30 px or
-   worse, and 30 px is a word width. So Phase 1 below is not licensed as written:
+   worse, and 30 px is a word width. Over every close-up *shot* that is **5 %**
+   paintable (18 % at a 10 px rule) — so **Phase 3's tighter framing is arguably
+   the precondition for Phase 1, not its sequel**; placement is flat across zoom,
+   so framing tighter costs nothing. So Phase 1 below is not licensed as written:
    it may paint only sources whose *local* error is small, and it must **measure
    that per source and skip the rest**, exactly as `figure_hires` does. Painting
    every registered source reproduces the doubling.
@@ -355,8 +361,12 @@ one flagged defect with no diagnosis yet.
    half is refused by measurement.
 3. ~~**Panorama Phase 0**~~ — DONE 2026-08-31. The plan's reorder is refused;
    "flatten the target only" passes on placement, under a tail constraint. Next
-   here is **Phase 2 first** — one `page_013` render comparison — before Phase 1
-   is built, because Phase 2 is what says whether any of it reads better.
+   here is **Phase 2 first** — a render comparison on `page_021` (25 of 27
+   placed, 13 with a usable tail) *and* `page_013` for continuity with the
+   recorded 324 / 336 / 270, with `page_024` as the negative control (nothing
+   paintable) — before Phase 1 is built, because Phase 2 is what says whether any
+   of it reads better. `page_013` alone would paint 3 sources and return a null
+   nobody could interpret.
 4. **3.3 picture continuity** — removes a whole family of visible defects.
 5. **3.2 the crop** — as soon as the owner settles the clipping question.
 

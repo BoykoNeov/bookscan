@@ -21,6 +21,13 @@ TWO PHASES, deliberately separate:
   * **--reread** (minutes, needs Tesseract) — for every block the score phase
     nominates, re-read that block's crop in the winning language and print the
     BEFORE/AFTER pair: word count, mean confidence, dictionary hits and hit rate.
+    COUPLING, stated so it cannot rot silently: this arm calls
+    ``block_reocr._reocr_block`` — a PRIVATE function of another module —
+    deliberately, so the numbers are the ones a pipeline pass would really see
+    rather than a second implementation of the same crop-and-read. If that
+    signature changes, fix the call here: the refused experiment behind
+    RESULTS 2026-08-31 stops being reproducible otherwise.
+
     This exists because the acceptance rule cannot be copied from
     ``block_reocr`` on faith: a garbled read FRAGMENTS, so it can return MORE
     tokens than a clean one, and a conjunctive "more words" clause would then

@@ -228,6 +228,46 @@ Italian, German**.
       the fixture), then per-block language. A single-column panel of running
       text would probably win today — this book has none, so that is a guess.
       n = 1 book, adjudicated by eye.
+- **Stage 08 renders a TABLE as a table — SHIPPED 2026-08-31 as
+      `pipeline/table_grid.py` (Stage 05) + a `<table>` path in Stage 08.** This is
+      the blocker yesterday's row named. **The interesting part is that the rows
+      could NOT be worked out at render time, and that is a proof, not a tuning
+      failure.** Tesseract's `line_id` groups a *cell*, not a row (on the owner's
+      route table the names are lines 0-35, the times 43-75, the heights 92-124),
+      the printed columns are staggered against each other by ~0.7 of the row
+      pitch, and the stagger **aliases**: sliding the name column by a whole row
+      pitch scores 7.4 px mean residual against 8.1 px for the truth, so the wrong
+      answer fits better. Deskewing (-2.86 deg) collapses three of five columns to
+      within 1 px and still does not fix it. **Do not re-attempt this from
+      geometry.** What knows the rows is Tesseract re-reading the block crop as one
+      uniform block (`psm 6`) — it has the ruled lines, its lines span the whole
+      table (x 36-2344 of 2370 vs a page-pass line's 126-506 of 1185), and it reads
+      two columns the page pass never read. But it is used as a **row oracle and
+      nothing else**: its *text* is measurably worse than the page pass's (mean
+      conf 70.6 vs 91.8; `2,2 4½ Std.` -> `, .`, `1250` -> `[250`, `102` -> `I Ly`),
+      so rows come from the re-read and text from the page pass. The pass **never
+      adds, drops or edits a word** — it writes only `Word.table_row` /
+      `table_col` — so word conservation is untouched and an abstain is free.
+      Acceptance is **structural** (the re-read's lines must span materially more
+      of the block's width, 0.30 -> 0.97), which is exactly why this is a new
+      module and not a rule in `block_reocr`, whose "more words AND no lower
+      confidence" test would correctly refuse the right answer. **4 of the
+      corpus's 7 Stage-04 TABLE blocks grid (12x2, 17x4, 7x2, 17x2); the 3
+      abstentions are all correct** (single-column fragments). Two guards earned
+      by measurement: a same-slot collision counts only across *different printed
+      rows* (otherwise the guard refused the fixture at 16% vs a 15% bar for being
+      right), and words inside a cell order by visual line at a 0.9-height
+      tolerance (0.6 splits one skewed line and sorts its right half first).
+      `deu` does **not** fix the numeric cells (68.5 vs 70.6, adds `Hım`) — this is
+      not a language problem. **Honest limit, pre-registered before any render was
+      read: a correct grid is necessary and NOT sufficient.** `2,2`->`22`,
+      `1,3`->`13`, `4½`->`4Y`, `170`->`I70` survive a perfect grid, so whether the
+      two route tables now beat their photographs is still the owner's call.
+      The **grade table refuses itself** on the structural rule, exactly as
+      predicted, and tuning against it was forbidden in advance.
+      `text_panel`'s promoted panels are now re-typed TABLE when they grid
+      (guard: `type_promoted` AND PARAGRAPH, uniquely that pass's mark), so its
+      remaining blocker is **per-block language alone**. See RESULTS 2026-08-31.
 - **Three owner proposals measured 2026-08-29, two refused; and two defects found
       behind the German render.** (a) **Reading each close-up separately and merging
       the words is a WASH** — line-aligned over 34 close-ups, a max-confidence merge
@@ -471,10 +511,10 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
 | 02 | `stage02_split` | book-boundary crop (`book_boundary.py`) → gutter detection → left/right pages; optional per-page frame source (`page_source.py`, off by default) | OpenCV (projection profile, GrabCut) |
 | 03 | `stage03_dewarp` | flatten page curvature | UVDoc (default), DocTr++ (partial crops) |
 | 04 | `stage04_layout` | block detection + reading order | DocLayout-YOLO + XY-Cut++ |
-| 05 | `stage05_ocr` | word-level text + bbox + confidence; caption ejection (`caption_eject.py`) + starved-block re-read (`block_reocr.py`) + figure-edge text absorption (`figure_text.py`) | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |
+| 05 | `stage05_ocr` | word-level text + bbox + confidence; caption ejection (`caption_eject.py`) + starved-block re-read (`block_reocr.py`) + figure-edge text absorption (`figure_text.py`) + table cell assignment (`table_grid.py`) | **Tesseract 5 TSV (backbone)**; EasyOCR second opinion for Cyrillic |
 | 06 | `stage06_uncertainty` | per-word decision using user mode a/b/c | own code |
 | 07 | `stage07_assemble` | job-level: build editable `document.json` + self-contained `document_assets/`; higher-resolution figure assets (`figure_hires.py`) | own code; OpenCV (SIFT + RANSAC + ECC) |
-| 08 | `stage08_render` | `document.json` → re-typeset HTML (always) → PDF (re-runnable) | own code; WeasyPrint/headless-Chromium (PDF, TBD), Noto fonts |
+| 08 | `stage08_render` | `document.json` → re-typeset HTML (always, incl. real `<table>` from `Word.table_row`/`table_col`) → PDF (re-runnable) | own code; WeasyPrint/headless-Chromium (PDF, TBD), Noto fonts |
 
 ### Non-negotiable design decisions (do not "optimize" these away)
 

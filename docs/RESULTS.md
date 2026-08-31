@@ -7671,3 +7671,142 @@ must exist before it pays: **Stage 08 rendering a TABLE as a table** — these t
 blocks are the fixture — and per-block language, since the grade table is German,
 Italian and French at once. A single-column panel of running text would probably
 win today; this book contains none, so that is a guess, recorded as one.
+
+## 2026-08-31 — Stage 08 renders a TABLE as a table; the rows come from a block re-read, not from geometry
+
+Yesterday's row turned `text_panel` off with a named blocker: *"Stage 08 able to
+render a TABLE as a table — these three blocks are the fixture."* This is that
+work. The headline is not the renderer, which is twenty lines; it is **where the
+rows had to come from**, and the fact that the obvious place cannot supply them.
+
+### The rows are not a function of the words. This is a proof, not a tuning failure
+
+The first design was a gridder over the words already in `document.json`. It
+cannot work, for three compounding reasons measured on `page_003__left` #7:
+
+* **`Word.line_id` groups a CELL, not a row.** The route names are lines 0–35,
+  the times 43–75, the heights 92–124. Grouping by line yields *columns* — which
+  is exactly the defect being fixed.
+* **The printed columns are staggered** against each other by roughly 0.7 of the
+  row pitch (the route name sits low in its ruled cell, the numbers high), on top
+  of a residual skew from dewarp. Neighbouring columns share no baseline, so
+  clustering by y is clustering the wrong thing.
+* **And the stagger ALIASES.** Sliding the name column by a whole row pitch
+  scores a mean residual of **7.4 px against 8.1 px** for the correct
+  correspondence. *The wrong answer fits better.* No threshold rescues that.
+
+Deskewing is real and insufficient: a −0.050 slope (−2.86°, found by projection
+peakiness) collapses three of the five columns to **within 1 px** of each other
+where they had drifted 16 px, and leaves the name column exactly as ambiguous.
+**Do not re-attempt this from geometry.**
+
+### What does know the rows, and what it is bad at
+
+Tesseract reading the block's own crop as one uniform block (`psm 6`) has the
+ruled lines and the baselines. Its TSV lines span the whole table — **x 36–2344
+of 2370**, against a page-pass line's 126–506 of 1185 — and each line is one
+complete table row, *including two columns the page pass never read at all.*
+
+But it must not be allowed near the text:
+
+| | rows | cell text | mean conf |
+|---|---|---|---|
+| page pass (`psm 3`, whole subpage) | **wrong** (column-major) | **right** | 91.8 |
+| block re-read (`psm 6`, this crop) | **right** | **wrong** | 70.6 |
+
+The re-read turns `2,2 4½ Std.` into `, .`, `1250` into `[250`, the page number
+`102` into `I Ly`. So `pipeline/table_grid.py` runs it as a **row oracle and
+nothing else** and discards its text. Rows from the re-read, text from the page
+pass; **the module never adds, drops or edits a word**, it only writes
+`Word.table_row` / `Word.table_col`. Word conservation is therefore untouched by
+construction and an abstain costs literally nothing.
+
+`deu` instead of `eng` does **not** fix those cells — 68.5 mean confidence
+against `eng`'s 70.6, and it introduces `Hım`/`Huım`. Written down so this item
+is not deferred to the per-block-language work on an excuse that does not hold.
+
+### Three things the measurement decided
+
+1. **A cell finds its row by overlapping the oracle's WORDS, never by a y band.**
+   One top/bottom band cannot follow a skewed row; done that way, two cells
+   collide in one band low down the table. Word-to-word overlap is local, so the
+   skew cancels itself.
+2. **A same-slot collision counts only when the two cells came from different
+   printed rows.** Most same-slot pairs are one printed line the page pass split
+   in half and the oracle correctly kept whole. Counting those refused the main
+   fixture at 16 % against a 15 % bar — i.e. the guard was rejecting the right
+   answer for being right.
+3. **Words inside a cell order by visual line, then left to right, at a
+   0.9-word-height tolerance.** Document order puts the tail of a split line
+   first (`ivieri/Gianni Aglio @ B10 Ferrata Giuseppe Ol`); a plain y-sort
+   scrambles one line into `Std. 7%`; and at 0.6 the two halves of a single
+   *skewed* line separate and the right-hand half sorts first.
+
+**Acceptance is STRUCTURAL** — the re-read's lines must span materially more of
+the block's width than the page pass's (0.30 → 0.97 on the fixture). That is why
+this is a new module rather than a rule inside `block_reocr`, whose acceptance is
+*more words AND no lower confidence*: the oracle read is worse on **both** while
+being the right answer, so that module would correctly refuse it.
+
+### Results
+
+Over the corpus's **7** Stage-04 TABLE blocks — the population that ships today:
+
+| block | words | result |
+|---|---|---|
+| `page_003__right` #11 | 73 | **12 × 2** |
+| `page_004__right` #14 | 219 | **17 × 4** |
+| `page_004__right` #16 | 48 | **7 × 2** |
+| `page_005__left` #1 | 164 | **17 × 2** |
+| `page_003__right` #23 | 8 | abstain — 1 column |
+| `page_016__right` #14 | 24 | abstain — 1 column |
+| `it_geo_07 page_001__left` #5 | 26 | abstain — 1 column |
+
+**4 gridded, 3 abstained, and all three abstentions are right** — each is a
+single-column fragment of a table whose other columns the page pass never read,
+`page_003__right` #23 being the marginal 8-word case that was flagged in advance
+as one that *should* abstain. End to end through a real Stage 05 → 08 run on
+pages 003/004/005, three tables render with every route keeping its own time and
+heights, and the per-word uncertainty highlight survives inside its cell.
+
+### The `text_panel` fixture, reported separately because it does not ship today
+
+Pre-registered before any render was read (and the pre-registration was amended,
+in writing, when the OCR findings above landed):
+
+| block | words | predicted | result |
+|---|---|---|---|
+| `page_003__left` #7 | 328 | win | **34 × 5** |
+| `page_004__left` #21 | 264 | win | **32 × 5** |
+| `page_017__right` #10 | 62 | **still lose** | **abstain** (span 0.79 vs 0.58) |
+
+The prediction held on all three. The grade table refuses *itself*, on the
+structural rule, without anyone tuning a threshold against it — and it was
+forbidden in advance to tune one. Rows 3–18 of `page_003__left` #7 were checked
+by eye against the photograph as (route, time, grade, height) tuples: `B10 | 2,3
+| 8½ Std. | 1250 Hm`, `C4 | 3 Std. | 580 Hm`, and so on — all correct.
+
+`text_panel` typed a promoted panel PARAGRAPH, deliberately, because *"Stage 08
+maps PARAGRAPH and TABLE to the same `<p>`, so telling them apart would change
+nothing a reader sees."* It changes everything a reader sees now, so a panel this
+run promoted out of a figure is offered to the grid and re-typed **TABLE** only
+if it actually grids. The guard is `type_promoted` AND `PARAGRAPH` — uniquely
+`text_panel`'s mark inside Stage 05 — so a paragraph Stage 04 detected, or one a
+human typed, is never touched. With `text_panel` off this is inert.
+
+### The honest limit, and it is the same shape as last time
+
+**A correct grid is necessary and NOT sufficient, and this row must not be read
+as saying the route tables are now good.** The cell text is still wrong in the
+cells whose entire value is the number: `2,2` → `22`, `1,3` → `13`, `4½` → `4Y`,
+`5¾` → `5%`, `170` → `I70`, and the coloured route-dot bullets read as `0`/`o`
+and occupy a whole column of their own. That is an OCR defect, not a layout one,
+and `deu` does not fix it. Whether these two blocks now beat their photographs is
+therefore **still the owner's call** — the pre-registration exists precisely so a
+correctly-gridded table full of wrong numbers could not be scored as a win. What
+changed is that the *structural* half of the blocker is gone and the failure is
+now legible: you can see which number is wrong, in which row.
+
+Inputs and per-block output: `docs/data/table_grid_census_20260831.json`,
+`docs/data/table_grid_census_20260831.txt`. n = 2 books, one of them by one
+reader's eye.

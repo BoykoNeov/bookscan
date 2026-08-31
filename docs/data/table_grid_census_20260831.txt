@@ -1,0 +1,170 @@
+
+##############################################################################
+# SHIPPING (Stage 04 typed TABLE)
+##############################################################################
+
+===== de3c20d3/page_003__right #11  (was table, 73 words, lang=eng)
+  12 rows x 2 cols | line span 0.22 -> 0.98 | weak 0% | collide 0%
+  | F Sellagruppe/Langkofelgruppe  |                               
+  | @ Fl Pisciadu Klettersteig     | 4% Std.                       
+  | @ F2Boeseekofel Klettersteig   | 3% Std.                       
+  | @ F2 Boéseekofel Normalweg     | 2% Std.                       
+  | @ F3 Vallon Klettersteig       | 4%, Std.                      
+  | @ F3 Lichtenfelserweg          | 4%, Std.                      
+  | @ F4 Via attrezzata Cesare Pia | 5% Std.                       
+  | @ FS PoBnecker Klettersteig    | 6% Std.                       
+  | @ Fb Rodella Klettersteig      | 1% Std.                       
+  | @ F7 Furcelade saslonch Klette | 2/4 Std.                      
+  | @ FB Oskar Schuster Steig      | 6/4 Std.                      
+  | @ © Sentiero attrezzato Pian d | 5% Std.                       
+
+===== de3c20d3/page_003__right #23  (was table, 8 words, lang=eng)
+  ABSTAINED: only 1 column(s)
+
+===== de3c20d3/page_004__right #14  (was table, 219 words, lang=eng)
+  17 rows x 4 cols | line span 0.17 -> 0.97 | weak 0% | collide 0%
+  | 0                              | Pl Sentiero Gustavo Vidi       | 3 Std.                         | 400 Hm 100 Hm                 
+  | ©                              | P2 Sentiero delle Palete       | 8 Std.                         | 400 Hm 100 Hm                 
+  | o                              | P3 Sentiero Claudio Costanzi   | 10% Std.                       | 1500 Hm | 1000 Hm             
+  | o                              | P4 Sentiero di Val Gelada      | 6/4 Std.                       | 420 Hm | 100 Hm               
+  | 0                              | PS Sentiero SOSAT              | 3 Std.                         | 300 Hm | 160 Hm               
+  | o                              | P6 Sentiero Osvaldo Orsi       | 5! Std.                        | 1140 Hm 120 Hm                
+  | 0                              | P7 Sentiero attrezzato Felice  | 4-5 Std.                       | 450 Hm 280 Hm                 
+  | ©                              | P8 Sentiero Alfredo Benini     | 4 Std.                         | 650 Hm 360 Hm                 
+  | o                              | P9 Sentiero Bocchette Alte (0. | 6 Std.                         | 860 Hm | 490 Hm               
+  | o                              | P10 Via delle Bocchette Centra | 4.5 Std.                       | 820 Hm 150 Hm                 
+  | o                              | Pll Sent. Brentari/Sent. del C | 5-7 Std.                       | 750 Hm | 200 Hm               
+  | 0                              | PI2 Via ferrata Ettore Castigl | 2/4 Std.                       | 450 Hm 160 Hm                 
+  | o                              | P13 Ferrata Artpinistico delle | 2 Std. B/C                     | 230 Hm | 200 Hm               
+  | -                              | Pl4 Via ferrata delle Aquile   | 2% Std. | C/D,Var.E|           | 200 Hm 150 Hm                 
+  | e                              | @ Sentiero dei Fiori - Adamell | 5% Std. | AB, I-(BC)|          | 760Hm | 250 Hm                
+  | ©                              | © Ferrata Corna dell Capre - I | 2 Std.                         | 210 Hm | 200 Hm               
+  | ©                              | @ Ferrata Corna del Bene - Ise | 4Y, Std.                       | 1010 Hm | 160 Hm              
+
+===== de3c20d3/page_004__right #16  (was table, 48 words, lang=eng)
+  7 rows x 2 cols | line span 0.53 -> 0.97 | weak 0% | collide 0%
+  | Ql Via ferrata Rino Pisetta    | 5i5td.                        
+  | Q2 Via ferrata Ernesto Che Gue | 7/4 Std.                      
+  | Q3 Via ferrata Giulio Segata   | 3% Std.                       
+  | Q4 Via ferrata Rio Sallagoni   | 2 5td.                        
+  | Q5 Sentiero attrezzato Colodri | 2% Std.                       
+  | Q6 Sentiero Scaloni /Sent. del | 3% Std.                       
+  | Q7 Via dell Amicizia           | 6 Std.                        
+
+===== de3c20d3/page_005__left #1  (was table, 164 words, lang=deu)
+  17 rows x 2 cols | line span 0.63 -> 0.95 | weak 2% | collide 0%
+  | Q                              |                               
+  | © 8 Via ferrata Susati         | 12 | 5% Std. B                
+  | © 08 Via ferrata Foletti       | 1,0 | 5% Std. B               
+  | @ 08 Sent. dei Camminamenti    | 1,0 | 5% Std. AB              
+  | @ 08 Sent. delle Laste         | 1,0 5 Std. AB                 
+  | © 09 Sentiero Contrabbandieri  | 25 | 3Std. CD                 
+  | 0 QI0 Ferrata Signora delle Ac | 1,4 | 24Std. C                
+  | @ ll Ferrata Ottorino Marangon | | 18 | 34Std. | CD,2+         
+  | 0 Q12 Via ferrata Gerardo Sega | 2,0 | 3% Std. B/C, I          
+  | @ 003 Ferrata delle Taccole    | 22 | 3% Std. CD               
+  | @ 014 Ferrata Sasse            | | 15 | 2% Std. B/C            
+  | @ 015 Ferrata Fregio und Gines | | 47 | B4Std, D               
+  | @ 016 Ferrata Crench           | | 14 2'Std. CD |              
+  | @ 017 Ferrata Casto - Kletters | | 13 | 3%Std. | BbbisF        
+  | @ 018 Ferrata Caspai           | | 22 | quSte. | D/E           
+  | @ 05 Ferrata Nasego            | 120 34Std. | D |              
+  | @ © Ferrata della Spigolo Band | | 14 | 4Std. CD |             
+
+===== de3c20d3/page_016__right #14  (was table, 24 words, lang=deu)
+  ABSTAINED: only 1 column(s)
+
+===== figtext_it_geo_07/page_001__left #5  (was table, 26 words, lang=eng)
+  ABSTAINED: only 1 column(s)
+
+##############################################################################
+# FIXTURE (hand-typed TABLE; text_panel promotes PARAGRAPH today)
+##############################################################################
+
+===== de3c20d3/page_003__left #7  (was figure, 328 words, lang=eng)
+  34 rows x 5 cols | line span 0.08 -> 0.94 | weak 4% | collide 3%
+  | Toureniibersi cht Klettersteig | ma] 22                         | 4); Std.                       |                                |                               
+  | @ BY Via ferrat2 Formen ton    |                                |                                |                                | 290 Hm                        
+  | @ BIO Ferrata Giuseppe 0! ivie | 23                             | 8% Std.                        |                                | 1250 Hm                       
+  | @ Bll Ferrata Maria Andrea/ Ra | 1,5                            | 1% Std.                        |                                | I70 Hm                        
+  | @ BI2 Sentiero Giuseppe ol ivi | 13                             | 4Y Std.                        | B                              | 800 Hm                        
+  | @ BI Yia ferrata Giovanni Lipe | 23                             | 7% Std.                        | c/D                            | 1500 Hm                       
+  | @ BI4 Scala d. Menighel/Grotta | 13                             | 5% Std.                        | B/C (B)                        | 820 Hm                        
+  | @ BIS Ferrata Averau, Ferrata  | 1,5                            | 4 Std.                         | A/B (B)                        | 520 Hm                        
+  | @ 2 Terza Cengia del Pomagagno |                                | 5 Std.                         | A/B, |                         | 1100 Hm                       
+  | Cl Sentiero dei Canyons e dell |                                | 3% Std.                        |                                | 470 Hm                        
+  | C2 Via ferrata Furcia Rossa    |                                | 7-8 Std.                       |                                | 1250 Hm                       
+  | Q Via ferrata Vallon Bianco    |                                | 8 Std.                         |                                | 1100 Hm                       
+  | (4 Via ferrata degli Alpini    |                                | 3 Std.                         |                                | 580 Hm                        
+  | CS Via ferrata und Tunnel Laga |                                | 4Y Std.                        |                                | 700 Hm                        
+  | C6 Ferrata Sottotenente Fusett |                                | 2 Std.                         |                                | 340 Hm                        
+  | C7 Yia ferrata Cesco Tomaselli |                                | 5% Std.                        |                                | 1050 Hm                       
+  | C8 Via ferrata Luigi Veronesi  |                                | 6% Std.                        |                                | 800 Hm                        
+  | (9 Heiligkreuzkofelsteig u. Ze |                                | 7 Std.                         | A/B (B/C)                      | 1030 Hm                       
+  | 010 Neunerspitze-Klettersteig  |                                | 8 Std.                         | B/C, I-/1                      | 1800 Hm                       
+  | Cll Conturinesspitze-Kletterst |                                | 8 Std.                         | A/B                            | 1680 Hm                       
+  | D Pragser Dolomiten Zillertale |                                |                                |                                |                               
+  | @ Dl Piz da Peres Klettersteig |                                | 5 Std.                         | cD |                           | 800 Hm                        
+  | @ D2 Olanger Klettersteig      |                                | 5 Std.                         | B                              | 1200 Hm                       
+  | © D3 Speikboden-Klettersteig   |                                | 2% Std.                        | c                              | 600 Hm                        
+  |                                |                                | 2% Std.                        | B/C |                          | 370 Hm                        
+  | @ DS Piraten-Kinder-Kletterste |                                | Ye Std.                        | AB |                           | 70 Hm                         
+  | © D6 Hans-Kammerlander-Kletter |                                | 4 Std.                         |                                | 450 Hm                        
+  | LL Olberg Klettersteig         |                                | 2% Std.                        |                                | 250 Hm                        
+  |                                |                                | ¥% Std.                        |                                | 20 Hm                         
+  | © ES Via ferrata dei Finanzier |                                | 4Y, Std. 8% Std.               | C | B/C                        | 720 Hm 1600 Hm                
+  | © El Via Eterna - Brigata (ado |                                | 7 Std.                         |                                | 1150 Hm                       
+  | © E2 Va ferrata Sass da Rocia  |                                | Yi Std.                        |                                | 100 Hm                        
+  | ® B Ya ferrata d' Trincee      |                                | 6% Std.                        |                                | 670 Hm                        
+  | © Ef Westgrat Ketterstei       |                                | 8 Std.                         |                                | 1550 Hm                       
+
+===== de3c20d3/page_004__left #21  (was figure, 264 words, lang=eng)
+  32 rows x 5 cols | line span 0.07 -> 0.95 | weak 0% | collide 0%
+  | @ J! Viaferrata Bolver-Lugli   |                                | C+                             | 1250 Hm                        |                               
+  | @ J2 Sent. N. Gusella u. Ferra |                                | B/C, |                         | 700 Hm                         |                               
+  | 0 JB Via ferrata del Porton    |                                | C                              | 500 Hm                         |                               
+  | @ JM Sent d. Cacciatore Sent.  |                                | B/C, I-                        | 1400 Hm                        |                               
+  | @ JS Yia ferrata del Canalone  |                                | D                              | 550 Hm                         |                               
+  | @ J6 Yaa ferrata Fiamme Gialle |                                | B, I+                          | ISS0 Hm                        |                               
+  | @ J7 Sent. dell Dottor (Ferrat |                                | B/C |                          | 1900 Hm                        |                               
+  | @ 8 Yaa ferrata Stella Alpina  |                                | cm, I-                         | 1800 Hm                        |                               
+  | @ © Ferrata Vecchia Ferrata Ye |                                | B/C                            | 2200 Hm                        |                               
+  | @ KX Ya ferrata degii Alleghes | Il Std.                        |                                | 2150 Hm                        | 880 Hm                        
+  | @ K Va ferrata Tissi           | 8 Std.                         |                                | 1600 Hm                        | 300 Hm                        
+  | @ OY ferrata Gianni Costantini | 10% Std.                       |                                | 1650 Hm                        | 1450 Hm                       
+  | @ KX Va ferrata Fiamme Gialle  | 7 Std.                         |                                | I350 Hm                        | 830 Hm                        
+  |                                | 9 Std.                         |                                | 1700 Hm                        | 1280 Hm                       
+  | U Ferrata della Memoria        | 2% Std.                        |                                | 230 Hm                         |                               
+  |                                | 6 Std.                         |                                | 1000 Hm                        |                               
+  | U Ya ferrata Zacchi - ferrata  | 5Va Std.                       |                                | 860 Hm                         |                               
+  | U4 Ya ferrata Berti            | 7% Std.                        |                                | 1140 Hm                        |                               
+  | LS Sentiers alpinistico M. Gua | 7) Std.                        | B/C |                          | 1250 Hm                        |                               
+  | MI Newer (Sudwand) Kletterstei | 7% Std.                        |                                | 1250 Hm                        |                               
+  | M1 Trafoio Klettersteig        | | Std.                         | C|                             | 150 Hm                         |                               
+  |                                | 7% Std.                        | E                              | 1230 Hm                        |                               
+  |                                | 17 Std.                        | C/D (B)                        | 300 Hm                         |                               
+  |                                | | Std.                         |                                | 90 Hm                          |                               
+  |                                | 4% Std.                        | C, Var. C/D                    | 440 Hm                         |                               
+  |                                | 4)5 Std.                       | D                              | 670 Hm                         |                               
+  |                                | I Std.                         | B/C - D/E                      | 80 Hm                          |                               
+  |                                | 4 Std.                         | C                              | 730 Hm                         |                               
+  |                                | 4 Std.                         | B/C                            | 700 Hm                         |                               
+  |                                | 3% Std.                        | B/C                            | 750 Hm                         |                               
+  |                                | 4' Std.                        | Bul                            | 800 Hm                         |                               
+  |                                | Va Std.                        | C bxw. D                       | 90 Hm                          |                               
+
+===== de3c20d3/page_017__right #10  (was figure, 62 words, lang=eng)
+  ABSTAINED: re-read spans no more of the width than the page pass (0.79 vs 0.58)
+
+==============================================================================
+SUMMARY
+  de3c20d3/page_003__right #11                   table      12x2      span 0.22->0.98
+  de3c20d3/page_003__right #23                   table      abstain   only 1 column(s)
+  de3c20d3/page_004__right #14                   table      17x4      span 0.17->0.97
+  de3c20d3/page_004__right #16                   table      7x2       span 0.53->0.97
+  de3c20d3/page_005__left #1                     table      17x2      span 0.63->0.95
+  de3c20d3/page_016__right #14                   table      abstain   only 1 column(s)
+  figtext_it_geo_07/page_001__left #5            table      abstain   only 1 column(s)
+  de3c20d3/page_003__left #7                     figure     34x5      span 0.08->0.94
+  de3c20d3/page_004__left #21                    figure     32x5      span 0.07->0.95
+  de3c20d3/page_017__right #10                   figure     abstain   re-read spans no more of the width than the page pass (0.79 vs 0.58)

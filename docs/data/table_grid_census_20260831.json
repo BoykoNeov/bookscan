@@ -1,0 +1,129 @@
+{
+ "what": "Every TABLE block in the corpus, gridded by pipeline/table_grid.py",
+ "when": "2026-08-31",
+ "language_of_stored_words": "eng (05_ocr/meta.json) on a German book; job.json says deu. Re-reading in deu does NOT improve the numeric cells: mean conf 68.5 vs eng 70.6, and it introduces 'H\u0131m'/'Hu\u0131m'.",
+ "why_geometry_cannot_do_this": {
+  "line_id_groups_a_cell_not_a_row": "page_003__left #7: names lines 0-35, times 43-75, heights 92-124",
+  "aliasing_proof_px": {
+   "shift_by_one_row_pitch": 7.4,
+   "no_shift_truth": 8.1,
+   "note": "the WRONG correspondence fits better; no threshold rescues it"
+  },
+  "deskew": {
+   "slope": -0.05,
+   "degrees": -2.86,
+   "effect": "collapses 3 of 5 columns to within 1px (was 16px drift); does NOT fix the name column"
+  }
+ },
+ "oracle_vs_page_pass": {
+  "rows": "oracle correct, page pass column-major",
+  "cells": "page pass correct, oracle wrong",
+  "oracle_mean_conf_eng": 70.6,
+  "oracle_mean_conf_deu": 68.5,
+  "page_pass_median_conf": 91.8,
+  "oracle_cell_errors": [
+   "'2,2 4 1/2 Std.' -> ', .'",
+   "'1250' -> '[250'",
+   "'102' -> 'I Ly'"
+  ],
+  "columns_only_the_oracle_reads": 2
+ },
+ "shipping_population": [
+  {
+   "block": "page_003__right #11",
+   "type": "table",
+   "result": "12x2",
+   "span": [
+    0.22,
+    0.98
+   ]
+  },
+  {
+   "block": "page_003__right #23",
+   "type": "table",
+   "result": "abstain",
+   "reason": "only 1 column",
+   "note": "8 words; the marginal case, and abstaining is correct"
+  },
+  {
+   "block": "page_004__right #14",
+   "type": "table",
+   "result": "17x4",
+   "span": [
+    0.17,
+    0.97
+   ]
+  },
+  {
+   "block": "page_004__right #16",
+   "type": "table",
+   "result": "7x2",
+   "span": [
+    0.53,
+    0.97
+   ]
+  },
+  {
+   "block": "page_005__left #1",
+   "type": "table",
+   "result": "17x2",
+   "span": [
+    0.63,
+    0.95
+   ]
+  },
+  {
+   "block": "page_016__right #14",
+   "type": "table",
+   "result": "abstain",
+   "reason": "only 1 column"
+  },
+  {
+   "block": "it_geo_07 page_001__left #5",
+   "type": "table",
+   "result": "abstain",
+   "reason": "only 1 column"
+  }
+ ],
+ "fixture_population_not_shipping_today": [
+  {
+   "block": "page_003__left #7",
+   "words": 328,
+   "result": "34x5",
+   "span": [
+    0.08,
+    0.94
+   ],
+   "graded": "rows 3-18 verified as (route, time, grade, height) tuples against the photograph: all correct"
+  },
+  {
+   "block": "page_004__left #21",
+   "words": 264,
+   "result": "32x5",
+   "span": [
+    0.07,
+    0.95
+   ]
+  },
+  {
+   "block": "page_017__right #10",
+   "words": 62,
+   "result": "abstain",
+   "reason": "re-read spans no more of the width than the page pass (0.79 vs 0.58)",
+   "note": "the grade table; PRE-REGISTERED as expected to lose, and it does, on its own structural terms"
+  }
+ ],
+ "known_wrong_cells_a_correct_grid_cannot_repair": [
+  "2,2 -> 22",
+  "1,3 -> 13",
+  "4 1/2 -> 4Y",
+  "5 3/4 -> 5%",
+  "170 -> I70",
+  "the coloured route-dot bullets read as '0'/'o'/'(c)' and occupy a whole column"
+ ],
+ "end_to_end": {
+  "job": "jobs/tablegrid_e2e (pages 003/004/005, Stage 05->08)",
+  "tables_in_rendered_html": 3,
+  "uncertainty_flags_inside_cells": "preserved"
+ }
+}

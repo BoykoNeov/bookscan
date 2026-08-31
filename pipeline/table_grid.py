@@ -56,7 +56,9 @@ the grid coming out grid-shaped. A block that fails any check keeps no cells and
 renders as it always did.
 
 Contract: reads a block's words and the subpage image, writes ONLY
-``Word.table_row`` / ``Word.table_col``. Never adds, drops or edits a word.
+``Word.table_row`` / ``Word.table_col`` — plus, for a block ``text_panel`` just
+promoted out of a figure, the block ``type`` when the grid proves it is a table
+(see ``_candidates``). Never adds, drops or edits a word.
 """
 from __future__ import annotations
 
@@ -120,6 +122,29 @@ DEFAULTS = {
 # because a human said so in the editor — never because this module guessed from
 # geometry, which would turn two-column prose into a table.
 TABLE_TYPES = frozenset({BlockType.TABLE})
+
+# ONE narrow exception, and it is the reason text_panel was turned off. That pass
+# re-types a photographed panel PARAGRAPH — deliberately, because at the time
+# Stage 08 rendered PARAGRAPH and TABLE identically, so telling them apart "would
+# change nothing a reader sees". It changes everything a reader sees now. All
+# three panels it promoted on the owner's book are multi-column tables, and left
+# as PARAGRAPH they would render as the same unreadable run of words that got the
+# pass switched off.
+#
+# So a block THIS RUN auto-promoted from a figure is offered to the grid, and
+# re-typed TABLE only if it actually grids. The guard is ``type_promoted`` AND
+# PARAGRAPH, which within Stage 05 is uniquely text_panel's mark (figure_grouping
+# promotes to CAPTION, unreadable_panel to FIGURE at Stage 07). A paragraph Stage
+# 04 detected, or one a human typed, is never touched — that is the difference
+# between "this picture turned out to be a table" and guessing at prose.
+#
+# Re-typing is what the rest of the pipeline already does with an automatic
+# decision (see figure_grouping, unreadable_panel): it sets ``type`` and
+# ``type_auto`` together and leaves ``type_promoted`` raised, so the editor shows
+# it as automatic and a human re-typing it back wins.
+def _candidates(blk: Block) -> bool:
+    return (blk.type in TABLE_TYPES
+            or (blk.type is BlockType.PARAGRAPH and blk.type_promoted))
 
 
 @dataclass
@@ -293,7 +318,7 @@ def grid_table_blocks(blocks: list[Block], img: np.ndarray, tess_bin: str,
         return blocks, notes, skips
 
     for blk in blocks:
-        if blk.type not in TABLE_TYPES:
+        if not _candidates(blk):
             continue
         words = [w for w in blk.words if w.text.strip()]
         if len(words) < int(pp["min_cells"]):
@@ -389,6 +414,13 @@ def grid_table_blocks(blocks: list[Block], img: np.ndarray, tess_bin: str,
             for w in cell:
                 w.table_row = renumber[r]
                 w.table_col = c
+        if blk.type is not BlockType.TABLE:
+            # A promoted panel that turned out to be a grid. Stage 08 routes on
+            # type, which is the editable, human-authoritative field — so this is
+            # what makes the table reach the renderer, and what a human overrides
+            # by re-typing it.
+            blk.type = BlockType.TABLE
+            blk.type_auto = BlockType.TABLE
         notes.append(GridNote(
             block_id=blk.id, n_rows=len(rows_used), n_cols=len(columns),
             n_words=len(words), span_page=round(span_page, 2),

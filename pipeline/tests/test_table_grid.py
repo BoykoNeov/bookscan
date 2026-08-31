@@ -212,3 +212,39 @@ def test_column_of_straddling_cell_still_lands_somewhere():
     column rather than being discarded."""
     cols = [(0, 100), (600, 700)]
     assert TG.column_of([W("x", 560, 0, w=60)], cols) == 1
+
+
+# --------------------------------------------------------------------------
+# The one narrow exception: a promoted panel that turns out to be a table
+# --------------------------------------------------------------------------
+
+
+def test_promoted_panel_that_grids_becomes_a_table(monkeypatch):
+    """text_panel types a promoted panel PARAGRAPH, which used to be harmless
+    because Stage 08 rendered both the same. It is not harmless now — all three
+    panels it promoted on the owner's book are tables."""
+    patch(monkeypatch, ORACLE_ROWS)
+    b = blk([w.model_copy() for w in COLUMN_MAJOR], BlockType.PARAGRAPH)
+    b.type_promoted = True
+    _, notes, _ = TG.grid_table_blocks([b], PAGE, "tess", "td", "eng", 1, 2.0)
+    assert notes and b.type is BlockType.TABLE and b.type_auto is BlockType.TABLE
+
+
+def test_promoted_panel_that_does_not_grid_stays_a_paragraph(monkeypatch):
+    """A promoted panel of running text is a paragraph and must stay one."""
+    patch(monkeypatch, tsv([]))
+    b = blk([w.model_copy() for w in COLUMN_MAJOR], BlockType.PARAGRAPH)
+    b.type_promoted = True
+    _, notes, skips = TG.grid_table_blocks([b], PAGE, "tess", "td", "eng", 1, 2.0)
+    assert not notes and skips and b.type is BlockType.PARAGRAPH
+
+
+def test_an_ordinary_paragraph_is_never_re_typed(monkeypatch):
+    """The guard is type_promoted, not the geometry. A paragraph Stage 04
+    detected — or a human typed — is not this pass's business, and gridding one
+    would turn two columns of prose into a table."""
+    patch(monkeypatch, ORACLE_ROWS)
+    b = blk([w.model_copy() for w in COLUMN_MAJOR], BlockType.PARAGRAPH)
+    assert not b.type_promoted
+    _, notes, skips = TG.grid_table_blocks([b], PAGE, "tess", "td", "eng", 1, 2.0)
+    assert not notes and not skips and b.type is BlockType.PARAGRAPH

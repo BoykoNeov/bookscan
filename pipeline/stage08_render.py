@@ -388,12 +388,18 @@ def _table_html(blk: Block, mode: str, job_dir: Path,
     if sum(len(v) for v in cells.values()) != len([w for w in blk.words
                                                    if w.text.strip()]):
         return None
-    n_rows = max(r for r, _ in cells) + 1
-    n_cols = max(c for _, c in cells) + 1
+    # The row and column values PRESENT, not range(max + 1). Stage 05 numbers
+    # them densely, but the document is mutable and the editor can split a block:
+    # the second half keeps rows 17-33, and range() would emit seventeen empty
+    # <tr>s before the first real one. The schema stores the cell on the WORD
+    # precisely so an edit cannot invalidate it, and the renderer has to honour
+    # that rather than assume Stage 05's numbering survived.
+    row_ids = sorted({r for r, _ in cells})
+    col_ids = sorted({c for _, c in cells})
     rows_html: list[str] = []
-    for r in range(n_rows):
+    for r in row_ids:
         tds: list[str] = []
-        for c in range(n_cols):
+        for c in col_ids:
             got = cells.get((r, c))
             if not got:
                 tds.append("<td></td>")

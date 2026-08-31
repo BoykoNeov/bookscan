@@ -7762,12 +7762,36 @@ Over the corpus's **7** Stage-04 TABLE blocks — the population that ships toda
 | `page_016__right` #14 | 24 | abstain — 1 column |
 | `it_geo_07 page_001__left` #5 | 26 | abstain — 1 column |
 
-**4 gridded, 3 abstained, and all three abstentions are right** — each is a
-single-column fragment of a table whose other columns the page pass never read,
-`page_003__right` #23 being the marginal 8-word case that was flagged in advance
-as one that *should* abstain. End to end through a real Stage 05 → 08 run on
-pages 003/004/005, three tables render with every route keeping its own time and
+**4 gridded, 3 abstained.** End to end through a real Stage 05 → 08 run on pages
+003/004/005, three tables render with every route keeping its own time and
 heights, and the per-word uncertainty highlight survives inside its cell.
+
+**The three abstentions were then opened and looked at, and they are NOT all
+right.** An earlier draft of this row claimed they were, on the strength of
+having inspected one of them; that claim was wrong and is corrected here rather
+than quietly dropped.
+
+* `page_003__right` #23 — **correct**. Two lines of route names, 8 words, the
+  rest of the table unread. Flagged in advance as one that should abstain.
+* `page_016__right` #14 — **right outcome, wrong reason.** It is not a fragment:
+  it is a full German/English/Italian glossary, roughly 90 rows by 3 columns. But
+  the page pass read **24 junk words** of it (`| | = Sl a A = SI | a A 0rso x`),
+  so there is nothing to grid and abstaining is correct. The defect is upstream —
+  this block is not readable as read — and it is not this pass's to fix.
+* `it_geo_07 page_001__left` #5 — **a genuine MISS, and the corpus's only
+  non-owner-book table.** It is a real three-column geological chart
+  (period / stage / Ma) whose words are read *well*. Cause, measured: the page
+  pass splits `INFERIORE` across the printed column rule into fragments at
+  x 1449–1475 and 1477–1518, which sit **in the gutter** — column 1 ends at 1446,
+  so the whitespace gap is **3 px** and the x-projection sees one column.
+  Two candidate fixes were swept over the whole population and **both change
+  nothing, on every block**: `col_gap_mult` 1.0 → 0.35 (the gutter is not the
+  issue at any threshold that is not also absurd), and excluding full-width
+  "spanning header" cells from the column vote (the title row is not the issue
+  either). Neither was kept — an unmeasured parameter that fixes nothing is not
+  worth its comment. The route that could work is taking the **columns** from the
+  oracle read too: it spans the table and reads all three columns, where the page
+  pass bridges two of them. Not attempted; recorded as the next step.
 
 ### The `text_panel` fixture, reported separately because it does not ship today
 
@@ -7806,6 +7830,13 @@ therefore **still the owner's call** — the pre-registration exists precisely s
 correctly-gridded table full of wrong numbers could not be scored as a win. What
 changed is that the *structural* half of the blocker is gone and the failure is
 now legible: you can see which number is wrong, in which row.
+
+One renderer bug found on review and fixed: the table emitted
+`range(max_row + 1)` rows. Stage 05 numbers densely, but the document is mutable
+and the editor ships block **split** — the second half of a split table keeps
+rows 17–33, and that would have prefixed it with seventeen empty rows. The cell
+is stored on the *word* precisely so an edit cannot invalidate it, so the
+renderer now iterates the row and column values actually present.
 
 Inputs and per-block output: `docs/data/table_grid_census_20260831.json`,
 `docs/data/table_grid_census_20260831.txt`. n = 2 books, one of them by one

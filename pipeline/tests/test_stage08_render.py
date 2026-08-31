@@ -629,3 +629,18 @@ def test_cell_order_is_visual_lines_then_left_to_right():
     wrapped = _w("Pegna", x=300); wrapped.bbox.y = 60
     assert [w.text for w in S8.cell_order([tail, head, wrapped])] == [
         "Ferrata", "Aglio", "Pegna"]
+
+
+def test_table_rows_are_the_ones_present_not_a_range(tmp_path: Path):
+    """The editor can SPLIT a gridded table, and the second half keeps its
+    original row numbers. Emitting range(max+1) would prefix it with seventeen
+    empty rows. The cell lives on the word so an edit cannot invalidate it —
+    the renderer has to honour that, not assume Stage 05's dense numbering."""
+    blk = _table_block([
+        _cell_w("Route", 17, 0, x=0, y=0), _cell_w("3 Std.", 17, 2, x=300, y=0),
+        _cell_w("Other", 18, 0, x=0, y=50), _cell_w("8 Std.", 18, 2, x=300, y=50),
+    ])
+    page, jd = _page_with([blk], tmp_path)
+    html = S8.render_html(_doc(page), jd)
+    assert html.count("<tr>") == 2
+    assert "<tr><td>Route</td><td>3 Std.</td></tr>" in html

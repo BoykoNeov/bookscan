@@ -43,7 +43,8 @@
    "type": "table",
    "result": "abstain",
    "reason": "only 1 column",
-   "note": "8 words; the marginal case, and abstaining is correct"
+   "note": "8 words; the marginal case, and abstaining is correct",
+   "verified_by_eye": "correct: 2 lines of route names, rest of the table unread"
   },
   {
    "block": "page_004__right #14",
@@ -76,13 +77,20 @@
    "block": "page_016__right #14",
    "type": "table",
    "result": "abstain",
-   "reason": "only 1 column"
+   "reason": "only 1 column",
+   "verified_by_eye": "NOT a fragment: a full German/English/Italian glossary, ~90x3. But the page pass read 24 JUNK words of it, so there is nothing to grid. Right outcome, wrong reason. Upstream defect."
   },
   {
    "block": "it_geo_07 page_001__left #5",
    "type": "table",
    "result": "abstain",
-   "reason": "only 1 column"
+   "reason": "only 1 column",
+   "verified_by_eye": "GENUINE MISS. A real 3-column geological chart (period/stage/Ma) whose words are read well. Cause: the page pass splits 'INFERIORE' across the printed column rule into fragments at x1449-1475 and x1477-1518 which sit IN the 3px gutter (col 1 ends 1446), so the x-projection sees one column.",
+   "fixes_swept_and_rejected": {
+    "col_gap_mult 1.0->0.35": "no change on any block",
+    "exclude full-width spanning header cells from the column vote": "no change on any block"
+   },
+   "next_step": "take COLUMNS from the oracle read too; it spans the table and reads all three"
   }
  ],
  "fixture_population_not_shipping_today": [
@@ -125,5 +133,6 @@
   "job": "jobs/tablegrid_e2e (pages 003/004/005, Stage 05->08)",
   "tables_in_rendered_html": 3,
   "uncertainty_flags_inside_cells": "preserved"
- }
+ },
+ "abstentions_verdict": "1 correct, 1 right-outcome-wrong-reason, 1 GENUINE MISS (it_geo_07 #5)"
 }

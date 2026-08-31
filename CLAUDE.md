@@ -252,8 +252,21 @@ Italian, German**.
       of the block's width, 0.30 -> 0.97), which is exactly why this is a new
       module and not a rule in `block_reocr`, whose "more words AND no lower
       confidence" test would correctly refuse the right answer. **4 of the
-      corpus's 7 Stage-04 TABLE blocks grid (12x2, 17x4, 7x2, 17x2); the 3
-      abstentions are all correct** (single-column fragments). Two guards earned
+      corpus's 7 Stage-04 TABLE blocks grid (12x2, 17x4, 7x2, 17x2).** The 3
+      abstentions were opened and looked at and are **not all correct** — an
+      earlier draft claimed they were on the strength of inspecting one, and that
+      is corrected in the RESULTS row. One is right (an 8-word fragment); one is
+      the right outcome for the wrong reason (a real 90x3 German/English/Italian
+      glossary whose page-pass read is 24 junk words, so there is nothing to
+      grid — an upstream defect); and **one is a genuine miss**: `it_geo_07` #5,
+      the corpus's only non-owner-book table, is a real 3-column chart that is
+      read well, refused because the page pass splits `INFERIORE` across the
+      printed column rule and the fragments sit IN the 3 px gutter, so the
+      x-projection sees one column. **Two candidate fixes were swept over the
+      whole population and both change nothing on every block** (`col_gap_mult`
+      1.0->0.35; excluding full-width header cells from the column vote) and
+      neither was kept. The route that could work is taking the **columns** from
+      the oracle read too — not attempted. Two guards earned
       by measurement: a same-slot collision counts only across *different printed
       rows* (otherwise the guard refused the fixture at 16% vs a 15% bar for being
       right), and words inside a cell order by visual line at a 0.9-height

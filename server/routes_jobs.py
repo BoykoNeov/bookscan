@@ -10,6 +10,7 @@ exists yet to build that contract against).
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
@@ -19,6 +20,27 @@ from server import jobs as J
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
 _UPLOAD_EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".webp"}
+
+# An uploaded part may name itself ``frame_NN_<origin>.<ext>`` to record HOW the
+# frame was taken; the marker is kept in the saved filename, which Stage 00
+# copies verbatim into ``ingest.json``'s ``source`` field. That is the only way
+# a later measurement can ask which frames a page's result came from, because
+# the *content* of a swept close-up and a tapped one is indistinguishable.
+#
+# The whitelist is closed, and the marker never reaches the filesystem unchecked:
+# a filename arrives from a client and everything else in it is discarded, so an
+# unrecognised or malformed marker is simply dropped and the frame gets the same
+# plain ``frame_NN`` name it always did.
+_ORIGIN_TAGS = {"sweep"}
+_ORIGIN_RE = re.compile(r"^frame_\d+_([a-z]{1,12})$")
+
+
+def _origin_tag(filename: str | None) -> str:
+    """``"_sweep"`` for a recognised origin marker, ``""`` otherwise."""
+    m = _ORIGIN_RE.match(Path(filename or "").stem)
+    if m and m.group(1) in _ORIGIN_TAGS:
+        return f"_{m.group(1)}"
+    return ""
 
 
 def _root(request: Request) -> Path:
@@ -91,6 +113,10 @@ async def upload_page(job_id: str, request: Request,
     convention) — not one page per file. Rejects an empty or bad-extension
     upload before creating any folder, so a bad request never leaves a
     half-populated page behind.
+
+    A part may carry an origin marker in its name (``frame_03_sweep.jpg``),
+    which is preserved in the saved filename; see ``_origin_tag``. Everything
+    else about the client's filename is discarded, exactly as before.
     """
     job_dir = _require_job(request, job_id)
     if not files:
@@ -110,7 +136,10 @@ async def upload_page(job_id: str, request: Request,
     saved = []
     for i, f in enumerate(files):
         ext = Path(f.filename).suffix.lower()
-        dest = raw_dir / f"frame_{i:02d}{ext}"
+        # The index is the SERVER's arrival order, never the client's claim —
+        # only the origin marker is taken from the uploaded name, and only from
+        # a closed whitelist (see _origin_tag).
+        dest = raw_dir / f"frame_{i:02d}{_origin_tag(f.filename)}{ext}"
         dest.write_bytes(await f.read())
         saved.append(dest.name)
 

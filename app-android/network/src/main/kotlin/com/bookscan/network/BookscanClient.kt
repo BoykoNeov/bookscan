@@ -37,9 +37,29 @@ object BookscanClientFactory {
         .build()
 }
 
-/** One capture frame ready to upload; [index] 0 is always the anchor ("frame_00"). */
+/**
+ * Origin markers a local capture filename may carry into the upload. The server
+ * keeps the marker in the saved frame's name and Stage 00 records that name in
+ * `ingest.json`'s `source` field, so a later measurement can ask which frames a
+ * result came from.
+ *
+ * Only "sweep" is marked, and only because it is the one origin whose effect is
+ * an open question: a sweep frame and a tapped close-up are otherwise the same
+ * kind of file, and without the marker "a sweep helped" cannot be told apart
+ * from "more close-ups helped". Anchors and tapped close-ups stay untagged, so
+ * every filename an existing job produces is byte-for-byte what it was.
+ */
+private val ORIGIN_TAGS = setOf("sweep")
+
+/**
+ * One capture frame ready to upload; [index] 0 is always the anchor
+ * ("frame_00"). A file whose name begins with a known origin marker is named
+ * `frame_NN_<marker>.<ext>` — see [ORIGIN_TAGS] for why only one exists, and
+ * `server/routes_jobs.py::upload_page` for the half that preserves it.
+ */
 fun multipartPart(index: Int, file: File, mediaType: String = "image/jpeg"): MultipartBody.Part {
     val body = file.asRequestBody(mediaType.toMediaType())
     val ext = file.extension.ifBlank { "jpg" }
-    return MultipartBody.Part.createFormData("files", "frame_%02d.%s".format(index, ext), body)
+    val tag = ORIGIN_TAGS.firstOrNull { file.name.startsWith("${it}_") }?.let { "_$it" } ?: ""
+    return MultipartBody.Part.createFormData("files", "frame_%02d%s.%s".format(index, tag, ext), body)
 }

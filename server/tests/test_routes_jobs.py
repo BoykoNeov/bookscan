@@ -86,6 +86,61 @@ def test_upload_writes_raw_frames(client: TestClient, tmp_path: Path):
     assert (raw_dir / "frame_01.png").read_bytes() == b"fake-png-bytes"
 
 
+def test_upload_preserves_a_sweep_origin_marker(client: TestClient, tmp_path: Path):
+    """A swept close-up and a tapped one are the same kind of file, so the only
+    way to tell later which a page's frames came from is the marker the app puts
+    in the part's name. Stage 00 copies the saved name into ``ingest.json``'s
+    ``source``, so keeping it here is what makes that question answerable."""
+    job_id = client.post("/api/jobs").json()["job_id"]
+    files = [
+        ("files", ("frame_00.jpg", io.BytesIO(b"anchor"), "image/jpeg")),
+        ("files", ("frame_01_sweep.jpg", io.BytesIO(b"swept"), "image/jpeg")),
+    ]
+    r = client.post(f"/api/jobs/{job_id}/pages", files=files)
+    assert r.json()["files"] == ["frame_00.jpg", "frame_01_sweep.jpg"]
+
+    raw_dir = tmp_path / job_id / "page_001" / "raw"
+    assert (raw_dir / "frame_01_sweep.jpg").read_bytes() == b"swept"
+
+
+def test_upload_index_is_arrival_order_not_the_client_s_claim(client: TestClient):
+    """Only the marker is taken from the uploaded name. The index is the
+    server's, so a client cannot renumber a page's frames by naming them."""
+    job_id = client.post("/api/jobs").json()["job_id"]
+    files = [
+        ("files", ("frame_09_sweep.jpg", io.BytesIO(b"a"), "image/jpeg")),
+        ("files", ("frame_04_sweep.jpg", io.BytesIO(b"b"), "image/jpeg")),
+    ]
+    r = client.post(f"/api/jobs/{job_id}/pages", files=files)
+    assert r.json()["files"] == ["frame_00_sweep.jpg", "frame_01_sweep.jpg"]
+
+
+@pytest.mark.parametrize("name", [
+    "frame_00_notatag.jpg",     # not on the whitelist
+    "frame_00_SWEEP.jpg",       # the whitelist is lowercase
+    "frame_00_sweep_extra.jpg",  # more than one trailing segment
+    "sweep.jpg",                 # no frame prefix at all
+])
+def test_upload_drops_an_unrecognised_marker(client: TestClient, name: str):
+    """An unknown or malformed marker falls back to the plain name rather than
+    reaching the filesystem — the filename comes from a client."""
+    job_id = client.post("/api/jobs").json()["job_id"]
+    files = [("files", (name, io.BytesIO(b"x"), "image/jpeg"))]
+    r = client.post(f"/api/jobs/{job_id}/pages", files=files)
+    assert r.json()["files"] == ["frame_00.jpg"]
+
+
+def test_upload_marker_cannot_escape_the_page_folder(client: TestClient, tmp_path: Path):
+    """A filename comes from a client, so a path-shaped one must not become a
+    path. Only the marker survives, and the folder is the server's."""
+    job_id = client.post("/api/jobs").json()["job_id"]
+    files = [("files", ("../../frame_00_sweep.jpg", io.BytesIO(b"x"), "image/jpeg"))]
+    r = client.post(f"/api/jobs/{job_id}/pages", files=files)
+    assert r.json()["files"] == ["frame_00_sweep.jpg"]
+    assert (tmp_path / job_id / "page_001" / "raw" / "frame_00_sweep.jpg").exists()
+    assert not (tmp_path.parent / "frame_00_sweep.jpg").exists()
+
+
 def test_upload_second_page_increments(client: TestClient):
     job_id = client.post("/api/jobs").json()["job_id"]
     one_file = [("files", ("a.jpg", io.BytesIO(b"x"), "image/jpeg"))]

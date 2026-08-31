@@ -22,6 +22,7 @@ import com.bookscan.app.ui.CloseupScreen
 import com.bookscan.app.ui.JobScreen
 import com.bookscan.app.ui.ServerSetupScreen
 import com.bookscan.app.ui.SpreadReviewScreen
+import com.bookscan.app.ui.SweepScreen
 import java.io.File
 
 /**
@@ -47,6 +48,15 @@ private sealed interface CaptureFlow {
      * buy a better anchor, nothing else.
      */
     data class CapturingMoreAnchors(val anchors: List<File>, val closeups: List<File>) : CaptureFlow
+    /**
+     * Continuous close-up capture across the spread ([SweepScreen]). Separate
+     * from [CapturingCloseup] only in HOW the frames are taken — what lands in
+     * `closeups` is the same kind of file, and nothing downstream distinguishes
+     * them except the `_sweep` marker the upload preserves so a later
+     * measurement can tell "a sweep helped" from "more close-ups helped".
+     */
+    data class Sweeping(val anchors: List<File>, val closeups: List<File>) : CaptureFlow
+
     data class ReviewingSpread(val anchors: List<File>, val closeups: List<File>) : CaptureFlow
 }
 
@@ -150,6 +160,21 @@ class MainActivity : ComponentActivity() {
                                 onDone = { flow = CaptureFlow.ReviewingSpread(f.anchors, f.closeups) },
                             )
 
+                            is CaptureFlow.Sweeping -> SweepScreen(
+                                outputDir = captureDir,
+                                logDir = getExternalFilesDir(null) ?: cacheDir,
+                                existingCloseups = f.closeups,
+                                // Appends and STAYS, same as the close-up
+                                // screen: a spread usually wants more than one
+                                // pass (left half, right half, a second at a
+                                // tighter zoom), and each must not cost a round
+                                // trip through review.
+                                onCaptured = { files ->
+                                    flow = CaptureFlow.Sweeping(f.anchors, f.closeups + files)
+                                },
+                                onDone = { flow = CaptureFlow.ReviewingSpread(f.anchors, f.closeups) },
+                            )
+
                             is CaptureFlow.ReviewingSpread -> SpreadReviewScreen(
                                 anchors = f.anchors,
                                 closeups = f.closeups,
@@ -158,6 +183,7 @@ class MainActivity : ComponentActivity() {
                                 queued = s.queue.pending.size,
                                 onAddAnchor = { flow = CaptureFlow.CapturingMoreAnchors(f.anchors, f.closeups) },
                                 onAddCloseup = { flow = CaptureFlow.CapturingCloseup(f.anchors, f.closeups) },
+                                onSweep = { flow = CaptureFlow.Sweeping(f.anchors, f.closeups) },
                                 // Straight back to the camera, no round trip
                                 // through the job screen: photographing a book
                                 // is one page after another, and a tap between

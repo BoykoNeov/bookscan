@@ -356,3 +356,135 @@ capture split into pages: `pipeline/book_boundary.py` returns the whole frame
 on a pale background, so the crop abstains and the spine finder is left
 searching a page whose emptiest column is not its gutter. See RESULTS
 2026-08-28.
+
+---
+
+## M7 — sweep capture: many close-ups per pass, not one per tap (BUILT 2026-08-31)
+
+**The question this answers is "is there a workable panorama option in the app
+that can be tested?" The answer was no, and this is the capture half of one.**
+`CaptureScreen` is a manual shutter plus an opt-in hover burst capped at four
+frames; `CloseupScreen` is one tap per close-up at a fixed zoom. Nothing in the
+app captured continuously while the phone moved.
+
+`ui/SweepScreen.kt` adds that: pick a zoom, tap **Start sweep**, slide the phone
+across the spread, and a still is taken every time the view has travelled far
+enough. It is reached from the spread review screen ("Sweep close-ups") and it
+appends and stays, like the close-up screen, so several passes over one spread
+cost no round trips.
+
+### It stitches nothing, on purpose
+
+The frames are **ordinary close-ups**. They go into the same `PendingSpread`,
+the same single multipart upload, and the same Stage 01 area classifier as a
+tapped close-up, and they go through the same `downscaleCloseupInPlace` — an
+un-downscaled frame is over `fullspread_area_frac` (0.70) and would compete to
+be the *anchor*, which is a real regression, not a cosmetic one.
+
+There is no panorama consumer in the pipeline to build against. Phase 2 of
+`docs/plans/panorama-and-next-steps.md` returned **no verdict** on 2026-08-31 —
+of 40 close-ups only 5 cleared the admission bar and 4 of those landed on one
+topographic map — and Phase 1 is explicitly **not licensed**. What this screen
+removes is the reason there is no better data: gathering close-ups over *text*
+costs one tap each today, so nobody gathers them.
+
+### The gate is new, and merging it with the hover gate would be a mistake
+
+`HoverGate` is fitted to fire **because the phone is still**: zero bursts across
+the whole 21 s moving recording. A sweep is motion, so it cannot fire during one
+by construction, and loosening its thresholds would destroy a calibration paid
+for on a device. `capture/SweepGate.kt` **inverts** the test instead — motion is
+the trigger, sharpness is the only veto — and lives beside it as a second pure,
+deterministic, unit-tested class (13 new cases in `SweepGateTest`).
+
+### What the thresholds are anchored to, and what they are not
+
+`tools/calibrate_sweep.py` replays the shipped rule over the three 2026-08-19
+device recordings (`docs/data/sweep_calibration_20260831.json`). Those logs are
+a hold, a re-frame and mixed use — **not** a page sweep — so this bounds the
+shot rate and settles one design question; it does not *fit* the thresholds.
+
+* **Sharpness floor 400**, reused unchanged from `CaptureScreen`: same metric,
+  same 320x240 buffer. **45 %** of the moving recording's frames clear it, so it
+  rejects roughly the blurrier half of a hand sweep.
+* **The idle floor is the load-bearing part.** Summing raw per-frame motion
+  fires **6** shots across the 23 s *steady* recording — pure duplicates of one
+  patch out of a capped budget — because a held phone still reports ~1.06 a
+  frame. Summing only the **excess over 3.1** (the value `HoverGate`'s fit
+  separates still from moving at) fires the mandatory first shot and **nothing
+  else**. Both arms stay in the tool so the choice is auditable.
+* **Motion threshold 200** because that is where a standing phone goes silent:
+  at 150 the steady log still fires a second shot, at 200 it does not, and on
+  the moving log 100/150/200 are indistinguishable (all fill the budget), so
+  nothing is paid for the margin. On 21 s of real hand motion it fills the whole
+  24-frame budget in **20.5 s**, a median **834 ms** apart — a sweep of a
+  spread, not a burst.
+* **A time-only fallback ships alongside it** (a toggle on screen, 800 ms), for
+  the case where the motion proxy proves uncalibratable on a real sweep.
+
+**The honest limit on all of it:** the motion signal is a mean absolute luma
+difference — a proxy for "the picture changed", not a distance. It grows with
+scene contrast as well as travel, so shots will not be evenly spaced on the
+page, and it saturates, so it cannot tell "moved half a frame" from "moved a
+whole one". **The threshold is a rate control, never an overlap guarantee.**
+Calibrating for overlap needs on-device registration, which is Phase 3's large
+build and is deliberately not attempted here. The screen carries the same live
+readout and CSV logging as `CaptureScreen`, writing `sweeplog_*.csv` to the
+external files dir, so the first device session can report *by how much* these
+are wrong rather than that the sweep "felt wrong".
+
+### The frame cap is per SPREAD, and that is the load-bearing part
+
+`SWEEP_MAX_FRAMES` is **24**, and it is a budget for the whole spread rather
+than for one sweep run. `sendSpread` puts every file of a spread into one
+multipart POST because `upload_page` names pages `page_NNN` by arrival — a
+spread cannot be split across requests without renumbering every page after it,
+which is the invariant `CaptureQueue` exists to protect. At the ~1-2 MB a
+downscaled close-up weighs that is a request in the tens of megabytes, inside
+the client's 60 s write timeout over local Wi-Fi.
+
+**A per-run cap would have bounded nothing.** `SweepGate.start()` resets its own
+count and the screen appends, and a spread normally gets several passes (left
+half, right half, one tighter) — so three runs would be 72 frames in one POST.
+The screen budgets against the close-ups already on the spread, refuses to arm
+when the budget is spent, and shows the whole-spread count and megabytes rather
+than the current run's, so the operator can see the request they are building.
+Tapped close-ups count against it too: they travel in the same request.
+
+`MAX_IN_FLIGHT` (2) bounds the `takePicture` queue, which would otherwise
+outlive the sweep. **A refused shot is given back to the budget**
+(`SweepGate.abandonShot`) and counted on screen — the gate counts a shot the
+moment it commands one, so without that a device that cannot hold the cadence
+would reach 24 with far fewer files than that on disk, end the sweep, and never
+say why. That silent-skip shape is already on the books once, in
+`figure_hires`.
+
+`CAPTURE_MODE_MAXIMIZE_QUALITY` is kept, same as the anchor and close-up paths,
+because a sweep frame has to be *comparable* with a tapped close-up or the
+device run can only tell them apart by count. If cadence turns out to be the
+binding constraint, `MINIMIZE_LATENCY` is the one-line knob — and it needs its
+own comparison, not just a faster sweep.
+
+### Sweep frames are identifiable downstream
+
+A swept close-up and a tapped one are otherwise indistinguishable, so "the sweep
+helped" could not be told apart from "more close-ups helped". The app names the
+upload part `frame_NN_sweep.jpg` and `upload_page` **preserves that marker** in
+the saved filename, which Stage 00 copies verbatim into `ingest.json`'s `source`
+field. The whitelist is closed and the index is still the server's own arrival
+order, so a client cannot renumber a page by naming its files; anchors and
+tapped close-ups are byte-for-byte named as before.
+
+The round trip is **executed, not inferred**: a page with `frame_01_sweep.jpg`
+in `raw/` run through Stage 00 records `source: frame_01_sweep.jpg`.
+
+### Verified here, and not
+
+`:capture:test` + `:network:test` (17 new `SweepGateTest` cases, 4 new
+`MultipartPartTest` cases — 84 JVM tests green, up from 63) and `assembleDebug`; `server/tests` for the marker,
+`tools/tests` for the replay. **Not verified on a phone.** Everything about the
+sweep *as an experience* — whether 24 frames at 3x actually cover a spread,
+whether the shots are usefully spaced, whether MAXIMIZE_QUALITY keeps up — is
+unmeasured, and is exactly what the first device session is for. Auto-capture's
+history is the warning: it was measured to give four stills per hover and
+delivered **one** on a real spread.

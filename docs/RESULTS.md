@@ -8343,3 +8343,93 @@ one page of one book and is **not** a claim that painting helps. `page_013`-righ
 is not comparable to the 2026-08-29 `324 / 336 / 270` row (that was `eng`, onto
 the anchor, at 1.58x, painting every registered source) and no arithmetic
 relating them is offered.
+
+---
+
+## 2026-08-31 — Sweep capture on the phone: what the existing device logs can and cannot decide
+
+`tools/calibrate_sweep.py`, data `docs/data/sweep_calibration_20260831.json`,
+inputs `docs/data/hover_calibration_20260819_{1_steady,2_moving,3_mixed}.csv`.
+Build recorded in `docs/plans/android-guided-capture.md` M7.
+
+**This row is not an accuracy result and does not claim the book reads better.**
+It records the two threshold questions that a replay over *existing* logs could
+answer, and — more importantly — the ones it could not.
+
+### The build in one line
+
+The app had no continuous-capture mode at all. `SweepScreen` + `SweepGate` add
+one: hold a zoom, slide across the spread, take a still every time the view has
+travelled far enough. The frames are **ordinary close-ups** — nothing is
+stitched, because Phase 1 is not licensed and Phase 2 gave no verdict.
+
+### What the logs decided
+
+The 2026-08-19 recordings are a 23 s steady hold, 21 s of deliberate motion and
+15 s of mixed use. They are **not** a page sweep, so they bound the shot *rate*
+and settle the accumulation rule; they do not fit the thresholds.
+
+| log | sharp ≥ 400 | shots at motion 100 / 150 / 200 / 300 / 400 |
+|---|---|---|
+| 1_steady (23.2 s) | 100 % | 2 / 2 / **1** / 1 / 1 |
+| 2_moving (21.1 s) | 45 % | 24 / 24 / **24** (cap) / 19 / 16 |
+| 3_mixed (15.4 s) | 83 % | 19 / 14 / **11** / 8 / 6 |
+
+* **The idle floor is the finding.** Accumulating raw per-frame motion fires
+  **6** shots across the steady recording — six duplicates of one patch out of a
+  24-frame budget — because a held phone still reports ~1.06 a frame and 190 of
+  those reach 200. Accumulating only the **excess over 3.1** (the value
+  `HoverGate`'s own fit separates still from moving at) fires the mandatory first
+  shot and **nothing else**. Both arms stay in the tool.
+* **200 over 150 is decided by the steady log, not the moving one.** At 150 a
+  standing phone still fires a second shot; at 200 it does not. On the moving log
+  100/150/200 are indistinguishable — all fill the budget — so the margin is
+  free. At 200, 24 shots land in **20.5 s**, a median **834 ms** apart.
+* The sharpness floor is `CaptureScreen`'s fitted 400 reused unchanged (same
+  metric, same 320×240 buffer). It passes **45 %** of the moving recording.
+
+### What the logs could NOT decide, and must not be read as deciding
+
+* **The motion signal is a proxy for "the picture changed", not a distance.** It
+  grows with scene contrast as well as travel and it saturates. So the threshold
+  is a **rate control and never an overlap guarantee**, and shots will not be
+  evenly spaced on a page. Calibrating for overlap needs on-device registration
+  — Phase 3's large build, deliberately not attempted.
+* **No recording of a sweep exists.** Every number above comes from a hold and a
+  re-frame. A `sweeplog_*.csv` off this screen is what would fit these values,
+  which is why the screen carries the same live readout and CSV logging as
+  `CaptureScreen`.
+* **Nothing is verified on a phone.** Whether 24 frames at 3× cover a spread,
+  whether MAXIMIZE_QUALITY keeps the cadence, whether the operator can sweep
+  steadily for 20 s — all unmeasured. The standing warning applies: auto-capture
+  was measured at four stills per hover and delivered **one** on a real spread
+  (2026-08-28), because the replay it was fitted on contained no frame from just
+  after a shutter fires. A time-only fallback ships beside the motion gate for
+  exactly that class of surprise.
+
+### Why it was built while the panorama thread is parked
+
+Phase 2's no-verdict was a **data famine**, not a refusal: 5 of 40 sources
+admitted, 4 of those onto one topographic map, so the statistic had almost no
+text under it. Close-ups over text cost one tap each today. This does **not**
+rest on Phase 0's "tighter framing is the precondition" — Phase 2 measured that
+claim and it does not survive its confound in either direction.
+
+Sweep frames upload as `frame_NN_sweep` and `upload_page` preserves the marker
+into `ingest.json`'s `source`, so a later measurement can separate "a sweep
+helped" from "more close-ups helped".
+
+Two things the frame budget had to get right, neither of them a measurement.
+The 24-frame cap is **per spread, not per sweep run** — a spread normally gets
+several passes and `SweepGate.start()` resets its own count, so a per-run cap
+would have bounded nothing while four documents claimed it bounded the upload.
+And a shot the camera is too busy to take is **given back** to the budget and
+counted on screen, because the gate counts a shot when it commands one: without
+that, a device that cannot hold the cadence ends its sweep early with fewer
+files than the cap and says nothing about why.
+
+Suite: **84 JVM tests green** (up from 63), `assembleDebug` green, plus
+`server/tests` for the marker and `tools/tests` for the replay. The marker's
+round trip is **executed, not inferred**: a page with `frame_01_sweep.jpg` in
+`raw/` run through Stage 00 records `source: frame_01_sweep.jpg` in
+`ingest.json`.

@@ -1,0 +1,483 @@
+{
+  "note": "Replay of SweepGate over the 2026-08-19 hover-calibration logs. Those logs are a hold, a re-frame and mixed use \u2014 NOT a page sweep \u2014 so this bounds the shot RATE and settles the idle-floor question; it does not fit the thresholds. A sweep log off SweepScreen would.",
+  "params": {
+    "sharpness_threshold": 400.0,
+    "motion_threshold": 200.0,
+    "idle_stability_floor": 3.1,
+    "min_capture_interval_ms": 400,
+    "max_frames": 24
+  },
+  "logs": {
+    "1_steady": {
+      "path": "docs\\data\\hover_calibration_20260819_1_steady.csv",
+      "frames": 696,
+      "sharp_pass_rate": 1.0,
+      "by_motion_threshold": {
+        "100": {
+          "shots": 2,
+          "duration_s": 23.167,
+          "shots_per_s": 0.086,
+          "fired_at_ms": [
+            0,
+            20500
+          ],
+          "capped": false
+        },
+        "150": {
+          "shots": 2,
+          "duration_s": 23.167,
+          "shots_per_s": 0.086,
+          "fired_at_ms": [
+            0,
+            21367
+          ],
+          "capped": false
+        },
+        "200": {
+          "shots": 1,
+          "duration_s": 23.167,
+          "shots_per_s": 0.043,
+          "fired_at_ms": [
+            0
+          ],
+          "capped": false
+        },
+        "300": {
+          "shots": 1,
+          "duration_s": 23.167,
+          "shots_per_s": 0.043,
+          "fired_at_ms": [
+            0
+          ],
+          "capped": false
+        },
+        "400": {
+          "shots": 1,
+          "duration_s": 23.167,
+          "shots_per_s": 0.043,
+          "fired_at_ms": [
+            0
+          ],
+          "capped": false
+        }
+      },
+      "raw_accumulation_rejected_arm": {
+        "shots": 6,
+        "duration_s": 23.167,
+        "shots_per_s": 0.259,
+        "fired_at_ms": [
+          0,
+          5867,
+          8334,
+          15767,
+          19934,
+          21300
+        ],
+        "capped": false
+      },
+      "timed_fallback_800ms": {
+        "shots": 24,
+        "duration_s": 23.167,
+        "shots_per_s": 1.036,
+        "fired_at_ms": [
+          0,
+          800,
+          1600,
+          2400,
+          3200,
+          4000,
+          4800,
+          5600,
+          6400,
+          7200,
+          8000,
+          8800,
+          9600,
+          10400,
+          11200,
+          12000,
+          12800,
+          13600,
+          14400,
+          15200,
+          16000,
+          16800,
+          17600,
+          18400
+        ],
+        "capped": true
+      }
+    },
+    "2_moving": {
+      "path": "docs\\data\\hover_calibration_20260819_2_moving.csv",
+      "frames": 633,
+      "sharp_pass_rate": 0.4534,
+      "by_motion_threshold": {
+        "100": {
+          "shots": 24,
+          "duration_s": 21.067,
+          "shots_per_s": 1.139,
+          "fired_at_ms": [
+            0,
+            1467,
+            1867,
+            2667,
+            3300,
+            4400,
+            5133,
+            5700,
+            6100,
+            6500,
+            7300,
+            7967,
+            8633,
+            9267,
+            9767,
+            10300,
+            10867,
+            12067,
+            12533,
+            12933,
+            13700,
+            14100,
+            14733,
+            15167
+          ],
+          "capped": true
+        },
+        "150": {
+          "shots": 24,
+          "duration_s": 21.067,
+          "shots_per_s": 1.139,
+          "fired_at_ms": [
+            0,
+            1467,
+            1867,
+            2667,
+            3300,
+            4400,
+            5133,
+            5700,
+            6433,
+            7300,
+            7967,
+            8633,
+            9267,
+            10067,
+            10867,
+            12267,
+            12767,
+            13700,
+            14233,
+            15000,
+            15767,
+            16233,
+            16800,
+            17400
+          ],
+          "capped": true
+        },
+        "200": {
+          "shots": 24,
+          "duration_s": 21.067,
+          "shots_per_s": 1.139,
+          "fired_at_ms": [
+            0,
+            1467,
+            1933,
+            2667,
+            3300,
+            4400,
+            5133,
+            5700,
+            6433,
+            7300,
+            7967,
+            8833,
+            9667,
+            10733,
+            12333,
+            13000,
+            13700,
+            14500,
+            15367,
+            16167,
+            16800,
+            18733,
+            19633,
+            20467
+          ],
+          "capped": true
+        },
+        "300": {
+          "shots": 19,
+          "duration_s": 21.067,
+          "shots_per_s": 0.902,
+          "fired_at_ms": [
+            0,
+            1467,
+            2667,
+            4400,
+            5133,
+            5900,
+            6500,
+            7300,
+            8633,
+            10000,
+            12133,
+            13233,
+            13700,
+            15000,
+            16167,
+            16800,
+            18733,
+            19633,
+            20467
+          ],
+          "capped": false
+        },
+        "400": {
+          "shots": 16,
+          "duration_s": 21.067,
+          "shots_per_s": 0.759,
+          "fired_at_ms": [
+            0,
+            1467,
+            2667,
+            4400,
+            5133,
+            6433,
+            7300,
+            8833,
+            10733,
+            13000,
+            13700,
+            15367,
+            16467,
+            18733,
+            19633,
+            20467
+          ],
+          "capped": false
+        }
+      },
+      "raw_accumulation_rejected_arm": {
+        "shots": 24,
+        "duration_s": 21.067,
+        "shots_per_s": 1.139,
+        "fired_at_ms": [
+          0,
+          1467,
+          1867,
+          2667,
+          3300,
+          4400,
+          5133,
+          5700,
+          6433,
+          7300,
+          7967,
+          8633,
+          9267,
+          10000,
+          10733,
+          11867,
+          12533,
+          13033,
+          13700,
+          14233,
+          15000,
+          15767,
+          16400,
+          16800
+        ],
+        "capped": true
+      },
+      "timed_fallback_800ms": {
+        "shots": 22,
+        "duration_s": 21.067,
+        "shots_per_s": 1.044,
+        "fired_at_ms": [
+          0,
+          1467,
+          2667,
+          4400,
+          5200,
+          6033,
+          7300,
+          8100,
+          8900,
+          9733,
+          10533,
+          11333,
+          12133,
+          12933,
+          13733,
+          14533,
+          15367,
+          16167,
+          16967,
+          18733,
+          19633,
+          20467
+        ],
+        "capped": false
+      }
+    },
+    "3_mixed": {
+      "path": "docs\\data\\hover_calibration_20260819_3_mixed.csv",
+      "frames": 458,
+      "sharp_pass_rate": 0.8319,
+      "by_motion_threshold": {
+        "100": {
+          "shots": 19,
+          "duration_s": 15.4,
+          "shots_per_s": 1.234,
+          "fired_at_ms": [
+            0,
+            1034,
+            1567,
+            2234,
+            4134,
+            4867,
+            6267,
+            7500,
+            7900,
+            8367,
+            8800,
+            9767,
+            10600,
+            11267,
+            11800,
+            12700,
+            13234,
+            13900,
+            15200
+          ],
+          "capped": false
+        },
+        "150": {
+          "shots": 14,
+          "duration_s": 15.4,
+          "shots_per_s": 0.909,
+          "fired_at_ms": [
+            0,
+            1334,
+            1834,
+            4534,
+            6167,
+            7500,
+            8067,
+            8800,
+            10200,
+            11234,
+            11867,
+            12700,
+            13434,
+            14967
+          ],
+          "capped": false
+        },
+        "200": {
+          "shots": 11,
+          "duration_s": 15.4,
+          "shots_per_s": 0.714,
+          "fired_at_ms": [
+            0,
+            1567,
+            4100,
+            6234,
+            7500,
+            8300,
+            9567,
+            11167,
+            12200,
+            13000,
+            14434
+          ],
+          "capped": false
+        },
+        "300": {
+          "shots": 8,
+          "duration_s": 15.4,
+          "shots_per_s": 0.519,
+          "fired_at_ms": [
+            0,
+            1800,
+            6134,
+            7500,
+            8800,
+            11234,
+            12700,
+            14967
+          ],
+          "capped": false
+        },
+        "400": {
+          "shots": 6,
+          "duration_s": 15.4,
+          "shots_per_s": 0.39,
+          "fired_at_ms": [
+            0,
+            3334,
+            7500,
+            9500,
+            12167,
+            14334
+          ],
+          "capped": false
+        }
+      },
+      "raw_accumulation_rejected_arm": {
+        "shots": 16,
+        "duration_s": 15.4,
+        "shots_per_s": 1.039,
+        "fired_at_ms": [
+          0,
+          1100,
+          1734,
+          3000,
+          4467,
+          5334,
+          6367,
+          7500,
+          8067,
+          8800,
+          9834,
+          10700,
+          11800,
+          12700,
+          13367,
+          14367
+        ],
+        "capped": false
+      },
+      "timed_fallback_800ms": {
+        "shots": 18,
+        "duration_s": 15.4,
+        "shots_per_s": 1.169,
+        "fired_at_ms": [
+          0,
+          800,
+          1600,
+          2467,
+          3267,
+          4067,
+          4867,
+          5667,
+          7500,
+          8300,
+          9100,
+          9900,
+          10700,
+          11800,
+          12700,
+          13500,
+          14300,
+          15100
+        ],
+        "capped": false
+      }
+    }
+  }
+}

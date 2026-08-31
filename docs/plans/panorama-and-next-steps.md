@@ -198,6 +198,47 @@ Two things known in advance about this phase:
   it delivered one still where four were measured. A capture loop is auto-capture
   with a goal; it must be built against that failure, not around it.
 
+#### BUILT 2026-08-31 — the capture half only, and NOT the loop above
+
+Asked whether the phone had a workable panorama option that could be tested, the
+answer was no: nothing in the app captured continuously while it moved. What
+shipped is `app-android/.../ui/SweepScreen.kt` + `capture/SweepGate.kt` — hold a
+zoom, slide across the spread, a still every time the view has travelled far
+enough. See `docs/plans/android-guided-capture.md` M7 for the full record.
+
+**Read what it is not.** It is **not** the coverage-and-sharpness loop described
+above: there is no on-device registration, so the phone cannot know what it has
+already seen sharply, and the "keep shooting until every part has been seen" goal
+is untouched. It stitches nothing, and it cannot: Phase 1 is not licensed and
+Phase 2 gave no verdict. The frames it produces are **ordinary close-ups** —
+same `PendingSpread`, same upload, same Stage 01 area classifier, same
+downscale.
+
+**Why build it while the thread is parked.** Phase 2's no-verdict was a data
+famine, not a refusal: 40 close-ups registered and 5 were admitted, 4 of those
+onto one topographic map, so the statistic had almost no text under it. Close-ups
+over text cost one tap each today, which is why nobody has gathered them. This
+makes gathering them cheap. It does **not** rest on Phase 0's "tighter framing is
+the precondition" — Phase 2 measured that claim and it does not survive its
+confound in either direction, so no argument here leans on it.
+
+**Two constraints from this thread went straight into the build.** `HoverGate` is
+fitted to fire because the phone is *still* and cannot fire during a sweep, so
+the sweep gets its own gate rather than a loosened version of that one; and every
+frame is downscaled like a close-up, because an un-downscaled one is above
+`fullspread_area_frac` and would compete to be the anchor.
+
+**The one number that is a real anchor, and the one that is not.** The idle floor
+(3.1) is settled by measurement: without it a *stationary* phone fires six
+duplicate shots across the 23 s steady recording, with it, none. The motion
+threshold (200) is anchored only to a recording of hand motion, not of a page
+sweep, and the signal underneath it is a "the picture changed" proxy — a **rate**
+control, never an overlap guarantee. A sweep log off this screen is what would
+fit it (`tools/calibrate_sweep.py`).
+
+**Nothing is verified on a phone.** Auto-capture is the warning: measured at four
+stills per hover, it delivered one on a real spread.
+
 **Honest summary, updated 2026-08-31: the measurement is done. The physics is
 right, the plan's own reorder was wrong, and a narrower version of it passes on
 placement — which is not yet a statement that anything reads better.** Phase 2

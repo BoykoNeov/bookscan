@@ -33,6 +33,10 @@ private const val THUMBNAIL_SAMPLE_SIZE = 8
  * classifies anchor-vs-closeup by area itself, no per-file tagging needed).
  * See docs/plans/android-guided-capture.md.
  *
+ * Close-ups arrive two ways: one tap each ([CloseupScreen]) or a continuous
+ * sweep across the page ([SweepScreen]). Both produce the same thing — the
+ * sweep exists because one tap per close-up is why few get taken.
+ *
  * Finishing a spread offers three exits, not one. "Upload spread" sends it now
  * — the flow verified on a real phone on 2026-08-28. The two "Save" actions put
  * it in the batch instead (`com.bookscan.capture.CaptureQueue`) so a whole book
@@ -48,6 +52,7 @@ fun SpreadReviewScreen(
     queued: Int,
     onAddAnchor: () -> Unit,
     onAddCloseup: () -> Unit,
+    onSweep: () -> Unit,
     onSaveAndNext: () -> Unit,
     onSaveAndStop: () -> Unit,
     onUpload: () -> Unit,
@@ -75,6 +80,12 @@ fun SpreadReviewScreen(
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(onClick = onAddAnchor, enabled = !uploading) { Text("Add full shot") }
             Button(onClick = onAddCloseup, enabled = !uploading) { Text("Add close-up") }
+        }
+        // Own row, and worded as what it does rather than "sweep": it banks
+        // ordinary close-ups, just many of them per pass instead of one per
+        // tap. Nothing downstream treats them differently — see SweepScreen.
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Button(onClick = onSweep, enabled = !uploading) { Text("Sweep close-ups") }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(onClick = onSaveAndNext, enabled = !uploading) { Text("Save & next page") }

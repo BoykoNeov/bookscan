@@ -526,6 +526,44 @@ Italian, German**.
       that did paint **ties on confident words (102 vs 102) and wins on the text
       diff**, rejoining two hyphen-broken words — the count was blind to it because
       the improvement was two words becoming one. n = 1 book, 3 spreads.
+- **The phone can now sweep for close-ups — SHIPPED 2026-08-31 as
+      `app-android/.../ui/SweepScreen.kt` + `capture/SweepGate.kt`, and it is the
+      CAPTURE half only.** There was no panorama option in the app to test: the
+      capture screen is a manual shutter plus a four-frame hover burst, the
+      close-up screen is one tap per close-up. Now: pick a zoom, tap Start sweep,
+      slide across the spread, and a still is taken every time the view has
+      travelled far enough. **It stitches nothing and cannot** — Phase 1 is not
+      licensed and Phase 2 gave no verdict — so the frames are **ordinary
+      close-ups**: same `PendingSpread`, same single multipart POST, same Stage 01
+      area classifier, same `downscaleCloseupInPlace` (an un-downscaled frame is
+      above `fullspread_area_frac` and would compete to be the **anchor**). It is
+      built because Phase 2's no-verdict was a **data famine** — 5 of 40 sources
+      admitted, 4 onto one map — and close-ups over text cost one tap each, so
+      nobody gathers them. It does **not** lean on "tighter framing is the
+      precondition"; Phase 2 measured that and it does not survive its confound.
+      **`HoverGate` is NOT reused and must not be loosened to do this**: it is
+      fitted to fire *because the phone is still* (zero bursts across a 21 s
+      moving recording), so `SweepGate` inverts the test — motion triggers,
+      sharpness vetoes. **The one number settled by measurement is the idle
+      floor**: summing raw per-frame motion fires **6** shots across the 23 s
+      *steady* recording (duplicates of one patch out of a capped budget),
+      summing only the excess over 3.1 fires none, and both arms stay in
+      `tools/calibrate_sweep.py`. 200 is where a standing phone goes silent (150
+      still fires a second shot) and fills the 24-frame budget in 20.5 s of real
+      hand motion, a median 834 ms apart. **But the motion signal is a "the
+      picture changed" proxy, not a distance — a RATE control, never an overlap
+      guarantee**, and the logs it is anchored to are a hold and a re-frame, not a
+      sweep; a time-only fallback ships beside it for that reason. The 24-frame
+      cap is **per SPREAD, not per run**, and that is load-bearing: a spread is
+      one POST (because `upload_page` names pages by arrival) and `start()`
+      resets the gate's own count, so a per-run cap would bound nothing — three
+      passes would be 72 frames in one request. A shot the camera was too busy
+      to take is given back to the budget and counted on screen. Sweep frames are named
+      `frame_NN_sweep` and the server **preserves that marker** into
+      `ingest.json`'s `source`, so "a sweep helped" can be told from "more
+      close-ups helped". **Nothing is verified on a phone** — auto-capture was
+      measured at four stills per hover and delivered one on a real spread. See
+      `docs/plans/android-guided-capture.md` M7.
 - **Importing a PDF and re-typesetting it is PLANNED, not built** —
       `docs/plans/pdf-import.md`. Import fills `00_ingest/` and nothing
       downstream changes; the PDF's own text layer is a second opinion routed

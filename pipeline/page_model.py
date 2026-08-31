@@ -277,6 +277,29 @@ class Block(BaseModel):
     # is a different risk class from one that silently vanished.
     is_surface: bool = False
 
+    # --- the language this block is actually printed in (Stage 05; block_lang) -
+    # A real book carries several languages on one page — this corpus's guide
+    # prints the German route description, the English one and the Italian one
+    # each in its own box — but a page is READ in one language, because Stage 05
+    # takes a single ``--lang``.
+    #
+    # None means "use the document's language", which is what every document
+    # written before this field existed says, and what most blocks say now: the
+    # label is applied only when a block's words clearly fit a different
+    # dictionary (pipeline/block_lang.py abstains on anything short, repetitive,
+    # bilingual or badly read). It is a Tesseract language code (``eng``, ``deu``)
+    # so it can key the same per-language lexicon map every other consumer uses.
+    #
+    # It is a LABEL, not an instruction to re-read: re-reading a block in its own
+    # language was measured and refused — on well-read blocks the text is a wash
+    # (one English paragraph comes back byte-identical under German) and on badly
+    # read ones the other language returns different garbage, not better. What it
+    # is for is the dictionary-dependent work downstream, and today that is
+    # exactly one thing: Stage 08 joins a line-end hyphen only when the joined
+    # token is a real word, so without this an English paragraph in a German book
+    # keeps ``rou- tes`` and ``at- tractive`` broken in the rendered PDF.
+    language: str | None = None
+
     def order_review_visible(self, order_mode: str) -> bool:
         """Reading-order analogue of ``Word.flag_visible``: in REVIEW mode a block's
         proposed order stays 'needs review' until the user clears it, and — like

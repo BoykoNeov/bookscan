@@ -27,6 +27,11 @@ masked NCC >= 0.45), scale recorded but never gated on::
     E  UVDoc-flattened   -> dewarped page     homography
     F  UVDoc-flattened   -> dewarped page     homography + mesh
 
+and, behind ``--control``, the floor the whole apparatus cannot read below::
+
+    Cc the TARGET's own pixels, resampled into the source frame -> C's arm
+    Dc the same, through D's arm
+
 A/B are the failed route on the full population. C/D flatten the target. E/F are
 the plan's actual premise - flatten BOTH - and they are in scope only because a
 probe showed UVDoc flattens a borderless close-up in 0.2-0.5 s. Without E/F a
@@ -47,7 +52,7 @@ Usage::
 
     python -m tools.panorama_phase0 [--job jobs/<id>] [--pages page_013 ...]
                                     [--out docs/data/panorama_phase0.json]
-                                    [--no-uvdoc]
+                                    [--no-uvdoc] [--control]
 """
 
 from __future__ import annotations
@@ -82,7 +87,7 @@ TILE = 128               # the tile size the earlier row reports
 MIN_RESP = 0.05          # tile admission, identical to _mesh_refine's
 MIN_VAR = 25.0
 MIN_FOOTPRINT = 256      # a bbox smaller than two tiles cannot be measured
-ARMS = ("A", "B", "B0", "C", "D", "E", "F")
+ARMS = ("A", "B", "B0", "C", "D", "E", "F", "Cc", "Dc")
 
 
 # --------------------------------------------------------------------------
@@ -400,7 +405,28 @@ def arm(img, base, H, params, mesh=None):
     return st
 
 
-def run_page(page_dir: Path, params, uv) -> list:
+def control_source(base, H, shape):
+    """The target's OWN pixels, resampled backwards into the source's frame.
+
+    Fed through the identical arm, the only displacement left is the one the
+    machinery invents: interpolation, the mesh's own smoothing, and the floor of
+    whatever estimator reads it. This repo has been here before - the close-up
+    sharpness gate compared photographs against a bar that the anchor's own
+    pixels scored 0.506 against, so nothing could ever pass and the number was
+    measuring the warp. A pass at 1.4-1.7 px against a 2.0 px bar is close enough
+    to that trap to have to be ruled out rather than argued about.
+
+    It is a PESSIMISTIC bound: the synthetic source is interpolated twice where a
+    real close-up is interpolated once, so the floor it reports is at least as
+    high as the true one. Which is the useful direction - a measurement clearly
+    below it is clearly real.
+    """
+    Hi = np.linalg.inv(H)
+    return cv2.warpPerspective(base, Hi, (shape[1], shape[0]),
+                               flags=cv2.INTER_LINEAR)
+
+
+def run_page(page_dir: Path, params, uv, control: bool = False) -> list:
     name = page_dir.name
     fj = json.loads((page_dir / "01_fuse/fuse.json").read_text(encoding="utf-8"))
     ij = json.loads((page_dir / "00_ingest/ingest.json").read_text(encoding="utf-8"))
@@ -483,6 +509,15 @@ def run_page(page_dir: Path, params, uv) -> list:
                 std["k_page"] = st["k_page"]
                 std["x_height"] = st["x_height"]
                 row["arms"]["D"] = std
+            if control:
+                syn = control_source(im, r["H"], img.shape)
+                for a, mesh in (("Cc", None), ("Dc", "footprint")):
+                    stc = arm(syn, im, r["H"], params, mesh)
+                    if stc:
+                        stc["subpage"] = sub
+                        stc["k_page"] = st["k_page"]
+                        stc["x_height"] = st["x_height"]
+                        row["arms"][a] = stc
 
         # --- E/F : UVDoc-flattened close-up -> dewarped page ---------------
         if uv is not None:
@@ -586,7 +621,7 @@ def summarise(rows: list) -> dict:
                 e[zt] = [round(float(np.median(v)), 2), len(v)] if v else None
             d[a] = e
         # C-F measure in dewarped-page pixels; the gate is in anchor pixels.
-        for a in "CDEF":
+        for a in ("C", "D", "E", "F", "Cc", "Dc"):
             if a not in d:
                 continue
             ks = [r["arms"][a]["k_page"] for r in sel
@@ -616,6 +651,10 @@ def main() -> int:
     ap.add_argument("--out", default=str(REPO / "docs/data/panorama_phase0.json"))
     ap.add_argument("--no-uvdoc", action="store_true",
                     help="skip arms E/F (the flatten-both arms)")
+    ap.add_argument("--control", action="store_true",
+                    help="also run Cc/Dc: the TARGET's own pixels through the "
+                         "identical arm, i.e. the floor the statistic cannot "
+                         "read below")
     args = ap.parse_args()
 
     job = Path(args.job)
@@ -636,7 +675,7 @@ def main() -> int:
     try:
         for pd in pages:
             print("%s ..." % pd.name, flush=True)
-            rows += run_page(pd, params, uv)
+            rows += run_page(pd, params, uv, args.control)
     finally:
         if uv is not None:
             uv.close()

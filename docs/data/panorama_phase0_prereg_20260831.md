@@ -111,3 +111,13 @@ decided in Phase 2, by more confident words **and** a text diff showing no
 degradation. A fail on arms A–D alone is **inconclusive for the plan's premise**
 and must be written up as such; only a fail that includes E/F speaks to
 "flatten both, then register".
+
+---
+
+*Post-hoc pointer, added after the run and changing nothing above (a
+pre-registration is not amended once results exist): the claim that the 128 px
+measurement tiles are "much finer" than `_mesh_refine`'s grid holds in one axis
+and not the other — on the footprint scope the correction's grid lands at 53-191
+px on this book. The corrected arms therefore rest on the dense-flow estimator
+and on the `--control` floor measurement, both of which are reported in RESULTS
+2026-08-31.*

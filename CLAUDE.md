@@ -456,6 +456,40 @@ Italian, German**.
       the blurry crop hides, which reads as a framing change and misled this
       session twice. `--no-figure-hires` / `figure_hires.enabled: false` turns it
       off. See RESULTS 2026-08-29.
+- **Panorama Phase 0 is MEASURED 2026-08-31 — the plan's own premise is REFUSED
+      and a narrower reorder passes (`tools/panorama_phase0.py`).** Seven
+      placements of all 317 close-ups, one matcher and one acceptance rule, gate
+      and population pre-registered before any number existed
+      (`docs/data/panorama_phase0_prereg_20260831.md`). **Flattening the close-up
+      too — "flatten first, stitch second", the plan's stated reorder — is worse
+      than leaving it raw on EVERY statistic and places 62 fewer close-ups
+      (154 vs 216); do not re-attempt it.** UVDoc flattens a borderless close-up
+      fine, so this is not a capability gap: flattening the source destroys the
+      features the matcher needs and adds a second deformation to undo. What
+      survives is **flatten the TARGET only** — raw close-up onto the dewarped
+      page, then `mesh_align` over the source's own footprint — which passes at
+      **1.39 px / 1.27 px** on the pre-registered statistic and 1.67 px on an
+      independent one (dense optical flow, added because grading a
+      phase-correlation correction with phase correlation is circular at the
+      correction's own grid, which on this book it nearly is). **Against a
+      measured floor of 0.09 px**: the target's own pixels through the identical
+      machinery, the control this repo owes itself since the sharpness gate that
+      nothing could pass. **The old doubling was largely correction SCOPE, not the
+      target** — estimating the field over the whole enlarged page (what the failed
+      run did) scores 4.24 px, indistinguishable from no correction at all (4.13),
+      against 1.55 px over the footprint on the same target. **The median passes
+      and the TAIL does not, and the tail is what doubles text:** only 16 of 172
+      placed close-ups have a worst-twentieth under 5 px and **72 (42 %) are at
+      30 px or worse** — a word width. So Phase 1 is licensed **only** as a design
+      that paints hard narrow seams and skips a source by its own local error,
+      never as "paint every registered source". A sub-window re-fit reaches the
+      same accuracy with no field at all (1.60 px) but 30–43 % of windows cannot
+      answer — a fallback, not a drop-in. **Nothing here says the page reads
+      better**: this is placement, further from the deliverable than a confidence
+      number, and Phase 2 (one `page_013` render comparison, more confident words
+      AND a text diff) is the next thing to do — before Phase 1 is built. The
+      four sofa spreads are worse under every arm and are not covered. See
+      RESULTS 2026-08-31.
 - **Importing a PDF and re-typesetting it is PLANNED, not built** —
       `docs/plans/pdf-import.md`. Import fills `00_ingest/` and nothing
       downstream changes; the PDF's own text layer is a second opinion routed

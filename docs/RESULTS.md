@@ -7988,3 +7988,161 @@ readings of all 36 nominated blocks, with their text), and
 or lost, per job) and `docs/data/block_lang_render_ab_20260831.json` (the two
 renders' hyphen sets). The census tool is `tools/block_lang_census.py`; its
 `--reread` and `--all-langs` arms are the refused experiment, kept runnable.
+
+---
+
+## 2026-08-31 — Panorama Phase 0: the plan's premise is refuted, and a different reorder passes
+
+`docs/plans/panorama-and-next-steps.md` §1 Phase 0, the measurement that was to
+decide a large build either way. Pre-registered in
+`docs/data/panorama_phase0_prereg_20260831.md` **before any number existed**:
+population, arms, statistic and gate all fixed in advance, because this document
+already records four occasions where a number improved while the text got worse.
+
+**Question.** Stitching close-ups into an enlarged spread was measured and refused
+(RESULTS 2026-08-29): the text came out **doubled**, diagnosed as a homography
+being a plane-to-plane map while a photographed page is a cylinder seen off-axis.
+The plan's premise was a **reorder — flatten first, stitch second**. Does
+registering onto flattened pixels remove the leftover displacement?
+
+**Two things about the earlier run shaped this one, and both were found by
+READING it rather than re-running it.** `temp/stitch2/superres.py` registered onto
+the **anchor** and *already applied* `figure_hires._mesh_refine` — so "add the
+local-bend correction" was never the open question; the **target** was. And its
+published numbers (6.5 px median, 59 px max, 5.3 px / 45 px neighbour) come from
+**one** close-up. They are context, not a baseline; every arm here is compared
+against arm A on the same population.
+
+### Method
+
+All **317** close-ups of the owner's 25-spread guide (`20260829-084115-de3c20d3`)
+— every frame `01_fuse/fuse.json` does not list as a full spread. The four sofa
+spreads are tagged and reported apart. One matcher for every arm (SIFT at 0.5
+scale, ratio 0.75, RANSAC 4 px — the one that registers 227/317 where shipped ORB
+gets 6), one acceptance rule for every arm (inliers ≥ 20 **and** masked NCC ≥
+0.45), scale recorded but never gated on. `figure_hires.candidates()` was
+deliberately **not** reused: its figure-tuned gates would admit a different subset
+per arm, which is the one thing a cross-arm comparison cannot survive.
+
+Statistic: leftover displacement over the source's footprint, on 128 px tiles
+admitted by `_mesh_refine`'s own rule, read again at a half-tile offset; plus
+**dense optical flow** as an estimator that shares no machinery with the
+correction. Arms on the flattened page are converted to anchor-equivalent pixels
+by their own local scales, so the gate is applied in one unit.
+
+### Result — non-sofa, 303 close-ups, anchor-equivalent pixels
+
+| arm | source → target | correction | placed | resid med | neigh med | flow med | flow p95 |
+|---|---|---|---|---|---|---|---|
+| A | raw → anchor | homography | 216 | 4.13 | 2.33 | 4.88 | 72.5 |
+| B | raw → anchor | + mesh, footprint scope | 216 | **1.55** | 1.08 | 2.02 | 63.4 |
+| B0 | raw → anchor | + mesh, whole-page scope | 216 | 4.24 | 2.15 | 4.72 | 61.4 |
+| C | raw → **flattened page** | homography | 172 | 3.66 | 2.63 | 4.31 | 29.5 |
+| D | raw → **flattened page** | + mesh, footprint scope | 172 | **1.39** | 1.27 | **1.67** | 21.2 |
+| E | **flattened close-up** → flattened page | homography | 154 | 6.76 | 4.61 | 9.63 | 52.4 |
+| F | **flattened close-up** → flattened page | + mesh, footprint scope | 154 | 2.57 | 2.50 | 3.34 | 43.3 |
+
+**The gate — median residual < 2 px AND neighbour disagreement < 5 px — is met by
+D on the pre-registered statistic (1.39 / 1.27) and on the independent one
+(1.67).** B meets it on the pre-registered statistic only (1.55) and fails on flow
+(2.02); the gate is not moved to accommodate either.
+
+On the **120 close-ups every arm placed** — the only strictly like-for-like set,
+which also answers the objection that C/D dropped the 44 hard ones — the ordering
+is unchanged: A 2.88, B **1.29**, B0 3.00, C 3.79, D **1.51**, E 6.48, F 2.57.
+Here B beats D on the median; it loses badly on the tail (below).
+
+### The headline is the refutation, not the pass
+
+**E and F — the plan's actual premise, flatten BOTH — are worse than C and D on
+every statistic, and place 62 fewer close-ups (154 vs 216).** A double loss.
+UVDoc flattens a borderless close-up perfectly well (probed first, 0.2–0.5 s,
+median displacement 4.3–6.2 % of the long side, visibly straighter text), but
+flattening the source destroys features the matcher needs and adds a second
+non-rigid deformation the correction then has to undo. The pre-registration fixed
+in advance that only a failure including E/F speaks to the premise. It does.
+
+**So: "flatten first, stitch second" is refused. "Flatten the TARGET only, then
+register with a footprint-scope correction" survives** — a different and smaller
+claim than the plan made.
+
+### What the old failure actually was
+
+**B0 (4.24) is indistinguishable from no correction at all (A, 4.13); B (1.55) is
+a third of it.** The only difference between B0 and B is the area the correction
+is estimated over — the whole enlarged page, which is what the failed run did,
+versus the close-up's own footprint. Most of the old doubling was **correction
+scope**, not the target. That is a retrospective diagnosis of a run that was never
+repeated here.
+
+### The control: this is not the machinery grading itself
+
+`_mesh_refine` is phase correlation and so is the tile statistic, and on the
+footprint scope the correction's own grid lands at **53–191 px** against a 128 px
+measurement tile — so the pre-registration's claim that the tiles are "much finer"
+than the correction holds in one axis and not the other. The corrected arms
+therefore rest on the flow estimator and on a floor measurement.
+
+Feeding the **target's own pixels**, resampled backwards into the close-up's frame,
+through the identical arm (`--control`, arms Cc/Dc) reads
+**0.09 anchor px** — 0.07 by flow, worst single close-up 0.79 px, over 42
+close-ups on four spreads, where D reads **1.21 / 1.62** on those same 42. The
+apparatus can read 14-20x below where D lands, so D's pass is a measurement and
+not a resampling artefact. The control is interpolated twice where
+a real close-up is interpolated once, so it is a **pessimistic** bound on the
+floor, which is the useful direction. This check exists because the same trap has
+already been sprung here once: the close-up sharpness gate compared photographs
+against a bar the anchor's own pixels scored 0.506 against, so nothing could pass.
+
+### The tail is where this is decided, and it does not pass
+
+Doubling is a tail phenomenon. Quoted as a range because the two estimators
+disagree by 2.6x, D's worst-twentieth is **8–21 anchor px** — about a word width.
+Per close-up, out of D's 172:
+
+* **110** have a median under 2 px, but only **16** have a worst-twentieth under
+  5 px, and **72 — 42 %** have a worst-twentieth of **30 px or more**.
+* B is worse (151 of 216, 70 %, at ≥ 30 px), F worse still (100 of 154, 65 %).
+
+So the median passes and the tail does not, on four close-ups in ten even in the
+best arm. **A pass therefore licenses Phase 1 only under a design that paints hard
+narrow seams and skips a source where its local error is large** — the design
+`figure_hires` already converged on for pictures. It does not license painting
+every registered source.
+
+### Diagnostic and honest limits
+
+* **Re-fitting per sub-window** brings the *uncorrected* arms to where the
+  correction gets: A 4.59 → 3.05 → **1.60** at 1, 2 and 4 divisions per side, C
+  5.26 → 3.32 → **1.89**. But only **148 of 211** (A) and **95 of 168** (C)
+  windows answer at all at 4 divisions, so this is a second viable Phase 1 design,
+  not a drop-in.
+* **The half-tile offset changes nothing** (D 1.685 → 1.625; every arm within
+  0.2 px), so the tile phase is not carrying the result.
+* **Tile-answer coverage 0.94–0.98** on every arm — these are fields, not a global
+  translation wearing a mesh's clothes.
+* **Gutter-straddling slivers are tagged and drive nothing**: excluding all 19
+  moves D from 1.73 to 1.77 flow-median.
+* In text-sized units D's residual is **0.077 x-heights** (F 0.142, C 0.202).
+* **The sofa spreads are worse under every arm** (D 3.66 anchor px) and D's pass
+  does not cover them. Their flattened pages are geometrically wrong for the
+  already-recorded crop reason.
+* **All 21 non-sofa spreads contribute**; no single spread carries the result.
+* **The tightest close-ups are the worst placed on the anchor arms and not on the
+  flattened-page arms** (A: 5.81 / 3.60 / 7.23 flow-median for < 1.4x, 1.4–1.8x,
+  ≥ 1.8x; D: 1.90 / 1.87 / 2.19). Decision-relevant for the plan's capture loop,
+  which wants tighter framing.
+* **This is a placement number, and placement is further from the deliverable than
+  a confidence number is.** Nothing here says a composite page reads better. Per
+  the pre-registration, a pass licenses **Phase 1 and Phase 2 and nothing else**,
+  and Phase 2 is decided by more confident words **and** a text diff.
+
+**Recommended next step, not started here:** re-run the exact `page_013`
+comparison that produced 324 / 336 / 270 confident words, under D's placement with
+a hard-seam sharpest-first paint. That is the cheapest link from this number to
+the book.
+
+Tool: `tools/panorama_phase0.py` (all seven arms plus the `--control` floor).
+Data: `docs/data/panorama_phase0_20260831.json` (every close-up, every arm),
+`docs/data/panorama_phase0_control_20260831.json`, pre-registration
+`docs/data/panorama_phase0_prereg_20260831.md`.

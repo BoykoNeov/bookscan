@@ -80,7 +80,46 @@ disagreement under 5 px. Current values without `mesh_align` are 6.5 px and 45 p
 enlarged canvas, and nothing further gets built. This is the whole point of doing
 it first: it costs a day and it uses only code that already ships.
 
+#### RUN 2026-08-31 — the premise above is REFUSED, and a smaller claim passes
+
+Seven placements over all 317 close-ups, one matcher and one acceptance rule
+(`tools/panorama_phase0.py`, pre-registration
+`docs/data/panorama_phase0_prereg_20260831.md`, RESULTS 2026-08-31). Read that row
+before building anything here; four things in it change this plan.
+
+1. **"Flatten first, stitch second" — the premise written above — is REFUSED.**
+   Flattening the close-up *too* (UVDoc, which does the job fine) is worse than
+   leaving it raw on **every** statistic **and** places 62 fewer close-ups
+   (154 vs 216). Do not re-attempt it. What survives is **flatten the TARGET
+   only**: register the raw close-up onto the dewarped page, then `mesh_align`.
+   That arm passes the gate at **1.39 px / 1.27 px**, against a measured floor of
+   **0.09 px** (the target's own pixels through the identical machinery).
+2. **The old failure was largely correction SCOPE, not the target.** Estimating
+   the displacement field over the whole enlarged page — what the failed run did —
+   scores 4.24 px, indistinguishable from applying no correction at all (4.13).
+   Estimating it over the close-up's own footprint scores 1.55 px on the *same*
+   target. Whatever Phase 1 builds, the field is estimated per source footprint.
+3. **The median passes and the TAIL does not.** Only **16 of 172** placed
+   close-ups have a worst-twentieth under 5 px; **72 — 42 %** are at 30 px or
+   worse, and 30 px is a word width. So Phase 1 below is not licensed as written:
+   it may paint only sources whose *local* error is small, and it must **measure
+   that per source and skip the rest**, exactly as `figure_hires` does. Painting
+   every registered source reproduces the doubling.
+4. A **second viable Phase 1 design** fell out of the diagnostic: re-fitting the
+   same correspondences per sub-window reaches the same accuracy with no
+   displacement field at all (1.60 px at 4 divisions a side) — but 30–43 % of
+   windows have too few correspondences to answer, so it is a fallback, not a
+   drop-in.
+
+The sofa spreads are worse under every arm and are **not** covered by this pass.
+
 ### Phase 1 — sharpness-aware patchwork (a few days, only if Phase 0 passes)
+
+**Phase 0 passed on 2026-08-31, under two constraints it did not have before:**
+register onto the **flattened page** with the raw close-up (never a flattened
+one), estimate the correction over the **source footprint** (never the page), and
+**skip a source whose local error is large** — 42 % of them are, and those are the
+ones that double the text.
 
 The owner has explicitly licensed visible patchwork *provided the patches are
 sharper*. So: paint a source only where it is genuinely sharper than what is
@@ -116,8 +155,12 @@ Two things known in advance about this phase:
   it delivered one still where four were measured. A capture loop is auto-capture
   with a goal; it must be built against that failure, not around it.
 
-**Honest summary of the panorama idea: the physics is right, one measurement
-stands between it and a real build, and that measurement is cheap.**
+**Honest summary, updated 2026-08-31: the measurement is done. The physics is
+right, the plan's own reorder was wrong, and a narrower version of it passes on
+placement — which is not yet a statement that anything reads better.** Phase 2
+still decides that, on more confident words AND a text diff. The cheapest way to
+get there is to re-run the exact `page_013` comparison (324 / 336 / 270 confident
+words) under the placement Phase 0 licensed.
 
 ---
 
@@ -310,7 +353,10 @@ one flagged defect with no diagnosis yet.
    not a language one either (see §2's 2026-08-31 note) — they belong to 3.2.
 2. ~~**Section 2 per-block language**~~ — DONE 2026-08-31 as a LABEL; the re-read
    half is refused by measurement.
-3. **Panorama Phase 0** — one day, decides a large build either way.
+3. ~~**Panorama Phase 0**~~ — DONE 2026-08-31. The plan's reorder is refused;
+   "flatten the target only" passes on placement, under a tail constraint. Next
+   here is **Phase 2 first** — one `page_013` render comparison — before Phase 1
+   is built, because Phase 2 is what says whether any of it reads better.
 4. **3.3 picture continuity** — removes a whole family of visible defects.
 5. **3.2 the crop** — as soon as the owner settles the clipping question.
 

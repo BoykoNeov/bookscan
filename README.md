@@ -22,8 +22,12 @@ Target OCR languages (priority order): English, Bulgarian, Italian, German.
 
 ## Status
 
-Gate 1 (OCR quality harness) is in progress — see
-[`docs/GATE1_SPEC.md`](docs/GATE1_SPEC.md). Results land in `docs/RESULTS.md`.
+All five gates are done (OCR harness, fusion/split/dewarp, layout, end-to-end
+re-typeset PDF, server + Android app). Start with
+[`CLAUDE.md`](CLAUDE.md) for the contract and the measured guardrails,
+[`docs/OPEN_PROBLEMS.md`](docs/OPEN_PROBLEMS.md) for what is still unsolved and
+the next experiment for each, [`docs/STATUS.md`](docs/STATUS.md) for the
+chronological record, and [`docs/RESULTS.md`](docs/RESULTS.md) for the numbers.
 
 ## Setup
 
@@ -48,9 +52,18 @@ the Windows default.
 ## Commands
 
 ```bash
-# Gate 1 harness (built during Gate 1)
+# the operator console (the interface)
+bookscan.bat            # or: python -m uvicorn server.app:app --host 0.0.0.0 --port 8000
+
+# Stage 02 split guard (red on purpose at 19/21 — see CLAUDE.md)
+python -m tools.split_eval
+
+# Gate 1 harness
 python -m tools.gate1_harness --testset testset/ --report docs/RESULTS.md
 
-# run one stage on one page (once stages exist)
+# run one stage on one page
 python -m pipeline.stage05_ocr jobs/demo/page_001/
+
+# unit tests (no GPU, no Tesseract needed)
+python -m pytest pipeline/tests tools/tests -q
 ```

@@ -235,3 +235,62 @@ def _run() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(_run())
+
+
+def test_find_book_is_a_pure_function_of_its_inputs():
+    """Two calls in one process must agree. Before 2026-09-02 they did not have
+    to: GrabCut's k-means init reads cv::theRNG(), which every earlier call
+    advanced, and on the raw de_02 frame the SAME call gave four different
+    boxes in one process (RESULTS 2026-09-02). Seeding each draw makes the
+    answer depend on the pixels alone."""
+    img, _ = _cluttered_frame()
+    a = BB.find_book(img)
+    b = BB.find_book(img)
+    c = BB.find_book(img)
+    assert (a.applied, a.emit, a.search) == (b.applied, b.emit, b.search)
+    assert (a.applied, a.emit, a.search) == (c.applied, c.emit, c.search)
+    assert a.diag.get("gc_draws") and a.diag.get("gc_jitter") is not None
+
+
+def test_draws_that_disagree_beyond_the_pad_abstain(monkeypatch):
+    """The emit pad covers a BOUNDED inward error. Draws that disagree by more
+    than it are the measurement that the error is not bounded on this frame,
+    so the honest answer is no crop, not the widest draw we happened to get."""
+    img, (x0, y0, x1, y1) = _cluttered_frame()
+    boxes = iter([(x0 - 40, y0 - 30, x1 + 40, y1 + 30),      # right
+                  (x0 + 300, y0 - 30, x1 + 40, y1 + 30),     # left edge inside the book
+                  (x0 - 40, y0 - 30, x1 + 40, y1 + 30)])
+    monkeypatch.setattr(BB, "grabcut_box", lambda image, p, rng_seed=None: next(boxes))
+    bb = BB.find_book(img)
+    assert not bb.applied
+    assert "unstable" in bb.reason and "disagree" in bb.reason
+    assert bb.emit == (0, 0, img.shape[1], img.shape[0])
+    assert bb.diag["gc_jitter"] > BB.DEFAULTS["emit_pad"]
+    assert len(bb.diag["gc_draws"]) == 3
+
+
+def test_draws_that_agree_emit_their_union(monkeypatch):
+    """Agreement within the pad keeps the crop, and the emitted box is the
+    UNION of the draws — the generous side, because stray room is harmless and
+    a clipped page is not."""
+    img, (x0, y0, x1, y1) = _cluttered_frame()
+    boxes = iter([(x0 - 40, y0 - 30, x1 + 40, y1 + 30),
+                  (x0 - 55, y0 - 30, x1 + 40, y1 + 45),
+                  (x0 - 40, y0 - 38, x1 + 52, y1 + 30)])
+    monkeypatch.setattr(BB, "grabcut_box", lambda image, p, rng_seed=None: next(boxes))
+    bb = BB.find_book(img)
+    assert bb.applied, bb.reason
+    ex0, ey0, ex1, ey1 = bb.emit
+    assert ex0 <= x0 - 55 and ey0 <= y0 - 38 and ex1 >= x1 + 52 and ey1 >= y1 + 45
+    assert bb.diag["gc_jitter"] <= BB.DEFAULTS["emit_pad"]
+
+
+def test_a_single_draw_never_trips_the_stability_rule():
+    """gc_draws: 1 is the pre-2026-09-02 behaviour with a fixed seed — one
+    box, no agreement to check. It must not refuse on a jitter of zero."""
+    img, _ = _cluttered_frame()
+    p = dict(BB.DEFAULTS)
+    p["gc_draws"] = 1
+    bb = BB.find_book(img, p)
+    assert bb.applied, bb.reason
+    assert bb.diag["gc_jitter"] == 0.0

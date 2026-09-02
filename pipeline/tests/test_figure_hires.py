@@ -226,3 +226,19 @@ def test_masked_text_lands_in_the_right_place_on_a_scaled_asset(tmp_path):
     out = S8._paint_out(asset, [BBox(x=100, y=0, w=100, h=100)], 0, 0, 200, 100)
     assert (out[:, :180] == 200).all(), "the left half must be untouched"
     assert out[:, 220:].std() < 1.0, "the right half must be filled flat"
+
+
+def test_a_frame_that_cannot_be_decoded_is_skipped_and_says_so(params, tmp_path):
+    """The skip is right (no pixels to cut from); the SILENCE was the bug.
+    RESULTS 2026-08-29 left one figure upgrading in isolation and refused in
+    the batch, with a frame decode returning None the likeliest cause and no
+    record that it had happened. A frame that fails to decode must now say so,
+    so Stage 07 can list it in document.meta.json."""
+    crop = _texture(600, 450, seed=5)
+    missing = FH.FrameIndex("gone.png", tmp_path / "gone.png", params)
+    assert missing.decode_failed is False          # nothing has been asked yet
+    assert FH.candidates(crop, [missing], params) == []
+    assert missing.decode_failed is True
+    ok = _FakeFrame("f.png", _texture(1200, 900, seed=5), params)
+    FH.candidates(crop, [ok], params)
+    assert ok.decode_failed is False

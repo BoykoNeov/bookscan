@@ -117,6 +117,28 @@ frame the book already fills, and that is what is lost. A degenerate mask (too
 small, absurd aspect) abstains too. Every refusal carries its reason into
 ``meta.warnings`` and the overlay.
 
+**GrabCut is a random draw, so it is drawn more than once (2026-09-02).** Its
+GMM initialisation is k-means with random centres from ``cv::theRNG()``, which
+nothing here seeded. Measured over all 21 ``split_eval`` rows under eight seeds
+(``docs/data/grabcut_seed_sweep_20260902.json``): the 14 abstaining rows and
+two of the four lap captures are seed-invariant, the other two lap captures
+move their left edge by 2-4 % of the box between seeds with the labelled book
+still inside every draw, and the raw ``de_02`` frame produces FOUR different
+answers — abstain, a 4.6 % clip that removes the header band, and a 11.9 % clip
+that removes the whole icon sidebar — depending on nothing but how many RNG
+calls preceded it in the process. That last frame is the "confidently wrong in
+one axis" failure the owner's sofa spreads show, and it was a coin flip. So
+``find_book`` now takes ``gc_draws`` seeded draws, emits their UNION (the
+generous side), and refuses when the draws disagree on any edge by more than
+``emit_pad`` — the pad exists to absorb a bounded inward error, and draws that
+disagree by more than it are the measurement that the error is not bounded
+here. The threshold is derived from the pad, not tuned: on the sweep the two
+jittering lap captures sit at 1.9 % and 4.1 %, ``de_02`` at 12.9 %. Cost is
+linear in draws (0.5-2.3 s per GrabCut on a 4-core box at ``gc_work_w`` 480).
+This catches instability, NOT a consistent bias: every applied draw on
+``de_02`` puts the top edge at y~222, below the orange header, and a rule about
+agreement cannot see an error the draws agree on.
+
 **Known limits, measured not assumed.**
   * n = 6 labelled spreads, one photographer, two books, one lighting setup.
     The thresholds separate cleanly on that corpus and have not been seen on
@@ -155,6 +177,13 @@ DEFAULTS = {
     "gc_seed_dilate": 31,   # -> GC_PR_FGD
     "gc_seed_erode": 15,    # -> GC_FGD
     "emit_pad": 0.06,       # outward pad; clipping hits zero at 0.04 (n=6)
+    # GrabCut is seeded and drawn several times; the draws must agree (see the
+    # module docstring, "GrabCut is a random draw"). The draws' union is what
+    # is emitted; a disagreement wider than the pad that is supposed to cover
+    # inward error means the pad cannot be trusted, so the detector abstains.
+    "gc_draws": 3,          # seeded GrabCut draws (seeds 0..n-1); cost is linear
+    "gc_max_jitter": None,  # max edge disagreement, fraction of the union box;
+                            # None -> emit_pad, by derivation, not by tuning
     "fallback_pad": 0.20,   # pad for the raw mask bbox when GrabCut is off/fails;
                             # the measured zero-clip pad for that (looser) box
     # --- abstain guards ------------------------------------------------------
@@ -277,12 +306,23 @@ def search_box(comp: np.ndarray, sc: float, p: dict, w: int, h: int) -> Box:
     return _pad_box(box, float(p["search_pad"]), w, h)
 
 
-def grabcut_box(image: np.ndarray, p: dict) -> Box | None:
+def grabcut_box(image: np.ndarray, p: dict, rng_seed: int | None = None
+                ) -> Box | None:
     """Box that decides which pixels become the page, via seeded GrabCut.
 
     The paper mask alone under-covers coloured page areas (headers, side
     strips); GrabCut, seeded from it, grows across them. Returns None if the
     segmentation collapses, so the caller can fall back rather than crop wrong.
+
+    ``rng_seed`` pins OpenCV's global RNG immediately before ``cv2.grabCut``. The
+    GMM initialisation inside GrabCut is k-means with random centres drawn from
+    ``cv::theRNG()``, so without this the box depends on everything that
+    consumed the RNG earlier in the process — measured 2026-09-02: the same
+    frame, four different boxes in one process, from a full abstain to a crop
+    that removes 11.9 % of the labelled book. With ``seed`` given the call is a
+    pure function of its inputs (``seed`` below is the GrabCut MASK seed, a
+    different thing). Note the side effect: the global RNG state is
+    left where GrabCut left it, which is what every unseeded call did anyway.
     """
     h, w = image.shape[:2]
     gw = int(p["gc_work_w"])
@@ -312,6 +352,8 @@ def grabcut_box(image: np.ndarray, p: dict) -> Box | None:
     gm[:, :b] = cv2.GC_BGD
     gm[:, -b:] = cv2.GC_BGD
 
+    if rng_seed is not None:
+        cv2.setRNGSeed(int(rng_seed))
     try:
         cv2.grabCut(small, gm, None, np.zeros((1, 65), np.float64),
                     np.zeros((1, 65), np.float64), int(p["gc_iters"]),
@@ -490,7 +532,48 @@ def find_book(image: np.ndarray, p: dict | None = None) -> BookBoundary:
 
     sbox = search_box(comp, sc, p, w, h)
 
-    ebox = grabcut_box(image, p) if p.get("grabcut", True) else None
+    ebox: Box | None = None
+    if p.get("grabcut", True):
+        # Several SEEDED draws, not one unseeded one. GrabCut's answer on a
+        # frame is a random variable (see grabcut_box); the draws make that
+        # visible and the rule below acts on it. The union is on the generous
+        # side, which is the side this module's asymmetry says to land on.
+        n_draws = max(1, int(p.get("gc_draws", 1) or 1))
+        draws = [grabcut_box(image, p, rng_seed=s) for s in range(n_draws)]
+        boxes = [b for b in draws if b is not None]
+        diag["gc_draws"] = [list(b) for b in boxes]
+        diag["gc_collapsed"] = len(draws) - len(boxes)
+        if boxes:
+            ebox = boxes[0]
+            for b in boxes[1:]:
+                ebox = _union(ebox, b)
+            uw, uh = max(1, ebox[2] - ebox[0]), max(1, ebox[3] - ebox[1])
+            spread = [(max(b[i] for b in boxes) - min(b[i] for b in boxes))
+                      / (uw if i % 2 == 0 else uh) for i in range(4)]
+            jitter = max(spread)
+            diag["gc_jitter"] = round(jitter, 4)
+            max_jitter = p.get("gc_max_jitter")
+            max_jitter = float(p["emit_pad"] if max_jitter is None else max_jitter)
+            if len(boxes) > 1 and jitter > max_jitter:
+                # The emit pad exists to absorb a bounded inward error. When
+                # two draws of the same segmentation disagree by more than
+                # that bound, the error on this frame is not bounded by it,
+                # and the union of a few draws is not a guarantee either — it
+                # is just the widest of the draws we happened to take. Refuse;
+                # this lands the frame on the abstain path, where the operator
+                # box and the model's search window already live.
+                return refuse(
+                    f"book box is unstable: {len(boxes)} seeded GrabCut draws "
+                    f"disagree by {jitter:.1%} of the box on one edge (> "
+                    f"{max_jitter:.0%}, the pad that covers inward error) - "
+                    f"not cropping",
+                    diag,
+                    evidence=(
+                        "GrabCut's segmentation of this frame changes with "
+                        "its random initialisation, so no single box from it "
+                        "carries a known error bound (RESULTS 2026-09-02). A "
+                        "drawn book_box.json or the model's search window "
+                        "applies here exactly as on any other abstain."))
     if ebox is None:
         # Fall back to the raw (untrimmed) mask bbox with the wider pad measured
         # for it. Never fall back to the SEARCH box: it is trimmed inward and

@@ -319,6 +319,7 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
     n_surface = 0
     n_hires = 0
     hires_log: list[dict] = []
+    decode_failures: list[str] = []
 
     for pd in page_dirs:
         resolved = S6.UncertaintyResult.model_validate_json(
@@ -431,6 +432,16 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                 if bgr is not None:
                     panels.append(_assemble_panel(bgr, dp))
 
+        # A frame that failed to decode was skipped by every figure on this
+        # spread. Say so: a missing candidate is invisible in the upgrade log
+        # (refusing is the normal outcome), so without this line a decode
+        # failure and "no capture holds this figure" read the same.
+        for fi in frame_index:
+            if fi.decode_failed:
+                decode_failures.append(f"{pd.name}/00_ingest/{fi.name}")
+                warnings.append(
+                    f"figure_hires: {pd.name}/00_ingest/{fi.name} could not be "
+                    f"decoded and was skipped for every figure on that spread")
         # Both subpages are done with this spread's captures. Keep the SIFT
         # descriptors (cheap) but drop the decoded frames — a dozen 6 Mpx images
         # held across 25 spreads is gigabytes for nothing.
@@ -503,6 +514,10 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             "figure_surface_log": surface_log,
             "figures_upgraded": n_hires,
             "figure_hires_sources": hires_log,
+            # Frames figure_hires could not decode. Each one was skipped for
+            # every figure on its spread; an empty list is the claim that no
+            # candidate went missing that way.
+            "frame_decode_failures": decode_failures,
             "captions_promoted": n_promoted,
             "figure_numbers_read": n_fig_numbers,
             "pairs_by_number": n_pairs_number,

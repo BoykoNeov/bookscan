@@ -112,8 +112,20 @@ def main(argv: list[str] | None = None) -> int:
     print("-" * 78)
     n_pass = 0
     worst_clip = 0.0
+    unavailable: list[str] = []
     for image_id, spec in gt.items():
-        img = load_anchor(image_id, spec)
+        try:
+            img = load_anchor(image_id, spec)
+        except FileNotFoundError as e:
+            # de_01/de_02 grade the orientation-normalised anchors under
+            # gitignored jobs/orient_fix_de*, so on any machine but the owner's
+            # those two rows cannot be graded. Say so and keep going: a guard
+            # that crashes on row 14 grades nothing, and a row that is not
+            # graded is not a pass — the run still exits 1.
+            unavailable.append(image_id)
+            print(f"{image_id:13} {'':>8} {'':>6} {'':>6} {'':>6} {'':>6} "
+                  f"{'':>5} {'':>6} UNAVAILABLE  ({e})")
+            continue
         book = BB.find_book(img, bb_params)
         if args.vlm and not book.applied:
             vbox, _vdiag = VLM.find_box(img, VLM.resolve_params({}))
@@ -167,6 +179,11 @@ def main(argv: list[str] | None = None) -> int:
     print("-" * 78)
     print(f"{n_pass}/{total} spreads correct"
           + ("" if n_pass == total else "  <-- REGRESSION"))
+    if unavailable:
+        print(f"{len(unavailable)} row(s) not graded on this machine — anchor "
+              f"lives in gitignored jobs/: {', '.join(unavailable)}. Their "
+              f"committed testset JPEGs are NOT the graded pixels (Stage 01 "
+              f"output), so they are not substituted.")
     if box_gt:
         print(f"worst clipping of a labelled book by the emitted crop: "
               f"{worst_clip:.1f}%" + ("" if worst_clip == 0.0 else

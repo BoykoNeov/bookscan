@@ -88,6 +88,22 @@ ingest:
 # side and OCR it. That cannot lose, and it costs a Stage 03 dewarp plus a
 # Tesseract pass per candidate per side. Sharpness/ink modes are deliberately
 # not offered.
+# --- Book-boundary crop (Stage 02, pipeline/book_boundary.py) ---
+# Defaults live in book_boundary.DEFAULTS; anything set here overrides them.
+# Listed here because these two were added 2026-09-02 and are the kind of knob
+# a session might otherwise "tune": GrabCut's answer on a frame is a RANDOM
+# DRAW (its k-means init reads OpenCV's global RNG), measured to swing the raw
+# de_02 frame between an abstain and a crop that removes 11.9 % of the book.
+# So the detector takes gc_draws seeded draws, emits their union, and abstains
+# when they disagree on any edge by more than gc_max_jitter of the box.
+# gc_max_jitter defaults to emit_pad (0.06) BY DERIVATION - the pad is the
+# inward error the crop claims to absorb - so do not set it independently
+# without re-measuring both. Cost is linear in gc_draws (0.5-2.3 s per draw
+# on a 4-core CPU at gc_work_w 480). See RESULTS 2026-09-02.
+book_crop:
+  gc_draws: 3
+  gc_max_jitter: null     # null -> emit_pad
+
 per_page_source:
   # NOTE: quoted — bare `off` is a YAML boolean (False), not the string.
   mode: "off"            # off | ocr

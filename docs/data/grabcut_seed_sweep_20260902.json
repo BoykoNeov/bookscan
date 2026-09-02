@@ -1,0 +1,3911 @@
+{
+ "_doc": "GrabCut seed sweep, 2026-09-02. For every row of testset/gt/gutter.json, pipeline.book_boundary.find_book (the SHIPPED detector as of commit c88e580, i.e. one unseeded GrabCut draw) was run eight times in one process with cv2.setRNGSeed(s) for s in 0..7 immediately before the call, and the shipped gutter search was run inside its search box. Fields per draw: applied, emit/search boxes (original px), emit_source, emit_area_frac, gutter (original px, None = no split), method, hit (within gutter.json tolerance), clip (% of the labelled book outside the emitted crop, None where book_box.json has no label), reason. PROVENANCE OF THE de_01/de_02 ROWS: their graded anchors live in gitignored jobs/orient_fix_de*, which this machine does not have, so those two rows were run on the committed testset/de_01.jpg / de_02.jpg (EXIF ignored, already upright). The book_box.json label fits de_02.jpg by eye at 1000 px wide (overlay drawn and inspected), but pixel identity with the Stage 01 anchor is NOT established, so the de_* numbers here are a finding about the committed frames, not a re-grade of the split_eval rows. Everything else is byte-identical to what split_eval grades. Machine: 4-core Linux container, OpenCV 5.0.0, no GPU. See docs/RESULTS.md 2026-09-02.",
+ "rows": {
+  "bg_01": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1907,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1907,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1907,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1907,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1907,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1907,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1907,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1907,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "bg_02": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1940,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1940,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1940,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1940,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1940,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1940,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1940,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1940,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "bg_03": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2011,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2011,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2011,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2011,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2011,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2011,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2011,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2011,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "en_coins_01": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1960,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1960,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1960,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1960,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1960,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1960,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1960,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1960,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "en_coins_02": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1994,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1994,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1994,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1994,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1994,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1994,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1994,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1994,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "en_coins_03": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.98,
+    "gutter": 2024,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.98,
+    "gutter": 2024,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.98,
+    "gutter": 2024,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.98,
+    "gutter": 2024,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.98,
+    "gutter": 2024,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.98,
+    "gutter": 2024,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.98,
+    "gutter": 2024,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.98,
+    "gutter": 2024,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard "
+   }
+  ],
+  "it_geo_01": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2091,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2091,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2091,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2091,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2091,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2091,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2091,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2091,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "it_geo_02": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2099,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2099,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2099,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2099,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2099,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2099,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2099,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2099,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "it_geo_03": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2082,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2082,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2082,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2082,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2082,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2082,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2082,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2082,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "it_geo_04": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1941,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1941,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1941,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1941,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1941,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1941,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1941,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 1941,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "it_geo_05": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.973,
+    "gutter": 2012,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.973,
+    "gutter": 2012,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.973,
+    "gutter": 2012,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.973,
+    "gutter": 2012,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.973,
+    "gutter": 2012,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.973,
+    "gutter": 2012,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.973,
+    "gutter": 2012,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.973,
+    "gutter": 2012,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard "
+   }
+  ],
+  "it_geo_06": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2089,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2089,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2089,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2089,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2089,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2089,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2089,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2089,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "it_geo_07": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2040,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2040,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2040,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2040,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2040,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2040,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2040,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": 2040,
+    "method": "ink",
+    "hit": true,
+    "clip": null,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ],
+  "de_01": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.855,
+    "gutter": 1983,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.855,
+    "gutter": 1983,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.855,
+    "gutter": 1983,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.855,
+    "gutter": 1983,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.855,
+    "gutter": 1983,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.855,
+    "gutter": 1983,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.855,
+    "gutter": 1983,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.855,
+    "gutter": 1983,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard "
+   }
+  ],
+  "de_02": [
+   {
+    "seed": 0,
+    "applied": true,
+    "emit": [
+     610,
+     224,
+     3690,
+     3000
+    ],
+    "search": [
+     637,
+     568,
+     3408,
+     2901
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.713,
+    "gutter": 2136,
+    "method": "ink",
+    "hit": true,
+    "clip": 11.935072660831137,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.892,
+    "gutter": 2047,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 89% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 2,
+    "applied": true,
+    "emit": [
+     149,
+     221,
+     3716,
+     3000
+    ],
+    "search": [
+     637,
+     568,
+     3408,
+     2901
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.826,
+    "gutter": 2136,
+    "method": "ink",
+    "hit": true,
+    "clip": 4.564459930313589,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 3,
+    "applied": true,
+    "emit": [
+     610,
+     224,
+     3690,
+     3000
+    ],
+    "search": [
+     637,
+     568,
+     3408,
+     2901
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.713,
+    "gutter": 2136,
+    "method": "ink",
+    "hit": true,
+    "clip": 11.935072660831137,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 4,
+    "applied": true,
+    "emit": [
+     149,
+     221,
+     3716,
+     3000
+    ],
+    "search": [
+     637,
+     568,
+     3408,
+     2901
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.826,
+    "gutter": 2136,
+    "method": "ink",
+    "hit": true,
+    "clip": 4.564459930313589,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "search": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.892,
+    "gutter": 2047,
+    "method": "pinch",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "detected region covers 89% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 6,
+    "applied": true,
+    "emit": [
+     610,
+     224,
+     3690,
+     3000
+    ],
+    "search": [
+     637,
+     568,
+     3408,
+     2901
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.713,
+    "gutter": 2136,
+    "method": "ink",
+    "hit": true,
+    "clip": 11.935072660831137,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 7,
+    "applied": true,
+    "emit": [
+     609,
+     224,
+     3698,
+     3000
+    ],
+    "search": [
+     637,
+     568,
+     3408,
+     2901
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.715,
+    "gutter": 2136,
+    "method": "ink",
+    "hit": true,
+    "clip": 11.906008328375966,
+    "reason": "cropped to detected book"
+   }
+  ],
+  "zoomset_de_01": [
+   {
+    "seed": 0,
+    "applied": true,
+    "emit": [
+     157,
+     267,
+     3071,
+     3060
+    ],
+    "search": [
+     391,
+     489,
+     2806,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.652,
+    "gutter": 1684,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 1,
+    "applied": true,
+    "emit": [
+     157,
+     267,
+     3071,
+     3060
+    ],
+    "search": [
+     391,
+     489,
+     2806,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.652,
+    "gutter": 1684,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 2,
+    "applied": true,
+    "emit": [
+     212,
+     267,
+     3068,
+     3060
+    ],
+    "search": [
+     391,
+     489,
+     2806,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.639,
+    "gutter": 1684,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 3,
+    "applied": true,
+    "emit": [
+     157,
+     267,
+     3071,
+     3060
+    ],
+    "search": [
+     391,
+     489,
+     2806,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.652,
+    "gutter": 1684,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 4,
+    "applied": true,
+    "emit": [
+     157,
+     267,
+     3071,
+     3060
+    ],
+    "search": [
+     391,
+     489,
+     2806,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.652,
+    "gutter": 1684,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 5,
+    "applied": true,
+    "emit": [
+     212,
+     267,
+     3068,
+     3060
+    ],
+    "search": [
+     391,
+     489,
+     2806,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.639,
+    "gutter": 1684,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 6,
+    "applied": true,
+    "emit": [
+     212,
+     267,
+     3068,
+     3060
+    ],
+    "search": [
+     391,
+     489,
+     2806,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.639,
+    "gutter": 1684,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 7,
+    "applied": true,
+    "emit": [
+     212,
+     267,
+     3068,
+     3060
+    ],
+    "search": [
+     391,
+     489,
+     2806,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.639,
+    "gutter": 1684,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   }
+  ],
+  "zoomset_de_02": [
+   {
+    "seed": 0,
+    "applied": true,
+    "emit": [
+     167,
+     331,
+     3529,
+     3060
+    ],
+    "search": [
+     271,
+     573,
+     3202,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.735,
+    "gutter": 1626,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 1,
+    "applied": true,
+    "emit": [
+     33,
+     331,
+     3536,
+     3060
+    ],
+    "search": [
+     271,
+     573,
+     3202,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.766,
+    "gutter": 1626,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 2,
+    "applied": true,
+    "emit": [
+     177,
+     331,
+     3528,
+     3060
+    ],
+    "search": [
+     271,
+     573,
+     3202,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.732,
+    "gutter": 1626,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 3,
+    "applied": true,
+    "emit": [
+     33,
+     331,
+     3536,
+     3060
+    ],
+    "search": [
+     271,
+     573,
+     3202,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.766,
+    "gutter": 1626,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 4,
+    "applied": true,
+    "emit": [
+     167,
+     331,
+     3529,
+     3060
+    ],
+    "search": [
+     271,
+     573,
+     3202,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.735,
+    "gutter": 1626,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 5,
+    "applied": true,
+    "emit": [
+     33,
+     331,
+     3536,
+     3060
+    ],
+    "search": [
+     271,
+     573,
+     3202,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.766,
+    "gutter": 1626,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 6,
+    "applied": true,
+    "emit": [
+     167,
+     331,
+     3529,
+     3060
+    ],
+    "search": [
+     271,
+     573,
+     3202,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.735,
+    "gutter": 1626,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 7,
+    "applied": true,
+    "emit": [
+     167,
+     331,
+     3529,
+     3060
+    ],
+    "search": [
+     271,
+     573,
+     3202,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.735,
+    "gutter": 1626,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   }
+  ],
+  "zoomset_en_01": [
+   {
+    "seed": 0,
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "search": [
+     484,
+     435,
+     3373,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.81,
+    "gutter": 1616,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 1,
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "search": [
+     484,
+     435,
+     3373,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.81,
+    "gutter": 1616,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 2,
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "search": [
+     484,
+     435,
+     3373,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.81,
+    "gutter": 1616,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 3,
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "search": [
+     484,
+     435,
+     3373,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.81,
+    "gutter": 1616,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 4,
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "search": [
+     484,
+     435,
+     3373,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.81,
+    "gutter": 1616,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 5,
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "search": [
+     484,
+     435,
+     3373,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.81,
+    "gutter": 1616,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 6,
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "search": [
+     484,
+     435,
+     3373,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.81,
+    "gutter": 1616,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 7,
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "search": [
+     484,
+     435,
+     3373,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.81,
+    "gutter": 1616,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   }
+  ],
+  "zoomset_en_02": [
+   {
+    "seed": 0,
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "search": [
+     467,
+     503,
+     3432,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.74,
+    "gutter": 1623,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 1,
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "search": [
+     467,
+     503,
+     3432,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.74,
+    "gutter": 1623,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 2,
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "search": [
+     467,
+     503,
+     3432,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.74,
+    "gutter": 1623,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 3,
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "search": [
+     467,
+     503,
+     3432,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.74,
+    "gutter": 1623,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 4,
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "search": [
+     467,
+     503,
+     3432,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.74,
+    "gutter": 1623,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 5,
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "search": [
+     467,
+     503,
+     3432,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.74,
+    "gutter": 1623,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 6,
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "search": [
+     467,
+     503,
+     3432,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.74,
+    "gutter": 1623,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   },
+   {
+    "seed": 7,
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "search": [
+     467,
+     503,
+     3432,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.74,
+    "gutter": 1623,
+    "method": "ink",
+    "hit": true,
+    "clip": 0.0,
+    "reason": "cropped to detected book"
+   }
+  ],
+  "paleset_01": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.918,
+    "gutter": 2741,
+    "method": "ink",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.918,
+    "gutter": 2741,
+    "method": "ink",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.918,
+    "gutter": 2741,
+    "method": "ink",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.918,
+    "gutter": 2741,
+    "method": "ink",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.918,
+    "gutter": 2741,
+    "method": "ink",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.918,
+    "gutter": 2741,
+    "method": "ink",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.918,
+    "gutter": 2741,
+    "method": "ink",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard "
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 0.918,
+    "gutter": 2741,
+    "method": "ink",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard "
+   }
+  ],
+  "paleset_02": [
+   {
+    "seed": 0,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": null,
+    "method": "none",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 1,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": null,
+    "method": "none",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 2,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": null,
+    "method": "none",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 3,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": null,
+    "method": "none",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 4,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": null,
+    "method": "none",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 5,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": null,
+    "method": "none",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 6,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": null,
+    "method": "none",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   },
+   {
+    "seed": 7,
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "search": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "emit_source": "grabcut",
+    "emit_area_frac": 1.0,
+    "gutter": null,
+    "method": "none",
+    "hit": false,
+    "clip": 0.0,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard"
+   }
+  ]
+ }
+}

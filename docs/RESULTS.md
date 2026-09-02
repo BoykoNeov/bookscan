@@ -8433,3 +8433,151 @@ Suite: **84 JVM tests green** (up from 63), `assembleDebug` green, plus
 round trip is **executed, not inferred**: a page with `frame_01_sweep.jpg` in
 `raw/` run through Stage 00 records `source: frame_01_sweep.jpg` in
 `ingest.json`.
+
+## 2026-09-02 — The book detector was a coin flip: GrabCut is a random draw, and `de_02` lands anywhere from "no crop" to "11.9 % of the book gone"
+
+Data `docs/data/grabcut_seed_sweep_20260902.json`; code
+`pipeline/book_boundary.py` (`gc_draws`, `gc_max_jitter`), `tools/split_eval.py`,
+`pipeline/figure_hires.py`, `pipeline/stage01_fuse.py`, `pipeline/stage07_assemble.py`.
+Machine: a 4-core Linux container, OpenCV 5.0.0, no GPU, no Tesseract — so
+**nothing here is an OCR claim**, and the two rows that read gitignored anchors
+could not be graded (see "What could not be checked").
+
+### How it was found
+
+Running `tools/split_eval` on a fresh clone. It crashed on row 14 (`de_01`
+reads `jobs/orient_fix_de1/...`, which only the owner's machine has), and while
+checking whether the committed `de_02.jpg` could stand in, the detector gave a
+**different answer on the same frame each time it was called in one process**:
+`(610, 224, 3690, 3000)`, the same again, `(610, 400, ...)`, then a full abstain.
+Across processes the sequence repeats exactly. That is the signature of an
+unseeded global RNG being advanced by earlier calls: `cv2.grabCut` initialises
+its GMMs with k-means and random centres from `cv::theRNG()`, and nothing in
+the pipeline seeded it. `tools/panorama_phase2` had already found the same
+mechanism under RANSAC ("no single-draw residual should ever be thresholded
+again", 2026-08-31); the book detector has the same disease and it was never
+looked for there.
+
+### The sweep
+
+Every `split_eval` row, eight seeded draws each (`cv2.setRNGSeed(s)`, s = 0..7,
+immediately before the shipped `find_book`), gutter search run inside each
+draw's search box, clipping graded against `book_box.json` where a label exists.
+
+| rows | draws applied | distinct emit boxes | gutter hit | clip range |
+|---|---|---|---|---|
+| 13 flat testset spreads | 0 / 8 each | 1 | 8 / 8 each | (no label) |
+| `paleset_01` / `_02` | 0 / 8 | 1 | 0 / 8 (known-failing) | 0.0 |
+| `de_01` (raw JPEG) | 0 / 8 | 1 | 8 / 8 | 0.00 |
+| `zoomset_en_01` / `_02` | 8 / 8 | 1 | 8 / 8 | 0.00 |
+| `zoomset_de_01` | 8 / 8 | **2** (x0 157 / 212) | 8 / 8 | 0.00 |
+| `zoomset_de_02` | 8 / 8 | **3** (x0 33 / 167 / 177) | 8 / 8 | 0.00 |
+| `de_02` (raw JPEG) | 6 / 8 | **4** | 8 / 8 | **0.00 – 11.94** |
+
+The `de_02` draws, exactly: seeds 1 and 5 abstain (union with the search box
+reaches 89 % of the frame); seeds 2 and 4 emit `(149, 221, 3716, 3000)` and clip
+**4.56 %** — the orange header band above y = 221, which is printed content;
+seeds 0, 3, 6, 7 emit `(610, 224, 3690, 3000)` and clip **11.9 %** — the header
+band AND the whole icon sidebar of the left page (the overlay was drawn and
+looked at; the red box starts right of the "Sehr schön / Gut / Diff" strip).
+Which of the three you got depended on how many RNG calls preceded it. Note
+what the draws agree on: every applied draw puts the top edge at y ≈ 222.
+GrabCut consistently fails to grow across the saturated header from a
+paper-colour seed on this frame, and no amount of agreement-checking sees an
+error the draws share.
+
+This is the "confidently wrong in one axis" failure the owner's sofa spreads 2
+and 4 showed (a box keeping the full frame height, 2026-08-29), on a committed
+fixture, and it was a coin flip.
+
+### What ships
+
+1. **Seeded draws, union, and a derived stability rule.** `find_book` now takes
+   `gc_draws` (default 3) GrabCut draws with seeds 0..n−1, emits their **union**
+   (the module's own asymmetry: stray room is harmless, a clipped page is not),
+   and **abstains when the draws disagree on any edge by more than `emit_pad`**
+   as a fraction of the union box. The threshold is not tuned: the 6 % pad is
+   the inward error the crop already claims to absorb, so draws that disagree
+   by more than it are the measurement that this frame's error is not bounded
+   by it. On the sweep that is 1.9 % (`zoomset_de_01`) and 4.1 %
+   (`zoomset_de_02`) kept, 12.9 % (`de_02`) refused — a gap, at n = 1 on the
+   refused side; a frame jittering between 4 and 6 % would be kept, and the
+   union would then be the widest of three draws, which is a sample, not a
+   bound. The refusal lands the frame on the abstain path, which is exactly
+   where the operator's `book_box.json` and the model's search window already
+   apply. With the shipped defaults the raw `de_02` now abstains for that stated
+   reason and its gutter comes from the spine-pinch cue at **2047 vs GT 2040**,
+   0.0 % clipped; `de_01` is seed-invariant (`gc_jitter` 0.0) and abstains at
+   85 % exactly as before.
+2. **Non-regression on everything gradable here:** the 13 flat spreads and the
+   two paleset rows are byte-identical to their previous outcome (they abstain,
+   and the abstain never depended on the draw), the four zoomset rows split
+   within tolerance with 0.0 % clipping, and `zoomset_de_02`'s emitted box is now
+   the union `(33, 331, 3536, 3060)` rather than whichever of three it used to
+   get. `split_eval`: **17 of the 19 gradable rows pass, 2 known-failing, worst
+   clip 0.0 %**, exit 1 as designed.
+3. **Cost, written down (acceptance criterion 4 of the detector plan):** one
+   GrabCut draw is 0.5 s (`bg_01`), 1.6 s (`de_02`), 2.3 s (`zoomset_de_02_f01`)
+   on this CPU; three draws is 3× that per spread, once per Stage 02 run. The
+   search box is unchanged (it is built from the paper mask, which is
+   deterministic), so the gutter search does not repeat.
+4. **RANSAC is seeded too**, in `figure_hires._match` and `stage01_fuse`
+   (`cv2.setRNGSeed(0)` before `findHomography`). This changes the
+   *distribution* of nothing and fixes the *draw*: "did this figure upgrade" and
+   "did this close-up register" are now the same answer on every run of the same
+   inputs. It does NOT make those gates multi-draw (Phase 2's "worst of three"
+   is a redesign at 3× cost, unbuilt), so a fixed draw can still be an unlucky
+   one. **This is a second, competing explanation for the 24-vs-25 figure
+   upgrade discrepancy (RESULTS 2026-08-29), alongside the decode skip** — the
+   next assemble on the owner's book will say which, because both are now
+   visible (below).
+5. **The silent frame-decode skip is silent no more** (§3.4 of
+   `panorama-and-next-steps.md`): `FrameIndex.decode_failed` is set when a frame
+   returns None, Stage 07 lists them in `document.meta.json` as
+   `frame_decode_failures` and warns per frame. The skip itself stays — there
+   are no pixels to cut from — only the silence is gone.
+6. **`split_eval` no longer crashes off the owner's machine.** A row whose
+   anchor is not in the repo prints `UNAVAILABLE`, is counted as not passed, and
+   the summary names it. The committed `de_*` JPEGs are **not** substituted: the
+   graded pixels are Stage 01 output, and pixel identity with the JPEG is not
+   established (the `de_02` book-box label fits the JPEG by eye at 1000 px wide,
+   which is ±4 image px per screen px against a knife-edge 0.0 % bar).
+
+### What could not be checked, and must be on the owner's machine
+
+* **The real `de_01`/`de_02` rows.** Their anchors are gitignored. The eval on
+  the owner's machine has been recording `de_02` as an abstain (0.0 %) and the
+  model-box arm as 1.89 % — under the old single unseeded draw, in whatever RNG
+  state row 15 of the loop happened to reach. After this change the answer no
+  longer depends on the row's position; whether the anchor jitters like the
+  JPEG does is the first thing to read off `gc_jitter` in the next
+  `split_eval` run there. **Expected: 19/21, 0.0 %. If `de_02` moves, the
+  reason is in `gc_draws` and it is a finding, not a regression to tune away.**
+  The chore that removes this blind spot for good is copying the two
+  `orient_fix` anchors into `testset/` as PNG (pixel-identical, like the
+  zoomset rows) — a five-minute owner action listed in `docs/OPEN_PROBLEMS.md`.
+* **The owner's sofa spreads 2 and 4**, the ones where the detector "did not
+  abstain — it returned a confident box that kept the full frame height". They
+  are the population this rule was built for and they are not in the repo.
+  Re-running Stage 02 on that job and reading `gc_jitter` for those four pages
+  is the measurement that says whether "confidently wrong" was in fact
+  "unstable", and it costs nothing but the run.
+* **OCR.** No Tesseract here, so nothing downstream of Stage 02 was re-graded.
+  The seeding in Stage 01 and Stage 07 changes no distribution, but the owner's
+  next full run of their book is the first one that will show which single
+  draws those modules had been living on.
+
+### Honest limits
+
+* n = 1 on the refused side of the stability rule, and it is a committed frame
+  that happens to expose it, not a frame chosen for it. The 6 % threshold is a
+  derivation; the 4.1 %–12.9 % gap it lands in is a measurement, not a margin.
+* The rule catches **instability**, not **bias**: `de_02`'s top edge is wrong in
+  every applied draw and the rule cannot see it. The header-band failure is
+  structural to seeding GrabCut from a paper-colour mask, and it is exactly the
+  reason `book_box.json`'s labels include the coloured headers.
+* Three draws can agree by chance. From the eight-seed sweep on `de_02` the
+  three outcomes appear at roughly 4:2:2, so three independent draws would all
+  land in one mode about one time in six on that frame; `gc_draws` is a knob
+  and the union is emitted either way. Raising it is a cost decision the
+  owner can make with the numbers above; it is not a tuning decision.

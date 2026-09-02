@@ -473,6 +473,10 @@ def stitch_closeup(base: np.ndarray, closeup: np.ndarray, p: dict,
 
     src = np.float32([kc[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
     dst = np.float32([kb[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+    # Seeded for the same reason as figure_hires._match: RANSAC draws from the
+    # unseeded global RNG, so "does this close-up register?" was a function of
+    # process history. One fixed draw per pair; the gates stay single-draw.
+    cv2.setRNGSeed(0)
     H, mask = cv2.findHomography(src, dst, cv2.RANSAC, float(p["ransac_reproj_px"]))
     if H is None:
         return None, r, "no homography"

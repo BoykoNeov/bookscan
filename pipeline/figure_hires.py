@@ -175,11 +175,21 @@ class FrameIndex:
         self.kp = None
         self.desc = None
         self._built = False
+        # Set the moment a decode returns None and never cleared, so a frame
+        # that could not be read is REPORTED (Stage 07 lists these in
+        # document.meta.json) instead of silently dropping out of every
+        # candidate search. This was the most likely cause of an offline sweep
+        # upgrading 25 figures where the shipped batch upgraded 24 (RESULTS
+        # 2026-08-29): ``candidates`` skips a frame whose ``image`` is None, and
+        # until now nothing said it had happened.
+        self.decode_failed = False
 
     @property
     def image(self) -> np.ndarray | None:
         if self._img is None:
             self._img = cv2.imread(str(self.path), cv2.IMREAD_COLOR)
+            if self._img is None:
+                self.decode_failed = True
         return self._img
 
     def build(self) -> bool:
@@ -292,6 +302,14 @@ def _match(crop: np.ndarray, idx: FrameIndex, params: dict):
         return None
     src = np.float32([kc[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
     dst = np.float32([idx.kp[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+    # RANSAC samples from cv::theRNG(), which nothing in the pipeline seeded, so
+    # the fit - and therefore every gate below it - was a draw that depended on
+    # what ran before it in the process. tools/panorama_phase2 measured 9 of 40
+    # sources flipping across its bar between draws. Pinning the seed makes
+    # "did this figure upgrade?" the same answer on every run; it does NOT make
+    # the gates multi-draw (that is a redesign with 3x the cost, unbuilt), so a
+    # fixed draw can still be an unlucky one. See RESULTS 2026-09-02.
+    cv2.setRNGSeed(0)
     H, mask = cv2.findHomography(src, dst, cv2.RANSAC,
                                  float(params["ransac_reproj_px"]))
     if H is None:
@@ -412,6 +430,9 @@ def candidates(crop: np.ndarray, frames: list[FrameIndex], params: dict
             continue
         img = idx.image
         if img is None:
+            # Not silent any more: ``idx.decode_failed`` is now set, and the
+            # caller reports it. The skip itself is still right - there are no
+            # pixels to cut from.
             continue
         fh, fw = img.shape[:2]
         cov = _coverage(H, w, h, fw, fh)

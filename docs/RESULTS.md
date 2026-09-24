@@ -8730,3 +8730,64 @@ so it too now reads `de_01.jpg`/`de_02.jpg` instead of the `jobs/` anchors —
 identical pixels, so none of its numbers can move, and it no longer needs
 `jobs/` for those rows either. No other tool reads the `anchor` field
 (grep of `tools/`, `pipeline/`, `server/`).
+
+## Figure continuity census (P3, pictures split in two) — FAIL, 4 wrong merges — 2026-09-24
+
+`tools/figure_continuity_census.py` · pre-registration
+`docs/data/figure_continuity_prereg_20260924.md` (committed `8b4c43b` before any
+score) · eye labels `docs/data/figure_continuity_labels_20260924.json`
+(committed `20981ab` before the scoring pass) · data
+`docs/data/figure_continuity_20260924.json` · job
+`jobs/20260829-084115-de3c20d3` (owner's German guidebook, 50 subpages).
+
+**Question.** OPEN_PROBLEMS P3 proposed a *continuity* test to merge figure
+blocks the layout detector cut in two, after a whiteness-of-the-gap rule glued
+text sidebars onto photographs. Statistic: on the document's page image, the
+worst row in the seam band as the fraction of overlap columns whose vertical
+step exceeds the pair's own 95th-percentile step (high = a printed boundary).
+Threshold T = the 95th percentile over a positive control of fake seams cut
+into whole single pictures.
+
+**Population — the plan's count does not reproduce.** The plan's 45 pairs (35
+empty-gap, 10 split by a caption) had no committed code. The pre-registered
+rule finds **52** owner pairs: 40 with an empty gap, 5 with a block between, 7
+on sofa (5 `is_surface`, 2 on spreads 1–4). **By eye, only 21 of the 52 are one
+picture cut in two** (20 empty-gap + 1 with a block between); 18 are two
+separate pictures, 10 are a picture touching a text panel (hut-information
+boxes, icon sidebars, the English-version panels), 3 are sofa. Seven of the 21
+are fragments of one map (`page_025__left`), so the population is less
+independent than its count. **None of the 21 carries a higher-resolution
+figure asset**, so a merge would discard no upgrade.
+
+| arm | n | C min / median / p95 / max |
+|---|---|---|
+| positive control (fake seams, 37 single pictures × 5 seeded cuts) | 185 | 0.000 / 0.071 / **0.121 = T** / 0.292 |
+| owner `one`, empty gap (gated) | 20 | 0.056 / 0.073 / 0.143 / 0.156 |
+| owner `two`/`sidebar`, empty gap + 3 `it_geo_06` negatives | 23 | 0.000 / 0.429 / 0.973 / 1.000 |
+
+**Gate: FAIL.** 18 of 20 `one` pairs read continuous (≥ half: that clause
+passes), but **4 separate pairs read continuous too** — the gate allows zero:
+
+| pair | what it is | C | why |
+|---|---|---|---|
+| `page_010__right#1-4` | group photo over a small line drawing | 0.075 | overlap is only the drawing's 348 columns; there the photo ends in a pale caption strip over pale paper — no step |
+| `page_022__left#3-5` | photo over the narrow icon sidebar | 0.054 | same shape: 147 overlap columns, width ratio 9.3 |
+| `page_023__left#2-3` | hut-info text panel over a hut thumbnail | 0.000 | the panel's text strokes set τ = 19.4; the soft edge of a blurry thumbnail never exceeds it |
+| `page_025__left#4-5` | the same shape, the next hut | 0.000 | τ = 19.2, same mechanism |
+
+The three `it_geo_06` negatives, all real separate photographs with a white
+gutter, score 0.29–0.90 — the named "opposite trap" is not the hard case here;
+**text panels next to photographs are**, the same class that killed the
+whiteness rule. A statistic normalised to the pair's own pixels is dominated by
+the sharpest thing in the pair, and a text panel's glyphs are sharper than any
+boundary it has.
+
+**Observed after scoring, not a result:** all 20 `one` pairs have a width ratio
+≤ 1.21, and the two wide-mismatch wrong merges are 9.3 and 4.1. A width
+precondition would remove those two but not the hut panels (ratio 1.02–1.04).
+A rule built from this sentence would be fitted to these labels; it needs its
+own pre-registration and a population it was not read off.
+
+**Refused:** this continuity statistic as a merge rule. Nothing was built in
+`pipeline/`. **What it could not check:** a second book; whether the 5
+`between`-class pairs (one of them a real split map) behave the same.

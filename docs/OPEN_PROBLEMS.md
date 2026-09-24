@@ -104,24 +104,39 @@ the panel), which is P5.
 
 ---
 
-## P3. Pictures split in two — 45 pairs in the owner's book
+## P3. Pictures split in two — 21 real splits in the owner's book, not 45
 
-35 stacked figure pairs with nothing between them (one picture, cut by the
-layout detector) and 10 split by a caption printed on the photograph.
+**Size, re-counted 2026-09-24** (RESULTS 2026-09-24, census). The earlier "45
+pairs" had no committed code. The pre-registered pair rule finds 52 stacked
+figure pairs; by eye **21 are one picture cut in two** (7 of them fragments of
+one map), 18 are two separate pictures, 10 are a picture touching a text panel
+(hut-information boxes, icon sidebars, English-version panels), 3 are sofa.
+None of the 21 has a higher-resolution figure asset, so a merge loses no
+upgrade. The adjudicated set is committed
+(`data/figure_continuity_labels_20260924.json`) and is reusable as a test bed.
 
-**REFUSED:** a whiteness-of-the-gap rule — merges 20 correctly and glues orange
-text sidebars onto photographs on 5, visible by eye.
+**REFUSED:**
+- a whiteness-of-the-gap rule — glues text sidebars onto photographs;
+- the **continuity statistic** (worst seam row, fraction of columns stepping
+  past the pair's own 95th percentile) — catches 18 of 20 real splits but
+  wrongly merges 4 separate pairs (RESULTS 2026-09-24). Two are a wide photo
+  over a narrow block, where the overlap columns see only pale caption strip
+  over pale paper; two are a hut text panel over a blurry thumbnail, where the
+  panel's glyphs set the bar higher than any boundary. The hard class is
+  **text panels next to photographs**, not `it_geo_06`'s stacked photographs
+  (those scored 0.29–0.90, clearly separate).
 
-**Next build (the plan's top item now that panorama is parked):** a
-**continuity** test — do the two halves' pixels continue across the gap? The
-correlation machinery exists in `figure_hires` (`min_ncc` 0.60, measured:
-wrong sources 0.51–0.52, right ones 0.63+). Measure it as a census over the
-owner's job *before* it ships (a `tools/` script that lists every stacked pair
-with its continuity score, adjudicated by eye on the overlays), then gate it
-the way `figure_surface` is gated: a merge deletes nothing, it only re-groups,
-so the bar is zero wrong merges on the 5 sidebar cases. **Precondition:** the
-owner's assembled job; the testset has no split-figure fixture (`it_geo_06` has
-four figures sharing a column, which is the *opposite* trap — do not merge those).
+**Next experiment:** ask the local vision model "is this one picture or two?"
+— a one-second question by eye, which is the only kind the guardrails allow
+it — **twice, in two forms that must agree** (the `figure_surface` pattern),
+graded against the 52 committed labels with the bar **zero wrong merges**.
+Write the prompts and pre-register before the first call; the labels were
+made without any model in the loop, so they are a fair test. A merge only
+re-groups blocks and stays reversible in the editor. A width-ratio
+precondition was noticed *after* scoring (all 20 real splits ≤ 1.21, two of
+the four wrong merges ≥ 4.1); it would not catch the hut panels, and it is
+fitted to these labels — it needs a population it was not read off.
+**Precondition:** the owner's assembled job (present); Ollama running.
 
 ---
 

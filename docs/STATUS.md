@@ -641,3 +641,16 @@ rules for it:
   from a clean worktree with no `jobs/`: 21 of 21 graded, 19/21, 0.0 %
   (RESULTS 2026-09-24). Closes OPEN_PROBLEMS P1 experiment 2 and the P9
   "anchors outside the repo" debt.
+
+### 2026-09-24 — pictures split in two: counted, and the continuity test refused
+
+- **Handoff written for the phone session:** `docs/plans/sweep-to-panorama-handoff.md`
+  (install, shoot one dense-text spread in sweep mode, fit the sweep gate,
+  pre-register and run panorama Phase 2 on it). Stitching fixes resolution,
+  not the wrong crop.
+- **P3 census** (`tools/figure_continuity_census.py`, RESULTS 2026-09-24):
+  pre-registration and eye labels committed before any score. 52 stacked
+  pairs, **21 real splits** (not 45), none carrying a hi-res asset. The
+  continuity statistic catches 18/20 but wrongly merges 4 (text panels over
+  thumbnails, wide photos over narrow blocks) → **FAIL, refused**. Next is a
+  two-question local-model check graded against the committed labels.

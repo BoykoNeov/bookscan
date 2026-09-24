@@ -46,8 +46,10 @@ The three things that cost the deliverable most today, in order:
    (`vlm_box` as a search window), one is open. Blocked on a fixture shoot of
    *negatives* and on the owner's postponed call about whether a model box may
    cut. `tools/split_eval` reads **19/21 and exits 1 on purpose**.
-2. **Pictures split in two** (P3): a continuity test using `figure_hires`'s
-   correlation machinery, measured as a census on the owner's job first.
+2. **Pictures split in two** (P3): 21 real splits (census 2026-09-24, labels
+   committed); the pixel-continuity test was measured and refused (4 wrong
+   merges, all text panels or narrow blocks). Next is a two-question local-model
+   check graded against the committed labels.
 3. **Panorama** (P4) is parked, not refused: Phase 1 needs per-region
    admission and a text spread swept on the phone before any code.
 

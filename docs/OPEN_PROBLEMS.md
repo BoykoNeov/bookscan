@@ -144,6 +144,9 @@ the phone (M7, 2026-08-31, unverified on a device) exists to feed it. **Next
 experiment:** one spread of dense text, swept at 2–3×, through Phase 2 —
 before any Phase 1 code. Confident-word count AND a text diff, never the count
 alone (four times now a confidence number rose while the text got worse).
+The step-by-step session (install, shoot, sweep log, pre-registration, what
+each outcome licenses) is `plans/sweep-to-panorama-handoff.md`, written
+2026-09-24; it needs the owner with the phone.
 
 **REFUSED on the way (do not re-attempt):** lowering Stage 01's `min_inliers`
 below 8; reading each close-up separately and merging words (a wash at 1.3×

@@ -51,25 +51,20 @@ TESTSET = REPO / "testset"
 GT_PATH = TESTSET / "gt" / "gutter.json"
 BOX_GT_PATH = TESTSET / "gt" / "book_box.json"
 
-# de_* need orientation normalization; the orient_fix jobs hold the landscape
-# anchors Stage 00 produces. Everything else is read straight from testset/.
-ANCHOR_OVERRIDE = {
-    "de_01": REPO / "jobs/orient_fix_de1/page_001/01_fuse/anchor.png",
-    "de_02": REPO / "jobs/orient_fix_de2/page_001/01_fuse/anchor.png",
-}
-
-
 def load_anchor(image_id: str, spec: dict | None = None) -> np.ndarray:
     """Resolve a spread id to the image Stage 02 would actually see.
 
-    A GT entry may name its own ``anchor`` file under ``testset/``; the zoomset
-    rows do, and their anchors were verified pixel-identical to the Stage 01
-    output, so those rows are reproducible from the repo alone. ``ANCHOR_OVERRIDE``
-    (de_01/de_02) still reaches into gitignored ``jobs/`` — see gutter.json's _doc.
+    A GT entry may name its own ``anchor`` file under ``testset/``; otherwise it
+    is ``testset/<id>.jpg``. Every row now reads from the repo alone: the
+    zoomset, paleset and (since 2026-09-24) de_01/de_02 anchors were each
+    verified to decode pixel-identical to the Stage 01 output they stand for.
+    EXIF orientation is IGNORED on purpose — de_01/de_02 carry a spurious tag
+    (6 and 8) over pixels that are already upright, and honouring it would
+    grade a sideways frame Stage 00 never produces
+    (``docs/data/de_anchor_identity_20260924.json``).
     """
     named = (spec or {}).get("anchor")
-    p = (TESTSET / named) if named else (
-        ANCHOR_OVERRIDE.get(image_id) or (TESTSET / f"{image_id}.jpg"))
+    p = TESTSET / (named or f"{image_id}.jpg")
     img = cv2.imread(str(p), cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
     if img is None:
         raise FileNotFoundError(f"cannot read anchor for {image_id}: {p}")
@@ -117,11 +112,10 @@ def main(argv: list[str] | None = None) -> int:
         try:
             img = load_anchor(image_id, spec)
         except FileNotFoundError as e:
-            # de_01/de_02 grade the orientation-normalised anchors under
-            # gitignored jobs/orient_fix_de*, so on any machine but the owner's
-            # those two rows cannot be graded. Say so and keep going: a guard
-            # that crashes on row 14 grades nothing, and a row that is not
-            # graded is not a pass — the run still exits 1.
+            # Every anchor lives under testset/ now, so this means a checkout
+            # is missing an image. Say so and keep going: a guard that crashes
+            # on row 14 grades nothing, and a row that is not graded is not a
+            # pass — the run still exits 1.
             unavailable.append(image_id)
             print(f"{image_id:13} {'':>8} {'':>6} {'':>6} {'':>6} {'':>6} "
                   f"{'':>5} {'':>6} UNAVAILABLE  ({e})")
@@ -180,10 +174,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"{n_pass}/{total} spreads correct"
           + ("" if n_pass == total else "  <-- REGRESSION"))
     if unavailable:
-        print(f"{len(unavailable)} row(s) not graded on this machine — anchor "
-              f"lives in gitignored jobs/: {', '.join(unavailable)}. Their "
-              f"committed testset JPEGs are NOT the graded pixels (Stage 01 "
-              f"output), so they are not substituted.")
+        print(f"{len(unavailable)} row(s) not graded — anchor image missing "
+              f"from testset/: {', '.join(unavailable)}. Not a pass.")
     if box_gt:
         print(f"worst clipping of a labelled book by the emitted crop: "
               f"{worst_clip:.1f}%" + ("" if worst_clip == 0.0 else

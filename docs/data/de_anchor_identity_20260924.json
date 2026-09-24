@@ -1,0 +1,38 @@
+{
+ "opencv": "5.0.0",
+ "read_flags": "IMREAD_COLOR|IMREAD_IGNORE_ORIENTATION",
+ "rows": {
+  "de_01": {
+   "jpg": "testset/de_01.jpg",
+   "png": "jobs/orient_fix_de1/page_001/01_fuse/anchor.png",
+   "jpg_file_sha256": "58aae764df686599453ef43eaaefcdba7bd888dec9f8a74f782b991d1cedfde5",
+   "png_file_sha256": "b6a5a3eb572f38b1033ab2a48a349f06aa51ff66c25a11b3fc57deeb113c0961",
+   "jpg_decoded_sha256": "a2efc7360683a75a8f4ec62f2c04a01ad002eae9dc090a5c7cc0f04668941668",
+   "png_decoded_sha256": "a2efc7360683a75a8f4ec62f2c04a01ad002eae9dc090a5c7cc0f04668941668",
+   "shape_hwc": [
+    3000,
+    4000,
+    3
+   ],
+   "max_abs_diff": 0,
+   "differing_pixels": 0,
+   "jpg_exif_orientation": 6
+  },
+  "de_02": {
+   "jpg": "testset/de_02.jpg",
+   "png": "jobs/orient_fix_de2/page_001/01_fuse/anchor.png",
+   "jpg_file_sha256": "7e76713a6a5a19ed6a0ceaa8c27da4677cdc336c714b529a1829dbdb861fc9d5",
+   "png_file_sha256": "c296fd146e664abc3362a8945ae344d896df89fadb31f627ef9aa41a5ad9ac20",
+   "jpg_decoded_sha256": "31dce3ca736fc213e7ace4344c48d464df46badf442c4adef4a9397b68a626af",
+   "png_decoded_sha256": "31dce3ca736fc213e7ace4344c48d464df46badf442c4adef4a9397b68a626af",
+   "shape_hwc": [
+    3000,
+    4000,
+    3
+   ],
+   "max_abs_diff": 0,
+   "differing_pixels": 0,
+   "jpg_exif_orientation": 8
+  }
+ }
+}

@@ -324,8 +324,14 @@ It needs a Bulgarian page carrying an English/other-language block.
   layer is a second opinion through `second_opinion.py`, never the text source.
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at
   N = 3, Phase 1 pre-registered, nothing in the pipeline reads it.
-- **Caption↔figure grouping review in the editor** (ranked above exact order by
-  the owner): the linear-order review half exists; the grouping half does not.
+- ~~Caption↔figure grouping review in the editor~~ — **BUILT** (stale line
+  corrected 2026-09-24). Pairing, re-pairing and unpairing a caption, and a
+  marker on every caption that will print alone, shipped earlier; 2026-09-24
+  added a "check this pair" marker on pairs guessed from position (`geometry`,
+  `sole_figure`) with a one-click Confirm — 8 on the owner's book, besides its
+  12 unpaired captions. Number-keyed pairs are not marked. What is NOT built:
+  pairing a caption to a picture on the other page of the spread (the schema
+  can hold it; neither editor nor renderer does it).
 
 ---
 

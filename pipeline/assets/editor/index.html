@@ -318,6 +318,24 @@ function captionNeedsPairing(blk){
   if(captionClaimLost(blk) || refIsDead(blk)) return true;
   return !blk.figure_ref && blk.pair_source!=="user"; }
 function pageCaptionsNeedingPairing(){ return page().blocks.filter(captionNeedsPairing); }
+// "check this pair" = the grouping pass paired this caption from WHERE it sits
+// (geometry) or because it is the page's only caption and only picture (sole_figure),
+// not from a printed number. Those are the guesses page_model.PairSource says a
+// reviewer should see; a number-keyed pair (the number is printed in the book) is left
+// alone. Confirming stamps pair_source="user" on the same figure_ref: a human ruling,
+// which is also what the renderer lets win if two captions ever claim the picture.
+const GUESSED_PAIR = new Set(["geometry","sole_figure"]);
+function pairNeedsCheck(blk){
+  return isCaption(blk) && live(blk) && GUESSED_PAIR.has(blk.pair_source)
+    && !!pairedFigure(blk) && !captionClaimLost(blk);
+}
+function pageGuessedPairs(){ return page().blocks.filter(pairNeedsCheck); }
+function confirmPair(blk){
+  const f = pairedFigure(blk); if(!f) return;
+  pushUndo("confirm caption pair");
+  blk.pair_source = "user";
+  markDirty(); renderPage(); renderBlockList(); renderInspector();
+}
 function partnerId(blk){                          // block to highlight alongside the selection
   if(isCaption(blk)){ const f=pairedFigure(blk); return f ? f.id : null; }
   if(isFigure(blk)){ const c=captionForFigure(blk); return c ? c.id : null; }
@@ -657,13 +675,14 @@ function drawOverlays(){
     const needsRev = orderNeedsReview(blk);
     const needsPair = captionNeedsPairing(blk);
     if(needsRev) b.classList.add("review");
-    if(needsPair) b.classList.add("pairing");
+    if(needsPair || pairNeedsCheck(blk)) b.classList.add("pairing");
     if(partner===blk.id) b.classList.add("partner");   // the caption/figure of the selection
     if(mergeIn.has(blk.id)) b.classList.add("mergein"); // would be merged into the selection
     if(blk.deleted) b.classList.add("deleted");
     if(state.selBlock===blk.id) b.classList.add("sel");
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
-    const pairMark = fig ? (captionClaimLost(blk) ? ` →#${fig.id} ⚠` : ` →#${fig.id}`)
+    const pairMark = fig ? (captionClaimLost(blk) ? ` →#${fig.id} ⚠`
+                                                  : ` →#${fig.id}${pairNeedsCheck(blk) ? " ?" : ""}`)
                          : (needsPair ? " ⛓" : "");
     const lbl = el("span","lbl",
       `${blk.reading_order} ${blk.type}${blk.deleted?" (deleted)":""}${blk.is_surface?" (surface)":""}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}${pairMark}`);
@@ -752,6 +771,8 @@ function blockEditor(blk){
     else if(captionNeedsPairing(blk)) head.appendChild(el("span","badge pair","no figure"));
     else if(blk.pair_source==="user")
       head.appendChild(el("span","badge edited", blk.figure_ref ? "pair: you" : "unpaired: you"));
+    else if(pairNeedsCheck(blk))
+      head.appendChild(el("span","badge pair","pair: guessed — check"));
     else if(blk.figure_ref)
       head.appendChild(el("span","badge","pair: "+(blk.pair_source||"?")));
   }
@@ -1056,6 +1077,16 @@ function pairingField(blk){
     go.style.marginTop="6px"; go.onclick=()=>selectBlock(other.id);
     f.appendChild(go);
   }
+  if(pairNeedsCheck(blk)){
+    const how = blk.pair_source==="sole_figure"
+      ? "it is the only caption and the only picture on this page"
+      : "of where it sits next to the picture";
+    f.appendChild(el("div","small muted",
+      `this pair was guessed because ${how}, not read from a printed number —`
+      + " check the highlighted picture, then confirm, pick another, or unpair"));
+    const ok=el("button","confirmpair","Confirm pair ✓"); ok.style.marginTop="6px";
+    ok.onclick=()=>confirmPair(blk); f.appendChild(ok);
+  }
   if(blk.figure_ref){
     const un=el("button",null,"Unpair"); un.style.marginTop="6px";
     un.onclick=()=>setPair(blk,null); f.appendChild(un);
@@ -1085,6 +1116,16 @@ function renderBlockList(){
     bar.appendChild(el("span","grow",
       `${unpaired} caption${unpaired>1?"s":""} on this page will print on their own `
       + "(no figure, or the figure went to another caption)"));
+    host.appendChild(bar);
+  }
+  // No bulk "confirm all" either: each guessed pair is one look at one picture.
+  const guessed = pageGuessedPairs().length;
+  if(guessed){
+    const bar = el("div","reviewbar pair small guessbar");
+    bar.appendChild(el("span","dot pair"));
+    bar.appendChild(el("span","grow",
+      `${guessed} caption pair${guessed>1?"s":""} on this page ${guessed>1?"were":"was"} guessed`
+      + " from position — select the caption to check"));
     host.appendChild(bar);
   }
   host.appendChild(el("div","small muted",
@@ -1122,7 +1163,7 @@ function renderBlockList(){
       + (blk.deleted?" · deleted (not printed)":""));
     row.appendChild(t);
     if(orderNeedsReview(blk)) row.appendChild(el("span","dot review"));
-    if(captionNeedsPairing(blk)) row.appendChild(el("span","dot pair"));
+    if(captionNeedsPairing(blk) || pairNeedsCheck(blk)) row.appendChild(el("span","dot pair"));
     if(blk.structure_edited) row.appendChild(el("span","ty","*"));
     row.onclick=()=>selectBlock(blk.id);
     host.appendChild(row);
@@ -1152,7 +1193,8 @@ function renderSettings(){
   host.appendChild(el("div","small muted",
     "review: mark every block's reading order for confirm/correct before reconstruction. "
     + "Caption↔figure grouping is separate and has no mode — select a caption to pair, "
-    + "repair or detach it (unpaired captions are marked on every page)."));
+    + "repair or detach it (unpaired captions, and pairs guessed from position rather than "
+    + "a printed number, are marked on every page)."));
 
   const src=el("input"); src.value=s.source_language||"";
   src.onchange=()=>{ pushUndo("change source language"); s.source_language=src.value; markDirty(); };

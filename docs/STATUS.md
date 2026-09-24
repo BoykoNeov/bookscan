@@ -754,3 +754,14 @@ rules for it:
 - Checked on a copy of the owner's job (`tools/delete_block_check.py`, RESULTS
   2026-09-24): the P3 wart on `page_023__right` is gone — #15's text no longer
   prints and the map shows "15A" where the patch was.
+
+### 2026-09-24 — editor: guessed caption pairs are marked for checking
+
+- The P10 line "grouping review not built" was stale: pairing/unpairing and the
+  "will print alone" marker already existed. Added the missing half the
+  `PairSource` docstring anticipated: a caption paired by `geometry` or
+  `sole_figure` is marked "pair: guessed — check" (page outline, list dot, a
+  per-page bar) with **Confirm pair**, which stamps `pair_source = user` on the
+  same picture. Number pairs are left alone; no bulk confirm. No schema change.
+  On a copy of the owner's job: 8 guessed pairs marked, 12 unpaired captions
+  marked (unchanged). Whether the 8 are right is the owner's look.

@@ -1460,5 +1460,73 @@ def test_e2e_deleting_a_picture_marks_its_caption(job: Path):
             browser.close()
 
 
+# --------------------------------------------------------------------------
+# Guessed pairs — a caption paired from position (geometry / sole_figure), not from
+# a printed number, is marked for the operator to check and confirm. A number-keyed
+# pair is left alone (page_model.PairSource). Confirming stamps pair_source="user"
+# on the SAME figure_ref.
+# --------------------------------------------------------------------------
+
+
+def _set_pair_source(job: Path, source: PairSource) -> None:
+    doc = ED.load_document(job)
+    doc.pages[0].blocks[3].pair_source = source
+    (job / "document.json").write_text(doc.model_dump_json(indent=2), encoding="utf-8")
+
+
+@pytest.mark.e2e
+@pytest.mark.parametrize("source", [PairSource.NUMBER, PairSource.GEOMETRY,
+                                    PairSource.SOLE_FIGURE])
+def test_e2e_guessed_pair_is_marked_and_confirmed(job: Path, source: PairSource):
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    _set_pair_source(job, source)
+    guessed = source is not PairSource.NUMBER
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            marks = lambda: (pg.query_selector("#blocklist .guessbar") is not None,
+                             len(pg.query_selector_all("#blocklist .blockrow .dot.pair")),
+                             len(pg.query_selector_all("#ovBlocks .bbox.pairing")))
+            assert marks() == ((True, 1, 1) if guessed else (False, 0, 0))
+            _select_row(pg, 3)
+            text = pg.text_content("#inspector")
+            if not guessed:                   # a printed number is not second-guessed
+                assert "guessed" not in text
+                assert pg.query_selector("#inspector button.confirmpair") is None
+                return
+            assert "pair: guessed — check" in text
+            assert ("only caption and the only picture" in text) is (
+                source is PairSource.SOLE_FIGURE)
+            assert pg.query_selector("#ovBlocks .bbox.partner") is not None   # the picture
+            pg.click("#inspector button.confirmpair")
+            blk = _page_blocks(pg)[3]
+            assert blk["pair_source"] == "user" and blk["figure_ref"]["block_id"] == 2
+            assert marks() == (False, 0, 0)
+            assert "pair: you" in pg.text_content("#inspector")
+            pg.click("#undo")
+            assert _page_blocks(pg)[3]["pair_source"] == source.value
+            assert marks() == (True, 1, 1)
+            _select_row(pg, 3)
+            pg.click("#inspector button.confirmpair")
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+            assert "edits protected" in pg.text_content("#status")
+        finally:
+            browser.close()
+
+    blk = ED.load_document(job).pages[0].blocks[3]
+    assert blk.pair_source is PairSource.USER
+    assert blk.figure_ref.block_id == 2 and blk.figure_ref.page_id == "page_001__single"
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))

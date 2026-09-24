@@ -1,0 +1,423 @@
+{
+ "_doc": "Eye labels for docs/data/three_edge_cue_prereg_20260924.md, G3. Written 2026-09-24 BEFORE the probe ran, from 480x360 thumbnails of each 01_fuse/anchor.png with only the frame border drawn (no detector box). reach[edge]: does the book content (the two visible pages, book_box.json convention) reach that frame edge ('yes') or come within ~6% of it ('near'), else 'no'. 'near' counts as reaching (conservative: it can only make a fire look false). Scene = one book x surface x session; n counts scenes.",
+ "frames": [
+  {
+   "frame": "jobs/20260818-144545-7c21f083/page_001/01_fuse/anchor.png",
+   "scene": "S1 coin book on grey sofa (08-18)",
+   "reach": {
+    "left": "yes",
+    "top": "yes",
+    "right": "yes",
+    "bottom": "yes"
+   },
+   "note": "coin book, tight"
+  },
+  {
+   "frame": "jobs/20260818-144649-0d501ac9/page_001/01_fuse/anchor.png",
+   "scene": "S1 coin book on grey sofa (08-18)",
+   "reach": {
+    "left": "yes",
+    "top": "yes",
+    "right": "yes",
+    "bottom": "yes"
+   },
+   "note": "coin book, tight"
+  },
+  {
+   "frame": "jobs/20260819-064025-6b4cc4ac/page_001/01_fuse/anchor.png",
+   "scene": "S2 guidebook on lap (08-19)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "lap, left edge ~7% in"
+  },
+  {
+   "frame": "jobs/20260819-064025-6b4cc4ac/page_002/01_fuse/anchor.png",
+   "scene": "S2 guidebook on lap (08-19)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "lap"
+  },
+  {
+   "frame": "jobs/20260819-064025-6b4cc4ac/page_003/01_fuse/anchor.png",
+   "scene": "S2 guidebook on lap (08-19)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "lap"
+  },
+  {
+   "frame": "jobs/20260819-064025-6b4cc4ac/page_004/01_fuse/anchor.png",
+   "scene": "S2 guidebook on lap (08-19)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "lap"
+  },
+  {
+   "frame": "jobs/20260828-092505-15c41a76/page_001/01_fuse/anchor.png",
+   "scene": "S3a coin book on lap (08-28)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "lap; right and bottom pages within ~6%"
+  },
+  {
+   "frame": "jobs/20260828-092505-15c41a76/page_002/01_fuse/anchor.png",
+   "scene": "S3b coin book on grey sofa (08-28)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "grey sofa"
+  },
+  {
+   "frame": "jobs/20260828-094929-677fd774/page_001/01_fuse/anchor.png",
+   "scene": "S4 coin book on yellow mat (08-28)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "yellow mat on sofa; right page near edge"
+  },
+  {
+   "frame": "jobs/20260828-095443-6f59677f/page_001/01_fuse/anchor.png",
+   "scene": "S5 tight text spreads (08-28)",
+   "reach": {
+    "left": "yes",
+    "top": "yes",
+    "right": "yes",
+    "bottom": "yes"
+   },
+   "note": "tight text spread"
+  },
+  {
+   "frame": "jobs/20260828-095443-6f59677f/page_002/01_fuse/anchor.png",
+   "scene": "S5 tight text spreads (08-28)",
+   "reach": {
+    "left": "yes",
+    "top": "yes",
+    "right": "yes",
+    "bottom": "yes"
+   },
+   "note": "tight text spread"
+  },
+  {
+   "frame": "jobs/20260828-095443-6f59677f/page_003/01_fuse/anchor.png",
+   "scene": "S5 tight text spreads (08-28)",
+   "reach": {
+    "left": "yes",
+    "top": "yes",
+    "right": "yes",
+    "bottom": "yes"
+   },
+   "note": "tight text spread"
+  },
+  {
+   "frame": "jobs/20260829-082508-b9e6fec9/page_001/01_fuse/anchor.png",
+   "scene": "S6 owner's guidebook on sofa (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "closed cover on sofa"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_001/01_fuse/anchor.png",
+   "scene": "S6 owner's guidebook on sofa (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "sofa spread 1"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_002/01_fuse/anchor.png",
+   "scene": "S6 owner's guidebook on sofa (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "sofa spread 2; left page ~6% in"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_003/01_fuse/anchor.png",
+   "scene": "S6 owner's guidebook on sofa (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "sofa spread 3"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_004/01_fuse/anchor.png",
+   "scene": "S6 owner's guidebook on sofa (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "sofa spread 4"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_005/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_006/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_007/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_008/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_009/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_010/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_011/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_012/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_013/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_014/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_015/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_016/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_017/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_018/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_019/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_020/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_021/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_022/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair; left page ~6% in"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_023/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_024/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair; left page ~5% in"
+  },
+  {
+   "frame": "jobs/20260829-084115-de3c20d3/page_025/01_fuse/anchor.png",
+   "scene": "S7 owner's guidebook on dark chair (08-29)",
+   "reach": {
+    "left": "no",
+    "top": "no",
+    "right": "no",
+    "bottom": "no"
+   },
+   "note": "dark chair"
+  }
+ ]
+}

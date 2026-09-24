@@ -90,3 +90,22 @@ too, and that case is not in this population.
 The baseline in gate clause 1 read "59"; the committed census sums to 60 (57
 left/right: D4 p2 1, D6 p1 40, D6 p3 16; 3 top/bottom: D2 p1, D2 p3, D4 p1). The
 threshold (at most 3) is unchanged.
+
+## Addendum, 2026-09-24 — after both border widths were REFUSED, before any number for this arm
+
+Both widths failed the gate (15 %: other pages -2.97 %, worst -23.6 %; 25 %:
+-5.04 %, worst -25.5 %, control down too); no third width, as fixed above. The
+reason is visible, not inferred: with a white frame UVDoc *bends* a page that was
+flat (D3 page 1's right column slopes and curves).
+
+The next arm named above is measured now, before any number exists for it:
+**skip flattening for imported pages** — the Stage 03 image of an imported page
+is its Stage 02 image, unchanged. Same 24 pages, same measures, same gate
+(clauses 1–3 as written; the fallback clause does not apply). Produced on a copy
+by writing each page's `03_dewarp/<name>` as a copy of `02_split/<name>` and
+running Stages 04–06 unchanged.
+
+Also reported: D5 (flattening was what removed its black scanner frame; without
+it the frame stays — look for junk blocks or words), and the same re-check of the
+text-layer marker's labelled sites. Stated limit: none of the 20 scanned pages is
+a crooked scan, so what is lost by not straightening one is NOT measured here.

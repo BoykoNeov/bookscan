@@ -39,11 +39,15 @@ nothing in ``jobs/``. Publishing copies it in with each page's frames under
 ``raw.importing/`` — invisible to that scan — and only then renames every one to
 ``raw/`` and writes ``job.json``.
 
-**Processing starts when the console does.** The importer does not talk to a
-running server: the console's queue lives in memory and is filled from disk
-only at startup (``server/reconcile.py``), so an import made while the console
-is open waits for its next start. The console import button (Slice 2) is what
-would enqueue directly.
+**From the command line, processing starts when the console does.** This CLI
+does not talk to a running server: the console's queue lives in memory and is
+filled from disk only at startup (``server/reconcile.py``), so an import made
+here while the console is open waits for its next start. The console's own
+**Import PDF** button (``server/routes_import.py``, Slice 2) calls
+``import_pdf`` in-process and enqueues every page the moment the job is
+published, so it needs no restart. A runtime "rescan for new pages" was
+deliberately NOT added instead: the phone upload writes ``raw/`` a moment before
+it enqueues, and a rescan landing in that gap would run the page twice.
 
 Usage::
 
@@ -64,6 +68,7 @@ import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 from pydantic import BaseModel, Field
@@ -159,22 +164,43 @@ def _render_size(page, dpi: int) -> tuple[int, int]:
     return int(round(r.width * dpi / 72.0)), int(round(r.height * dpi / 72.0))
 
 
-def survey(pdf_path: Path, dpi: int = 300, layout: str = "detect") -> tuple[list[ImportedPage], list[str]]:
-    """Every page's verdict, WITHOUT rendering anything — what ``--dry-run`` shows."""
+def survey(pdf_path: Path, dpi: int = 300, layout: str = "detect",
+           page_layouts: dict[int, str] | None = None) -> tuple[list[ImportedPage], list[str]]:
+    """Every page's verdict, WITHOUT rendering anything — what ``--dry-run`` and
+    the console's Import PDF check show.
+
+    ``page_layouts`` maps a 1-based PDF page number to ``single``/``spread`` and
+    wins over ``layout`` for that page (provenance ``operator``): the console's
+    per-page toggle. A page number the PDF does not have is an error, not ignored.
+    """
     import fitz
 
     if layout not in ("detect", "single", "spread"):
         raise ValueError(f"layout must be detect|single|spread, not {layout!r}")
+    page_layouts = dict(page_layouts or {})
+    bad = {k: v for k, v in page_layouts.items() if v not in ("single", "spread")}
+    if bad:
+        raise ValueError(f"a page's layout must be single|spread, not {bad}")
+    unreadable = None
     try:
         doc = fitz.open(pdf_path)
     except Exception as e:
-        raise ImportRefused(f"cannot open {pdf_path.name} as a PDF: {e}") from e
+        unreadable = f"cannot open {pdf_path.name} as a PDF: {e}"
+    if unreadable is not None:
+        # Raised outside the except block and unchained on purpose: MuPDF's
+        # exception keeps the half-opened file alive through its traceback, and
+        # on Windows that file cannot be deleted while it is (WinError 32) — the
+        # console deletes a refused upload right after this returns.
+        raise ImportRefused(unreadable)
     try:
         if doc.needs_pass:
             raise ImportRefused(f"{pdf_path.name} is password-protected; remove the "
                                 f"password first (nothing was imported)")
         if doc.page_count == 0:
             raise ImportRefused(f"{pdf_path.name} has no pages")
+        outside = sorted(k for k in page_layouts if not 1 <= k <= doc.page_count)
+        if outside:
+            raise ValueError(f"{pdf_path.name} has {doc.page_count} pages; no page {outside}")
         pages, warnings = [], []
         for i, page in enumerate(doc):
             w, h = _render_size(page, dpi)
@@ -183,6 +209,8 @@ def survey(pdf_path: Path, dpi: int = 300, layout: str = "detect") -> tuple[list
                 verdict, source = ("spread" if aspect > SPREAD_ASPECT else "single"), "pdf_import_aspect"
             else:
                 verdict, source = layout, "operator"
+            if i + 1 in page_layouts:
+                verdict, source = page_layouts[i + 1], "operator"
             cov = image_coverage(page)
             pages.append(ImportedPage(
                 page=f"page_{i + 1:03d}", pdf_page=i + 1, width=w, height=h,
@@ -196,12 +224,18 @@ def survey(pdf_path: Path, dpi: int = 300, layout: str = "detect") -> tuple[list
 def import_pdf(pdf_path: Path, jobs_root: Path, *, dpi: int = 300,
                layout: str = "detect", mode: str = "flag", lang: str | None = None,
                job_id: str | None = None, allow_vector: bool = False,
-               staging_root: Path | None = None) -> ImportResult:
+               staging_root: Path | None = None,
+               page_layouts: dict[int, str] | None = None,
+               on_page: Callable[[int, int], None] | None = None) -> ImportResult:
     """Render every page of ``pdf_path`` into a new job under ``jobs_root``.
 
     Raises ``ImportRefused`` (and writes nothing to ``jobs_root``) when the PDF is
     unreadable, encrypted, empty, or has a page that is not a scan (unless
     ``allow_vector``). Any other failure also leaves nothing in ``jobs_root``.
+
+    ``page_layouts`` is ``survey``'s per-page override. ``on_page(done, total)``
+    is called after each page is rendered into staging — progress only: the job
+    stays invisible until the last page is in and ``_publish`` has run.
     """
     import fitz
 
@@ -220,7 +254,7 @@ def import_pdf(pdf_path: Path, jobs_root: Path, *, dpi: int = 300,
         raise ImportRefused(f"{final} already exists; importing never adds pages "
                             f"to an existing job")
 
-    pages, warnings = survey(pdf_path, dpi, layout)
+    pages, warnings = survey(pdf_path, dpi, layout, page_layouts)
     not_scans = [p for p in pages if not p.is_scan]
     if not_scans and not allow_vector:
         listed = ", ".join(f"{p.pdf_page} ({p.image_coverage:.0%} image)"
@@ -265,6 +299,8 @@ def import_pdf(pdf_path: Path, jobs_root: Path, *, dpi: int = 300,
                     "aspect": p.aspect,
                     "note": f"{pdf_path.name} page {p.pdf_page} at {dpi} dpi",
                 }, indent=1), encoding="utf-8")
+                if on_page is not None:
+                    on_page(p.pdf_page, len(pages))
         finally:
             doc.close()
         (staging / "import.json").write_text(result.model_dump_json(indent=2),
@@ -369,9 +405,10 @@ def main(argv: list[str] | None = None) -> int:
     for w in res.warnings:
         print(f"  warning: {w}")
     print(f"imported {res.page_count} pages into {args.jobs_root / res.job_id} "
-          f"in {time.perf_counter() - t0:.1f}s. The console picks up new pages only "
-          f"when it STARTS: start it (bookscan.bat), or restart it if it is already "
-          f"open. One page by hand: python -m pipeline.run_all "
+          f"in {time.perf_counter() - t0:.1f}s. The console picks up pages imported "
+          f"HERE only when it STARTS: start it (bookscan.bat), or restart it if it is "
+          f"already open (the console's own Import PDF button needs no restart). "
+          f"One page by hand: python -m pipeline.run_all "
           f"{args.jobs_root / res.job_id / 'page_001'}")
     return 0
 

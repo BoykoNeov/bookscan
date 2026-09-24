@@ -15,7 +15,7 @@ these plans feed are ranked in `../OPEN_PROBLEMS.md`.
 | `partitioned-questing-pillow.md` | **DONE** (Gate 5 server; console shipped 2026-08-29). | The desktop FastAPI server. |
 | `max-quality-fusion.md` | **SUPERSEDED by measurement.** Stage 01 stitching registers 6/317 close-ups with ORB (227/317 with SIFT) and painting them doubles text; the resolution is collected at Stage 07 instead (`figure_hires`). See `panorama-and-next-steps.md` for the live version of this idea. | The original multi-zoom fusion design. |
 | `multiview-curvature.md` + `multiview-phase1-prereg.md` | **RESEARCH, not shipped.** Phase 0 passed at N=3; Phase 1 pre-registered; nothing in the pipeline reads it. | Correcting page curvature from several angles. |
-| `pdf-import.md` | **Slice 1 BUILT** 2026-09-24 (CLI importer + declared single pages in Stage 02); Slice 2 (console button) and Slice 3 (text layer as a second opinion) not started. | Importing a PDF as if it were scanned pages. |
+| `pdf-import.md` | **Slices 1 and 2 BUILT** 2026-09-24 (CLI importer + declared single pages in Stage 02; the console's Import PDF button). Slice 3 (text layer as a second opinion): measurement pre-registered, not built. | Importing a PDF as if it were scanned pages. |
 
 Two documents that are not plans but are read like one:
 

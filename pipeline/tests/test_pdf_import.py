@@ -235,3 +235,53 @@ def test_dry_run_writes_nothing(tmp_path: Path, capsys):
     out = capsys.readouterr().out
     assert rc == 0 and "-> spread" in out and "-> single" in out and "dry run" in out
     assert not jobs.exists() or _job_dirs(jobs) == []
+
+
+def test_a_per_page_override_wins_for_that_page_only(tmp_path: Path):
+    """The console's per-page toggle: one page changed, the others keep the guess."""
+    pdf, _ = _scan_pdf(tmp_path)
+    seen = []
+    res = PI.import_pdf(pdf, tmp_path / "jobs", dpi=DPI, job_id="imp6",
+                        staging_root=tmp_path / "st", page_layouts={2: "spread"},
+                        on_page=lambda done, total: seen.append((done, total)))
+    assert [(p.layout, p.layout_source) for p in res.pages] == [
+        ("spread", "pdf_import_aspect"), ("spread", "operator")]
+    lay = json.loads((tmp_path / "jobs" / "imp6" / "page_002" / "page_layout.json")
+                     .read_text())
+    assert (lay["layout"], lay["source"]) == ("spread", "operator")
+    assert seen == [(1, 2), (2, 2)]
+
+
+def test_no_override_and_no_callback_is_the_old_import(tmp_path: Path):
+    """Adding the two options must not change what a plain import writes."""
+    pdf, _ = _scan_pdf(tmp_path)
+    a = PI.import_pdf(pdf, tmp_path / "ja", dpi=DPI, job_id="a", staging_root=tmp_path / "st")
+    b = PI.import_pdf(pdf, tmp_path / "jb", dpi=DPI, job_id="a", staging_root=tmp_path / "st",
+                      page_layouts={}, on_page=None)
+    assert [p.model_dump() for p in a.pages] == [p.model_dump() for p in b.pages]
+    for page in ("page_001", "page_002"):
+        for rel in ("raw/frame_00.png", "page_layout.json"):
+            assert (tmp_path / "ja" / "a" / page / rel).read_bytes() == \
+                   (tmp_path / "jb" / "a" / page / rel).read_bytes()
+
+
+@pytest.mark.parametrize("bad", [{3: "single"}, {0: "single"}, {1: "sideways"}])
+def test_a_bad_per_page_override_is_an_error_not_ignored(tmp_path: Path, bad):
+    pdf, _ = _scan_pdf(tmp_path)
+    with pytest.raises(ValueError):
+        PI.survey(pdf, DPI, page_layouts=bad)
+
+
+def test_an_exception_from_the_progress_callback_leaves_nothing(tmp_path: Path):
+    """The console cancels an import by raising from on_page."""
+    pdf, _ = _scan_pdf(tmp_path)
+    jobs = tmp_path / "jobs"
+    jobs.mkdir()
+
+    def stop(done, total):
+        raise RuntimeError("stop")
+
+    with pytest.raises(RuntimeError, match="stop"):
+        PI.import_pdf(pdf, jobs, dpi=DPI, job_id="imp7", staging_root=tmp_path / "st",
+                      on_page=stop)
+    assert _job_dirs(jobs) == [] and not (tmp_path / "st" / "imp7").exists()

@@ -24,11 +24,13 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
+from pipeline import pdf_import as PI
 from pipeline.stage04_layout import load_config
 from server import jobs as J
 from server import reconcile as R
 from server.routes_assemble import router as assemble_router
 from server.routes_editor import router as editor_router
+from server import routes_import
 from server.routes_jobs import router as jobs_router
 from server.routes_pages import router as pages_router
 from server.routes_render import router as render_router
@@ -48,6 +50,7 @@ async def _lifespan(app: FastAPI):
     resumed = R.resume(app.state.jobs_root, app.state.worker)
     app.state.resumed_pages = [str(p) for p in resumed]
     yield
+    routes_import.cancel_running(app)
     await app.state.worker.stop()
 
 
@@ -64,12 +67,18 @@ def create_app(config_path: Path | None = None) -> FastAPI:
     # the Android app's whole model is rapid concurrent-upload traffic to one
     # job, and page numbering must never race (see gate5-progress memory).
     app.state.upload_lock = asyncio.Lock()
+    # The console's Import PDF (server/routes_import.py): checked and running
+    # imports by token, the tasks running them, and where they render.
+    app.state.imports = {}
+    app.state.import_tasks = set()
+    app.state.import_staging = PI.staging_dir(cfg)
 
     app.include_router(jobs_router)
     app.include_router(pages_router)
     app.include_router(assemble_router)
     app.include_router(render_router)
     app.include_router(editor_router)
+    app.include_router(routes_import.router)
 
     @app.get("/api/health")
     def health() -> dict:

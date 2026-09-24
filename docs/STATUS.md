@@ -805,3 +805,35 @@ rules for it:
 - Deleted blocks: `Block.order_review_visible` now skips them like the editor
   does, and Stage 08's meta counts (blocks, words, flags, figures, unreviewed)
   count only what renders.
+
+### 2026-09-24 — PDF import, Slice 2: the console's Import PDF button
+
+- **What the operator does:** jobs list → *Import PDF* → choose the file (and a
+  resolution, 300 dpi by default) → *Check*. The console lists every page: its
+  pixel size, wide or tall, how much of it is picture, and the spread/single
+  guess with a per-page selector (plus "set every page to"). Pages made by
+  software are named in red and need an explicit "import anyway" tick. Mode and
+  OCR language are chosen on the same screen. *Import* renders the pages with
+  a progress bar; when the last page is in, the job appears and every page is
+  queued on the worker at once — **no restart**.
+- `server/routes_import.py`: upload + survey (`POST /api/imports`, creates no
+  job), start (`POST /api/imports/{token}/start`), progress (`GET`), discard
+  (`DELETE`). It calls `pdf_import.import_pdf` unchanged, so every refusal and
+  the all-or-nothing publish are the importer's. One import renders at a time
+  (409 otherwise). A shutdown mid-render stops after the current page and
+  publishes nothing. Uploads live beside the importer's staging folder, never
+  inside it (`import_pdf` wipes `<staging>/<job_id>`), and keep the PDF's own
+  (sanitised) name, which `import.json` records.
+- `pdf_import`: `page_layouts` (per-page override, provenance `operator`) and an
+  `on_page` progress callback; with neither, the output is byte-identical
+  (tested). Also fixed: on Windows a PDF that MuPDF failed to open stayed locked
+  while the error was alive, so a refused upload could not be deleted (measured
+  WinError 32); the refusal is now raised unchained, outside the handler.
+- **Not added, on purpose:** a runtime "rescan for new pages". The phone upload
+  writes `raw/` a moment before it enqueues, so a rescan landing in that gap
+  would run the page twice. A CLI import still waits for the console's next
+  start, and the CLI says so.
+- Verified in a real browser (Playwright, a throwaway jobs folder) on a two-page
+  cut of a real ABBYY-produced scan: check → per-page change → reload keeps the
+  checked PDF → import → job page with pages running/queued → both pages done
+  through Stage 06 in ~20 s each. Suite 809 passed.

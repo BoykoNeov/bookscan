@@ -13,14 +13,16 @@
   diagnosis. Everything below is plain DOM + fetch.
 
   It is a READ-ONLY view of the per-page trace. The only calls that change
-  anything are the three explicit buttons (re-run a page, assemble, render), and
-  each of those goes through an existing server route that subprocesses the
-  pipeline. Nothing here writes an artifact.
+  anything are the explicit buttons (re-run a page, assemble, render, import a
+  PDF), and each of those goes through a server route. Nothing here writes an
+  artifact.
 
   Routing is by hash so the browser Back button works and a page view can be
   bookmarked:  #/            job list
                #/<job>       one job, its pages, its outputs
                #/<job>/<pg>  one page's trace
+               #import[/<t>] import a PDF (<t> = a checked upload's token).
+                             No leading slash, so it can never be a job id.
 -->
 <style>
   :root {
@@ -174,10 +176,12 @@ async function api(path, opts) {
 // ---------------------------------------------------------------- state
 const S = { jobs: [], job: null, jobId: null, page: null, inspect: null,
             words: null, tab: null, sub: 0, show: "words", onlyUncertain: false,
-            selWord: null, poll: null };
+            selWord: null, poll: null, imp: null, impLayouts: {} };
 
 // ---------------------------------------------------------------- routing
 function route() {
+  const imp = location.hash.match(/^#import(?:\/([0-9a-f]+))?$/);
+  if (imp) return { job: null, page: null, importToken: imp[1] || null, isImport: true };
   const h = location.hash.replace(/^#\/?/, "");
   const [job, page] = h.split("/").filter(Boolean);
   return { job: job || null, page: page || null };
@@ -548,6 +552,202 @@ function startPolling() {
 }
 function stopPolling() { if (S.poll) { clearInterval(S.poll); S.poll = null; } }
 
+// ---------------------------------------------------------------- import a PDF
+// Two steps on purpose (docs/plans/pdf-import.md): Check uploads and SURVEYS the
+// PDF (each page's shape, whether it is a scan) and creates nothing; the
+// operator can then change any page's single/spread verdict; only Import renders
+// and creates the job, whose pages the server then queues itself.
+const bytesText = (b) => b >= 1e9 ? `${(b / 1e9).toFixed(1)} GB` : `${Math.max(1, Math.round(b / 1e6))} MB`;
+const SEL = "font:inherit;background:#1b2334;color:inherit;border:1px solid #33415c;border-radius:4px;padding:1px 4px";
+let impPoll = null;
+function stopImportPolling() { if (impPoll) { clearTimeout(impPoll); impPoll = null; } }
+
+async function renderImport(token) {
+  const m = document.getElementById("main");
+  document.getElementById("crumbs").innerHTML = `<a href="#/">jobs</a> / import a PDF`;
+  if (!token) { S.imp = null; S.impLayouts = {}; return renderImportForm(); }
+  if (!S.imp || S.imp.token !== token) {
+    try { S.imp = await api(`/api/imports/${token}`); S.impLayouts = {}; }
+    catch (e) {
+      m.innerHTML = `<h2>Import a PDF</h2><p class="muted">That import is gone
+        (${esc(e.message)}). The server forgets a checked PDF when it restarts.</p>
+        <p><a href="#import">Start again</a></p>`;
+      return;
+    }
+  }
+  renderImportChecked();
+}
+
+function renderImportForm() {
+  const m = document.getElementById("main");
+  m.innerHTML = `<h2>Import a PDF</h2>
+    <p class="muted" style="max-width:760px">A scanned book or article becomes a new job,
+      one page folder per PDF page. Each page is rendered to an image and goes through
+      the same pipeline as the phone's photographs. The PDF's own hidden text, if it
+      has any, is not used.</p>
+    <div class="row" style="margin:14px 0">
+      <input type="file" id="i-file" accept=".pdf,application/pdf">
+      <label class="row" style="gap:5px">resolution
+        <input type="number" id="i-dpi" value="300" min="72" max="1200" step="1"
+          style="width:5.5em;${SEL}"> dpi</label>
+      <button id="i-check" class="primary">Check</button>
+    </div>
+    <p class="muted">Check reads the PDF and lists what will be created. Nothing is
+      created until you press Import.</p>
+    <p id="i-msg"></p>`;
+  document.getElementById("i-check").onclick = async () => {
+    const f = document.getElementById("i-file").files[0];
+    const msg = document.getElementById("i-msg");
+    const say = (text, bad) => { msg.textContent = text; msg.style.color = bad ? "var(--bad)" : "var(--dim)"; };
+    if (!f) return say("Choose a PDF first.", true);
+    const dpi = +document.getElementById("i-dpi").value || 300;
+    const btn = document.getElementById("i-check");
+    btn.disabled = true;
+    say(`Uploading and reading ${f.name}…`);
+    const fd = new FormData();
+    fd.append("file", f);
+    try {
+      S.imp = await api(`/api/imports?dpi=${dpi}`, { method: "POST", body: fd });
+      S.impLayouts = {};
+      location.hash = `#import/${S.imp.token}`;
+    } catch (e) {
+      say(`Not imported: ${e.message}`, true);
+      btn.disabled = false;
+    }
+  };
+}
+
+function impLayout(p) { return S.impLayouts[p.pdf_page] || p.layout; }
+
+function renderImportChecked() {
+  const m = document.getElementById("main");
+  const imp = S.imp;
+  const head = `<h2>${esc(imp.pdf)}</h2>
+    <p class="muted">${plural(imp.page_count, "page")} at ${imp.dpi} dpi, about
+      ${bytesText(imp.estimated_bytes)} of pixels before compression.</p>`;
+
+  if (imp.state === "running") {
+    m.innerHTML = head + `<p>Rendering page ${imp.done} of ${imp.page_count}…</p>
+      <div style="height:6px;background:#333c4c;border-radius:3px;max-width:520px">
+        <div style="height:6px;border-radius:3px;background:var(--accent);width:${pct(imp.done, imp.page_count)}%"></div></div>
+      <p class="muted">The job appears only when every page is in, and its pages are
+        then queued for processing. You can leave this page.</p>`;
+    impPoll = setTimeout(pollImport, 700);
+    return;
+  }
+  if (imp.state === "failed") {
+    m.innerHTML = head + `<p style="color:var(--bad)">Import failed: ${esc(imp.error)}</p>
+      <p class="muted">Nothing was created.</p><p><a href="#import">Start again</a></p>`;
+    return;
+  }
+  if (imp.state === "done") {
+    m.innerHTML = head + `<p>Imported as <a href="#/${esc(imp.job_id)}">${esc(imp.job_id)}</a>.</p>`;
+    return;
+  }
+
+  const langs = ["", ...(imp.languages || [])];
+  const notScan = new Set(imp.not_scans || []);
+  const one = notScan.size === 1;
+  const nSpread = imp.pages.filter(p => impLayout(p) === "spread").length;
+  const keepMode = document.getElementById("i-mode")?.value || "flag";
+  const keepLang = document.getElementById("i-lang")?.value || "";
+  const keepVec = !!document.getElementById("i-vector")?.checked;
+  m.innerHTML = head + `
+    ${notScan.size ? `<p style="color:var(--bad);max-width:760px">${plural(notScan.size, "page")}
+      ${one ? "is" : "are"} not a scan: the pictures on ${one ? "it" : "them"} cover less than
+      90 % of the page, so ${one ? "it was" : "they were"} made by software, not photographed.
+      This pipeline re-typesets photographs of pages.</p>
+      <label class="row" style="gap:6px;margin-bottom:10px"><input type="checkbox" id="i-vector"
+        ${keepVec ? "checked" : ""}> import ${one ? "it" : "them"} anyway</label>` : ""}
+    <div class="cards">
+      <div class="card"><div class="n"><select id="i-mode" style="${SEL}">${
+        imp.modes.map(x => `<option${x === keepMode ? " selected" : ""}>${esc(x)}</option>`).join("")}
+        </select></div><div class="k">uncertainty mode</div></div>
+      <div class="card"><div class="n"><select id="i-lang" style="${SEL}">${
+        langs.map(c => `<option value="${esc(c)}"${c === keepLang ? " selected" : ""}>${
+          c ? esc(c) : esc(imp.lang_default + " (default)")}</option>`).join("")}
+        </select></div><div class="k">OCR language</div></div>
+      <div class="card"><div class="n">${imp.page_count - nSpread} / ${nSpread}</div>
+        <div class="k">single pages / spreads</div></div>
+    </div>
+    <p class="muted" style="max-width:760px">A <b>spread</b> is two facing book pages in one
+      picture: the pipeline looks for the spine and cuts it in two. A <b>single</b> page is
+      read whole and never cut. The guess below comes from each page's shape (wider than
+      tall = spread) and is only a guess: an oblong book's single page is wide too.</p>
+    <div class="row" style="margin:8px 0 12px">
+      <span class="muted">Set every page to:</span>
+      <button data-all="">as guessed</button><button data-all="single">single page</button>
+      <button data-all="spread">spread</button>
+      <span style="flex:1"></span>
+      <button id="i-discard">Discard</button>
+      <button id="i-go" class="primary">Import ${plural(imp.page_count, "page")}</button>
+    </div>
+    <p id="i-msg" style="color:var(--bad)"></p>
+    <div style="overflow-x:auto"><table style="max-width:820px">
+      <tr><th>PDF page</th><th>pixels</th><th>shape</th><th>pictures cover</th><th>treat as</th><th></th></tr>
+      ${imp.pages.map(p => {
+        const bad = notScan.has(p.pdf_page);
+        return `<tr>
+        <td>${p.pdf_page}</td><td class="dim">${p.width} × ${p.height}</td>
+        <td class="dim">${p.aspect >= 1 ? "wide" : "tall"} (${p.aspect.toFixed(2)})</td>
+        <td style="color:${bad ? "var(--bad)" : "var(--dim)"}">${Math.round(100 * p.image_coverage)} %</td>
+        <td><select data-pg="${p.pdf_page}" style="${SEL}">${["single", "spread"].map(v =>
+          `<option${impLayout(p) === v ? " selected" : ""}>${v}</option>`).join("")}</select></td>
+        <td class="muted">${bad ? "not a scan"
+          : S.impLayouts[p.pdf_page] ? "set by you" : "guessed from shape"}</td></tr>`;
+      }).join("")}
+    </table></div>`;
+
+  m.querySelectorAll("select[data-pg]").forEach(el => el.onchange = () => {
+    S.impLayouts[+el.dataset.pg] = el.value;
+    renderImportChecked();
+  });
+  m.querySelectorAll("button[data-all]").forEach(b => b.onclick = () => {
+    S.impLayouts = {};
+    if (b.dataset.all) for (const p of imp.pages) S.impLayouts[p.pdf_page] = b.dataset.all;
+    renderImportChecked();
+  });
+  document.getElementById("i-discard").onclick = async () => {
+    try { await api(`/api/imports/${imp.token}`, { method: "DELETE" }); } catch (e) {}
+    S.imp = null;
+    location.hash = "#import";
+  };
+  document.getElementById("i-go").onclick = async () => {
+    const go = document.getElementById("i-go");
+    const vec = document.getElementById("i-vector");
+    const lang = document.getElementById("i-lang").value;
+    const body = { mode: document.getElementById("i-mode").value,
+                   lang: lang || null, layouts: S.impLayouts,
+                   allow_vector: !!(vec && vec.checked) };
+    go.disabled = true;
+    try {
+      S.imp = await api(`/api/imports/${imp.token}/start`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body) });
+      renderImportChecked();
+    } catch (e) {
+      document.getElementById("i-msg").textContent = `Not started: ${e.message}`;
+      go.disabled = false;
+    }
+  };
+}
+
+async function pollImport() {
+  impPoll = null;
+  const r = route();
+  if (!r.isImport || !S.imp || r.importToken !== S.imp.token) return;
+  try { S.imp = await api(`/api/imports/${S.imp.token}`); }
+  catch (e) { S.imp = null; return renderImport(r.importToken); }
+  if (S.imp.state === "done") {
+    toast(`Imported ${plural(S.imp.page_count, "page")}; they are queued for processing.`, 6000);
+    const job = S.imp.job_id;
+    S.imp = null;
+    location.hash = `#/${job}`;
+    return;
+  }
+  renderImportChecked();
+}
+
 // ---------------------------------------------------------------- render
 async function render() {
   const r = route();
@@ -555,12 +755,22 @@ async function render() {
   const crumbs = document.getElementById("crumbs");
   const main = document.getElementById("main");
   document.getElementById("headact").innerHTML = "";
+  stopImportPolling();
 
   try {
+    if (r.isImport) {
+      const d = await api("/api/jobs");
+      S.jobs = d.jobs || d;
+      renderSidebar();
+      await renderImport(r.importToken);
+      return;
+    }
     if (!S.jobId) {
       const d = await api("/api/jobs");
       S.jobs = d.jobs || d;
       crumbs.textContent = "all jobs";
+      document.getElementById("headact").innerHTML =
+        `<a class="btn primary" href="#import">Import PDF</a>`;
       renderSidebar();
       main.innerHTML = `<h2>Jobs</h2>` + (S.jobs.length
         ? `<div id="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">`
@@ -569,7 +779,8 @@ async function render() {
               <div class="sub">${plural(j.pages ?? 0, "page")} · ${esc(j.mode || "")}
                 · ${ago(j.mtime)}${j.has_render ? " · rendered" : ""}</div></a>`).join("")
           + `</div>`
-        : `<p class="muted">No jobs yet. Shoot a book with the phone app and it will appear here.</p>`);
+        : `<p class="muted">No jobs yet. Shoot a book with the phone app, or press
+             Import PDF to bring in a scanned book, and it will appear here.</p>`);
       return;
     }
     S.job = await api(`/api/jobs/${S.jobId}`);

@@ -320,16 +320,17 @@ It needs a Bulgarian page carrying an English/other-language block.
 
 ## P10. Planned, not started
 
-- **PDF import** (`plans/pdf-import.md`): **Slice 1 built 2026-09-24** —
-  `python -m pipeline.pdf_import book.pdf` makes a job (one page folder per PDF
-  page, all or nothing, pages made by software refused), and Stage 02 honours
-  a declared single page. Proven only on pixels cut from one testset spread; no
-  real scanned PDF has been through it. The console queues imported pages
-  only when it starts (its queue is in memory), so an import made while it is
-  open waits for a restart. Open: the console import button (Slice 2), which
-  would queue them directly; the text layer as a second opinion through `second_opinion.py`,
-  never the text source (Slice 3); every imported single page carries Stage
-  00's "result is PORTRAIT" warning, which is noise there.
+- **PDF import** (`plans/pdf-import.md`): **Slices 1 and 2 built 2026-09-24** —
+  the console's **Import PDF** button (or `python -m pipeline.pdf_import`) makes a
+  job (one page folder per PDF page, all or nothing, pages made by software
+  refused unless ticked), shows each page's spread/single guess with a per-page
+  toggle first, and — from the console — queues every page at once with no
+  restart. A CLI import made while the console is open still waits for its next
+  start. A two-page cut of a real ABBYY scan ran through the console to the end
+  of Stage 06; no whole real book has been imported yet. Open: the text layer as
+  a second opinion (Slice 3, measurement pre-registered in
+  `docs/data/pdf_textlayer_prereg_20260924.md`); every imported single page
+  carries Stage 00's "result is PORTRAIT" warning, which is noise there.
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at
   N = 3, Phase 1 pre-registered, nothing in the pipeline reads it.
 - ~~Caption↔figure grouping review in the editor~~ — **BUILT** (stale line

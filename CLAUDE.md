@@ -369,9 +369,10 @@ python -m pipeline.stage05_ocr jobs/demo/page_001/
 # run full pipeline on a folder of captures
 python -m pipeline.run_all --input testset/spread_03/ --job demo --mode flag
 
-# import a scanned PDF as a new job (one page folder per PDF page; --dry-run
-# shows each page's spread/single verdict first). The console queues the pages
-# when it STARTS — restart it if it is already open
+# import a scanned PDF as a new job: the console's "Import PDF" button (checks
+# the PDF, shows each page's spread/single guess with a per-page toggle, then
+# imports and queues every page — no restart). The CLI does the same, but the
+# console only picks a CLI import up when it STARTS (--dry-run = the check)
 python -m pipeline.pdf_import book.pdf [--lang deu] [--layout detect|single|spread]
 
 # draw the book box by hand when the detector could not find the book

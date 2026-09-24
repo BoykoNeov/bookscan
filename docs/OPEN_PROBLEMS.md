@@ -163,9 +163,9 @@ big detector box lies across all its strips, so refusing would deadlock. Driven
 through the real page over a copy of the owner's job
 (`tools/figure_merge_check.py`, RESULTS 2026-09-24): **13 of 13 pictures
 rejoined exactly in 15 clicks, 0 pieces taken in by mistake**, 143 → 123
-rendered pictures. Known wart: on `page_023__right` a junk OCR block (#15)
+rendered pictures. Known wart, now fixed by hand: on `page_023__right` a junk OCR block (#15)
 ends up inside the map, gets painted out as a pale patch and still prints; the
-button warns, and the fix is a "delete block" editor action that does not exist.
+button warns, and **Delete block** (below) removes it.
 
 **Next experiment, ranked:**
 1. **Suggest merges** as markers the operator accepts or dismisses, from the
@@ -177,8 +177,14 @@ button warns, and the fix is a "delete block" editor action that does not exist.
 now has a "not part of the book — do not print" checkbox on every picture and
 every surface-flagged block. Unticking restores the block (and makes it
 mergeable); ticking hides a picture the model missed. It is a hand edit
-(`structure_edited`), so a re-assemble will not silently undo it. The junk-block
-wart on `page_023__right` still needs a "delete block" action, not built.
+(`structure_edited`), so a re-assemble will not silently undo it.
+
+**Junk-block wart — CLOSED 2026-09-24:** the editor has **Delete block**, a
+reversible hide (`Block.deleted`; Restore puts it back). Stage 08 drops a deleted
+block before pairing and masking, so on a copy of the owner's job deleting
+`page_023__right` #15 removes its text and gives the merged map its own pixels
+back (the patch had hidden "15A"; RESULTS 2026-09-24). Other map-lettering
+blocks are the operator's to delete, one click each.
 2. **The automatic merge**, only after 1: pre-register pixel ∧ model (and
    `is_surface` excluded) on a new population. That needs a second book with
    stacked figures, adjudicated by eye before either method runs. **Blocked on

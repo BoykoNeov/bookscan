@@ -737,3 +737,20 @@ rules for it:
 - Editor: "not part of the book — do not print" checkbox in the block
   inspector (clears or sets `is_surface`, marks the block hand-edited, undoable).
   Browser test `test_e2e_clear_the_surface_flag`.
+
+### 2026-09-24 — editor: "Delete block" (reversible)
+
+- `Block.deleted` (schema, set only by the editor): a hide, not a removal; the
+  block keeps its words and place and "Restore" puts it back. Stage 08 (v0.4.0)
+  drops deleted blocks before caption binding, the adjacency fallback and the
+  figure text mask, so a deleted block neither prints, binds as a caption, nor
+  paints a patch into a picture. `normalize_edits` marks it hand-edited
+  server-side. Editor: Delete/Restore in the inspector with what the delete will
+  do, dotted outline, struck-through row; every pairing/merge/split/review helper
+  skips deleted blocks the way the renderer does; a caption whose picture was
+  deleted is marked ("figure gone").
+- Side effect, pinned by a test: a caption with no pairing that followed a
+  deleted block now sits next to the picture before it and is grouped with it.
+- Checked on a copy of the owner's job (`tools/delete_block_check.py`, RESULTS
+  2026-09-24): the P3 wart on `page_023__right` is gone — #15's text no longer
+  prints and the map shows "15A" where the patch was.

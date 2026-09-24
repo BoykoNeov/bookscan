@@ -9210,3 +9210,29 @@ blocks relabelled**. Wiring the EasyOCR disagreement gate to the block label
 could therefore change no word on the only fixtures where that gate runs. No
 flag, no code. It needs a Bulgarian page that carries a block in another
 language before it can be measured.
+
+## 2026-09-24 — "Delete block": the junk text inside the merged map is gone, and the map gets its own pixels back
+
+`docs/data/delete_block_check_20260924.json`, `python -m tools.delete_block_check`
+(on a copy of the owner's job; the job itself is never written). It re-does the
+13 labelled merges through the real editor page (unchanged: 13/13 exact, 15
+clicks, 0 taken in by mistake, 143 → 123 pictures), renders, then selects
+`page_023__right` #15 ("N are,", OCR of the map's own lettering, inside the
+joined map #14) in the editor, presses **Delete block**, saves and renders
+again. Graded on the render:
+
+| | #15's text on the page | map vs page photo, inside #15's box | outside it |
+|---|---|---|---|
+| before delete | printed once | max diff 179 (the pale patch) | 0 |
+| after delete | 0 | **0** (the photo's own pixels) | 0 |
+
+Every other page's rendered HTML is byte-identical; 123 pictures before and
+after. The saved block keeps its two words, is `deleted` and hand-edited, and
+the document reads as protected from a re-assemble. By eye (not committed; a
+300 px crop): the patch had been hiding the trail number **"15A"** printed on
+the map.
+
+What it could not check: whether other lettering blocks on the owner's pages
+should be deleted too. `page_023__right` alone has twelve "other" blocks of map
+labels (#1, #2, #4–#13) around its upper pictures; deleting any of them is the
+operator's call, one click each, and nothing is deleted automatically.

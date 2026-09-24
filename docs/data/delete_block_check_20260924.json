@@ -1,0 +1,54 @@
+{
+  "job": "jobs\\20260829-084115-de3c20d3",
+  "page_id": "page_023__right",
+  "junk_block": 15,
+  "junk_text": "N are,",
+  "junk_bbox": {
+    "x": 697,
+    "y": 1716,
+    "w": 135,
+    "h": 29
+  },
+  "merged_map_block": 14,
+  "merged_map_bbox": {
+    "x": 14,
+    "y": 1566,
+    "w": 1195,
+    "h": 564
+  },
+  "merge_summary": {
+    "pictures": 13,
+    "exact": 13,
+    "clicks": 15,
+    "removed_outside_label": 0,
+    "figures_rendered_before": 143,
+    "figures_rendered_after": 123,
+    "saved_document_reads_as_edited": true
+  },
+  "editor": {
+    "delete_note": "Delete blocknot printed, but kept in the document so it can be restored; it sits inside picture #14: that picture will show its own pixels here instead of a pale patch",
+    "map_panel_before_delete": "merge pictures (one picture cut into pieces)— choose a picture —Block #0 · order 0Block #3 · order 3no picture directly below — choose one to merge with"
+  },
+  "saved": {
+    "deleted": true,
+    "structure_edited": true,
+    "words_kept": 2,
+    "reads_as_edited": true
+  },
+  "before_delete": {
+    "junk_word_occurrences_in_page": 1,
+    "map_vs_page_pixels_inside_junk_box_maxdiff": 179,
+    "map_vs_page_pixels_outside_junk_box_maxdiff": 0
+  },
+  "after_delete": {
+    "junk_word_occurrences_in_page": 0,
+    "map_vs_page_pixels_inside_junk_box_maxdiff": 0,
+    "map_vs_page_pixels_outside_junk_box_maxdiff": 0
+  },
+  "map_changed_outside_junk_box_maxdiff": 0,
+  "other_page_sections_identical": true,
+  "figures_rendered_before_after": [
+    123,
+    123
+  ]
+}

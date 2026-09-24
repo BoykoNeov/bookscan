@@ -1290,5 +1290,175 @@ def test_e2e_clear_the_surface_flag(merge_job: Path):
     assert ED._document_has_edits(doc) is True
 
 
+# --------------------------------------------------------------------------
+# Delete block — a reversible hide the operator sets (page_model.Block.deleted)
+#
+# The case it exists for (docs/OPEN_PROBLEMS.md P3): after the owner's map on
+# page_023__right is merged, a junk OCR block read off the map's lettering sits
+# inside the joined picture, so Stage 08 printed it as garbage AND painted a pale
+# patch into the map. Deleting it must stop both. The merge fixture's #2 ("2150m",
+# printed on the picture, inside the joined box) is exactly that shape.
+# --------------------------------------------------------------------------
+
+
+def _deleted(doc: Document, block_id: int) -> Document:
+    {b.id: b for b in doc.pages[0].blocks}[block_id].deleted = True
+    return doc
+
+
+def test_deleted_block_is_inferred_as_a_hand_edit(merge_job: Path):
+    """Only the editor sets ``deleted``, so the server marks the block hand-edited
+    whatever the browser sent — otherwise a re-assemble would bring it back."""
+    doc = _deleted(ED.load_document(merge_job), 2)
+    assert ED._document_has_edits(doc) is False          # the browser forgot the flag
+    ED.normalize_edits(doc)
+    blk = {b.id: b for b in doc.pages[0].blocks}[2]
+    assert blk.structure_edited is True and blk.deleted is True
+    assert ED._document_has_edits(doc) is True
+
+
+def test_http_put_persists_a_deleted_block(merge_job: Path):
+    doc = _deleted(ED.load_document(merge_job), 2)
+    with _Server(merge_job) as srv:
+        req = urllib.request.Request(
+            srv.url("/api/document"), data=doc.model_dump_json().encode("utf-8"),
+            headers={"Content-Type": "application/json"}, method="PUT")
+        body = json.loads(urllib.request.urlopen(req).read())
+    assert body["ok"] is True and body["has_edits"] is True
+    blk = {b.id: b for b in ED.load_document(merge_job).pages[0].blocks}[2]
+    assert blk.deleted is True and blk.structure_edited is True
+    assert blk.words[0].text == "2150m"                  # kept: restorable
+
+
+def test_deleted_text_inside_a_picture_neither_prints_nor_paints_it_out(merge_job: Path):
+    from pipeline import stage08_render as S8
+    kept = S8.render_html(_merge_shaped(ED.load_document(merge_job)), merge_job)
+    gone = S8.render_html(_deleted(_merge_shaped(ED.load_document(merge_job)), 2), merge_job)
+    y, x = 102 - 40 + 3, 60 - 10 + 20                    # inside #2, in merged-crop coords
+    # not deleted: printed as text and painted out of the picture (the wart)
+    assert "2150m" in kept
+    assert tuple(_figure_imgs(kept)[0][y, x]) == (40, 120, 200)
+    # deleted: not printed, and the picture shows its own pixels there (the black ink)
+    assert "2150m" not in gone
+    img = _figure_imgs(gone)[0]
+    assert img.shape[:2] == (130, 180) and tuple(img[y, x]) == (0, 0, 0)
+    # the rest of the page is untouched: same pictures, caption still inside the merge
+    assert gone.count('<figure class="figure-block">') == 2
+    assert "Rifugio" in gone.split('<figure class="figure-block">')[1].split("</figure>")[0]
+
+
+def test_deleted_caption_does_not_bind_and_deleted_figure_frees_its_caption(job: Path):
+    from pipeline import stage08_render as S8
+    base = S8.render_html(ED.load_document(job), job)
+    assert "<figcaption" in base and "Figure" in base
+    no_cap = S8.render_html(_deleted(ED.load_document(job), 3), job)
+    assert no_cap.count('<figure class="figure-block">') == 1   # the picture still prints
+    assert "<figcaption" not in no_cap and "Figure" not in no_cap
+    no_fig = S8.render_html(_deleted(ED.load_document(job), 2), job)
+    assert '<figure class="figure-block">' not in no_fig
+    assert "Figure" in no_fig                                   # caption prints on its own
+
+
+def test_deleting_the_block_between_a_picture_and_a_free_caption_lets_it_bind(job: Path):
+    """The documented side effect: the renderer never sees a deleted block, so a caption
+    with no pairing that follows it becomes adjacent to the picture before it and is
+    grouped with it, exactly as if the deleted block had never been detected."""
+    from pipeline import stage08_render as S8
+
+    def doc_with_gap() -> Document:
+        doc = ED.load_document(job)
+        pg = doc.pages[0]
+        cap = pg.blocks[3]
+        cap.figure_ref, cap.pair_source, cap.reading_order = None, None, 4
+        pg.blocks.append(Block(
+            id=4, type=BlockType.PARAGRAPH, bbox={"x": 10, "y": 150, "w": 40, "h": 4},
+            reading_order=3,
+            words=[Word(text="junk", bbox={"x": 10, "y": 150, "w": 40, "h": 4},
+                        conf=20.0, line_id=3, block_id=4)]))
+        return doc
+
+    apart = S8.render_html(doc_with_gap(), job)
+    assert "<figcaption" not in apart and "junk" in apart
+    joined = S8.render_html(_deleted(doc_with_gap(), 4), job)
+    assert "junk" not in joined
+    fig = joined.split('<figure class="figure-block">')[1].split("</figure>")[0]
+    assert "<figcaption" in fig and "Figure" in fig
+
+
+@pytest.mark.e2e
+def test_e2e_delete_and_restore_a_block(merge_job: Path):
+    """Select the junk text, delete it: it is drawn as deleted, the merge preview on the
+    picture no longer warns that it will be painted out, and Restore / undo work. The
+    deletion survives saving as protected work."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(merge_job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            _select_row(pg, 1)
+            assert "text block #2 will sit inside" in pg.text_content("#inspector .mergefield")
+            _select_row(pg, 2)
+            assert "kept in the document" in pg.text_content("#inspector .deletefield")
+            pg.click("#inspector button.deletebtn")
+            blocks = _page_blocks(pg)
+            assert blocks[2]["deleted"] is True and blocks[2]["structure_edited"] is True
+            assert "deleted: not printed" in pg.text_content("#inspector")
+            assert pg.query_selector("#ovBlocks .bbox.deleted") is not None
+            assert "deleted (not printed)" in pg.text_content("#blocklist")
+            _select_row(pg, 1)                         # the warning is gone
+            assert "#2" not in pg.text_content("#inspector .mergefield")
+            _select_row(pg, 2)
+            pg.click("#inspector button.restorebtn")
+            assert _page_blocks(pg)[2]["deleted"] is False
+            pg.click("#undo")                          # undo the restore
+            assert _page_blocks(pg)[2]["deleted"] is True
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+        finally:
+            browser.close()
+
+    doc = ED.load_document(merge_job)
+    blk = {b.id: b for b in doc.pages[0].blocks}[2]
+    assert blk.deleted is True and blk.words[0].text == "2150m"
+    assert ED._document_has_edits(doc) is True
+
+
+@pytest.mark.e2e
+def test_e2e_deleting_a_picture_marks_its_caption(job: Path):
+    """A caption whose picture is deleted will print on its own; the editor says so on
+    the caption (the renderer ignores a pairing to a deleted picture)."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            _select_row(pg, 2)
+            assert "caption #3 is paired to this picture" in pg.text_content(
+                "#inspector .deletefield")
+            pg.click("#inspector button.deletebtn")
+            _select_row(pg, 3)
+            text = pg.text_content("#inspector")
+            assert "figure gone" in text and "will print on its own" in text
+            assert "1 caption on this page will print on their own" in pg.text_content(
+                "#blocklist")
+        finally:
+            browser.close()
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))

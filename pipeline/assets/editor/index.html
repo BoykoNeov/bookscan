@@ -55,6 +55,12 @@
   .mergebox { border:2px dashed var(--edited); pointer-events:none; }
   .bbox.mergein { border-color:var(--edited); border-style:solid; border-width:2px;
                   background:rgba(90,209,139,.10); }
+  /* deleted by the operator: still shown (it can be restored), clearly not printed */
+  .bbox.deleted { border-color:var(--patch); border-style:dotted; opacity:.55; }
+  .wbox.deleted { opacity:.3; }
+  .blockrow.deleted { opacity:.55; }
+  .blockrow.deleted .grow { text-decoration:line-through; }
+  .badge.deleted { color:var(--patch); border-color:var(--patch); }
   .bbox .lbl { position:absolute; top:-16px; left:0; font-size:11px; padding:0 4px;
                background:var(--accent); color:#0a1120; border-radius:3px;
                white-space:nowrap; }
@@ -242,6 +248,7 @@ function wordClass(w){ if(isEdited(w)) return "edited";
 function orderMode(){ return (state.doc.settings.order_mode)||"auto"; }
 function orderNeedsReview(blk){
   if(orderMode()!=="review") return false;
+  if(blk.deleted) return false;                  // not printed, so its place does not matter
   if(blk.order_confirmed) return false;
   if(blk.order_auto!=null && blk.reading_order!==blk.order_auto) return false;  // renumbered
   return true;
@@ -268,12 +275,22 @@ function confirmAllOnPage(){ pushUndo("confirm order on every block");
 // shown read-only rather than silently rewritten or dropped.
 function isCaption(blk){ return blk.type==="caption"; }
 function isFigure(blk){ return blk.type==="figure"; }
-function pageFigures(){ return page().blocks.filter(isFigure)
+// A block the operator deleted is dropped by stage08_render before pairing, masking
+// or printing, so every helper below that mirrors the renderer skips it too.
+function live(blk){ return !blk.deleted; }
+function pageFigures(){ return page().blocks.filter(b=>isFigure(b) && live(b))
   .sort((a,b)=>a.reading_order-b.reading_order); }
 function refIsOffPage(blk){ return !!blk.figure_ref && blk.figure_ref.page_id!==page().page_id; }
 function pairedFigure(blk){                       // the figure this caption points at, this page
   if(!blk.figure_ref || refIsOffPage(blk)) return null;
-  return page().blocks.find(b=>b.id===blk.figure_ref.block_id) || null;
+  const f = page().blocks.find(b=>b.id===blk.figure_ref.block_id);
+  return f && isFigure(f) && live(f) ? f : null;
+}
+// Paired (on this page) to a picture that is gone: deleted, or no longer a figure.
+// The renderer then prints the caption on its own, and not even the adjacency
+// fallback picks it up (that only takes captions with no pairing at all).
+function refIsDead(blk){
+  return isCaption(blk) && !!blk.figure_ref && !refIsOffPage(blk) && !pairedFigure(blk);
 }
 // Which caption the RENDERER will actually put inside this figure. Mirrors
 // stage08_render._caption_bindings exactly: a human ruling outranks an inferred one,
@@ -281,7 +298,7 @@ function pairedFigure(blk){                       // the figure this caption poi
 // loses the figure renders standalone — the UI must say so rather than show a pair
 // the deliverable ignores.
 function captionForFigure(fig){
-  const claims = page().blocks.filter(b=>isCaption(b) && b.figure_ref
+  const claims = page().blocks.filter(b=>isCaption(b) && live(b) && b.figure_ref
       && b.figure_ref.page_id===page().page_id && b.figure_ref.block_id===fig.id)
     .sort((a,b)=>a.reading_order-b.reading_order);
   return claims.find(b=>b.pair_source==="user") || claims[0] || null;
@@ -297,8 +314,8 @@ function captionClaimLost(blk){                   // paired in the data, standal
 // another caption. A user's deliberate unpair is a decision, so it clears the marker —
 // the per-block analogue of order_review_visible keying on the order field specifically.
 function captionNeedsPairing(blk){
-  if(!isCaption(blk)) return false;
-  if(captionClaimLost(blk)) return true;
+  if(!isCaption(blk) || !live(blk)) return false;
+  if(captionClaimLost(blk) || refIsDead(blk)) return true;
   return !blk.figure_ref && blk.pair_source!=="user"; }
 function pageCaptionsNeedingPairing(){ return page().blocks.filter(captionNeedsPairing); }
 function partnerId(blk){                          // block to highlight alongside the selection
@@ -364,6 +381,7 @@ function nudgeBlock(id, delta){
 
 // A block can be split only where doing so is meaningful AND lossless.
 function splitBlocked(blk){
+  if(blk.deleted) return "this block is deleted — restore it first";
   if(blk.type === "figure")
     return "a figure renders from its cropped pixels, not its words — splitting it would change nothing in the output";
   if(blk.text != null)
@@ -444,7 +462,7 @@ function splitBlock(blk, wi){
 // Blocks marked as the surface the book lay on never print, so they are neither
 // pulled in nor mergeable.
 
-function mergeEligible(b){ return isFigure(b) && !b.is_surface; }
+function mergeEligible(b){ return isFigure(b) && !b.is_surface && live(b); }
 function boxesOverlap(a, b){
   return Math.min(a.x+a.w, b.x+b.w) > Math.max(a.x, b.x)
       && Math.min(a.y+a.h, b.y+b.h) > Math.max(a.y, b.y);
@@ -461,6 +479,7 @@ function unionOfBoxes(boxes){
 
 function mergeBlockedReason(blk){
   if(!isFigure(blk)) return "only pictures can be merged";
+  if(blk.deleted) return "this picture is deleted — restore it first";
   if(blk.is_surface)
     return "this block is marked as the surface the book was lying on, so it does not print at all";
   return null;
@@ -521,14 +540,14 @@ function planMerge(head, target){
     : null;
 
   const warnings = [];
-  const caps = p.blocks.filter(b=>isCaption(b) && b.figure_ref && b.figure_ref.page_id===p.page_id
+  const caps = p.blocks.filter(b=>isCaption(b) && live(b) && b.figure_ref && b.figure_ref.page_id===p.page_id
                                 && ids.has(b.figure_ref.block_id));
   if(caps.length > 1)
     warnings.push(`${caps.length} captions (${caps.map(c=>"#"+c.id).join(", ")}) belong to these pieces;`
       + " a picture holds one caption, so the others will print on their own");
   // A caption printed with a piece only because it came right after it in reading
   // order (no pairing recorded) can come loose when that piece is removed.
-  const seq = orderedBlocks();
+  const seq = orderedBlocks().filter(live);       // the renderer never sees deleted blocks
   const freeCapAfter = (list, i) => { const n = list[i+1];
     return n && isCaption(n) && !n.figure_ref && n.pair_source!=="user" ? n : null; };
   const before = new Set();
@@ -543,7 +562,7 @@ function planMerge(head, target){
   const nums = [...new Set(members.map(b=>b.figure_number).filter(n=>n!=null))];
   if(nums.length > 1)
     warnings.push(`the pieces carry different printed figure numbers (${nums.join(", ")}) — they may be separate pictures`);
-  const text = p.blocks.filter(b=>!ids.has(b.id) && !isFigure(b) && !b.is_surface
+  const text = p.blocks.filter(b=>!ids.has(b.id) && !isFigure(b) && !b.is_surface && live(b)
                                  && ((b.words && b.words.length) || b.text!=null));
   const nowInside = text.filter(b=>boxInside(b.bbox, box) && !members.some(m=>boxInside(b.bbox, m.bbox)));
   const nowPartly = text.filter(b=>!boxInside(b.bbox, box) && boxesOverlap(b.bbox, box)
@@ -641,15 +660,16 @@ function drawOverlays(){
     if(needsPair) b.classList.add("pairing");
     if(partner===blk.id) b.classList.add("partner");   // the caption/figure of the selection
     if(mergeIn.has(blk.id)) b.classList.add("mergein"); // would be merged into the selection
+    if(blk.deleted) b.classList.add("deleted");
     if(state.selBlock===blk.id) b.classList.add("sel");
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
     const pairMark = fig ? (captionClaimLost(blk) ? ` →#${fig.id} ⚠` : ` →#${fig.id}`)
                          : (needsPair ? " ⛓" : "");
     const lbl = el("span","lbl",
-      `${blk.reading_order} ${blk.type}${blk.is_surface?" (surface)":""}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}${pairMark}`);
+      `${blk.reading_order} ${blk.type}${blk.deleted?" (deleted)":""}${blk.is_surface?" (surface)":""}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}${pairMark}`);
     b.appendChild(lbl); ovB.appendChild(b);
     (blk.words||[]).forEach((w,wi)=>{
-      const e = el("div","box wbox "+wordClass(w));
+      const e = el("div","box wbox "+wordClass(w)+(blk.deleted?" deleted":""));
       e.style.left=pct(w.bbox.x,W); e.style.top=pct(w.bbox.y,H);
       e.style.width=pct(w.bbox.w,W); e.style.height=pct(w.bbox.h,H);
       e.title = w.text;
@@ -721,12 +741,14 @@ function blockEditor(blk){
   head.appendChild(el("strong",null,`Block #${blk.id}`));
   if(blk.structure_edited) head.appendChild(el("span","badge edited","structure edited"));
   if(blk.is_surface) head.appendChild(el("span","badge surface","not printed: surface"));
+  if(blk.deleted) head.appendChild(el("span","badge deleted","deleted: not printed"));
   if(orderMode()==="review"){
     head.appendChild(el("span", "badge " + (orderNeedsReview(blk)?"review":"edited"),
       orderNeedsReview(blk) ? "order: review" : "order: ok"));
   }
   if(isCaption(blk)){
     if(captionClaimLost(blk)) head.appendChild(el("span","badge pair","figure taken"));
+    else if(refIsDead(blk)) head.appendChild(el("span","badge pair","figure gone"));
     else if(captionNeedsPairing(blk)) head.appendChild(el("span","badge pair","no figure"));
     else if(blk.pair_source==="user")
       head.appendChild(el("span","badge edited", blk.figure_ref ? "pair: you" : "unpaired: you"));
@@ -734,6 +756,7 @@ function blockEditor(blk){
       head.appendChild(el("span","badge","pair: "+(blk.pair_source||"?")));
   }
   c.appendChild(head);
+  c.appendChild(deleteField(blk));
 
   const f1 = el("div","field");
   f1.appendChild(el("label","small muted","type"));
@@ -818,6 +841,53 @@ function surfaceField(blk){
   f.appendChild(el("div","small muted", blk.is_surface
     ? "untick to print this block again, if it is really part of the page"
     : "tick if this is the sofa/table the book was photographed on"));
+  return f;
+}
+
+// ---- delete / restore ----
+// Deleting is a reversible hide (page_model.Block.deleted), never a removal: the
+// block stays in the document, drawn dotted, and Restore puts it back. The renderer
+// drops it before pairing, masking and printing, so deleting a junk text block that
+// sits inside a picture also stops it painting a pale patch into that picture.
+function setDeleted(blk, on){
+  pushUndo(on ? "delete block" : "restore block");
+  blk.deleted = !!on;
+  blk.structure_edited = true;       // server-side normalize_edits infers it too
+  if(on) state.mergeTarget = null;
+  markDirty(); renderPage(); renderBlockList(); renderInspector();
+}
+
+function deleteConsequences(blk){
+  const p = page(), out = [];
+  if(isFigure(blk)){
+    const caps = p.blocks.filter(b=>isCaption(b) && live(b) && b.figure_ref
+      && b.figure_ref.page_id===p.page_id && b.figure_ref.block_id===blk.id);
+    if(caps.length)
+      out.push(`caption ${caps.map(b=>"#"+b.id).join(", ")} is paired to this picture and will print on its own`);
+  } else {
+    const around = p.blocks.filter(b=>isFigure(b) && live(b) && b.id!==blk.id && boxInside(blk.bbox, b.bbox));
+    if(around.length)
+      out.push(`it sits inside picture ${around.map(b=>"#"+b.id).join(", ")}: that picture will show`
+        + " its own pixels here instead of a pale patch");
+  }
+  if(isCaption(blk) && pairedFigure(blk) && captionForFigure(pairedFigure(blk))===blk)
+    out.push(`picture #${pairedFigure(blk).id} will print without this caption`);
+  return out;
+}
+
+function deleteField(blk){
+  const f = el("div","field deletefield");
+  if(blk.deleted){
+    f.appendChild(el("div","small muted","deleted — this block is not printed. Restore puts it back exactly as it was."));
+    const b = el("button","restorebtn","Restore block"); b.onclick = ()=>setDeleted(blk, false);
+    f.appendChild(b);
+    return f;
+  }
+  const b = el("button","deletebtn","Delete block"); b.onclick = ()=>setDeleted(blk, true);
+  f.appendChild(b);
+  const notes = deleteConsequences(blk);
+  f.appendChild(el("div","small muted", "not printed, but kept in the document so it can be restored"
+    + (notes.length ? "; " + notes.join("; ") : "")));
   return f;
 }
 
@@ -966,6 +1036,12 @@ function pairingField(blk){
         ? "unpaired by you — the renderer will keep it standing alone"
         : "not paired — the grouping pass abstained rather than guess"));
   f.appendChild(el("div","small muted", bits.join(" · ")));
+  if(refIsDead(blk)){
+    const w = el("div","small"); w.style.color="var(--pair)";
+    w.textContent = `⚠ paired to block #${blk.figure_ref.block_id}, which is deleted or no longer a picture`
+      + " — this caption will print on its own. Pick another picture, or unpair it.";
+    f.appendChild(w);
+  }
   if(captionClaimLost(blk)){
     // Never let the badge/dropdown imply a pairing the renderer drops.
     const other = captionForFigure(pairedFigure(blk));
@@ -1018,7 +1094,7 @@ function renderBlockList(){
        : "")));
   const blocks=[...page().blocks].sort((a,b)=>a.reading_order-b.reading_order);
   blocks.forEach((blk, idx)=>{
-    const row=el("div","blockrow"+(state.selBlock===blk.id?" sel":""));
+    const row=el("div","blockrow"+(state.selBlock===blk.id?" sel":"")+(blk.deleted?" deleted":""));
     row.draggable = true;
     row.dataset.idx = String(idx);
     // HTML5 DnD: dragstart carries the block ID (not the row index) so the drop is
@@ -1042,7 +1118,8 @@ function renderBlockList(){
     row.appendChild(el("span","ord", String(blk.reading_order)));
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
     const t=el("span","grow", blk.type + (fig?` → #${fig.id}${captionClaimLost(blk)?" ⚠":""}`:"")
-      + (blk.text!=null?" · translated":"") + (blk.is_surface?" · surface (not printed)":""));
+      + (blk.text!=null?" · translated":"") + (blk.is_surface?" · surface (not printed)":"")
+      + (blk.deleted?" · deleted (not printed)":""));
     row.appendChild(t);
     if(orderNeedsReview(blk)) row.appendChild(el("span","dot review"));
     if(captionNeedsPairing(blk)) row.appendChild(el("span","dot pair"));

@@ -658,3 +658,20 @@ rules for it:
 - Same-day correction (RESULTS): three of the four wrong merges have a real
   boundary 6–9 px outside the checked band (loose detector boxes); no
   threshold rescues the rule.
+
+### 2026-09-24 — pictures split in two: the local model asked twice, refused too
+
+- **Pre-registered before any graded pair was asked** (commit c779758): two
+  frozen prompts, 13 distinct pictures committed so the map's 7 pairs cannot
+  carry recall, both questions on every pair, two draws. A first second question
+  (margin bars) was dropped on out-of-population probes and says so.
+- **FAIL** (RESULTS 2026-09-24): 10 of 13 pictures restored, 37/37 controls
+  whole, 0 unreadable, 0 flips. But **10 of 34 separate pairs merged**, 4 of
+  them off the sofa: a hut photo glued to its information panel ("a caption"),
+  and pairs with a 21–24 px sliver where "ONE" describes the big block. The
+  seam question alone is nearly blind (17 of 34 wrong).
+- Observed after scoring: the model's and the pixel rule's wrong merges are
+  disjoint, so requiring both would be clean on these labels. That choice was
+  made after seeing the errors → a hypothesis for a second book, not a result.
+- P3 now ranks the operator's lever first: a "merge with the figure below"
+  action in the editor, which does not exist yet.

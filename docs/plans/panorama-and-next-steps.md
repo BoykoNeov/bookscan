@@ -410,6 +410,11 @@ over blurry thumbnails and wide photos over narrow blocks. `figure_hires`'s
 `min_ncc` was not reused: it measures whether two photographs of one patch
 agree, which is a different quantity. Next: `OPEN_PROBLEMS.md` P3.
 
+**MEASURED 2026-09-24 — the local model asked twice is REFUSED as well** (10 of
+34 separate pairs merged, 4 off the sofa: photo + hut-information panel, and
+thin slivers). The automatic merge is now behind a second book; `OPEN_PROBLEMS.md`
+P3 ranks a hand merge in the editor first.
+
 ### 3.4 The silent frame-decode skip — one line, do it while passing
 
 `figure_hires.candidates()` skips a frame that fails to decode **without saying so**.

@@ -8833,3 +8833,77 @@ own pre-registration and a population it was not read off.
   - The labels are the session's by-eye judgement, not the owner's.
     `python -m tools.figure_continuity_census sheets` regenerates the images
     they were read from.
+
+## Split pictures: the local model asked twice (P3) — FAIL, 10 wrong merges (4 off the sofa) — 2026-09-24
+
+**Question.** After the pixel-continuity rule was refused, does a local vision
+model, asked two different questions that must agree, tell "one picture cut in
+two" from "two things that touch"? Pre-registered
+(`docs/data/figure_split_vlm_prereg_20260924.md`, commit c779758) before any
+graded pair was shown to the model. Same 55 pairs and eye labels as the census;
+the 21 real splits grouped beforehand into **13 distinct pictures**
+(`docs/data/figure_split_vlm_groups_20260924.json`) so that the map's 7 pairs
+cannot carry the recall bar alone. Tool `tools/figure_split_vlm.py`; every raw
+answer in `docs/data/figure_split_vlm_20260924.json`. Model `qwen3.6:27b`,
+`figure_surface`'s exact call.
+
+- **Question 1 (crop):** the rectangle around both blocks, unmarked: "ONE
+  continuous picture, or TWO OR MORE separate items stacked?"
+- **Question 2 (seam):** a taller window between white margins, red arrows
+  pointing at the row the detector cut at: "does one picture CONTINUE across
+  that line, or is it a BOUNDARY?"
+
+Both asked on every pair, twice each. **Merge** = all four answers say
+ONE / CONTINUES.
+
+| arm (first draw) | real-split pairs caught (of 21) | separate pairs called one (of 34) |
+|---|---|---|
+| question 1 alone | 21 | 12 |
+| question 2 alone | 18 | 17 |
+| **both agree** | **18** | **10** |
+
+Positive control: 37 of 37 single pictures read as whole by both questions.
+Unreadable answers 0 %. Draw-to-draw flips 0 (the model is deterministic at
+temperature 0, as recorded 2026-08-29). Pictures restored: **10 of 13**
+(bar 7). **Gate: FAIL**, because the gate allows zero wrong merges.
+
+**The verdict does not depend on the sofa.** 6 of the 10 wrong merges involve
+the sofa: sofa next to sofa, or a block already flagged `is_surface`. The census
+did not gate those; this pre-registration counted them. Set all of them aside
+and **4 wrong merges remain among the 27 on real pages** (the 23 `empty`-class
+separates, `it_geo_06`'s 3 included, plus 4 `between`-class ones), still a FAIL:
+
+| pair | what it is | why the model merged it |
+|---|---|---|
+| `page_023__left#1-2` | hut photo over its orange hut-information panel | question 1 reads the panel as the photo's caption (the prompt allows "possibly with a caption printed on it"); question 2 says the photo continues into the panel |
+| `page_025__left#3-4` | the same shape, the next hut | same |
+| `page_009__right#0-1` | large photo over a 24 px sliver of a small drawing | the crop is almost all photo, so ONE describes the photo, not the pair |
+| `page_025__left#9-10` | text panel over a 21 px sliver of the next photo | the same, the other way round |
+
+**Question 2 barely discriminates on this book.** Alone it wrongly merges 17
+of 34 pairs. It also cost 3 real splits, all thin top slivers (22–29 px:
+`page_009__right#1-2`, `page_011__left#3-4`, `page_011__right#2-3`). It turns 12
+wrong merges into 10. Its one miss on the out-of-population probe (blank paper
+at the arrows read as CONTINUES) was recorded before the run.
+
+**Observed after scoring, not a result.** The model's 4 wrong merges and the
+pixel rule's 4 (RESULTS, same day) are **disjoint**. Requiring both gives, on
+these labels:
+- 16 of 21 real-split pairs, 9 of 13 pictures;
+- 0 of the 23 gated separate pairs;
+- 2 of 34 on all separate pairs (`page_001__right#6-7` and
+  `page_003__left#0-7`, both sofa or an `is_surface` block).
+
+The pixel rule's threshold comes from its positive control, not from these
+labels. But the *decision to combine the two* was made after seeing that
+their errors do not overlap, which is selection on this population. Excluding
+`is_surface` blocks up front would be a second choice made the same way. This
+is a hypothesis for a new pre-registration **on pairs neither method was read
+off**, not a rescue of either. Even if it held, zero wrong on 23 separate pairs
+is compatible with a true rate near 13 % (rule of three).
+
+**Refused:** this two-question check as a merge rule, with these prompts. The
+prompts are **not** to be re-tuned on these 55 pairs (for example by dropping
+the "caption" clause, which the table above points at): that would be fitting
+to the labels. **Not checked:** a second book; side-by-side splits; whether
+`gemma4:31b` differs (a new pre-registration, by the rule written in this one).

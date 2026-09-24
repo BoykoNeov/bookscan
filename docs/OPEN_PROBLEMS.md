@@ -104,42 +104,67 @@ the panel), which is P5.
 
 ---
 
-## P3. Pictures split in two — 21 stacked splits found; the old 45 does not reproduce
+## P3. Pictures split in two — 21 stacked splits found; no automatic merge survives
 
 **Size, re-counted 2026-09-24** (RESULTS 2026-09-24, census). The earlier "45
 pairs" had no committed method and does not reproduce. The pre-registered rule
 — *vertical* stacks only, gap ≤ 5 % of page height — finds 52 pairs; by eye
-**21 are one picture cut in two** (7 of them fragments of
-one map), 18 are two separate pictures, 10 are a picture touching a text panel
-(hut-information boxes, icon sidebars, English-version panels), 3 are sofa.
-None of the 21 has a higher-resolution figure asset, so a merge loses no
-upgrade. The adjudicated set is committed
-(`data/figure_continuity_labels_20260924.json`) and is reusable as a test bed.
+**21 are one picture cut in two**, which are **13 distinct pictures** (7 of the
+pairs are fragments of one map); 18 are two separate pictures, 10 are a picture
+touching a text panel (hut-information boxes, icon sidebars, English-version
+panels), 3 are sofa. None of the 21 has a higher-resolution figure asset, so a
+merge loses no upgrade. The adjudicated set and the picture grouping are
+committed (`data/figure_continuity_labels_20260924.json`,
+`data/figure_split_vlm_groups_20260924.json`) and are reusable as a test bed —
+but **both methods below have now been read against it**, so it can no longer
+license a combination of them.
 
 **REFUSED:**
 - a whiteness-of-the-gap rule — glues text sidebars onto photographs;
 - the **continuity statistic** (worst seam row, fraction of columns stepping
-  past the pair's own 95th percentile) — catches 18 of 20 real splits but
-  wrongly merges 4 separate pairs (RESULTS 2026-09-24, with its same-day
-  correction). In three of the four the real boundary sits 6–9 px outside the
-  narrow band checked, because the detector's boxes are loose; in the fourth
-  there is no boundary at all (pale caption strip over pale paper). **No
-  threshold rescues it:** one that admits even half the real splits also
-  admits three separate pairs. The hard class is text panels and small blocks
-  next to photographs, not `it_geo_06`'s stacked photographs (0.29–0.90,
-  clearly separate).
+  past the pair's own 95th percentile) — catches 18 of 20 but wrongly merges 4
+  separate pairs; loose detector boxes put the real boundary 6–9 px outside the
+  band. **No threshold rescues it** (RESULTS 2026-09-24).
+- the **local model asked twice** ("one picture or two?" on the crop, "does the
+  picture continue across the arrowed line?" on a wider window; all four
+  answers must agree) — restores 10 of 13 pictures and every control, but
+  wrongly merges **10 of 34** separate pairs, **4 of them off the sofa**
+  (RESULTS 2026-09-24). Two mechanisms:
+  - it reads a hut photo plus its orange information panel as one captioned
+    picture;
+  - on a pair with a 21–24 px sliver, "ONE" describes the big block.
 
-**Next experiment:** ask the local vision model "is this one picture or two?"
-— a one-second question by eye, which is the only kind the guardrails allow
-it — **twice, in two forms that must agree** (the `figure_surface` pattern),
-graded against the 52 committed labels with the bar **zero wrong merges**.
-Write the prompts and pre-register before the first call; the labels were
-made without any model in the loop, so they are a fair test. A merge only
-re-groups blocks and stays reversible in the editor. A width-ratio
-precondition was noticed *after* scoring (all 20 real splits ≤ 1.21, two of
-the four wrong merges ≥ 4.1); it would not catch the hut panels, and it is
-fitted to these labels — it needs a population it was not read off.
-**Precondition:** the owner's assembled job (present); Ollama running.
+  The seam question barely discriminates (17 of 34 wrong alone). **Do not
+  re-tune these prompts on these pairs.**
+
+**Hypothesis, not a result:** the pixel rule's 4 wrong merges and the model's 4
+are **disjoint**. Requiring both gives 16/21 pairs, 9/13 pictures and 0 of the
+23 gated separate pairs on these labels, plus 2 on sofa pairs, which excluding
+`is_surface` blocks would remove. The combination was chosen *after* seeing
+the errors, so it needs pairs neither method was read off.
+
+**Next experiment, ranked:**
+1. **The operator's lever: "merge with the figure below" in the editor.** The
+   editor can split, reorder and undo, but not merge. Rejoining the 13
+   pictures is 20 merges in a 50-page book (the map alone is 7 blocks), needs
+   no model, and cannot make a wrong merge the operator did not choose. The
+   split action's constraints apply (commit f8d6301, `pipeline/editor.py`):
+   keep the head block's id and allocate nothing (ids are pointers),
+   take the union bbox, and set `structure_edited` by hand.
+   Optionally the pixel ∧ model agreement can **suggest** a merge as a marker
+   the operator accepts or dismisses. A flag is not a merge, so a wrong
+   suggestion costs a click, not a picture.
+2. **The automatic merge**, only after 1: pre-register pixel ∧ model (and
+   `is_surface` excluded) on a new population. That needs a second book with
+   stacked figures, adjudicated by eye before either method runs. **Blocked on
+   data.** The testset's other books hold about 17 stacked pairs over 7
+   spreads (counted 2026-09-24, unlabelled). Of those, `it_geo_06`'s 3 are
+   already this test's negative control, and `it_geo_07`'s 7 were used to
+   develop the prompts; the four seen are separate diagrams. `tablegrid_e2e`
+   *is* the owner's book. So the testset has too few real splits to grade
+   recall, and some of its pairs are already contaminated.
+
+**Precondition:** none for 1. For 2, a second scanned book.
 
 ---
 

@@ -48,9 +48,10 @@ The three things that cost the deliverable most today, in order:
    cut. `tools/split_eval` reads **19/21 and exits 1 on purpose**.
 2. **Pictures split in two** (P3): 21 vertical splits found by a pre-registered
    census (2026-09-24, labels committed; the old 45 does not reproduce); the
-   pixel-continuity test was measured and refused (4 wrong merges, no threshold
-   rescues it). Next is a two-question local-model
-   check graded against the committed labels.
+   pixel-continuity test and a two-question local-model check were both
+   measured and refused (4 and 10 wrong merges; their mistakes are disjoint,
+   noticed after scoring). Next is a hand "merge with the figure below" in the
+   editor, which does not exist yet.
 3. **Panorama** (P4) is parked, not refused: Phase 1 needs per-region
    admission and a text spread swept on the phone before any code.
 

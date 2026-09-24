@@ -141,3 +141,32 @@ disagreement in the control is examined; so all control disagreements, kept or
 flagged, go into the blind set, and the 20 % rule is applied to them. Nothing
 else changes. Also fixed before labelling: the crop step looked for
 `<name>.png.png` (Stage 06 page names already end in `.png`).
+
+## Addendum 2, 2026-09-24 — re-judging after Stage 03 stopped flattening imported pages (written before any new label)
+
+The owner shipped "skip flattening for imported pages" (RESULTS 2026-09-24,
+white-border row). The pages Tesseract reads changed, so the marker's measured
+precision no longer describes them: about 30 of the 71 judged sites disappear
+and about 20 new ones appear. This round re-scores the SAME rule on the pages as
+now shipped.
+
+* **Pages:** the same 24, as the shipped pipeline now produces them (checked to
+  be identical to the measured skip-flattening arm before any site is drawn).
+* **Sites:** exactly as in the main protocol: 1↔1 disagreements; kept words for
+  D1–D7, every disagreement for the control; the same 60-per-document cap.
+* **Carried labels:** a site with the same document, PDF page, Tesseract token
+  and layer token as a labelled site keeps its label (the label says which of
+  the two readings the page prints; that does not depend on the crop). Any extra
+  occurrence beyond those labelled is a new site.
+* **New sites are judged blind by a fresh helper** (same model, a new context
+  that has seen neither the key nor this session), NOT by the session that ran
+  the measurement: that session's printout listed the new sites with the
+  Tesseract reading first, which breaks blinding for it. Same crops (of the new
+  `03_dewarp`), A/B order drawn per site from seed `20260924-rejudge`, the same
+  five labels and the same rule (letters and digits only; case and punctuation
+  ignored; "both" when they differ only in that).
+* **Score:** the same gate, the same control rule, over carried + new labels;
+  new-site tallies also reported alone.
+* **Consequence, fixed now:** if the gate FAILS on the shipped pages, the marker
+  is switched off in `config.yaml` (`pdf_text_layer.enabled: false`) and the
+  owner is told; nothing else is retuned.

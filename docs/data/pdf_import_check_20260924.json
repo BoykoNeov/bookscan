@@ -1,0 +1,85 @@
+{
+  "spread": "en_coins_01",
+  "lang": "eng",
+  "dpi": 300,
+  "pdf": "W:\\temp\\claude\\pdf_import\\check\\en_coins_01.pdf",
+  "import": {
+    "verdicts": [
+      [
+        "page_001",
+        "spread",
+        "pdf_import_aspect",
+        1.3333
+      ],
+      [
+        "page_002",
+        "single",
+        "pdf_import_aspect",
+        0.6667
+      ]
+    ],
+    "coverage": [
+      1.0,
+      1.0
+    ]
+  },
+  "control_spread": {
+    "rendered_equals_anchor": true,
+    "gutter_direct": 1960,
+    "gutter_import": 1960,
+    "left": {
+      "words_a": 397,
+      "words_b": 397,
+      "equal_words": 397,
+      "ratio": 1.0,
+      "changes": [],
+      "n_changes": 0
+    },
+    "right": {
+      "words_a": 349,
+      "words_b": 349,
+      "equal_words": 349,
+      "ratio": 1.0,
+      "changes": [],
+      "n_changes": 0
+    }
+  },
+  "single_page": {
+    "rendered_equals_crop": true,
+    "crop_box_in_anchor": {
+      "x": 0,
+      "y": 0,
+      "w": 2000,
+      "h": 3000
+    },
+    "split_method": "declared-single",
+    "split_pages": [
+      "single.png"
+    ],
+    "stage00_warnings": [
+      "frame_00.png: result is PORTRAIT, but a book spread should be landscape — orientation may be wrong (OSD weak + EXIF rotation distrusted). A capture-side orientation hint or text-baseline detector would resolve it.",
+      "orientation via shared tools.normalize (priority cascade: capture-hint / text-baseline [both stubs] -> OSD -> EXIF mirror-only, pure-rotation tag distrusted -> landscape prior); RAW decode deferred (rawpy absent); 180 branch is OSD-only but now on a stricter measured floor (5.0 vs 2.0) because nothing else in the cascade can contradict a 180; de_* fixtures guard the figure-heavy case."
+    ],
+    "stage03_warnings": [
+      "v0.2: UVDoc (default) + classical no-torch fallback. Classical corrects vertical curl only (horizontal foreshortening left) and emits a flagged identity on flat/low-text pages; UVDoc does full geometric rectification.",
+      "FIGURE PAGES: a full-page warp (classical OR UVDoc) bends figures as well as text. Since CLAUDE.md crops figures from THIS dewarped image, a warp fit to body-text baselines can distort coin/photo crops on figure/multi-block pages (WER, being text-only, does not see this). The real fix is layout-aware dewarp — Stage 04 feeding per-region masks so figures are left unwarped — not a better engine. (fit_rms_px did NOT separate figure from text pages on the testset; baseline coverage would — see fit_displacement.)"
+    ],
+    "text_vs_direct_left": {
+      "words_a": 397,
+      "words_b": 397,
+      "equal_words": 397,
+      "ratio": 1.0,
+      "changes": [],
+      "n_changes": 0
+    }
+  },
+  "document": {
+    "page_ids": [
+      "page_001__left",
+      "page_001__right",
+      "page_002__single"
+    ],
+    "render_sections": 3,
+    "single_section_rendered": true
+  }
+}

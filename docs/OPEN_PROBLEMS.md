@@ -320,8 +320,14 @@ It needs a Bulgarian page carrying an English/other-language block.
 
 ## P10. Planned, not started
 
-- **PDF import** (`plans/pdf-import.md`): fills `00_ingest/`, the PDF's text
-  layer is a second opinion through `second_opinion.py`, never the text source.
+- **PDF import** (`plans/pdf-import.md`): **Slice 1 built 2026-09-24** —
+  `python -m pipeline.pdf_import book.pdf` makes a job (one page folder per PDF
+  page, all or nothing, pages made by software refused), and Stage 02 honours
+  a declared single page. Proven only on pixels cut from one testset spread; no
+  real scanned PDF has been through it. Open: the console import button
+  (Slice 2); the text layer as a second opinion through `second_opinion.py`,
+  never the text source (Slice 3); every imported single page carries Stage
+  00's "result is PORTRAIT" warning, which is noise there.
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at
   N = 3, Phase 1 pre-registered, nothing in the pipeline reads it.
 - ~~Caption↔figure grouping review in the editor~~ — **BUILT** (stale line

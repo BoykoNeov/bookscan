@@ -765,3 +765,26 @@ rules for it:
   same picture. Number pairs are left alone; no bulk confirm. No schema change.
   On a copy of the owner's job: 8 guessed pairs marked, 12 unpaired captions
   marked (unchanged). Whether the 8 are right is the owner's look.
+
+### 2026-09-24 — PDF import, Slice 1
+
+- `pipeline/pdf_import.py`: a PDF becomes a job, one `page_NNN/raw/frame_00.png`
+  per PDF page, rendered (never extracted) at a recorded dpi (300). Wider than
+  tall → spread, else single, written to `page_NNN/page_layout.json` with its
+  provenance and overridable with `--layout`. A page whose images cover < 90 %
+  of it (union, so tiled scans count and an invisible OCR layer does not
+  matter) is not a scan and refuses the import, naming the pages; encrypted
+  and unreadable files refuse too. All or nothing: rendered in a staging folder
+  under `W:\temp\claude`, copied in with frames under `raw.importing/` (the
+  console's startup scan ignores them), renamed to `raw/` only when every page
+  is in, `job.json` last. `--dry-run` prints each page's verdict and the size.
+- Stage 02 v0.6.0: reads `page_layout.json` (a new documented exception, like
+  the book box). `single` → whole frame as `single.png`, no spine search, no
+  book detection, operator box still wins, per-page source skipped with a
+  warning. No file (every phone page) → unchanged; `split_eval` 19/21, 0.0 %.
+- Checked end to end (`tools/pdf_import_check.py`, RESULTS 2026-09-24): the
+  imported spread reads word-for-word like the direct photograph; a declared
+  single page reaches the render as `page_002__single`.
+- Not built: the console button (Slice 2), the text layer as a second opinion
+  (Slice 3). Known wart: Stage 00 warns "result is PORTRAIT" on every imported
+  single page.

@@ -191,6 +191,18 @@ named by the new `SubPage.source` — with the mode off that is always
 verbatim. Default is off for a **measured** reason, not caution (RESULTS
 2026-08-26); do not turn it on without reading that row.
 
+**Declared-page-layout exception (Stage 02).** `<page_dir>/page_layout.json` is
+**input**, like `book_box.json`: no stage writes it, it sits at the page-dir
+root, Stage 02 reads it. `pipeline/pdf_import.py` writes one per imported page
+(a PDF page may be one book page or a whole spread; phone pages never have one),
+with its provenance: `pdf_import_aspect` (a guess from the page's shape) or
+`operator`. `single` means Stage 02 emits the whole frame as `single.png` with no
+spine search and no book detection (an operator's `book_box.json` still wins);
+`spread`/`detect`, a corrupt file, or no file run the normal path unchanged. The
+detector is skipped on a single page because it was only ever measured on
+spreads — the cost is that a single page *photographed* on a surface keeps the
+surface unless a box is drawn.
+
 ### Job folder layout
 
 ```
@@ -356,6 +368,10 @@ python -m pipeline.stage05_ocr jobs/demo/page_001/
 
 # run full pipeline on a folder of captures
 python -m pipeline.run_all --input testset/spread_03/ --job demo --mode flag
+
+# import a scanned PDF as a new job (one page folder per PDF page; --dry-run
+# shows each page's spread/single verdict first; the console then processes it)
+python -m pipeline.pdf_import book.pdf [--lang deu] [--layout detect|single|spread]
 
 # draw the book box by hand when the detector could not find the book
 # (writes <page>/book_box.json; "Save & re-split" re-runs Stage 02 only)

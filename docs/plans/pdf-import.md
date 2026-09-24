@@ -1,6 +1,8 @@
 # Importing a PDF and re-typesetting it through the pipeline
 
-**Status: PLAN ONLY, not started.** Written 2026-08-29 at the owner's request
+**Status: Slice 1 BUILT 2026-09-24** (`pipeline/pdf_import.py`, Stage 02's
+`page_layout.json`, `tools/pdf_import_check.py`; RESULTS 2026-09-24). Slices 2
+(console import) and 3 (text layer as a second opinion) not started. Written 2026-08-29 at the owner's request
 ("i want to be able to import pdf's and reedit them through the pipeline as
 scanned pages ... it is not neccessary do to that now, but write it as a plan").
 

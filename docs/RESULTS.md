@@ -9236,3 +9236,25 @@ What it could not check: whether other lettering blocks on the owner's pages
 should be deleted too. `page_023__right` alone has twelve "other" blocks of map
 labels (#1, #2, #4–#13) around its upper pictures; deleting any of them is the
 operator's call, one click each, and nothing is deleted automatically.
+
+## 2026-09-24 — PDF import, Slice 1: the import hands the pipeline the same pixels; a declared single page runs to the render
+
+`docs/data/pdf_import_check_20260924.json`, `python -m tools.pdf_import_check`
+(one testset spread, `en_coins_01`, `--lang eng`, 300 dpi). The direct run's
+upright anchor and its Stage 02 left page were written into a two-page PDF at
+their own pixel size, imported with `pipeline/pdf_import.py`, and run through
+`run_all`, Stage 07 and Stage 08.
+
+| arm | what came in | result |
+|---|---|---|
+| control: the spread | PDF page 1, aspect 1.33 → `spread` | rendered frame identical to the anchor (max diff 0); gutter 1960 = 1960; text diff against the direct run **0 changes** (left 397/397 words, right 349/349) |
+| single page | PDF page 2, aspect 0.67 → `single` | Stage 02 `declared-single`, one `single.png`; text diff against the direct left page 0 changes (397/397); `page_002__single` in `document.json` and rendered |
+
+What this does and does not show. The control is the import's own test: same
+pixels in, same text out, so nothing the importer does leaks into the pipeline.
+The single-page arm proves the plumbing (a page never searched for a spine is
+dewarped, read, assembled and rendered), but its input is pixel-identical to
+the direct run's `left.png`, so an identical text is expected and says nothing
+about a genuinely photographed or scanned single page. One scene, synthetic
+PDF, no real scanned PDF yet; not an accuracy claim. `split_eval` after the
+Stage 02 change: 19/21, worst clip 0.0 %, unchanged.

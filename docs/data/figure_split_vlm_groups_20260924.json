@@ -1,0 +1,20 @@
+{
+ "_note": "Written 2026-09-24 BEFORE any model call, for the pre-registered recall bar of docs/data/figure_split_vlm_prereg_20260924.md. The 21 pairs labelled 'one' in figure_continuity_labels_20260924.json grouped into the distinct pictures they are pieces of. Grouping = pairs sharing a block (a pair labelled 'one' says both blocks are the same picture, so the relation is transitive), cross-checked by eye on W:/temp/claude/figure_continuity/owner_pairs_02..08.png. No two groups are the same picture: consecutive groups on one subpage are separated by a pair labelled two/sidebar or by unrelated layout. 13 pictures; the map on page_025__left alone is 7 pairs, so a pair count overstates the evidence.",
+ "pictures": {
+  "p009R_a":  ["page_009__right#1-2"],
+  "p011L_glacier": ["page_011__left#1-2"],
+  "p011L_crampon": ["page_011__left#3-4"],
+  "p011L_phones": ["page_011__left#11-13"],
+  "p011R_a":   ["page_011__right#2-3"],
+  "p012R_a": ["page_012__right#0-1"],
+  "p015L_a":  ["page_015__left#10-11"],
+  "p018R_a":  ["page_018__right#19-22", "page_018__right#22-23"],
+  "p023R_a":  ["page_023__right#14-16", "page_023__right#16-17"],
+  "p025L_rock":   ["page_025__left#1-2"],
+  "p025L_hut1":   ["page_025__left#5-7"],
+  "p025L_hut2":   ["page_025__left#10-14"],
+  "map_025L":     ["page_025__left#12-13", "page_025__left#12-23", "page_025__left#13-19",
+                   "page_025__left#13-23", "page_025__left#19-20", "page_025__left#20-21",
+                   "page_025__left#21-22"]
+ }
+}

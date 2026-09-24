@@ -71,6 +71,7 @@
   .badge.edited { color:var(--edited); border-color:var(--edited); }
   .badge.review { color:var(--review); border-color:var(--review); }
   .badge.pair { color:var(--pair); border-color:var(--pair); }
+  .badge.surface { color:var(--muted, #999); border-style:dashed; }
   .dot { display:inline-block; width:8px; height:8px; border-radius:50%; }
   .dot.review { background:var(--review); }
   .dot.pair { background:var(--pair); }
@@ -645,7 +646,7 @@ function drawOverlays(){
     const pairMark = fig ? (captionClaimLost(blk) ? ` →#${fig.id} ⚠` : ` →#${fig.id}`)
                          : (needsPair ? " ⛓" : "");
     const lbl = el("span","lbl",
-      `${blk.reading_order} ${blk.type}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}${pairMark}`);
+      `${blk.reading_order} ${blk.type}${blk.is_surface?" (surface)":""}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}${pairMark}`);
     b.appendChild(lbl); ovB.appendChild(b);
     (blk.words||[]).forEach((w,wi)=>{
       const e = el("div","box wbox "+wordClass(w));
@@ -719,6 +720,7 @@ function blockEditor(blk){
   const head = el("div","row");
   head.appendChild(el("strong",null,`Block #${blk.id}`));
   if(blk.structure_edited) head.appendChild(el("span","badge edited","structure edited"));
+  if(blk.is_surface) head.appendChild(el("span","badge surface","not printed: surface"));
   if(orderMode()==="review"){
     head.appendChild(el("span", "badge " + (orderNeedsReview(blk)?"review":"edited"),
       orderNeedsReview(blk) ? "order: review" : "order: ok"));
@@ -743,6 +745,8 @@ function blockEditor(blk){
   if(blk.type_auto!=null && blk.type_auto!==blk.type)
     f1.appendChild(el("div","small muted",`auto: ${blk.type_auto}`));
   c.appendChild(f1);
+
+  if(blk.is_surface || isFigure(blk)) c.appendChild(surfaceField(blk));
 
   const f2 = el("div","field");
   f2.appendChild(el("label","small muted","reading order"));
@@ -793,6 +797,28 @@ function blockEditor(blk){
     c.appendChild(splitField(blk));
   }
   return c;
+}
+
+// ---- surface flag ----
+// is_surface is a FLAG, never a deletion (page_model.py): the local model said twice
+// that this block is the sofa/table the book lay on, so Stage 08 skips it. The
+// operator can clear it (a real picture wrongly called sofa comes back, and becomes
+// mergeable again) or set it on a picture the model missed. Either way it is a hand
+// edit, so it sets structure_edited and a re-assemble will not silently undo it.
+function surfaceField(blk){
+  const f = el("div","field surfacefield");
+  const lab = el("label","small");
+  const cb = el("input"); cb.type="checkbox"; cb.className="surfacecb"; cb.checked=!!blk.is_surface;
+  cb.onchange = () => { pushUndo(cb.checked ? "mark as surface" : "clear surface mark");
+    blk.is_surface = cb.checked; blk.structure_edited = true; markDirty();
+    drawOverlays(); renderBlockList(); renderInspector(); };
+  lab.appendChild(cb);
+  lab.appendChild(document.createTextNode(" not part of the book (the surface it lay on) — do not print"));
+  f.appendChild(lab);
+  f.appendChild(el("div","small muted", blk.is_surface
+    ? "untick to print this block again, if it is really part of the page"
+    : "tick if this is the sofa/table the book was photographed on"));
+  return f;
 }
 
 // ---- split control ----
@@ -1016,7 +1042,7 @@ function renderBlockList(){
     row.appendChild(el("span","ord", String(blk.reading_order)));
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
     const t=el("span","grow", blk.type + (fig?` → #${fig.id}${captionClaimLost(blk)?" ⚠":""}`:"")
-      + (blk.text!=null?" · translated":""));
+      + (blk.text!=null?" · translated":"") + (blk.is_surface?" · surface (not printed)":""));
     row.appendChild(t);
     if(orderNeedsReview(blk)) row.appendChild(el("span","dot review"));
     if(captionNeedsPairing(blk)) row.appendChild(el("span","dot pair"));

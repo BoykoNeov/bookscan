@@ -1240,5 +1240,55 @@ def test_e2e_merge_picker_and_undo(merge_job: Path):
             browser.close()
 
 
+@pytest.mark.e2e
+def test_e2e_clear_the_surface_flag(merge_job: Path):
+    """The surface flag is a flag, not a deletion (page_model.py): the operator can
+    clear it, which makes the block printable and mergeable again, and the change is
+    a hand edit that survives saving and protects the document from a re-assemble.
+    Undo puts the flag back."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(merge_job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            _select_row(pg, 6)                                   # the sofa
+            assert "not printed: surface" in pg.text_content("#inspector")
+            cb = pg.wait_for_selector("#inspector input.surfacecb")
+            assert cb.is_checked()
+            assert pg.query_selector("#inspector button.mergebtn") is None
+            cb.click()
+            blocks = _page_blocks(pg)
+            assert blocks[6]["is_surface"] is False
+            assert blocks[6]["structure_edited"] is True
+            assert "not printed: surface" not in pg.text_content("#inspector")
+            assert pg.query_selector("#inspector .mergefield") is not None
+            assert "merge unavailable" not in pg.text_content("#inspector .mergefield")
+            pg.click("#undo")
+            assert _page_blocks(pg)[6]["is_surface"] is True
+            _select_row(pg, 6)
+            pg.click("#inspector input.surfacecb")
+            _select_row(pg, 1)                                   # an ordinary picture
+            assert not pg.is_checked("#inspector input.surfacecb")
+            _select_row(pg, 0)                                   # text: no checkbox
+            assert pg.query_selector("#inspector input.surfacecb") is None
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+        finally:
+            browser.close()
+
+    doc = ED.load_document(merge_job)
+    blk = {b.id: b for b in doc.pages[0].blocks}[6]
+    assert blk.is_surface is False and blk.structure_edited is True
+    assert ED._document_has_edits(doc) is True
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-v"]))

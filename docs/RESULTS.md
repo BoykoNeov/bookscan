@@ -8791,3 +8791,45 @@ own pre-registration and a population it was not read off.
 **Refused:** this continuity statistic as a merge rule. Nothing was built in
 `pipeline/`. **What it could not check:** a second book; whether the 5
 `between`-class pairs (one of them a real split map) behave the same.
+
+**Correction and disclosures, same day (after review).**
+
+- **The "why" column is partly wrong.** Looking ±30 rows around each
+  wrong-merge seam: in **three of the four the boundary exists, but 6–9 rows
+  outside the ±3-row band**, because the detector's box is loose.
+  - `page_022__left#3-5` has its edge at row 787, 9 rows above the upper
+    box's bottom (796), at 0.36.
+  - The two hut pairs have theirs 8 rows inside the lower box (rows 1179 and
+    1304), at 0.16 and 0.17. That places the edge in the *interior* that
+    sets τ, not in the band.
+  - Only `page_010__right#1-4` has no boundary anywhere in the window
+    (max 0.07). Its explanation — pale caption strip over pale paper —
+    stands.
+  - So the failure is mostly **band too narrow for the detector's box
+    error**, secondarily glyph strokes setting τ. A wider band would lift
+    three of the four above today's T, but it would also raise the positive
+    control (a max over more rows), and it still leaves `page_010__right#1-4`.
+    That is a hypothesis for a new pre-registration, not a rescue of this one.
+- **The verdict does not depend on the threshold.** Any threshold that
+  admits even half the real splits (≥ their median, 0.073) also admits three
+  separate pairs (0.000, 0.000, 0.054). No later session should try moving T.
+- **"21 real splits, not 45" is narrower than it reads.** The rule sees only
+  *vertical* stacks, with a gap ≤ 5 % of page height and ≥ half-width
+  overlap, on today's `document.json`. It never looked for side-by-side
+  halves or wider gaps. The plan's 45 **does not reproduce** and its method
+  was never committed. That is a finding about reproduction, not proof the
+  45 was wrong.
+- **Not checked:** the owner's defect items #12/#14/#16/#18/#20 are not
+  recorded with page locations anywhere in the repo, so whether each lands
+  among the 21 is unverified.
+- **Disclosures:**
+  - The `sofa_spread` class was scoped to the owner's job after the
+    pre-registration was committed but before any score existed. The
+    negative-control job's single spread is also named `page_001`, and was
+    first mis-classed.
+  - The code caps a fake seam's gap at `h // 4`, which the pre-registration
+    does not mention. It never binds: control figures are ≥ 600 px tall, so
+    the cap is ≥ 150, and the largest empty-class gap is 130.
+  - The labels are the session's by-eye judgement, not the owner's.
+    `python -m tools.figure_continuity_census sheets` regenerates the images
+    they were read from.

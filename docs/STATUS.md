@@ -649,8 +649,12 @@ rules for it:
   pre-register and run panorama Phase 2 on it). Stitching fixes resolution,
   not the wrong crop.
 - **P3 census** (`tools/figure_continuity_census.py`, RESULTS 2026-09-24):
-  pre-registration and eye labels committed before any score. 52 stacked
-  pairs, **21 real splits** (not 45), none carrying a hi-res asset. The
+  pre-registration and eye labels committed before any score. 52 vertically
+  stacked pairs, **21 real splits** (the old 45 does not reproduce; its method
+  was never committed), none carrying a hi-res asset. The
   continuity statistic catches 18/20 but wrongly merges 4 (text panels over
   thumbnails, wide photos over narrow blocks) → **FAIL, refused**. Next is a
   two-question local-model check graded against the committed labels.
+- Same-day correction (RESULTS): three of the four wrong merges have a real
+  boundary 6–9 px outside the checked band (loose detector boxes); no
+  threshold rescues the rule.

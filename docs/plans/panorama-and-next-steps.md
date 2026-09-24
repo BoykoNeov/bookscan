@@ -401,9 +401,10 @@ exists in `figure_hires` (`min_ncc`, measured at 0.60 because wrong sources scor
 0.51–0.52 and right ones 0.63+). Medium effort, well-defined, and it removes a
 whole family of the owner's complaints at once.
 
-**MEASURED 2026-09-24 — the continuity test is REFUSED, and the count above is
-wrong.** A pre-registered census (RESULTS 2026-09-24) finds 52 stacked pairs,
-of which 21 are one picture cut in two, not 35 + 10. The statistic catches 18
+**MEASURED 2026-09-24 — the continuity test is REFUSED, and the count above
+does not reproduce.** A pre-registered census (RESULTS 2026-09-24; vertical
+stacks only) finds 52 stacked pairs, of which 21 are one picture cut in two;
+the method behind 35 + 10 was never committed. The statistic catches 18
 of the 20 empty-gap splits but wrongly merges 4 separate pairs — text panels
 over blurry thumbnails and wide photos over narrow blocks. `figure_hires`'s
 `min_ncc` was not reused: it measures whether two photographs of one patch

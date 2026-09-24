@@ -104,11 +104,12 @@ the panel), which is P5.
 
 ---
 
-## P3. Pictures split in two — 21 real splits in the owner's book, not 45
+## P3. Pictures split in two — 21 stacked splits found; the old 45 does not reproduce
 
 **Size, re-counted 2026-09-24** (RESULTS 2026-09-24, census). The earlier "45
-pairs" had no committed code. The pre-registered pair rule finds 52 stacked
-figure pairs; by eye **21 are one picture cut in two** (7 of them fragments of
+pairs" had no committed method and does not reproduce. The pre-registered rule
+— *vertical* stacks only, gap ≤ 5 % of page height — finds 52 pairs; by eye
+**21 are one picture cut in two** (7 of them fragments of
 one map), 18 are two separate pictures, 10 are a picture touching a text panel
 (hut-information boxes, icon sidebars, English-version panels), 3 are sofa.
 None of the 21 has a higher-resolution figure asset, so a merge loses no
@@ -119,12 +120,14 @@ upgrade. The adjudicated set is committed
 - a whiteness-of-the-gap rule — glues text sidebars onto photographs;
 - the **continuity statistic** (worst seam row, fraction of columns stepping
   past the pair's own 95th percentile) — catches 18 of 20 real splits but
-  wrongly merges 4 separate pairs (RESULTS 2026-09-24). Two are a wide photo
-  over a narrow block, where the overlap columns see only pale caption strip
-  over pale paper; two are a hut text panel over a blurry thumbnail, where the
-  panel's glyphs set the bar higher than any boundary. The hard class is
-  **text panels next to photographs**, not `it_geo_06`'s stacked photographs
-  (those scored 0.29–0.90, clearly separate).
+  wrongly merges 4 separate pairs (RESULTS 2026-09-24, with its same-day
+  correction). In three of the four the real boundary sits 6–9 px outside the
+  narrow band checked, because the detector's boxes are loose; in the fourth
+  there is no boundary at all (pale caption strip over pale paper). **No
+  threshold rescues it:** one that admits even half the real splits also
+  admits three separate pairs. The hard class is text panels and small blocks
+  next to photographs, not `it_geo_06`'s stacked photographs (0.29–0.90,
+  clearly separate).
 
 **Next experiment:** ask the local vision model "is this one picture or two?"
 — a one-second question by eye, which is the only kind the guardrails allow

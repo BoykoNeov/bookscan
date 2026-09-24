@@ -4,10 +4,11 @@
 `page_layout.json`, `tools/pdf_import_check.py`; RESULTS 2026-09-24). **Slice 2
 BUILT 2026-09-24** (`server/routes_import.py` + the console's Import PDF view:
 check, per-page toggle, import, every page queued with no restart). **Slice 3
-MEASURED 2026-09-24, not built** (`docs/data/pdf_textlayer_prereg_20260924.md`,
-RESULTS 2026-09-24): the raw disagreement trigger passes its gate (48 catches /
-16 false alarms, 7 documents) but its catches are notation, and agreement must
-never clear a flag; building it is the owner's call. Written 2026-08-29 at the owner's request
+BUILT 2026-09-24** on the owner's call, exactly as measured
+(`pipeline/pdf_text_layer.py`; prereg `docs/data/pdf_textlayer_prereg_20260924.md`,
+RESULTS 2026-09-24): 48 catches / 16 false alarms, catches are notation, and it
+never clears a flag. Stage 03's edge cutting on imported flat scans: a white
+border REFUSED, skipping flattening measured and passing, not shipped (owner). Written 2026-08-29 at the owner's request
 ("i want to be able to import pdf's and reedit them through the pipeline as
 scanned pages ... it is not neccessary do to that now, but write it as a plan").
 

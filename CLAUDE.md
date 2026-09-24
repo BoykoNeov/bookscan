@@ -96,6 +96,9 @@ pointer is the date in `docs/STATUS.md` / `docs/RESULTS.md`.
 - **The cheapest lever keeps being the operator's.** Three measurements ended
   at "the photograph was framed wrong". Capture guidance before the next
   algorithm.
+- **Padding a flat page with white before UVDoc bends it.** Refused at 15 % and
+  25 % (2026-09-24): the edge cuts go, but flat pages come out curved and lose
+  3–24 % of their readable words. Do not retry widths or colours.
 - **Panorama Phase 1 is not licensed**; the "flatten first, stitch second"
   reorder is refused; painting registered sources wholesale doubles text.
 - **The stitching gate that nothing could pass** (sharpness ratio 1.0) stays,
@@ -203,7 +206,7 @@ detector is skipped on a single page because it was only ever measured on
 spreads — the cost is that a single page *photographed* on a surface keeps the
 surface unless a box is drawn. The file also carries `"origin": "pdf_import"` on
 every imported page (whoever chose the layout), passed through to split.json as
-`layout_origin`.
+`layout_origin`; nothing acts on it yet.
 
 **PDF-text-layer exception (Stage 05).** `<page_dir>/pdf_text_layer.json` is
 **input** of the same kind: the importer saves the PDF page's hidden OCR words

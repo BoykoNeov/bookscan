@@ -9343,3 +9343,59 @@ the enlargement is general, and the damage depends on how thin the margin is;
 (ii) the blinding leaked a little: the red box is always Tesseract's box, so
 where the two readings cover different spans (S027, `Cassini/Hu`) the box hints
 which reading is Tesseract's.
+
+## 2026-09-24 — PDF text-layer marker BUILT exactly as measured; a white border before flattening REFUSED at both widths; skipping flattening for imported pages PASSES its gate (not shipped: owner's call)
+
+Owner's decisions the same day: build the raw text-layer trigger; fix the edge
+cutting with a white border.
+
+**1. The marker ships as the measured rule, proven by replay.** The rule's only
+copy is now `pipeline/pdf_text_layer.py` (the eval tool imports it). Replayed on
+the audited pages it reproduces all 71 labelled sites and every page's site
+counts, other-replace counts and coverage exactly
+(`docs/data/pdf_textlayer_20260924/replay_shipped_rule.out`); re-running the
+shipped Stage 05 + 06 on a copy with the importer's new `pdf_text_layer.json`
+marks exactly those words, Stage 06 flags every one, and no Tesseract word
+changes (`ship_check.out`, 24/24 pages). Abstention edges = the measured
+population: English only, layer ≥ 150 words, alignment coverage ≥ 0.42 (the
+lowest measured page is 0.4286 — a floor at its rounded 0.429 would have dropped
+it). Control pages 2 and 4 have 148 and 74 layer words and abstain.
+
+**2. White border before UVDoc: REFUSED** (prereg
+`docs/data/pdf_whiteborder_prereg_20260924.md`, width fixed from geometry before
+any word count: UVDoc pushes an imported flat page's edges 3–9 % past the frame,
+max 13.69 %, so 15 % per side; one pre-registered fallback, 25 %). Measure: words
+at an image edge, and Tesseract tokens agreeing with the PDF's own text layer.
+
+| arm | words at an edge (24 pages) | D6 p1+p3 agreeing | other 22 pages agreeing | worst page | control | verdict |
+|---|---|---|---|---|---|---|
+| audited (UVDoc as shipped) | 60 | 1175 | 5554 | — | 713 | — |
+| white border 15 % | 0 | 1155 | 5389 (−2.97 %) | −23.6 % (D3 p1) | 715 | **REFUSE** |
+| white border 25 % (fallback) | 0 | 1140 | 5274 (−5.04 %) | −25.5 % | 687 | **REFUSE** |
+| **skip flattening (imported pages)** | **0** | **1176** | **5596 (+0.76 %)** | **−1.61 %** | **717** | **passes all clauses** |
+
+Why the border fails, by looking (`border15`, D3 page 1): with a white frame
+UVDoc treats the flat page as a document to rectify and BENDS it — the right
+column slopes and curves — and Tesseract reads the bent lines worse. It trades
+the edge loss on 2 pages for a reading loss on many. The 15 % fallback trigger
+(an original edge mapped outside the frame) came from homography extrapolation
+while zero words touched an edge; it was honoured anyway, as registered.
+
+Skip-flattening arm (addendum committed before its numbers): `03_dewarp` of an
+imported page = its `02_split` image. D5, whose black scanner frame UVDoc had
+been removing: same 6 blocks, no junk block from the frame; the extra words are
+the chart legends inside figures. **Not shipped:** it is not the option the owner
+chose, and none of the 20 pages is a crooked scan, so what is lost by never
+straightening an imported page is NOT measured.
+
+**3. The text-layer marker's measured precision is tied to Stage 03.** On the
+skip-flattening pages, 32 of the 71 judged sites are gone (30 distinct: 28
+catches, 2 can't-tell — Tesseract now reads those words differently) and 21 new,
+unjudged sites appear (20 distinct; one is ABBYY's `the`→`die` again); on the
+15 % border pages, 32 gone (31 distinct, 28 catches, 1 false alarm) and 23 new. The 0.75 describes pages as UVDoc leaves them today, which is what ships.
+After any Stage 03 change for imports it is an unmeasured claim until re-judged.
+
+Evidence: `docs/data/pdf_whiteborder_20260924/` (overshoot, run and measure
+scripts, the three arms' outputs and JSON). Limits: the same 24 pages derived
+the border width and tested it (geometry only); English technical print; phone
+pages untouched in every arm.

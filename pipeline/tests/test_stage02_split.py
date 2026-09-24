@@ -629,8 +629,8 @@ def test_declared_single_page_still_takes_the_operators_box():
 
 
 def test_the_pdf_origin_reaches_split_json_on_both_paths():
-    """Stage 03's white border keys on ``layout_origin``, which says where the
-    pixels came from — not ``layout_source``, which says who chose the layout and
+    """``layout_origin`` tells an imported page from a phone page (nothing acts
+    on it yet): it says where the pixels came from — not ``layout_source``, which says who chose the layout and
     reads "operator" for an override on an import AND for a hand-written file on
     a phone page. Nothing else about the split may change because of it."""
     spread = _cluttered_spread()

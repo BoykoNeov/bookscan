@@ -1,0 +1,88 @@
+D1/page_001: edge   0 ->   0   agreeing tokens  460/ 473 ->  459/ 471 (-1)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D1/page_002: edge   0 ->   0   agreeing tokens  486/ 488 ->  485/ 488 (-1)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D1/page_003: edge   0 ->   0   agreeing tokens  174/ 348 ->  174/ 349 (+0)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D2/page_001: edge   1 ->   0   agreeing tokens  218/ 257 ->  218/ 261 (+0)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D2/page_002: edge   0 ->   0   agreeing tokens  202/ 207 ->  200/ 206 (-2)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D2/page_003: edge   1 ->   0   agreeing tokens   96/ 224 ->  130/ 297 (+34)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D3/page_001: edge   0 ->   0   agreeing tokens  550/ 824 ->  543/ 806 (-7)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D3/page_002: edge   0 ->   0   agreeing tokens  512/ 581 ->  512/ 568 (+0)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D3/page_003: edge   0 ->   0   agreeing tokens  465/ 694 ->  458/ 718 (-7)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D4/page_001: edge   1 ->   0   agreeing tokens  226/ 245 ->  234/ 247 (+8)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D4/page_002: edge   1 ->   0   agreeing tokens   96/ 124 ->  111/ 127 (+15)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D4/page_003: edge   0 ->   0   agreeing tokens  243/ 282 ->  249/ 281 (+6)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D5/page_001: edge   0 ->   0   agreeing tokens  155/ 155 ->  155/ 155 (+0)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D5/page_002: edge   0 ->   0   agreeing tokens  124/ 149 ->  122/ 162 (-2)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D5/page_003: edge   0 ->   0   agreeing tokens  204/ 215 ->  203/ 213 (-1)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D6/page_001: edge  40 ->   0   agreeing tokens  664/1047 ->  656/1041 (-8)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D6/page_002: edge   0 ->   0   agreeing tokens  506/ 924 ->  505/ 900 (-1)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D6/page_003: edge  16 ->   0   agreeing tokens  511/ 667 ->  520/ 670 (+9)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D7/page_001: edge   0 ->   0   agreeing tokens  428/ 430 ->  429/ 430 (+1)   original edge outside frame 0 px, border [0, 0, 0, 0]
+D7/page_002: edge   0 ->   0   agreeing tokens  409/ 409 ->  409/ 409 (+0)   original edge outside frame 0 px, border [0, 0, 0, 0]
+C/page_001: edge   0 ->   0   agreeing tokens  240/ 240 ->  240/ 252 (+0)   original edge outside frame 0 px, border [0, 0, 0, 0]
+C/page_002: edge   0 ->   0   agreeing tokens  143/ 147 ->  146/ 147 (+3)   original edge outside frame 0 px, border [0, 0, 0, 0]
+C/page_003: edge   0 ->   0   agreeing tokens  261/ 265 ->  262/ 262 (+1)   original edge outside frame 0 px, border [0, 0, 0, 0]
+C/page_004: edge   0 ->   0   agreeing tokens   69/  69 ->   69/  69 (+0)   original edge outside frame 0 px, border [0, 0, 0, 0]
+
+edge words 60 -> 0
+D6 p1+p3 agreeing 1175 -> 1176
+other 22 pages agreeing 5554 -> 5596 (+0.76%); worst page -1.61%
+control agreeing 713 -> 717
+fallback trigger (any original edge outside the frame): False
+  PASS  edge words <= 3 (was 60)
+  PASS  D6 p1+p3 gain agreeing tokens
+  PASS  other 22 pages lose <= 0.5 %
+  PASS  no other page loses > 2 %
+  PASS  control does not fall
+VERDICT: SHIP 
+
+text-layer sites judged before: 71; still there: 39; gone: 32; new: 21
+  gone: ('C', 2, 'i', 'iv') labelled ('B', 'catch')
+  gone: ('C', 2, 'ii', 'iii') labelled ('A', 'catch')
+  gone: ('C', 2, 'l', 'i') labelled ('B', 'catch')
+  gone: ('C', 2, 'minis', 'mints') labelled ('B', 'catch')
+  gone: ('D2', 87, '7', 'ty') labelled ('neither', 'catch')
+  gone: ('D2', 87, 'tum', 'turn') labelled ('A', 'catch')
+  gone: ('D2', 201, '69', '8') labelled ('neither', 'catch')
+  gone: ('D2', 201, '88', '8') labelled ('neither', 'catch')
+  gone: ('D2', 201, 'dtaei', 'dta1') labelled ('neither', 'catch')
+  gone: ('D2', 201, 'endedtm', 'ended') labelled ('B', 'catch')
+  gone: ('D3', 4, '4f', 'ajf') labelled ('neither', 'catch')
+  gone: ('D3', 4, 'gm', 'gjm2') labelled ('neither', 'catch')
+  gone: ('D3', 5, '2', 'k') labelled ('A', 'catch')
+  gone: ('D3', 5, 'fic', 'frg') labelled ('neither', 'catch')
+  gone: ('D4', 251, 'cassinihu', 'cassinihuygens') labelled ('A', 'catch')
+  gone: ('D4', 419, '2', '26') labelled ('A', 'catch')
+  gone: ('D4', 419, 'ryp', 'run') labelled ('B', 'catch')
+  gone: ('D4', 585, 'ar', 'at') labelled ('neither', 'catch')
+  gone: ('D4', 585, 'gy', 'gnj') labelled ('B', 'catch')
+  gone: ('D4', 585, 't', 'x') labelled ('neither', 'catch')
+  gone: ('D6', 3, '0', '03') labelled ('neither', 'catch')
+  gone: ('D6', 3, 'bhe', 'the') labelled ('B', 'catch')
+  gone: ('D6', 3, 'electrdde', 'electr6de') labelled ('neither', 'catch')
+  gone: ('D6', 3, 'h0', 'h202') labelled ('neither', 'catch')
+  gone: ('D6', 3, 'h0', 'hs20') labelled ('neither', 'catch')
+  gone: ('D6', 3, 'o', '02') labelled ('neither', 'catch')
+  gone: ('D6', 4, '29', '2') labelled ('A', 'catch')
+  gone: ('D6', 4, 'o', '0') labelled ('neither', 'catch')
+  gone: ('D6', 5, 'e', 'the') labelled ('unclear', None)
+  gone: ('D6', 5, 'spended', 'suspended') labelled ('unclear', None)
+  new:  ('C', 2, 'sight', 'isight')
+  new:  ('D1', 45, 'the', 'die')
+  new:  ('D2', 87, '74', 'ty')
+  new:  ('D2', 87, 'k', 'ky')
+  new:  ('D2', 143, 'er', 'et')
+  new:  ('D2', 201, '00', '8')
+  new:  ('D2', 201, 'gassimgphot', 'dets1090000')
+  new:  ('D2', 201, 'gparamhgt', 'gparamywe1')
+  new:  ('D2', 201, 'h', 'catch')
+  new:  ('D2', 201, 'out', 'cout')
+  new:  ('D2', 201, 'setw10', 'setw1')
+  new:  ('D2', 201, 'setw10', 'setw18')
+  new:  ('D2', 201, 'setw18', 'setw1')
+  new:  ('D2', 201, 'setw18', 'setw10')
+  new:  ('D4', 419, '8', '0')
+  new:  ('D4', 585, '7', 'x')
+  new:  ('D4', 585, '8', '0')
+  new:  ('D6', 5, '19', '1')
+  new:  ('D6', 5, 'i8', 'is')
+  new:  ('D6', 5, 'values', 'value8')

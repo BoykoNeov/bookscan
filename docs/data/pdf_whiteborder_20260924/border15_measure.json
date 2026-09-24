@@ -1,0 +1,1020 @@
+{
+ "rows": [
+  {
+   "page": "D1/page_001",
+   "doc": "D1",
+   "pdf_page": 45,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 460,
+   "agree_after": 453,
+   "tokens_before": 473,
+   "tokens_after": 473,
+   "overshoot_px": 0.0,
+   "border_px": [
+    287,
+    407,
+    287,
+    407
+   ],
+   "size_before": [
+    1913,
+    2713
+   ],
+   "size_after": [
+    2487,
+    3527
+   ]
+  },
+  {
+   "page": "D1/page_002",
+   "doc": "D1",
+   "pdf_page": 75,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 486,
+   "agree_after": 482,
+   "tokens_before": 488,
+   "tokens_after": 488,
+   "overshoot_px": 0.0,
+   "border_px": [
+    288,
+    408,
+    288,
+    408
+   ],
+   "size_before": [
+    1917,
+    2717
+   ],
+   "size_after": [
+    2493,
+    3533
+   ]
+  },
+  {
+   "page": "D1/page_003",
+   "doc": "D1",
+   "pdf_page": 104,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 174,
+   "agree_after": 175,
+   "tokens_before": 348,
+   "tokens_after": 336,
+   "overshoot_px": 0.0,
+   "border_px": [
+    287,
+    408,
+    287,
+    408
+   ],
+   "size_before": [
+    1913,
+    2717
+   ],
+   "size_after": [
+    2487,
+    3533
+   ]
+  },
+  {
+   "page": "D2/page_001",
+   "doc": "D2",
+   "pdf_page": 87,
+   "edge_before": 1,
+   "edge_after": 0,
+   "agree_before": 218,
+   "agree_after": 207,
+   "tokens_before": 257,
+   "tokens_after": 256,
+   "overshoot_px": 11.1,
+   "border_px": [
+    221,
+    361,
+    221,
+    361
+   ],
+   "size_before": [
+    1474,
+    2404
+   ],
+   "size_after": [
+    1916,
+    3126
+   ]
+  },
+  {
+   "page": "D2/page_002",
+   "doc": "D2",
+   "pdf_page": 143,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 202,
+   "agree_after": 200,
+   "tokens_before": 207,
+   "tokens_after": 210,
+   "overshoot_px": 11.8,
+   "border_px": [
+    226,
+    364,
+    226,
+    364
+   ],
+   "size_before": [
+    1504,
+    2428
+   ],
+   "size_after": [
+    1956,
+    3156
+   ]
+  },
+  {
+   "page": "D2/page_003",
+   "doc": "D2",
+   "pdf_page": 201,
+   "edge_before": 1,
+   "edge_after": 0,
+   "agree_before": 96,
+   "agree_after": 127,
+   "tokens_before": 224,
+   "tokens_after": 215,
+   "overshoot_px": 55.3,
+   "border_px": [
+    220,
+    364,
+    220,
+    364
+   ],
+   "size_before": [
+    1470,
+    2428
+   ],
+   "size_after": [
+    1910,
+    3156
+   ]
+  },
+  {
+   "page": "D3/page_001",
+   "doc": "D3",
+   "pdf_page": 4,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 550,
+   "agree_after": 420,
+   "tokens_before": 824,
+   "tokens_after": 810,
+   "overshoot_px": 21.1,
+   "border_px": [
+    360,
+    473,
+    360,
+    473
+   ],
+   "size_before": [
+    2398,
+    3154
+   ],
+   "size_after": [
+    3118,
+    4100
+   ]
+  },
+  {
+   "page": "D3/page_002",
+   "doc": "D3",
+   "pdf_page": 5,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 512,
+   "agree_after": 452,
+   "tokens_before": 581,
+   "tokens_after": 571,
+   "overshoot_px": 39.8,
+   "border_px": [
+    360,
+    473,
+    360,
+    473
+   ],
+   "size_before": [
+    2398,
+    3154
+   ],
+   "size_after": [
+    3118,
+    4100
+   ]
+  },
+  {
+   "page": "D3/page_003",
+   "doc": "D3",
+   "pdf_page": 7,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 465,
+   "agree_after": 465,
+   "tokens_before": 694,
+   "tokens_after": 690,
+   "overshoot_px": 21.4,
+   "border_px": [
+    360,
+    473,
+    360,
+    473
+   ],
+   "size_before": [
+    2398,
+    3154
+   ],
+   "size_after": [
+    3118,
+    4100
+   ]
+  },
+  {
+   "page": "D4/page_001",
+   "doc": "D4",
+   "pdf_page": 251,
+   "edge_before": 1,
+   "edge_after": 0,
+   "agree_before": 226,
+   "agree_after": 234,
+   "tokens_before": 245,
+   "tokens_after": 246,
+   "overshoot_px": 0.0,
+   "border_px": [
+    236,
+    388,
+    236,
+    388
+   ],
+   "size_before": [
+    1574,
+    2588
+   ],
+   "size_after": [
+    2046,
+    3364
+   ]
+  },
+  {
+   "page": "D4/page_002",
+   "doc": "D4",
+   "pdf_page": 419,
+   "edge_before": 1,
+   "edge_after": 0,
+   "agree_before": 96,
+   "agree_after": 113,
+   "tokens_before": 124,
+   "tokens_after": 128,
+   "overshoot_px": 0.0,
+   "border_px": [
+    236,
+    388,
+    236,
+    388
+   ],
+   "size_before": [
+    1574,
+    2588
+   ],
+   "size_after": [
+    2046,
+    3364
+   ]
+  },
+  {
+   "page": "D4/page_003",
+   "doc": "D4",
+   "pdf_page": 585,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 243,
+   "agree_after": 239,
+   "tokens_before": 282,
+   "tokens_after": 281,
+   "overshoot_px": 0.0,
+   "border_px": [
+    236,
+    388,
+    236,
+    388
+   ],
+   "size_before": [
+    1574,
+    2588
+   ],
+   "size_after": [
+    2046,
+    3364
+   ]
+  },
+  {
+   "page": "D5/page_001",
+   "doc": "D5",
+   "pdf_page": 12,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 155,
+   "agree_after": 155,
+   "tokens_before": 155,
+   "tokens_after": 156,
+   "overshoot_px": 71.1,
+   "border_px": [
+    384,
+    494,
+    384,
+    494
+   ],
+   "size_before": [
+    2562,
+    3296
+   ],
+   "size_after": [
+    3330,
+    4284
+   ]
+  },
+  {
+   "page": "D5/page_002",
+   "doc": "D5",
+   "pdf_page": 19,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 124,
+   "agree_after": 121,
+   "tokens_before": 149,
+   "tokens_after": 163,
+   "overshoot_px": 1.4,
+   "border_px": [
+    384,
+    494,
+    384,
+    494
+   ],
+   "size_before": [
+    2558,
+    3292
+   ],
+   "size_after": [
+    3326,
+    4280
+   ]
+  },
+  {
+   "page": "D5/page_003",
+   "doc": "D5",
+   "pdf_page": 26,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 204,
+   "agree_after": 204,
+   "tokens_before": 215,
+   "tokens_after": 225,
+   "overshoot_px": 60.6,
+   "border_px": [
+    384,
+    494,
+    384,
+    494
+   ],
+   "size_before": [
+    2562,
+    3296
+   ],
+   "size_after": [
+    3330,
+    4284
+   ]
+  },
+  {
+   "page": "D6/page_001",
+   "doc": "D6",
+   "pdf_page": 3,
+   "edge_before": 40,
+   "edge_after": 0,
+   "agree_before": 664,
+   "agree_after": 656,
+   "tokens_before": 1047,
+   "tokens_after": 1049,
+   "overshoot_px": 0.0,
+   "border_px": [
+    303,
+    432,
+    303,
+    432
+   ],
+   "size_before": [
+    2020,
+    2882
+   ],
+   "size_after": [
+    2626,
+    3746
+   ]
+  },
+  {
+   "page": "D6/page_002",
+   "doc": "D6",
+   "pdf_page": 4,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 506,
+   "agree_after": 505,
+   "tokens_before": 924,
+   "tokens_after": 910,
+   "overshoot_px": 0.0,
+   "border_px": [
+    303,
+    432,
+    303,
+    432
+   ],
+   "size_before": [
+    2020,
+    2882
+   ],
+   "size_after": [
+    2626,
+    3746
+   ]
+  },
+  {
+   "page": "D6/page_003",
+   "doc": "D6",
+   "pdf_page": 5,
+   "edge_before": 16,
+   "edge_after": 0,
+   "agree_before": 511,
+   "agree_after": 499,
+   "tokens_before": 667,
+   "tokens_after": 671,
+   "overshoot_px": 0.0,
+   "border_px": [
+    303,
+    432,
+    303,
+    432
+   ],
+   "size_before": [
+    2020,
+    2882
+   ],
+   "size_after": [
+    2626,
+    3746
+   ]
+  },
+  {
+   "page": "D7/page_001",
+   "doc": "D7",
+   "pdf_page": 1,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 428,
+   "agree_after": 428,
+   "tokens_before": 430,
+   "tokens_after": 430,
+   "overshoot_px": 0.0,
+   "border_px": [
+    279,
+    428,
+    279,
+    428
+   ],
+   "size_before": [
+    1863,
+    2850
+   ],
+   "size_after": [
+    2421,
+    3706
+   ]
+  },
+  {
+   "page": "D7/page_002",
+   "doc": "D7",
+   "pdf_page": 2,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 409,
+   "agree_after": 409,
+   "tokens_before": 409,
+   "tokens_after": 410,
+   "overshoot_px": 0.0,
+   "border_px": [
+    279,
+    428,
+    279,
+    428
+   ],
+   "size_before": [
+    1863,
+    2850
+   ],
+   "size_after": [
+    2421,
+    3706
+   ]
+  },
+  {
+   "page": "C/page_001",
+   "doc": "C",
+   "pdf_page": 1,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 240,
+   "agree_after": 240,
+   "tokens_before": 240,
+   "tokens_after": 240,
+   "overshoot_px": 0.0,
+   "border_px": [
+    372,
+    526,
+    372,
+    526
+   ],
+   "size_before": [
+    2479,
+    3508
+   ],
+   "size_after": [
+    3223,
+    4560
+   ]
+  },
+  {
+   "page": "C/page_002",
+   "doc": "C",
+   "pdf_page": 2,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 143,
+   "agree_after": 147,
+   "tokens_before": 147,
+   "tokens_after": 147,
+   "overshoot_px": 0.0,
+   "border_px": [
+    372,
+    526,
+    372,
+    526
+   ],
+   "size_before": [
+    2479,
+    3508
+   ],
+   "size_after": [
+    3223,
+    4560
+   ]
+  },
+  {
+   "page": "C/page_003",
+   "doc": "C",
+   "pdf_page": 3,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 261,
+   "agree_after": 262,
+   "tokens_before": 265,
+   "tokens_after": 263,
+   "overshoot_px": 0.0,
+   "border_px": [
+    372,
+    526,
+    372,
+    526
+   ],
+   "size_before": [
+    2479,
+    3508
+   ],
+   "size_after": [
+    3223,
+    4560
+   ]
+  },
+  {
+   "page": "C/page_004",
+   "doc": "C",
+   "pdf_page": 4,
+   "edge_before": 0,
+   "edge_after": 0,
+   "agree_before": 69,
+   "agree_after": 66,
+   "tokens_before": 69,
+   "tokens_after": 69,
+   "overshoot_px": 2.6,
+   "border_px": [
+    372,
+    526,
+    372,
+    526
+   ],
+   "size_before": [
+    2479,
+    3508
+   ],
+   "size_after": [
+    3223,
+    4560
+   ]
+  }
+ ],
+ "gates": {
+  "edge words <= 3 (was 60)": true,
+  "D6 p1+p3 gain agreeing tokens": false,
+  "other 22 pages lose <= 0.5 %": false,
+  "no other page loses > 2 %": false,
+  "control does not fall": true
+ },
+ "fallback": true,
+ "sites_gone": [
+  [
+   "C",
+   2,
+   "i",
+   "iv",
+   "B",
+   "catch"
+  ],
+  [
+   "C",
+   2,
+   "ii",
+   "iii",
+   "A",
+   "catch"
+  ],
+  [
+   "C",
+   2,
+   "l",
+   "i",
+   "B",
+   "catch"
+  ],
+  [
+   "C",
+   2,
+   "minis",
+   "mints",
+   "B",
+   "catch"
+  ],
+  [
+   "D2",
+   87,
+   "7",
+   "zy",
+   "neither",
+   "catch"
+  ],
+  [
+   "D2",
+   87,
+   "tum",
+   "turn",
+   "A",
+   "catch"
+  ],
+  [
+   "D2",
+   201,
+   "08",
+   "8",
+   "neither",
+   "catch"
+  ],
+  [
+   "D2",
+   201,
+   "69",
+   "8",
+   "neither",
+   "catch"
+  ],
+  [
+   "D2",
+   201,
+   "dtaei",
+   "dta1",
+   "neither",
+   "catch"
+  ],
+  [
+   "D2",
+   201,
+   "endedtm",
+   "ended",
+   "B",
+   "catch"
+  ],
+  [
+   "D3",
+   4,
+   "gm",
+   "gjm2",
+   "neither",
+   "catch"
+  ],
+  [
+   "D3",
+   4,
+   "lk",
+   "ljk",
+   "B",
+   "false_alarm"
+  ],
+  [
+   "D3",
+   5,
+   "2",
+   "k",
+   "A",
+   "catch"
+  ],
+  [
+   "D3",
+   5,
+   "fic",
+   "frg",
+   "neither",
+   "catch"
+  ],
+  [
+   "D4",
+   251,
+   "cassinihu",
+   "cassinihuygens",
+   "A",
+   "catch"
+  ],
+  [
+   "D4",
+   419,
+   "2",
+   "26",
+   "A",
+   "catch"
+  ],
+  [
+   "D4",
+   419,
+   "ryp",
+   "run",
+   "B",
+   "catch"
+  ],
+  [
+   "D4",
+   585,
+   "6",
+   "0",
+   "neither",
+   "catch"
+  ],
+  [
+   "D4",
+   585,
+   "gy",
+   "gnj",
+   "B",
+   "catch"
+  ],
+  [
+   "D4",
+   585,
+   "t",
+   "x",
+   "neither",
+   "catch"
+  ],
+  [
+   "D6",
+   3,
+   "bhe",
+   "the",
+   "B",
+   "catch"
+  ],
+  [
+   "D6",
+   3,
+   "electrdde",
+   "electr6de",
+   "neither",
+   "catch"
+  ],
+  [
+   "D6",
+   3,
+   "h0",
+   "h202",
+   "neither",
+   "catch"
+  ],
+  [
+   "D6",
+   3,
+   "h0",
+   "hs20",
+   "neither",
+   "catch"
+  ],
+  [
+   "D6",
+   3,
+   "o",
+   "02",
+   "neither",
+   "catch"
+  ],
+  [
+   "D6",
+   4,
+   "29",
+   "2",
+   "A",
+   "catch"
+  ],
+  [
+   "D6",
+   4,
+   "o",
+   "0",
+   "neither",
+   "catch"
+  ],
+  [
+   "D6",
+   4,
+   "o",
+   "02",
+   "neither",
+   "catch"
+  ],
+  [
+   "D6",
+   5,
+   "4",
+   "a",
+   "B",
+   "catch"
+  ],
+  [
+   "D6",
+   5,
+   "e",
+   "the",
+   "unclear",
+   null
+  ],
+  [
+   "D6",
+   5,
+   "spended",
+   "suspended",
+   "unclear",
+   null
+  ]
+ ],
+ "sites_new": [
+  [
+   "D2",
+   87,
+   "k",
+   "ky"
+  ],
+  [
+   "D2",
+   87,
+   "ol",
+   "of"
+  ],
+  [
+   "D2",
+   201,
+   "86",
+   "8"
+  ],
+  [
+   "D2",
+   201,
+   "89",
+   "8"
+  ],
+  [
+   "D2",
+   201,
+   "setw18",
+   "setw1"
+  ],
+  [
+   "D2",
+   201,
+   "t",
+   "ttm"
+  ],
+  [
+   "D3",
+   4,
+   "7",
+   "t"
+  ],
+  [
+   "D3",
+   4,
+   "fal",
+   "fall"
+  ],
+  [
+   "D3",
+   4,
+   "gm",
+   "gm2"
+  ],
+  [
+   "D3",
+   4,
+   "measute",
+   "measure"
+  ],
+  [
+   "D3",
+   7,
+   "succession",
+   "successwn"
+  ],
+  [
+   "D3",
+   7,
+   "wil",
+   "will"
+  ],
+  [
+   "D4",
+   585,
+   "1",
+   "x"
+  ],
+  [
+   "D4",
+   585,
+   "az",
+   "at"
+  ],
+  [
+   "D4",
+   585,
+   "cs",
+   "csgmin"
+  ],
+  [
+   "D4",
+   585,
+   "t00",
+   "too"
+  ],
+  [
+   "D5",
+   26,
+   "bandmatiff",
+   "bandmatlff"
+  ],
+  [
+   "D6",
+   3,
+   "gelected",
+   "selected"
+  ],
+  [
+   "D6",
+   3,
+   "h",
+   "h2"
+  ],
+  [
+   "D6",
+   5,
+   "01mkcl",
+   "0l1mkci"
+  ],
+  [
+   "D6",
+   5,
+   "19",
+   "1"
+  ],
+  [
+   "D6",
+   5,
+   "values",
+   "value8"
+  ]
+ ]
+}

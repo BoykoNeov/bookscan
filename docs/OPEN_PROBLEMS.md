@@ -328,22 +328,26 @@ It needs a Bulgarian page carrying an English/other-language block.
   restart. A CLI import made while the console is open still waits for its next
   start. A two-page cut of a real ABBYY scan ran through the console to the end
   of Stage 06; no whole real book has been imported yet.
-  **Slice 3 measured, not built** (RESULTS 2026-09-24): flagging a kept word where
-  the PDF's hidden text disagrees passes its pre-registered gate — 48 real
-  mistakes caught against 16 correct words flagged, 7 documents — but almost all
-  the catches are formulas and symbols (O₂, τ_df, Greek, code zeros; one chemistry
-  paper gives 20 of 48); on plain words the hidden text is wrong more often than
-  Tesseract. The per-document clause passes at exactly its minimum (4 of 5), so
-  losing any one passing document would fail it. The dictionary-checked
-  version flags almost nothing (5). **Agreement must never clear a flag** (23 %
-  of agreed, flagged words are wrong). Owner's call whether to build the raw
-  trigger for imported PDFs, knowing it is a notation catcher.
-  **New defect: Stage 03 cuts the edges of flat scans with thin margins** —
-  UVDoc enlarges an already-flat page and pushes line starts off it (2 of 20
-  imported pages, 40 and 16 words at the left/right edge; 3 more with one word at
-  the top/bottom; the count is a lower bound). Next experiment: pad the page with white
-  before flattening, or skip flattening for imported pages, and count words at
-  the edge again with `docs/data/pdf_textlayer_20260924/edge_census.py`.
+  **Slice 3 BUILT 2026-09-24** on the owner's call, exactly as measured: where an
+  imported PDF's hidden text disagrees with Tesseract one word for one word, the
+  word is flagged (`Word.layer_disagree`; 48 real mistakes to 16 correct words in
+  the test, almost all formulas and symbols). It never supplies text and never
+  clears a flag (23 % of agreed, flagged words are wrong). English only, a layer
+  of ≥ 150 words, alignment coverage ≥ 0.42 — the measured population. Its 0.75
+  describes pages as Stage 03 flattens them TODAY: change Stage 03 for imports
+  and about 30 of the 71 judged spots move, so the precision must be re-judged.
+  **Open defect: Stage 03 cuts the edges of flat scans with thin margins** —
+  UVDoc enlarges an already-flat page and pushes line starts off it (60 words at
+  an edge on 24 test pages, 56 of them on two pages of one paper; a lower bound).
+  **A white border before flattening is REFUSED** at 15 % and 25 % (RESULTS
+  2026-09-24): it removes the edge cuts but makes UVDoc bend flat pages (D3 page 1
+  lost 24 % of its readable words); do not retry border widths or colours.
+  **Skipping flattening for imported pages passes the same gate** (edges 60 → 0,
+  other pages +0.8 %, worst −1.6 %, control up) and is NOT shipped: it waits on
+  the owner, and what it costs on a crooked scan is unmeasured (no crooked page
+  in the test). If shipped: key it on `layout_origin == "pdf_import"` (already
+  written by the importer, read by nothing yet), and re-judge the text-layer
+  marker's sites on the new pages.
   Every imported single page carries Stage 00's "result is PORTRAIT" warning,
   which is noise there.
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at

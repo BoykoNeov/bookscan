@@ -257,8 +257,8 @@ def test_a_per_page_override_wins_for_that_page_only(tmp_path: Path):
     lay = json.loads((tmp_path / "jobs" / "imp6" / "page_002" / "page_layout.json")
                      .read_text())
     assert (lay["layout"], lay["source"]) == ("spread", "operator")
-    # the operator decided the LAYOUT; the pixels still came from a PDF, and that
-    # is what Stage 03's white border keys on
+    # the operator decided the LAYOUT; the pixels still came from a PDF, and
+    # `origin` is what tells an imported page from a phone page
     assert lay["origin"] == "pdf_import"
     assert seen == [(1, 2), (2, 2)]
 

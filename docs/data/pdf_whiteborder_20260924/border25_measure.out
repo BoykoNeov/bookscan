@@ -1,0 +1,103 @@
+D1/page_001: edge   0 ->   0   agreeing tokens  460/ 473 ->  456/ 472 (-4)   original edge outside frame 0 px, border [478, 678, 478, 678]
+D1/page_002: edge   0 ->   0   agreeing tokens  486/ 488 ->  479/ 490 (-7)   original edge outside frame 0 px, border [479, 679, 479, 679]
+D1/page_003: edge   0 ->   0   agreeing tokens  174/ 348 ->  159/ 176 (-15)   original edge outside frame 0 px, border [478, 679, 478, 679]
+D2/page_001: edge   1 ->   0   agreeing tokens  218/ 257 ->  217/ 267 (-1)   original edge outside frame 0 px, border [368, 601, 368, 601]
+D2/page_002: edge   0 ->   0   agreeing tokens  202/ 207 ->  197/ 207 (-5)   original edge outside frame 0 px, border [376, 607, 376, 607]
+D2/page_003: edge   1 ->   0   agreeing tokens   96/ 224 ->   88/ 219 (-8)   original edge outside frame 0 px, border [368, 607, 368, 607]
+D3/page_001: edge   0 ->   0   agreeing tokens  550/ 824 ->  410/ 805 (-140)   original edge outside frame 0 px, border [600, 788, 600, 788]
+D3/page_002: edge   0 ->   0   agreeing tokens  512/ 581 ->  464/ 585 (-48)   original edge outside frame 0 px, border [600, 788, 600, 788]
+D3/page_003: edge   0 ->   0   agreeing tokens  465/ 694 ->  416/ 675 (-49)   original edge outside frame 0 px, border [600, 788, 600, 788]
+D4/page_001: edge   1 ->   0   agreeing tokens  226/ 245 ->  234/ 248 (+8)   original edge outside frame 0 px, border [394, 647, 394, 647]
+D4/page_002: edge   1 ->   0   agreeing tokens   96/ 124 ->  111/ 126 (+15)   original edge outside frame 0 px, border [394, 647, 394, 647]
+D4/page_003: edge   0 ->   0   agreeing tokens  243/ 282 ->  240/ 276 (-3)   original edge outside frame 0 px, border [394, 647, 394, 647]
+D5/page_001: edge   0 ->   0   agreeing tokens  155/ 155 ->  155/ 155 (+0)   original edge outside frame 0 px, border [640, 824, 640, 824]
+D5/page_002: edge   0 ->   0   agreeing tokens  124/ 149 ->  122/ 167 (-2)   original edge outside frame 0 px, border [640, 823, 640, 823]
+D5/page_003: edge   0 ->   0   agreeing tokens  204/ 215 ->  203/ 225 (-1)   original edge outside frame 0 px, border [640, 824, 640, 824]
+D6/page_001: edge  40 ->   0   agreeing tokens  664/1047 ->  659/1049 (-5)   original edge outside frame 0 px, border [505, 720, 505, 720]
+D6/page_002: edge   0 ->   0   agreeing tokens  506/ 924 ->  506/ 916 (+0)   original edge outside frame 0 px, border [505, 720, 505, 720]
+D6/page_003: edge  16 ->   0   agreeing tokens  511/ 667 ->  481/ 675 (-30)   original edge outside frame 0 px, border [505, 720, 505, 720]
+D7/page_001: edge   0 ->   0   agreeing tokens  428/ 430 ->  427/ 430 (-1)   original edge outside frame 0 px, border [466, 712, 466, 712]
+D7/page_002: edge   0 ->   0   agreeing tokens  409/ 409 ->  390/ 411 (-19)   original edge outside frame 0 px, border [466, 712, 466, 712]
+C/page_001: edge   0 ->   0   agreeing tokens  240/ 240 ->  232/ 242 (-8)   original edge outside frame 0 px, border [620, 877, 620, 877]
+C/page_002: edge   0 ->   0   agreeing tokens  143/ 147 ->  145/ 148 (+2)   original edge outside frame 0 px, border [620, 877, 620, 877]
+C/page_003: edge   0 ->   0   agreeing tokens  261/ 265 ->  262/ 262 (+1)   original edge outside frame 0 px, border [620, 877, 620, 877]
+C/page_004: edge   0 ->   0   agreeing tokens   69/  69 ->   48/  71 (-21)   original edge outside frame 0 px, border [620, 877, 620, 877]
+
+edge words 60 -> 0
+D6 p1+p3 agreeing 1175 -> 1140
+other 22 pages agreeing 5554 -> 5274 (-5.04%); worst page -25.45%
+control agreeing 713 -> 687
+fallback trigger (any original edge outside the frame): False
+  PASS  edge words <= 3 (was 60)
+  FAIL  D6 p1+p3 gain agreeing tokens
+  FAIL  other 22 pages lose <= 0.5 %
+  FAIL  no other page loses > 2 %
+  FAIL  control does not fall
+VERDICT: REFUSE 
+
+text-layer sites judged before: 71; still there: 31; gone: 40; new: 29
+  gone: ('C', 2, 'i', 'iv') labelled ('B', 'catch')
+  gone: ('C', 2, 'ii', 'iii') labelled ('A', 'catch')
+  gone: ('C', 2, 'l', 'i') labelled ('B', 'catch')
+  gone: ('C', 2, 'minis', 'mints') labelled ('B', 'catch')
+  gone: ('D2', 87, 'k', 'kz') labelled ('neither', 'catch')
+  gone: ('D2', 201, '08', '8') labelled ('neither', 'catch')
+  gone: ('D2', 201, '69', '8') labelled ('neither', 'catch')
+  gone: ('D2', 201, '88', '9') labelled ('neither', 'catch')
+  gone: ('D2', 201, 'dtaei', 'dta1') labelled ('neither', 'catch')
+  gone: ('D2', 201, 'endedtm', 'ended') labelled ('B', 'catch')
+  gone: ('D3', 4, '4f', 'ajf') labelled ('neither', 'catch')
+  gone: ('D3', 4, 'gm', 'gjm2') labelled ('neither', 'catch')
+  gone: ('D3', 4, 'lk', 'ljk') labelled ('B', 'false_alarm')
+  gone: ('D3', 5, '2x', 'kx') labelled ('A', 'catch')
+  gone: ('D3', 5, 'fic', 'frg') labelled ('neither', 'catch')
+  gone: ('D3', 7, 'l', 'i') labelled ('unclear', None)
+  gone: ('D3', 7, 'ws', 'vs') labelled ('B', 'catch')
+  gone: ('D4', 251, 'cassinihu', 'cassinihuygens') labelled ('A', 'catch')
+  gone: ('D4', 419, '2', '26') labelled ('A', 'catch')
+  gone: ('D4', 419, 'ryp', 'run') labelled ('B', 'catch')
+  gone: ('D4', 585, '6', '0') labelled ('neither', 'catch')
+  gone: ('D4', 585, 'ar', 'at') labelled ('neither', 'catch')
+  gone: ('D4', 585, 'gy', 'gnj') labelled ('B', 'catch')
+  gone: ('D4', 585, 't', 'x') labelled ('neither', 'catch')
+  gone: ('D6', 3, '0', '02') labelled ('neither', 'catch')
+  gone: ('D6', 3, '0', '03') labelled ('neither', 'catch')
+  gone: ('D6', 3, 'bhe', 'the') labelled ('B', 'catch')
+  gone: ('D6', 3, 'electrdde', 'electr6de') labelled ('neither', 'catch')
+  gone: ('D6', 3, 'h0', 'h202') labelled ('neither', 'catch')
+  gone: ('D6', 3, 'h0', 'hs20') labelled ('neither', 'catch')
+  gone: ('D6', 3, 'o', '03') labelled ('neither', 'catch')
+  gone: ('D6', 4, '29', '2') labelled ('A', 'catch')
+  gone: ('D6', 4, 'o', '0') labelled ('neither', 'catch')
+  gone: ('D6', 4, 'o', '02') labelled ('neither', 'catch')
+  gone: ('D6', 5, 'e', 'the') labelled ('unclear', None)
+  gone: ('D6', 5, 'size', '8ze') labelled ('B', 'false_alarm')
+  gone: ('D6', 5, 'spended', 'suspended') labelled ('unclear', None)
+  new:  ('D1', 45, 'the', 'die')
+  new:  ('D2', 87, '4', 'ky')
+  new:  ('D2', 87, '4', 'kz')
+  new:  ('D2', 87, 'k', 'ky')
+  new:  ('D2', 87, 'k4', 'ky')
+  new:  ('D2', 87, 'ly', 'j')
+  new:  ('D2', 143, 'er', 'et')
+  new:  ('D2', 201, '00', '09')
+  new:  ('D2', 201, '80', '8')
+  new:  ('D2', 201, 'setw18', 'setw1')
+  new:  ('D2', 201, 'setw18', 'setw10')
+  new:  ('D2', 201, 't', 'meteoh')
+  new:  ('D3', 4, 'gm', 'gm2')
+  new:  ('D3', 7, 'b', 'by')
+  new:  ('D3', 7, 'ma', 'may')
+  new:  ('D4', 585, '72', 'n')
+  new:  ('D4', 585, 'csgeac', 'csgfac')
+  new:  ('D4', 585, 't00', 'too')
+  new:  ('D5', 26, '60', '600')
+  new:  ('D6', 3, 'h', 'h2')
+  new:  ('D6', 3, 'of', 'ofx')
+  new:  ('D6', 5, '01mkcl', '0l1mkci')
+  new:  ('D6', 5, '19', '1')
+  new:  ('D6', 5, 'organism', '0')
+  new:  ('D6', 5, 's126', 'size')
+  new:  ('D6', 5, 't', 'therefore')
+  new:  ('D6', 5, 'values', 'value8')
+  new:  ('D7', 1, '1s', 'is')

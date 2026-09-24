@@ -868,3 +868,24 @@ rules for it:
   20 of the 48 catches. The edge count is a lower bound, and at the top/bottom it
   finds 3 more pages with one word at the edge. The blinding leaked slightly (the
   red box is always Tesseract's). RESULTS carries the correction clause.
+
+### 2026-09-24 — Text-layer marker built; white border refused; skip-flattening measured
+
+- **Owner's decisions:** build the raw text-layer trigger; fix edge cutting with
+  a white border.
+- **Marker built** (`pipeline/pdf_text_layer.py`, `Word.layer_disagree`, schema in
+  its own commit): the importer saves each page's hidden words as
+  `pdf_text_layer.json` (page-root input, documented in CLAUDE.md) and marks every
+  page `origin: pdf_import`; Stage 05 aligns and marks, Stage 06 ORs it in. The
+  eval tool now imports the same code; a replay reproduces all 71 labelled sites
+  and every page's counts, and a Stage 05+06 re-run on a copy marks exactly those
+  words. Abstains outside the measured population (English, ≥ 150 layer words,
+  coverage ≥ 0.42).
+- **White border refused** at both pre-registered widths (15 %, 25 %): edge cuts
+  60 → 0, but UVDoc then bends flat pages; other pages lose 3–5 % of agreeing
+  words, one page 24 %. The Stage 03 code was reverted, never committed.
+- **Skip flattening for imported pages** (the prereg's named next arm, addendum
+  before numbers) passes every clause; not shipped — the owner's call, and the
+  cost on a crooked scan is unmeasured.
+- The marker's measured precision belongs to today's Stage 03 output: on the
+  changed pages about 30 of 71 judged spots disappear and ~20 new ones appear.

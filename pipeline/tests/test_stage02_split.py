@@ -533,6 +533,112 @@ def test_mixed_source_boxes_address_their_own_frame():
         assert (page_dir / "debug" / "02_split_source_frame_01.png").exists()
 
 
+# --------------------------------------------------------------------------
+# Declared page layout (v0.6.0): ``<page_dir>/page_layout.json`` is input, like
+# book_box.json. pipeline/pdf_import.py writes it; "single" means no spine search
+# and no book detection. Absent, the stage must be exactly what it was.
+# --------------------------------------------------------------------------
+
+
+def _page_with(spread: np.ndarray, td: str) -> Path:
+    page_dir = Path(td) / "page_001"
+    (page_dir / "01_fuse").mkdir(parents=True)
+    cv2.imwrite(str(page_dir / "01_fuse" / "anchor.png"), spread)
+    return page_dir
+
+
+def _write_layout(page_dir: Path, layout: str, source: str = "pdf_import_aspect",
+                  aspect: float | None = 0.7) -> None:
+    (page_dir / "page_layout.json").write_text(json.dumps(
+        {"layout": layout, "source": source, "aspect": aspect}), encoding="utf-8")
+
+
+def _outputs(page_dir: Path) -> dict:
+    out = {}
+    for name in ("left.png", "right.png", "single.png"):
+        f = page_dir / "02_split" / name
+        out[name] = cv2.imread(str(f), cv2.IMREAD_COLOR) if f.exists() else None
+    split = json.loads((page_dir / "02_split" / "split.json").read_text(encoding="utf-8"))
+    for k in ("layout", "layout_source"):
+        split.pop(k)
+    return {"images": out, "split": split}
+
+
+def test_no_layout_file_means_nothing_changes():
+    """Same frame, with and without the feature's input: the default path is
+    untouched, and a declared "spread" (or "detect") IS the default path."""
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = _page_with(spread, td)
+        assert S2mod.load_page_layout(page_dir) == (None, None)
+        r0 = run(page_dir, {})
+        base = _outputs(page_dir)
+        assert (r0.layout, r0.layout_source) == ("detect", "")
+        assert r0.gutter_x is not None
+        for declared in ("spread", "detect"):
+            _write_layout(page_dir, declared, aspect=1.33)
+            r1 = run(page_dir, {})
+            now = _outputs(page_dir)
+            assert (r1.layout, r1.layout_source) == (declared, "pdf_import_aspect")
+            assert now["split"] == base["split"]
+            for name, img in base["images"].items():
+                assert (img is None) == (now["images"][name] is None)
+                assert img is None or np.array_equal(img, now["images"][name])
+
+
+def test_declared_single_page_is_the_whole_frame_and_never_searched():
+    """A two-page-LOOKING frame declared single is emitted whole: no spine
+    search, no book crop — and every artifact the contract asks for exists."""
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = _page_with(spread, td)
+        run(page_dir, {})                                  # leaves left/right.png
+        _write_layout(page_dir, "single")
+        r = run(page_dir, {"per_page_source": {"mode": "ocr"}})
+        assert r.method == "declared-single" and r.gutter_x is None
+        assert (r.layout, r.layout_source) == ("single", "pdf_import_aspect")
+        assert [p.name for p in r.pages] == ["single.png"]
+        assert r.book_crop_applied is False
+        assert r.book_crop_source == "none (declared single page)"
+        out = page_dir / "02_split"
+        assert not (out / "left.png").exists() and not (out / "right.png").exists()
+        written = cv2.imread(str(out / "single.png"), cv2.IMREAD_COLOR)
+        assert np.array_equal(written, spread)
+        assert (page_dir / "debug" / "02_split.png").exists()
+        meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+        assert meta["version"] == S2mod.VERSION
+        assert meta["params"]["layout"]["layout"] == "single"
+        assert any("declared SINGLE" in w for w in meta["warnings"])
+        assert any("per_page_source" in w and "skipped" in w for w in meta["warnings"])
+        assert not any("PORTRAIT" in w for w in meta["warnings"])
+
+
+def test_declared_single_page_still_takes_the_operators_box():
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = _page_with(spread, td)
+        _write_layout(page_dir, "single", source="operator", aspect=None)
+        _write_user_box(page_dir, (400, 300, 1600, 1200))
+        r = run(page_dir, {})
+        assert r.book_crop_source == "operator" and r.book_crop_applied is True
+        box = r.pages[0].box
+        written = cv2.imread(str(page_dir / "02_split" / "single.png"), cv2.IMREAD_COLOR)
+        assert np.array_equal(written, spread[box.y:box.y + box.h, box.x:box.x + box.w])
+        assert box.x <= 400 and box.x + box.w >= 1600      # padded outward, never inward
+
+
+def test_a_corrupt_layout_file_never_stops_a_page():
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = _page_with(spread, td)
+        (page_dir / "page_layout.json").write_text('{"layout": "sideways"}',
+                                                   encoding="utf-8")
+        r = run(page_dir, {})
+        assert r.layout == "detect" and r.gutter_x is not None
+        meta = json.loads((page_dir / "02_split" / "meta.json").read_text(encoding="utf-8"))
+        assert any("page_layout.json unreadable" in w for w in meta["warnings"])
+
+
 def _run() -> int:
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:

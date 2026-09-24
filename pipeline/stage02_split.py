@@ -71,6 +71,7 @@ import argparse
 import json
 import time
 from pathlib import Path
+from typing import Literal
 
 import cv2
 import numpy as np
@@ -83,7 +84,7 @@ from pipeline import page_source as PS
 from pipeline.page_model import BBox, StageMeta
 
 STAGE = "stage02_split"
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -189,6 +190,37 @@ class UserBookBox(BaseModel):
     note: str = ""                        # free text from the operator
 
 
+class PageLayout(BaseModel):
+    """``<page_dir>/page_layout.json`` — what this capture IS: a two-page spread
+    or a single page.
+
+    **The second documented exception to the stage contract**, the same kind as
+    ``book_box.json``: INPUT that no stage writes, at the page-dir root so it is
+    never mistaken for a stage folder. ``pipeline/pdf_import.py`` writes it for
+    every page it imports (a PDF page may be one book page or a whole spread; the
+    phone always shoots spreads, so a phone page never has one), and an operator
+    may write or edit it.
+
+    ``source`` is provenance and is kept apart from the verdict on purpose: the
+    importer's call from the page's shape (``pdf_import_aspect``) is a machine
+    guess, an ``operator`` call is a human's, and a reader of split.json must be
+    able to tell which one decided that a page was never searched for a spine.
+
+    ``single`` means: no gutter search and no book-boundary detection — the whole
+    frame is the page (or an operator's ``book_box.json``, if one exists). The
+    detector is skipped rather than trusted because it was built and measured on
+    spreads only, and its known failure on a pale surface is a confident wrong
+    crop; for a produced scan there is nothing to crop anyway. The cost: a single
+    page PHOTOGRAPHED on a surface keeps that surface (P1's problem) unless an
+    operator draws the box. ``spread`` and ``detect`` both run the normal path.
+    """
+
+    layout: Literal["single", "spread", "detect"]
+    source: str = "operator"      # "operator" | "pdf_import_aspect" | ...
+    aspect: float | None = None   # width / height the verdict was made from
+    note: str = ""
+
+
 class SplitResult(BaseModel):
     """Contents of ``02_split/split.json`` — the stage's inter-stage data."""
 
@@ -234,6 +266,11 @@ class SplitResult(BaseModel):
     # not a crop was applied, so Stage 03 and patch-mode word crops need to know
     # nothing about the crop. Asserted in test_stage02_split.
     book_crop_applied: bool = False
+    # --- declared page layout (``<page_dir>/page_layout.json``, v0.6.0) -----
+    # "detect" with an empty source is a page nobody declared anything about —
+    # every phone capture, and every page before this field existed.
+    layout: str = "detect"
+    layout_source: str = ""
     # Never infer this from book_crop_applied: an operator box that failed its
     # provenance check leaves applied False with the DETECTOR's own reason, and a
     # reader has to be able to tell that from a page nobody ever drew on.
@@ -606,6 +643,24 @@ def draw_overlay_full(image: np.ndarray, book: "BB.BookBoundary",
 # --------------------------------------------------------------------------
 
 USER_BOX_FILE = "book_box.json"
+LAYOUT_FILE = "page_layout.json"
+
+
+def load_page_layout(page_dir: Path) -> tuple[PageLayout | None, str | None]:
+    """Read ``<page_dir>/page_layout.json`` -> (layout, problem).
+
+    Absent -> (None, None): the normal path, exactly as before the file existed.
+    Unreadable -> (None, why): also the normal path, with the reason for a
+    warning — like ``book_box.json``, a malformed input must never stop a page.
+    """
+    f = page_dir / LAYOUT_FILE
+    if not f.exists():
+        return None, None
+    try:
+        return PageLayout.model_validate_json(f.read_text(encoding="utf-8")), None
+    except Exception as e:
+        return None, (f"{LAYOUT_FILE} unreadable, ignored ({type(e).__name__}): "
+                      f"{str(e)[:200]}")
 
 
 def load_user_box(page_dir: Path) -> UserBookBox | None:
@@ -671,6 +726,13 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     if image is None:
         raise RuntimeError(f"unreadable image: {src}")
     h, w = image.shape[:2]
+
+    layout, layout_problem = load_page_layout(page_dir)
+    if layout_problem:
+        warnings.append(layout_problem)
+    if layout is not None and layout.layout == "single":
+        return _run_single(page_dir, image, layout, cfg, params, ps_params,
+                           warnings, t0, debug)
 
     # A two-page spread is always wider than tall. Portrait input means the
     # orientation was not normalized upstream — the vertical-gutter detector
@@ -961,6 +1023,8 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
         corroborated_by=list(diag["corroborated_by"]),
         other_cues_agree_elsewhere=bool(diag["other_cues_agree_elsewhere"]),
         book_crop_applied=book.applied, book_crop_source=crop_source,
+        layout=layout.layout if layout is not None else "detect",
+        layout_source=layout.source if layout is not None else "",
         book_crop_reason=book.reason, book_crop_evidence=book.evidence,
         book_crop=anchor_box, vlm_box=vlm_diag,
         book_search=BBox(x=sx0, y=sy0, w=sx1 - sx0, h=sy1 - sy0),
@@ -1010,6 +1074,84 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
     (out_dir / "meta.json").write_text(
         meta.model_dump_json(indent=2), encoding="utf-8"
     )
+    return result
+
+
+def _run_single(page_dir: Path, image: np.ndarray, layout: PageLayout,
+                cfg: dict, params: dict, ps_params: dict, warnings: list[str],
+                t0: float, debug: bool) -> SplitResult:
+    """The declared-single-page branch: no gutter search, no book detection.
+
+    Kept out of ``run`` so the default path is not touched at all when no
+    ``page_layout.json`` says ``single``. Writes everything the stage contract
+    asks of any Stage 02 run: ``single.png``, ``split.json``, ``meta.json`` and
+    the debug overlay. ``debug`` has nothing extra to dump here (no profile).
+    """
+    h, w = image.shape[:2]
+    say = (f"page declared SINGLE by {LAYOUT_FILE} (source: {layout.source}"
+           + (f", aspect {layout.aspect:.3f}" if layout.aspect is not None else "")
+           + "): no gutter search and no book-boundary detection")
+    crop_source, reason = "none (declared single page)", say
+    ex0, ey0, ex1, ey1 = 0, 0, w, h
+    user = load_user_box(page_dir)
+    if user is not None:
+        bad = user_box_mismatch(user, w, h)
+        if bad:
+            warnings.append(f"operator book box in {USER_BOX_FILE} REFUSED: {bad}. "
+                            f"Emitting the whole frame.")
+            crop_source = "operator-refused"
+        else:
+            book = BB.user_box(image, tuple(user.box), BB.resolve_params(cfg))
+            if book.diag.get("user_box_rejected"):
+                warnings.append(f"operator book box REFUSED: {book.reason}")
+                crop_source = "operator-refused"
+            else:
+                ex0, ey0, ex1, ey1 = book.emit
+                crop_source, reason = "operator", book.reason
+    warnings.append(say + (f"; cut to the operator's book box {[ex0, ey0, ex1, ey1]}"
+                           if crop_source == "operator"
+                           else "; the whole frame is the page"))
+    if ps_params["mode"] != "off":
+        warnings.append(f"per_page_source.mode={ps_params['mode']!r} skipped: it "
+                        f"chooses a frame per side of a spine, and a single page "
+                        f"has none.")
+
+    out_dir = page_dir / "02_split"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for stale in ("left.png", "right.png", "single.png"):
+        (out_dir / stale).unlink(missing_ok=True)
+    cv2.imwrite(str(out_dir / "single.png"), image[ey0:ey1, ex0:ex1])
+    box = BBox(x=ex0, y=ey0, w=ex1 - ex0, h=ey1 - ey0)
+    result = SplitResult(
+        source="01_fuse/anchor.png", width=w, height=h, gutter_x=None,
+        confident=False, method="declared-single",
+        pages=[SubPage(name="single.png", box=box, gutter_x=None, book_crop=box)],
+        book_crop_applied=crop_source == "operator", book_crop_source=crop_source,
+        book_crop_reason=reason, book_crop=box, book_search=box,
+        layout="single", layout_source=layout.source,
+    )
+    (out_dir / "split.json").write_text(result.model_dump_json(indent=2),
+                                        encoding="utf-8")
+
+    debug_dir = page_dir / "debug"
+    debug_dir.mkdir(parents=True, exist_ok=True)
+    overlay = image.copy()
+    cv2.rectangle(overlay, (ex0, ey0), (ex1 - 1, ey1 - 1), (0, 200, 0), 6)
+    cv2.putText(overlay, f"single page (declared: {layout.source})", (30, 60),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.4, (0, 160, 0), 3)
+    cv2.imwrite(str(debug_dir / "02_split.png"), overlay)
+
+    total_ms = (time.perf_counter() - t0) * 1000.0
+    meta = StageMeta(
+        stage=STAGE, version=VERSION,
+        params={**{k: params[k] for k in DEFAULTS},
+                "layout": layout.model_dump(),
+                "per_page_source": {k: ps_params[k] for k in PS.DEFAULTS}},
+        timings_ms={"total": round(total_ms, 1)},
+        warnings=warnings,
+    )
+    (out_dir / "meta.json").write_text(meta.model_dump_json(indent=2),
+                                       encoding="utf-8")
     return result
 
 

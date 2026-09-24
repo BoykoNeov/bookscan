@@ -132,8 +132,14 @@ per_page_source:
 # are the EDGES OF WHAT WAS MEASURED, not tuned values: English only, pages with a
 # layer of at least 150 words, alignment coverage at least 0.42 (the lowest
 # measured page was 0.4286). Widening any of them is an unmeasured claim.
+#
+# SWITCHED OFF 2026-09-24, by the rule written before re-judging (prereg addendum
+# 2): once Stage 03 stopped flattening imported pages, the same rule re-scored
+# 35 catches / 23 false alarms (0.60) but only 3 documents at >= 0.50 (the gate
+# needs 4) — Tesseract now reads several of the mistakes it used to catch. Turning
+# it back on is the owner's call; the code and its tests stay.
 pdf_text_layer:
-  enabled: true
+  enabled: false
   languages: [eng]
   min_layer_words: 150
   min_coverage: 0.42

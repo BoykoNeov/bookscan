@@ -1,0 +1,21 @@
+R001 A  "values" (italic)
+R002 neither  "setw(10)" in code font, zero drawn with a dot/slash; neither 1@ nor 18
+R003 neither  Greek theta (θ); neither 8 nor 0
+R004 neither  Greek tau with subscript "df" (τ_df); neither 74 nor ty
+R005 neither  italic k with subscript "df" (k_df); neither ky nor k
+R006 neither  Greek tau (τ); neither x nor 7
+R007 A  "1%"
+R008 B  word is "catch" (red box covers only its final "h"); the printed word is catch
+R009 A  "setw(10)", code-font zero
+R010 neither  Greek theta (θ) in "θ = 0"; neither 0 nor 8
+R011 B  "is"
+R012 B  "setw(10)", code-font zero
+R013 B  "the"
+R014 A  "gAssim.gphot"
+R015 A  "gParam.hgt"
+R016 A  word is "cout" (red box covers only "out"); the printed word is cout
+R017 A  italic "et" (of "et al.")
+R018 B  "0.0;" with code-font zeros
+R019 A  "setw(10)", code-font zero
+R020 A  "ISight" (capital I, not a bracket)
+R021 neither  "setw(10)", code-font zero; neither 1@ nor 18

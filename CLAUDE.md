@@ -206,7 +206,12 @@ detector is skipped on a single page because it was only ever measured on
 spreads — the cost is that a single page *photographed* on a surface keeps the
 surface unless a box is drawn. The file also carries `"origin": "pdf_import"` on
 every imported page (whoever chose the layout), passed through to split.json as
-`layout_origin`; nothing acts on it yet.
+`layout_origin`, and **Stage 03 does not flatten such a page** (it is written
+unchanged): UVDoc enlarged already-flat scans and cut line starts off thin
+margins; skipping it restored every cut word and read the other test pages 0.7 %
+better (RESULTS 2026-09-24). The cost, unmeasured: a crooked or curved page
+inside a PDF is not straightened. An import made before this has no `origin` and
+is still flattened.
 
 **PDF-text-layer exception (Stage 05).** `<page_dir>/pdf_text_layer.json` is
 **input** of the same kind: the importer saves the PDF page's hidden OCR words
@@ -217,7 +222,9 @@ disagree one word for one word, the word gets `Word.layer_disagree`, which Stage
 layer never supplies text or confidence, its reading is not stored, and
 agreement clears nothing (23 % of agreed flagged words were still wrong). English
 only, a layer of ≥ 150 words, alignment coverage ≥ 0.42 — the edges of what was
-measured (RESULTS 2026-09-24), not tuned values.
+measured (RESULTS 2026-09-24), not tuned values. **Switched OFF in config.yaml**
+(same day): re-judged on the unflattened pages Stage 03 now ships, it fails its
+per-document clause (3 of 4 needed). The importer still saves the layer.
 
 ### Job folder layout
 

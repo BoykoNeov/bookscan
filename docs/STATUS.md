@@ -893,3 +893,14 @@ rules for it:
   registered 22; recomputed (15 % −2.60 %, 25 % −4.88 %, skip +0.73 %), no
   verdict changes. A direct count shows skipping flattening restores all 24
   cut-off words on D6 (the agreement count had understated it).
+
+### 2026-09-24 — Imported pages not flattened (shipped); text-layer marker switched off
+
+- **Owner: "ship it".** Stage 03 v0.3.0 writes an imported page unchanged (keyed on
+  `layout_origin`, the importer's marker); UVDoc is not loaded for it. The shipped
+  code reproduces the measured skip arm exactly on all 24 test pages.
+- **Marker re-judged on those pages** (addendum 2, written before labels; 21 new
+  sites judged blind by a fresh helper): 35 catches / 23 false alarms, 3 of 5
+  documents at ≥ 0.50 → fails. D3 lost four catches because Tesseract now reads
+  them right. **Switched off in config.yaml** by the rule fixed in advance; code
+  kept; owner's call to turn it back on.

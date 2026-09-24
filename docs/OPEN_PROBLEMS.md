@@ -328,27 +328,20 @@ It needs a Bulgarian page carrying an English/other-language block.
   restart. A CLI import made while the console is open still waits for its next
   start. A two-page cut of a real ABBYY scan ran through the console to the end
   of Stage 06; no whole real book has been imported yet.
-  **Slice 3 BUILT 2026-09-24** on the owner's call, exactly as measured: where an
-  imported PDF's hidden text disagrees with Tesseract one word for one word, the
-  word is flagged (`Word.layer_disagree`; 48 real mistakes to 16 correct words in
-  the test, almost all formulas and symbols). It never supplies text and never
-  clears a flag (23 % of agreed, flagged words are wrong). English only, a layer
-  of ≥ 150 words, alignment coverage ≥ 0.42 — the measured population. Its 0.75
-  describes pages as Stage 03 flattens them TODAY: change Stage 03 for imports
-  and about 30 of the 71 judged spots move, so the precision must be re-judged.
-  **Open defect: Stage 03 cuts the edges of flat scans with thin margins** —
-  UVDoc enlarges an already-flat page and pushes line starts off it (60 words at
-  an edge on 24 test pages, 56 of them on two pages of one paper; a lower bound).
-  **A white border before flattening is REFUSED** at 15 % and 25 % (RESULTS
-  2026-09-24): it removes the edge cuts but makes UVDoc bend flat pages (D3 page 1
-  lost 24 % of its readable words); do not retry border widths or colours.
-  **Skipping flattening for imported pages passes the same gate** (edges 60 → 0,
-  the other 22 pages +0.7 %, worst −1.6 %; the 24 cut-off words on D6 all read
-  whole again) and is NOT shipped: it waits on
-  the owner, and what it costs on a crooked scan is unmeasured (no crooked page
-  in the test). If shipped: key it on `layout_origin == "pdf_import"` (already
-  written by the importer, read by nothing yet), and re-judge the text-layer
-  marker's sites on the new pages.
+  **Slice 3 built, then switched OFF the same day** (RESULTS 2026-09-24): the
+  "hidden text disagrees" marker (`Word.layer_disagree`) passed its gate on
+  flattened pages (48 catches / 16 false alarms), but once imported pages stopped
+  being flattened it re-scored 35 / 23 with only 3 of 4 required documents at
+  ≥ 0.50 — Tesseract now reads several of its old catches itself. Off in
+  config.yaml by the pre-registered rule; the importer still saves the layer, so
+  turning it on needs no re-import. Owner's call. Agreement never clears a flag.
+  **Imported pages are no longer flattened** (Stage 03 v0.3.0, shipped): UVDoc
+  enlarged already-flat scans and cut line starts off thin margins; skipping it
+  restored every cut word and read the other test pages 0.7 % better. A white
+  border before UVDoc was REFUSED (it bends flat pages). **Unmeasured cost:** a
+  crooked or curved page inside a PDF (a photographed book bound into a file) is
+  no longer straightened — the next thing to check when such a PDF turns up.
+  Imports made before 2026-09-24 have no `origin` and are still flattened.
   Every imported single page carries Stage 00's "result is PORTRAIT" warning,
   which is noise there.
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at

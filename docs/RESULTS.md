@@ -9419,3 +9419,43 @@ numbers (0.1–1.1) and three words (`applied`, `potential`, `Kolthoff`); the
 recovered words do not show as agreement because the layer orders that region
 differently (page coverage 0.63). So skipping flattening DOES restore the cut
 words; the agreement count understates it.
+
+## 2026-09-24 — Imported pages are no longer flattened (SHIPPED); re-judged on those pages, the text-layer marker FAILS its per-document clause and is switched off
+
+**Shipped on the owner's call:** Stage 03 v0.3.0 writes an imported PDF page
+(`layout_origin == "pdf_import"`) unchanged and never loads UVDoc for it. The
+shipped code was run on a fresh copy of the 24 test pages: every page's
+`03_dewarp` image, words and decisions are identical to the measured
+skip-flattening arm (row above), so that arm's numbers are the shipped numbers:
+every cut word on D6 restored, the other 22 pages +0.73 %, worst page −1.61 %.
+Phone pages are untouched (unit test). Imports made before today carry no
+`origin` and are still flattened.
+
+**Re-judged, as pre-registered before any label** (prereg addendum 2): the same
+rule on the pages as now shipped. 39 sites carry their earlier label (same
+document, page and both readings); 21 new sites judged blind by a fresh helper
+that saw only the anonymised crops (the measuring session had seen the new
+sites unblinded, so it did not judge). Data:
+`docs/data/pdf_textlayer_20260924/rejudge/`.
+
+| | catches | false alarms | can't tell | precision | docs ≥ 0.50 (of eligible) | verdict |
+|---|---|---|---|---|---|---|
+| first measurement (flattened pages) | 48 | 16 | 3 | 0.75 | 4 of 5 | BUILD |
+| **re-judged (unflattened, as shipped)** | **35** | **23** | 1 | **0.60** | **3 of 5** | **REFUSE** |
+| of which the 21 new sites (D1–D7) | 13 | 7 | 0 | 0.65 | — | — |
+
+Per document (catches/false alarms): D1 0/7 · D2 14/5 · D3 4/5 · D4 5/1 · D6 12/5;
+D5, D7 none; control 1/0 (valid). Arm (b) (dictionary-gated) 3/0, refused.
+
+Why: D3 fell from 8/5 to 4/5 with NO new site — four mistakes the layer used to
+catch there are now read correctly by Tesseract itself on the unflattened page,
+while its false alarms (the layer's `1%2` for "1962", `IS)` for "(15),") remain.
+The fix to Stage 03 removed part of what the marker was catching. The verdict
+does not hinge on the helper's two judgement calls (R008, R016, where the red
+box covers part of a word): both are D2, which stays ≥ 0.50 either way; D3 is one
+site from passing, but the clause is as written.
+
+**Consequence, as fixed before judging:** `pdf_text_layer.enabled: false` in
+config.yaml. Code, tests and the importer's saved layer stay; turning it back on
+is the owner's call. What it would still do if on: ~0.60 precision, about 3 flags
+on a page with a layer, mostly notation.

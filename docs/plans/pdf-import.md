@@ -7,8 +7,9 @@ check, per-page toggle, import, every page queued with no restart). **Slice 3
 BUILT 2026-09-24** on the owner's call, exactly as measured
 (`pipeline/pdf_text_layer.py`; prereg `docs/data/pdf_textlayer_prereg_20260924.md`,
 RESULTS 2026-09-24): 48 catches / 16 false alarms, catches are notation, and it
-never clears a flag. Stage 03's edge cutting on imported flat scans: a white
-border REFUSED, skipping flattening measured and passing, not shipped (owner). Written 2026-08-29 at the owner's request
+never clears a flag. Stage 03 no longer flattens imported pages (shipped: it
+cut thin margins; a white border was refused), and re-judged on those pages the
+marker fails its per-document clause — switched OFF in config, owner's call. Written 2026-08-29 at the owner's request
 ("i want to be able to import pdf's and reedit them through the pipeline as
 scanned pages ... it is not neccessary do to that now, but write it as a plan").
 

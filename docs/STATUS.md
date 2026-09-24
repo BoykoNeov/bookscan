@@ -628,3 +628,9 @@ rules for it:
 - **OPEN_PROBLEMS P1 experiment 4's cue is dead as written** (it fires on
   neither spread); a three-edge variant is unmeasured. Experiment 1 is closed.
   The fix available today for spreads 2 and 4 is a hand-drawn book box.
+- **Correction, same day:** the white sheets do **not** set the box's right
+  edge on spreads 2 and 4 — it sits in open sofa 150–350 px past the book, and
+  the sheets are 650–870 px further out (RESULTS 2026-09-24, correction clause).
+  Nor is it established that they caused spread 3's escape: its own search box
+  is the whole frame. On spreads 2 and 4 the detector's paper mask runs to the
+  left, top and bottom frame edges — it reads the sofa as paper there.

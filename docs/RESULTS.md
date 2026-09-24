@@ -8662,3 +8662,25 @@ Stage 02 folders were not rewritten, so its downstream stages are not stale.
 * The model-box question for spread 4 (would it have been right?) is unasked;
   the operator path (`tools/book_box_editor`) remains the fix available today
   for spreads 2 and 4.
+
+**Correction, same day (2026-09-24), to items 3 and 4 above.** Two claims in
+this entry were not what the pixels show.
+(i) *"Its one inward edge, the right one, stops at a stack of loose white
+sheets ... not at the book"* is **wrong**. Read off the quarter-scale previews,
+the emitted right edge is 2971 on spread 2 and 2863 on spread 4, against the
+book's right edge at roughly 2620 (the model's box says 2640) and 2720, and the
+sheets starting near 3840 and 3520. The right edge sits in open sofa 150–350 px
+past the book; the sheets are 650–870 px further out and do not set it. What
+does set it is not established here (it may be the book's edge plus the emit
+pad, which would make it the one edge that is right — unchecked).
+(ii) *"the search box reached the white sheets"* for spread 3 is **not
+established**. Recomputed in memory, the detector's own paper-mask search box on
+spread 3 is the **entire frame**, (0, 0, 4080, 3060) — `boundary_found: False` —
+so the union is 100 % because the search box already is. (The `book_search`
+saved in its `split.json` is the model-aimed window from `search_only`, not
+this one.) The sheets could account for the right side of that box, not for
+its left, top and bottom. On spreads 2 and 4 the same search box is
+(0, 0, 2821, 3060) and (0, 0, 2802, 3060): **the paper mask itself runs to the
+left, top and bottom frame edges**, i.e. it reads the sofa as paper on those
+sides, and GrabCut, seeded from it, agrees. Unchanged: the three-sides finding,
+the eight-seed stability, the spread-2 model correction, experiment 4's cue.

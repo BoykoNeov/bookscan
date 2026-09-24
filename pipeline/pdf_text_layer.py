@@ -1,5 +1,13 @@
 """A scanned PDF's own hidden text as a SECOND OPINION on Tesseract (plan Slice 3).
 
+**OFF by default since 2026-09-24** (``DEFAULTS["enabled"]`` and config.yaml). It
+passed its gate on pages Stage 03 flattened, but once Stage 03 stopped flattening
+imported pages it was re-judged on those pages (prereg addendum 2) and failed the
+per-document clause: 35 catches / 23 false alarms, 3 of the 4 required documents
+at >= 0.50 — Tesseract now reads several of the mistakes it used to catch. The
+importer still saves the layer, so switching it on needs no re-import; that is
+the owner's call. Everything below describes what it does when switched on.
+
 A scanned PDF often carries an invisible text layer: somebody else's OCR of the
 same page. Where that layer and Tesseract read a word differently, the word gets a
 marker (``Word.layer_disagree``, ORed into Stage 06's ``uncertain`` exactly like
@@ -57,7 +65,7 @@ LINE_END_MARKS = ("­", "¬")      # soft hyphen, ¬
 # The measured population's edges (see module docstring). Config may narrow them
 # (``pdf_text_layer`` in config.yaml); widening them is an unmeasured claim.
 DEFAULTS = {
-    "enabled": True,
+    "enabled": False,            # switched off 2026-09-24 (module docstring)
     "languages": ["eng"],
     "min_layer_words": 150,
     "min_coverage": 0.42,

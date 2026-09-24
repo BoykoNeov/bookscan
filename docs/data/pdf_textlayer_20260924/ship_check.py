@@ -1,7 +1,11 @@
 """End-to-end: on a COPY of the measured pages, write each page's text layer the
 way the importer now does, re-run the shipped Stage 05 + 06, and check that the
 words marked layer_disagree are exactly the replay's marks (and that Stage 06
-flags every one of them)."""
+flags every one of them).
+
+Run while the marker was ON. Since 2026-09-24 it is off in config.yaml, so a
+re-run needs a config with ``pdf_text_layer: {enabled: true}``, or Stage 05 marks
+nothing and every page reads DIFFERENT."""
 import json
 import shutil
 import subprocess
@@ -30,7 +34,7 @@ for d in manifest["docs"]:
         before = json.loads((SRC / "jobs" / d["id"] / f"page_{k + 1:03d}" / "06_uncertain"
                              / "resolved.json").read_text(encoding="utf-8"))
         layer = L.layer_words(src[pno - 1])
-        exp = L.check(L.page_words(before["pages"]), layer)
+        exp = L.check(L.page_words(before["pages"]), layer, dict(L.DEFAULTS, enabled=True))  # the rule as measured (off by default since 2026-09-24)
         exp_texts = sorted(L.page_words(before["pages"])[i]["text"] for i in exp.marked)
         L.write_layer(page_dir, layer, pdf_name=Path(d["file"]).name, pdf_page=pno,
                       producer=producer)

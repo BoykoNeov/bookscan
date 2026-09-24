@@ -20,7 +20,7 @@ WORK = Path(sys.argv[1] if len(sys.argv) > 1 else r"W:\temp\claude\pdf_textlayer
 DATA = REPO / "docs" / "data" / "pdf_textlayer_20260924"
 key = json.loads((DATA / "key_labelled.json").read_text(encoding="utf-8"))
 manifest = json.loads((DATA / "manifest.json").read_text(encoding="utf-8"))
-RAW = dict(L.DEFAULTS, min_layer_words=0, min_coverage=0.0)
+RAW = dict(L.DEFAULTS, enabled=True, min_layer_words=0, min_coverage=0.0)
 
 
 def site_id(doc, pno, sub, box, tn, ln):
@@ -44,7 +44,7 @@ for d in manifest["docs"]:
                 subs.append(sp["name"])
         layer = L.layer_words(src[pno - 1])
         chk = L.check(words, layer, RAW)
-        shipped = L.check(words, layer)
+        shipped = L.check(words, layer, dict(L.DEFAULTS, enabled=True))  # the rule as measured (off by default since 2026-09-24)
         cov.append(round(chk.coverage, 3))
         n_other += chk.other_replace
         for t, lt in chk.sites:

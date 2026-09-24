@@ -9024,3 +9024,130 @@ Tests: 3 new in `pipeline/tests/test_book_boundary.py` (off by default and
 recorded; refuses when on, ASCII reason and evidence; leaves an ordinary crop
 alone). `test_book_boundary`, `test_stage02_split`, `test_vlm_box`: 59 pass.
 `tools/split_eval` after the change: 19/21, 0.0 %, exit 1 as before.
+
+## 2026-09-24 — "Union the model box with the paper mask" (P1 experiment 3, option 1): REFUSED offline, no code
+
+Pre-registration `docs/data/mask_union_guard_prereg_20260924.md` (written
+before computing); output `docs/data/mask_union_guard_20260924.json`. Offline:
+recorded model boxes (21 testset rows from `vlm_box_split_20260829.json`;
+spreads 1 and 3 from their `split.json`; 2 and 4 asked today), the paper mask
+from `book_boundary.paper_mask` with shipped params. No GrabCut, no model call.
+
+**Guard as written:** cut box = model box padded by `search_pad` ∪ bounding
+box of the raw paper-mask component.
+
+| target frame | guarded box, share of frame | frame edges touched (± one mask pixel) |
+|---|---|---|
+| `paleset_01` | 0.91 | L, B |
+| `paleset_02` | 0.98 | L, R, B |
+| sofa spread 1 | 1.00 | all four |
+| sofa spread 2 | 0.72 | **L, T, B** |
+| sofa spread 3 | 1.00 | all four |
+| sofa spread 4 | 0.71 | **L, T, B** |
+
+**Kill line met on every target frame:** each is either ≥ 83 % of the frame (the
+area gate would refuse it) or touches three edges — on spreads 2 and 4 the
+guarded box is the same three-sided sofa crop the detector already emits,
+because the paper mask itself runs to the left, top and bottom edges there.
+On the pale frames the mask has merged with the surface, so the union gives
+back the frame.
+
+**And it does not even stop the clip it was proposed for.** `de_02` clips
+**1.89 %** guarded, identical to the model box alone: the mask's own left edge
+(776) sits further inside than the model's padded box, so the union adds
+nothing on the side the model cut. Only `zoomset_en_02`'s 1.19 % bottom clip is
+removed (the mask reaches y = 3055), on a row where the detector already crops
+correctly and the model box is never used.
+
+So the guard is active only where nothing needed fixing and a no-op where the
+model box is needed. **Refused as written.** Not tried on these frames, and not
+to be: a per-edge "is the band outside the box surface?" test (the cue
+families of RESULTS 2026-08-28, dead), or a separate, wider cutting pad (a pad
+retune under another name; `search_pad` has a recorded dead zone). What is left
+for a model box that cuts is the owner's postponed decision on the clipping bar
+plus the fixture shoot.
+
+The edge column needed one correction before reading: the mask box is computed
+at 680 px wide, so its far edges land ~5 px short of the frame; exact equality
+reported sofa 2 and 4 as touching L, T only. The table uses one mask pixel of
+tolerance (6 px); the JSON carries both.
+
+**Addendum (2026-09-24, same day) to the "three frame edges" row above.** Its
+sentence "every such frame … abstains at the area gate" was, for the testset
+rows, not printed by the probe. Now checked
+(`docs/data/three_edge_cue_testset_reasons_20260924.json`): all 13 flat rows
+abstain at the area gate (97–100 % of the frame), as do `de_01` (85 %) and both
+paleset rows; `de_02` abstains as unstable (12.9 %). The sentence stands.
+
+## 2026-09-24 — The 24-vs-25 figure upgrade (P7): neither suspected cause — the block was not a figure yet. Fixed: 25
+
+Data: `docs/data/hires_isolation_20260924.json`, `docs/data/hires_panels_20260924.json`
+(scripts `hires_isolation_probe_20260924.py`, `hires_batch_replay_20260924.py`,
+`hires_panels_probe_20260924.py`, all under `docs/data/`). Owner's job
+`jobs/20260829-084115-de3c20d3`, run on a byte copy under `W:\temp\claude\p7`
+so the owner's `document.json` was not touched. Shipped config (figure_surface
+on, local model running).
+
+**The experiment P7 named:** assemble twice. Both runs are identical to each
+other **and to the 2026-08-29 run**: the same 24 figures keyed by page + bbox,
+the same scale and source frames on every one, the same 14 surface flags,
+`frame_decode_failures` empty. So the gap reproduces exactly — and with no
+decode failure, the decode-skip explanation is dead for this run.
+
+**Isolation, today, seeded:** `page_022__left` #5 searched alone through
+Stage 07's own `_upgrade_figure` upgrades on 3 of 3 calls — one source,
+`frame_17`, 1.285×, 60 inliers, NCC 0.827, coverage 1.00, identical to the
+number recorded 2026-08-29. Replaying the batch loop for that spread (shared
+frame index, every figure of both subpages in document order) upgrades it too.
+So the seeded RANSAC draw is not the cause either.
+
+**Cause.** The block is `type_promoted`: it is an icon panel that
+`unreadable_panel` re-types FIGURE, and in Stage 07 that pass runs over the
+whole job **after** the per-page hires pass. When hires looked, the block was
+text. The 2026-08-29 offline sweep searched the finished document's figures,
+which included it. Both explanations recorded in P7 were wrong.
+
+**Consequence, measured:** every panel converted to a picture has always
+printed from the page crop. On this book 22 panels are converted; searched now
+exactly as a figure is, **1 of 22 upgrades** (the same #5); the other 21 have no
+capture that clears the gates. Checked by checkerboard (48 px tiles, page crop
+upsampled vs the upgrade): text and icon edges run straight across tile
+boundaries, the upgrade is visibly sharper, no ghosting.
+
+**Fix, shipped:** Stage 07 now runs the same `_upgrade_figure` call on the
+panels `unreadable_panel` converted, after the conversion, re-indexing the
+captures only for spreads that have one. Re-assembled on the copy: **25
+upgraded**, the 24 earlier upgrades identical (page, bbox, scale, sources), 14
+surface flags unchanged, no decode failures. The new entry carries
+`after_panel_conversion: true` in `figure_hires_sources`. Not done: the surface
+check on converted panels (figure_surface was measured on detector figures;
+extending it is unmeasured). Test: `test_a_panel_retyped_figure_still_gets_the_hires_search`.
+
+The owner's own `document.json` is not re-assembled by this change; it gains the
+upgrade the next time they re-assemble (which needs `--force` only if they have
+edited it).
+
+## 2026-09-24 — Table columns from the row oracle (P6): REFUSED, both gates fail
+
+Pre-registration `docs/data/table_oracle_cols_prereg_20260924.md` (committed
+before the run); probe `docs/data/table_oracle_cols_probe_20260924.py`, output
+`docs/data/table_oracle_cols_20260924.json`. Stored Stage 05 words, `03_dewarp`
+images, config Tesseract.
+
+Sanity held: arm off reproduces 2026-08-31 exactly (4 gridded; #23, #14 and
+`it_geo_07` #5 abstain "only 1 column"). With the arm on:
+
+| block | arm on | gate |
+|---|---|---|
+| `it_geo_07 page_001__left` #5 (target) | **still abstains: 1 column from the re-read too** | 1 **FAIL** |
+| `page_003__right` #23 (must abstain) | **grids, 2 × 6** | 2 **FAIL** |
+| `page_016__right` #14 (must abstain) | abstains (1 and 1) | 2 pass |
+| the 4 gridded blocks | identical cells | 3 pass |
+
+The psm-6 re-read bridges the chart's gutter just as the page pass does, so
+taking the columns from it cannot reach the target; and on #23 it invents six
+columns out of two lines of route names. Code removed (an off-by-default arm
+that fixes nothing is not kept); gap thresholds not tuned on these blocks, per
+the pre-registration. The chart stays a known miss; what would reach it is
+evidence the bridging fragments are one word (they are `INFERIORE` split
+across the printed rule), which neither read supplies.

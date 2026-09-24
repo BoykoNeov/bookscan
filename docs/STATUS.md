@@ -714,3 +714,24 @@ rules for it:
   kept on the left) — mode (c) is not only a pale-surface failure; costs no
   content.
 - Asked the local model for spread 4's box for the first time: right, and tight.
+
+### 2026-09-24 — sofa crop: "model box ∪ paper mask" refused offline
+
+- P1 experiment 3's option 1, pre-registered and computed from recorded boxes.
+  On every target frame (both pale rows, sofa spreads 1–4) the guarded box is
+  ≥ 83 % of the frame or the same three-sided sofa crop; it also leaves
+  `de_02`'s 1.89 % clip untouched. Refused, no code. The model box cutting now
+  waits on the owner's clipping-bar decision and the fixture shoot.
+
+### 2026-09-24 — figure upgrades closed; table columns refused; sofa checkbox
+
+- P7: assembled the owner's book twice on a copy — identical to each other and
+  to 2026-08-29 (24, no decode failures). The missing 25th is an icon panel
+  `unreadable_panel` turns into a picture after the hires pass ran. Stage 07
+  now searches converted panels too: 25, the 24 unchanged. 1 of 22 converted
+  panels has a usable capture.
+- P6: columns from the psm-6 re-read, pre-registered — refused (the target
+  still reads as one column; a two-line block grids 2 × 6). Code removed.
+- Editor: "not part of the book — do not print" checkbox in the block
+  inspector (clears or sets `is_surface`, marks the block hand-edited, undoable).
+  Browser test `test_e2e_clear_the_surface_flag`.

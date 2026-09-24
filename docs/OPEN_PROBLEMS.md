@@ -67,21 +67,26 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
 2. **DONE 2026-09-24**, with no new file: the committed `de_01.jpg`/`de_02.jpg`
    are pixel-identical to those anchors, so both rows now name them. Verified
    from a clean worktree with no `jobs/`: 21 of 21 rows graded, 19/21, 0.0 %.
-3. **Build, opt-in, off by default:** the inward-only guard for the model box
-   (option 1 of the postponed decision) behind `vlm_box.cut: false`, measured on
-   `split_eval --vlm` for clipping. It needs no owner decision to *exist*; it
-   needs one to be turned on. **It does not reach mode (c) by itself:** the
-   model is asked only when the detector abstains or finds no spine, so spread 4
-   was never asked and spread 2's answer only aimed the search.
+3. **REFUSED 2026-09-24 as written** (RESULTS 2026-09-24, offline,
+   pre-registered): "model box ∪ paper mask" is ≥ 83 % of the frame or the same
+   three-sided sofa crop on every target frame (both pale rows, sofa spreads
+   1–4), because the mask is what merged with the surface; and it leaves
+   `de_02`'s 1.89 % clip exactly where it was. No code. Do not replace it on
+   these frames with a per-edge surface test (dead cue family) or a wider
+   cutting pad (a pad retune by another name). A model box that cuts now waits
+   on the postponed decision above and on the fixture shoot. For the record, the
+   model's box on spread 4 (asked 2026-09-24 for the first time) is right and
+   tight.
 4. **DONE 2026-09-24 — the "three frame edges" cue** (RESULTS 2026-09-24,
    pre-registered). Passes all gates, fires on spreads 2 and 4 only, 0 false
    fires; shipped as `book_crop.three_edge_abstain`, **off**. Why off: every
    frame that could false-fire (a book really filling three sides) abstains at
    the area gate first, so the cue has never met one; the positives are one
-   scene. It is not a fix either — it turns a wrong crop into no crop. Turning
-   it on is worth it only together with experiment 3 (so the abstain lands on
-   a model box that cuts) and after the fixture shoot supplies tight frames
-   that reach it. **New, found on the way:** spread 21 (dark chair) is a wrong
+   scene. It is not a fix either — it turns a wrong crop into no crop. With
+   experiment 3 refused there is nothing yet for the abstain to hand the frame
+   to except the model's search window and a hand-drawn box; turning it on waits
+   for a model box that may cut (the owner's decision) and for tight frames from
+   the fixture shoot that reach it. **New, found on the way:** spread 21 (dark chair) is a wrong
    crop touching **two** edges (a cushion kept on the left) — mode (c) is not
    only a pale-surface failure, and this cue cannot see it. No content lost.
 5. Shoot the fixtures. Nothing above replaces this. The shot list should now
@@ -168,12 +173,12 @@ button warns, and the fix is a "delete block" editor action that does not exist.
    a click, not a picture. Worth building only if the owner finds 15 clicks
    per book too many — their call, not a measurement.
 
-**Gap found while building the merge (not fixed):** the editor has no control
-to clear `is_surface`, although `page_model.py`'s comment and the guardrail "a
-flag is not a deletion" both say it can. A real picture the local model wrongly
-called sofa can therefore neither be restored nor merged from the editor (merge
-refuses surface blocks because they do not print). The fix is a checkbox in the
-block inspector; owner to decide when.
+**Gap found while building the merge — CLOSED 2026-09-24:** the block inspector
+now has a "not part of the book — do not print" checkbox on every picture and
+every surface-flagged block. Unticking restores the block (and makes it
+mergeable); ticking hides a picture the model missed. It is a hand edit
+(`structure_edited`), so a re-assemble will not silently undo it. The junk-block
+wart on `page_023__right` still needs a "delete block" action, not built.
 2. **The automatic merge**, only after 1: pre-register pixel ∧ model (and
    `is_surface` excluded) on a new population. That needs a second book with
    stacked figures, adjudicated by eye before either method runs. **Blocked on
@@ -243,24 +248,27 @@ beat their photographs is still the owner's call by eye.
 
 **Known miss:** `it_geo_07` #5, a real 3-column chart read well, refused because
 the page pass splits a word across the printed rule. Two column fixes swept
-and both change nothing. **Next build:** take the *columns* from the oracle read
-too, not only the rows — not attempted. **REFUSED:** working out rows from
+and both change nothing. **Columns from the oracle read: REFUSED 2026-09-24**
+(pre-registered): the re-read bridges the same gutter (still 1 column), and it
+invents a 2 × 6 grid on `page_003__right` #23, which must abstain. No next build
+is known that reaches this block. **REFUSED:** working out rows from
 geometry (the stagger aliases — the wrong answer fits better; deskewing does not
 help); `deu` for the numeric cells.
 
 ---
 
-## P7. Figure upgrades — one reproducible discrepancy, now diagnosable
+## P7. Figure upgrades — CLOSED 2026-09-24
 
-An offline sweep upgrades 25 figures and the shipped run 24; one block upgrades
-in isolation and is refused in the batch. Two candidate causes, **both made
-visible 2026-09-02**: a frame decode returning None under memory pressure (now
-listed as `frame_decode_failures` in `document.meta.json`) and RANSAC drawing
-from the unseeded global RNG (now seeded). **Next experiment:** re-run assemble
-on the owner's book twice; identical upgrade lists plus an empty
-`frame_decode_failures` closes it. **REFUSED:** lowering `min_coverage` below
-0.90 (an under-covered figure needs another photograph); `min_ncc` below 0.60.
-Verify pictures by checkerboard, never side by side.
+The 24-vs-25 discrepancy was neither a decode failure nor the RANSAC draw
+(both runs identical, no decode failures; the block upgrades in isolation and
+in a batch replay). `page_022__left` #5 is an icon panel that
+`unreadable_panel` re-types FIGURE **after** the per-page hires pass, so the
+pass never saw it. Fixed: converted panels now get the same search; 25
+upgrades, the 24 unchanged (RESULTS 2026-09-24). Only 1 of the 22 converted
+panels has a usable capture — the panels' problem is still the pixels (P2).
+**Still unmeasured:** the surface check is not run on converted panels.
+**REFUSED (unchanged):** lowering `min_coverage` below 0.90; `min_ncc` below
+0.60. Verify pictures by checkerboard, never side by side.
 
 ---
 

@@ -288,9 +288,10 @@ de-hyphenation, graded on the render (38 broken words → 26, 0 newly broken).
 **Deliberately not wired:** the EasyOCR disagreement gate and Stage 06's
 threshold also key on a lexicon. **REFUSED:** a page-level `deu+ita` string
 (loses umlauts while raising confidence — confident-word counts are not
-comparable across language sets). **Next experiment:** wire the EasyOCR gate to
-the block label *behind a flag*, grade on a text diff over the Bulgarian
-fixtures, the only ones where that gate runs.
+comparable across language sets). **Wiring the EasyOCR gate to the block label is BLOCKED ON DATA** (counted
+2026-09-24): on the Bulgarian fixtures, the only ones where that gate runs, 0 of
+33 blocks get a label other than the page's, so the change could alter nothing.
+It needs a Bulgarian page carrying an English/other-language block.
 
 ---
 

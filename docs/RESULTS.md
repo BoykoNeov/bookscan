@@ -9200,3 +9200,13 @@ new parameter and needs its own pre-registration on a population not read
 here; the 6 flagged figures are now contaminated for that purpose. Until then the
 owner can compare any upgrade against its page crop by eye; the editor falls back
 to the page crop if a figure's box is edited.
+
+## 2026-09-24 — P8, counted before building: the block-language label changes nothing on the Bulgarian fixtures
+
+`docs/data/block_lang_bul_count_20260924.json`. `block_lang.label_blocks` with
+the shipped params and all four installed Hunspell dictionaries, run in memory
+on the stored Stage 05 blocks of `floor_bg_01..03` (read as `bul`): **0 of 33
+blocks relabelled**. Wiring the EasyOCR disagreement gate to the block label
+could therefore change no word on the only fixtures where that gate runs. No
+flag, no code. It needs a Bulgarian page that carries a block in another
+language before it can be measured.

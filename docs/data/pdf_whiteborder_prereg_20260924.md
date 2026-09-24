@@ -59,7 +59,7 @@ pages are not touched. Every page re-runs from Stage 02 (`run_all` from
 Ship the border if **all** hold:
 
 1. **It fixes the defect:** words touching an edge, summed over the 24 pages, fall
-   from 59 to **at most 3**; and D6 pages 1 and 3 together gain agreeing tokens.
+   from 60 to **at most 3**; and D6 pages 1 and 3 together gain agreeing tokens.
 2. **It harms nothing else:** summed over the other 22 pages, agreeing tokens do
    not fall by more than **0.5 %**, and no single page loses more than **2 %** of
    its agreeing tokens.
@@ -84,3 +84,9 @@ from the same pages it is tested on (geometry only, fixed before any word count)
 phone pages are unaffected by construction (no `layout_origin`), shown by a unit
 test, not by a re-run; a PDF of a book PHOTOGRAPHED on a surface gets the border
 too, and that case is not in this population.
+
+## Correction, 2026-09-24 — before any bordered run
+
+The baseline in gate clause 1 read "59"; the committed census sums to 60 (57
+left/right: D4 p2 1, D6 p1 40, D6 p3 16; 3 top/bottom: D2 p1, D2 p3, D4 p1). The
+threshold (at most 3) is unchanged.

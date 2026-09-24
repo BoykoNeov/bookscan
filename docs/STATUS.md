@@ -837,3 +837,28 @@ rules for it:
   cut of a real ABBYY-produced scan: check → per-page change → reload keeps the
   checked PDF → import → job page with pages running/queued → both pages done
   through Stage 06 in ~20 s each. Suite 809 passed.
+
+### 2026-09-24 — PDF import, Slice 3 measured: the PDF's hidden text as a second opinion
+
+- Pre-registered first (`docs/data/pdf_textlayer_prereg_20260924.md`, committed
+  before any disagreement existed; one addendum before labelling, because the
+  control's only disagreements fell on already-flagged words). Tool
+  `tools/pdf_textlayer_eval.py` (prepare / sites / score); data in
+  `docs/data/pdf_textlayer_20260924/`.
+- 7 English documents from 7 text-layer producers, 20 pages, the shipped
+  pipeline; the layer aligned by word sequence (Stage 03 moves the words, so
+  its boxes are useless); 71 disagreements judged blind.
+- **Gate passes for the raw trigger** (48 catches, 16 false alarms, 0.75, four
+  documents at ≥ 0.50); the dictionary-gated version is refused (5 catches). The
+  control was clean (0 of 4 disagreements invented by the method).
+- **But the catches are notation**: both engines wrong at 35 of 48 (subscripts,
+  Greek, code zeros), one chemistry paper gives 20; on plain words the layer is
+  wrong more often than Tesseract (ABBYY read "the" as "die" six times in one
+  report). Without that paper the gate's per-document clause fails.
+- **Agreement is not evidence**: 23 % of flagged words the layer agrees with are
+  still wrong. The layer must never clear a flag and never supply text.
+- **Found on the way:** Stage 03 (UVDoc) enlarges an already-flat scan and cuts
+  line starts on a thin-margin page (2 of 20 pages; 40 and 16 words). Open.
+- Not built: whether to ship the raw trigger for imported PDFs is the owner's
+  call; the measurement says it would add ~3 flags a page, three in four right,
+  almost all in formulas.

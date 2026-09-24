@@ -1,0 +1,3828 @@
+{
+ "per_doc": {
+  "D1": {
+   "pages": 3,
+   "t_tokens": 1309,
+   "l_tokens": 1135,
+   "equal_t": 1120,
+   "coverage": [
+    0.973,
+    0.996,
+    0.5
+   ],
+   "sites": 6,
+   "sites_kept": 6,
+   "sites_flagged": 0,
+   "armb_kept": 0,
+   "other_replace": 5,
+   "flagged_agree": 9
+  },
+  "D2": {
+   "pages": 3,
+   "t_tokens": 688,
+   "l_tokens": 683,
+   "equal_t": 516,
+   "coverage": [
+    0.848,
+    0.976,
+    0.429
+   ],
+   "sites": 18,
+   "sites_kept": 12,
+   "sites_flagged": 6,
+   "armb_kept": 1,
+   "other_replace": 20,
+   "flagged_agree": 16
+  },
+  "D3": {
+   "pages": 3,
+   "t_tokens": 2099,
+   "l_tokens": 2184,
+   "equal_t": 1527,
+   "coverage": [
+    0.667,
+    0.881,
+    0.67
+   ],
+   "sites": 21,
+   "sites_kept": 14,
+   "sites_flagged": 7,
+   "armb_kept": 2,
+   "other_replace": 31,
+   "flagged_agree": 28
+  },
+  "D4": {
+   "pages": 3,
+   "t_tokens": 651,
+   "l_tokens": 671,
+   "equal_t": 565,
+   "coverage": [
+    0.922,
+    0.774,
+    0.862
+   ],
+   "sites": 12,
+   "sites_kept": 9,
+   "sites_flagged": 3,
+   "armb_kept": 1,
+   "other_replace": 18,
+   "flagged_agree": 8
+  },
+  "D5": {
+   "pages": 3,
+   "t_tokens": 519,
+   "l_tokens": 539,
+   "equal_t": 483,
+   "coverage": [
+    1.0,
+    0.832,
+    0.949
+   ],
+   "sites": 2,
+   "sites_kept": 0,
+   "sites_flagged": 2,
+   "armb_kept": 0,
+   "other_replace": 11,
+   "flagged_agree": 6
+  },
+  "D6": {
+   "pages": 3,
+   "t_tokens": 2638,
+   "l_tokens": 2608,
+   "equal_t": 1681,
+   "coverage": [
+    0.634,
+    0.548,
+    0.766
+   ],
+   "sites": 45,
+   "sites_kept": 26,
+   "sites_flagged": 19,
+   "armb_kept": 2,
+   "other_replace": 43,
+   "flagged_agree": 28
+  },
+  "D7": {
+   "pages": 2,
+   "t_tokens": 839,
+   "l_tokens": 839,
+   "equal_t": 837,
+   "coverage": [
+    0.995,
+    1.0
+   ],
+   "sites": 1,
+   "sites_kept": 0,
+   "sites_flagged": 1,
+   "armb_kept": 0,
+   "other_replace": 0,
+   "flagged_agree": 3
+  },
+  "C": {
+   "pages": 4,
+   "t_tokens": 721,
+   "l_tokens": 718,
+   "equal_t": 713,
+   "coverage": [
+    1.0,
+    0.973,
+    0.985,
+    1.0
+   ],
+   "sites": 4,
+   "sites_kept": 0,
+   "sites_flagged": 4,
+   "armb_kept": 0,
+   "other_replace": 1,
+   "flagged_agree": 2
+  }
+ },
+ "primary": [
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    577,
+    1130,
+    45,
+    39
+   ],
+   "t_raw": "k,",
+   "t_norm": "k",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.848,
+   "l_raw": "kz,",
+   "l_norm": "kz",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S001",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1553,
+    1975,
+    66,
+    30
+   ],
+   "t_raw": "size",
+   "t_norm": "size",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.766,
+   "l_raw": "8ze",
+   "l_norm": "8ze",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S002",
+   "a_is_tesseract": false,
+   "label": "B",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    868,
+    585,
+    35,
+    33
+   ],
+   "t_raw": "0,",
+   "t_norm": "0",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "02",
+   "l_norm": "02",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S003",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    834,
+    484,
+    39,
+    36
+   ],
+   "t_raw": "B,",
+   "t_norm": "b",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.848,
+   "l_raw": "By",
+   "l_norm": "by",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S004",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    242,
+    2813,
+    64,
+    25
+   ],
+   "t_raw": "Fic.",
+   "t_norm": "fic",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.881,
+   "l_raw": "FrG.",
+   "l_norm": "frg",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S005",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    369,
+    1594,
+    42,
+    36
+   ],
+   "t_raw": "7,",
+   "t_norm": "7",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.848,
+   "l_raw": "ty,",
+   "l_norm": "ty",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S006",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    536,
+    1081,
+    57,
+    27
+   ],
+   "t_raw": "0-1°",
+   "t_norm": "01",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.548,
+   "l_raw": "0.10",
+   "l_norm": "010",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S007",
+   "a_is_tesseract": false,
+   "label": "B",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    212,
+    466,
+    145,
+    29
+   ],
+   "t_raw": "reactions.",
+   "t_norm": "reactions",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "reaction8.",
+   "l_norm": "reaction8",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S008",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    1403,
+    2403,
+    36,
+    36
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "02",
+   "l_norm": "02",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S009",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "C",
+   "pdf_page": 2,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\C\\page_002",
+   "sub": "single.png",
+   "box": [
+    152,
+    113,
+    88,
+    61
+   ],
+   "t_raw": "II)",
+   "t_norm": "ii",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "III)",
+   "l_norm": "iii",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S010",
+   "a_is_tesseract": false,
+   "label": "A",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    962,
+    2086,
+    54,
+    34
+   ],
+   "t_raw": "the",
+   "t_norm": "the",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "die",
+   "l_norm": "die",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S011",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    432,
+    739,
+    66,
+    28
+   ],
+   "t_raw": "8.8,",
+   "t_norm": "88",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.429,
+   "l_raw": "@.9,",
+   "l_norm": "9",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S012",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "C",
+   "pdf_page": 2,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\C\\page_002",
+   "sub": "single.png",
+   "box": [
+    1898,
+    2251,
+    157,
+    99
+   ],
+   "t_raw": "minis",
+   "t_norm": "minis",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "mints",
+   "l_norm": "mints",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S013",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    589,
+    1988,
+    122,
+    40
+   ],
+   "t_raw": "1963).",
+   "t_norm": "1963",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.881,
+   "l_raw": "1%3).",
+   "l_norm": "13",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S014",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "C",
+   "pdf_page": 2,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\C\\page_002",
+   "sub": "single.png",
+   "box": [
+    2206,
+    1546,
+    31,
+    52
+   ],
+   "t_raw": "L",
+   "t_norm": "l",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "I:",
+   "l_norm": "i",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S015",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    667,
+    1466,
+    34,
+    34
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.548,
+   "l_raw": "0.",
+   "l_norm": "0",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S016",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    1135,
+    1642,
+    39,
+    34
+   ],
+   "t_raw": "Ar",
+   "t_norm": "ar",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.862,
+   "l_raw": "At",
+   "l_norm": "at",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S017",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    622,
+    645,
+    20,
+    33
+   ],
+   "t_raw": "6",
+   "t_norm": "6",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.862,
+   "l_raw": "0",
+   "l_norm": "0",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S018",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    433,
+    598,
+    43,
+    34
+   ],
+   "t_raw": "7.",
+   "t_norm": "7",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.848,
+   "l_raw": "zy.",
+   "l_norm": "zy",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S019",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    802,
+    271,
+    35,
+    32
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "02",
+   "l_norm": "02",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S020",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    1292,
+    1995,
+    37,
+    34
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "03",
+   "l_norm": "03",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S021",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    1816,
+    1434,
+    83,
+    37
+   ],
+   "t_raw": "H,0,",
+   "t_norm": "h0",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "H202",
+   "l_norm": "h202",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S022",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    588,
+    2267,
+    96,
+    41
+   ],
+   "t_raw": "g/m?",
+   "t_norm": "gm",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.667,
+   "l_raw": "gjm2",
+   "l_norm": "gjm2",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S023",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    0,
+    2111,
+    17,
+    18
+   ],
+   "t_raw": "e",
+   "t_norm": "e",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.766,
+   "l_raw": "the",
+   "l_norm": "the",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S024",
+   "a_is_tesseract": true,
+   "label": "unclear",
+   "outcome": null
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    673,
+    544,
+    147,
+    27
+   ],
+   "t_raw": "electrdde.",
+   "t_norm": "electrdde",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "electr6de.",
+   "l_norm": "electr6de",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S025",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    876,
+    740,
+    66,
+    24
+   ],
+   "t_raw": "6.9;",
+   "t_norm": "69",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.429,
+   "l_raw": "@.8;",
+   "l_norm": "8",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S026",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 251,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_001",
+   "sub": "single.png",
+   "box": [
+    1206,
+    2307,
+    195,
+    38
+   ],
+   "t_raw": "Cassini/Hu",
+   "t_norm": "cassinihu",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.922,
+   "l_raw": "Cassini/Huygens",
+   "l_norm": "cassinihuygens",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S027",
+   "a_is_tesseract": false,
+   "label": "A",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    329,
+    2299,
+    34,
+    33
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.548,
+   "l_raw": "02",
+   "l_norm": "02",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S028",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    126,
+    1607,
+    20,
+    26
+   ],
+   "t_raw": "T",
+   "t_norm": "t",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.862,
+   "l_raw": "x",
+   "l_norm": "x",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S029",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1865,
+    626,
+    31,
+    28
+   ],
+   "t_raw": "4",
+   "t_norm": "4",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.766,
+   "l_raw": "A",
+   "l_norm": "a",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S030",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    1640,
+    1564,
+    20,
+    30
+   ],
+   "t_raw": "2",
+   "t_norm": "2",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.881,
+   "l_raw": "k",
+   "l_norm": "k",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S031",
+   "a_is_tesseract": false,
+   "label": "A",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    278,
+    781,
+    36,
+    34
+   ],
+   "t_raw": "0,",
+   "t_norm": "0",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "03",
+   "l_norm": "03",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S032",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    368,
+    784,
+    79,
+    33
+   ],
+   "t_raw": "H,0,",
+   "t_norm": "h0",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "H202",
+   "l_norm": "h202",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S033",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    0,
+    2063,
+    135,
+    33
+   ],
+   "t_raw": "spended",
+   "t_norm": "spended",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.766,
+   "l_raw": "suspended",
+   "l_norm": "suspended",
+   "arm_b": true,
+   "in_uniform_sample": true,
+   "id": "S034",
+   "a_is_tesseract": true,
+   "label": "unclear",
+   "outcome": null
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    1725,
+    2264,
+    58,
+    31
+   ],
+   "t_raw": "2X",
+   "t_norm": "2x",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.881,
+   "l_raw": "kX",
+   "l_norm": "kx",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S035",
+   "a_is_tesseract": false,
+   "label": "A",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    672,
+    697,
+    34,
+    31
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.548,
+   "l_raw": "02",
+   "l_norm": "02",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S036",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    281,
+    149,
+    36,
+    34
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "02",
+   "l_norm": "02",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S037",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 7,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_003",
+   "sub": "single.png",
+   "box": [
+    1854,
+    2802,
+    150,
+    43
+   ],
+   "t_raw": "(1960).",
+   "t_norm": "1960",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.67,
+   "l_raw": "(1%0).",
+   "l_norm": "10",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S038",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    304,
+    1434,
+    10,
+    56
+   ],
+   "t_raw": "7",
+   "t_norm": "7",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.862,
+   "l_raw": "x",
+   "l_norm": "x",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S039",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 251,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_001",
+   "sub": "single.png",
+   "box": [
+    711,
+    1462,
+    124,
+    33
+   ],
+   "t_raw": "(RHU).",
+   "t_norm": "rhu",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.922,
+   "l_raw": "(RI-IU).",
+   "l_norm": "riiu",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S040",
+   "a_is_tesseract": false,
+   "label": "B",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    619,
+    774,
+    64,
+    28
+   ],
+   "t_raw": "8.8,",
+   "t_norm": "88",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.429,
+   "l_raw": "@.8,",
+   "l_norm": "8",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S041",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 7,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_003",
+   "sub": "single.png",
+   "box": [
+    752,
+    736,
+    8,
+    11
+   ],
+   "t_raw": "L,",
+   "t_norm": "l",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.67,
+   "l_raw": "i,",
+   "l_norm": "i",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S042",
+   "a_is_tesseract": false,
+   "label": "unclear",
+   "outcome": null
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    1856,
+    1476,
+    82,
+    37
+   ],
+   "t_raw": "H,0,",
+   "t_norm": "h0",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "HS20",
+   "l_norm": "hs20",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S043",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    579,
+    2528,
+    53,
+    32
+   ],
+   "t_raw": "the",
+   "t_norm": "the",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "die",
+   "l_norm": "die",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S044",
+   "a_is_tesseract": false,
+   "label": "B",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    1510,
+    1875,
+    118,
+    41
+   ],
+   "t_raw": "4/(F",
+   "t_norm": "4f",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.667,
+   "l_raw": "Aj(F",
+   "l_norm": "ajf",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S045",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 7,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_003",
+   "sub": "single.png",
+   "box": [
+    1751,
+    1304,
+    51,
+    22
+   ],
+   "t_raw": "ws.",
+   "t_norm": "ws",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.67,
+   "l_raw": "vs.",
+   "l_norm": "vs",
+   "arm_b": true,
+   "in_uniform_sample": true,
+   "id": "S046",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    342,
+    1990,
+    95,
+    38
+   ],
+   "t_raw": "1962,",
+   "t_norm": "1962",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.881,
+   "l_raw": "1%2,",
+   "l_norm": "12",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S047",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    617,
+    1189,
+    56,
+    52
+   ],
+   "t_raw": "Gy",
+   "t_norm": "gy",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.862,
+   "l_raw": "Gnj",
+   "l_norm": "gnj",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S048",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    922,
+    2525,
+    51,
+    31
+   ],
+   "t_raw": "the",
+   "t_norm": "the",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "die",
+   "l_norm": "die",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S049",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    768,
+    2310,
+    53,
+    34
+   ],
+   "t_raw": "the",
+   "t_norm": "the",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "die",
+   "l_norm": "die",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S050",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    457,
+    2056,
+    122,
+    24
+   ],
+   "t_raw": "ended.TM",
+   "t_norm": "endedtm",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.429,
+   "l_raw": "ended.\"",
+   "l_norm": "ended",
+   "arm_b": true,
+   "in_uniform_sample": true,
+   "id": "S051",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    414,
+    774,
+    65,
+    27
+   ],
+   "t_raw": "8.8,",
+   "t_norm": "88",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.429,
+   "l_raw": "9.8,",
+   "l_norm": "98",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S052",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    564,
+    1175,
+    101,
+    30
+   ],
+   "t_raw": "dTaei,",
+   "t_norm": "dtaei",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.429,
+   "l_raw": "dTa@1,",
+   "l_norm": "dta1",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S053",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    300,
+    2427,
+    52,
+    30
+   ],
+   "t_raw": "the",
+   "t_norm": "the",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "die",
+   "l_norm": "die",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S054",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    730,
+    622,
+    77,
+    32
+   ],
+   "t_raw": "H,0,",
+   "t_norm": "h0",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "H202",
+   "l_norm": "h202",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S055",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    822,
+    774,
+    63,
+    25
+   ],
+   "t_raw": "0.8;",
+   "t_norm": "08",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.429,
+   "l_raw": "@.8;",
+   "l_norm": "8",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S056",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    520,
+    2265,
+    35,
+    32
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.548,
+   "l_raw": "0,",
+   "l_norm": "0",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S057",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    1578,
+    2769,
+    98,
+    40
+   ],
+   "t_raw": "(15),",
+   "t_norm": "15",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.881,
+   "l_raw": "IS)",
+   "l_norm": "is",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S058",
+   "a_is_tesseract": false,
+   "label": "B",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    262,
+    1049,
+    69,
+    33
+   ],
+   "t_raw": "Fic.",
+   "t_norm": "fic",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.881,
+   "l_raw": "FrG.",
+   "l_norm": "frg",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S059",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    1880,
+    2611,
+    54,
+    37
+   ],
+   "t_raw": "Fg",
+   "t_norm": "fg",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.667,
+   "l_raw": "FE",
+   "l_norm": "fe",
+   "arm_b": true,
+   "in_uniform_sample": true,
+   "id": "S060",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    760,
+    1389,
+    35,
+    33
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.548,
+   "l_raw": "02",
+   "l_norm": "02",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S061",
+   "a_is_tesseract": false,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 419,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_002",
+   "sub": "single.png",
+   "box": [
+    1026,
+    2216,
+    39,
+    35
+   ],
+   "t_raw": "2",
+   "t_norm": "2",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.774,
+   "l_raw": "26",
+   "l_norm": "26",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S062",
+   "a_is_tesseract": false,
+   "label": "A",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    0,
+    770,
+    54,
+    25
+   ],
+   "t_raw": "bhe",
+   "t_norm": "bhe",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "the",
+   "l_norm": "the",
+   "arm_b": true,
+   "in_uniform_sample": true,
+   "id": "S063",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    221,
+    624,
+    62,
+    32
+   ],
+   "t_raw": "29,.",
+   "t_norm": "29",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.548,
+   "l_raw": "2",
+   "l_norm": "2",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S064",
+   "a_is_tesseract": false,
+   "label": "A",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    627,
+    701,
+    37,
+    33
+   ],
+   "t_raw": "O,",
+   "t_norm": "o",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "0s",
+   "l_norm": "0s",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S065",
+   "a_is_tesseract": true,
+   "label": "neither",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 419,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_002",
+   "sub": "single.png",
+   "box": [
+    747,
+    2252,
+    53,
+    23
+   ],
+   "t_raw": "ryp",
+   "t_norm": "ryp",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.774,
+   "l_raw": "run",
+   "l_norm": "run",
+   "arm_b": true,
+   "in_uniform_sample": true,
+   "id": "S066",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    1615,
+    2081,
+    26,
+    26
+   ],
+   "t_raw": "is",
+   "t_norm": "is",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.634,
+   "l_raw": "is8",
+   "l_norm": "is8",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S067",
+   "a_is_tesseract": true,
+   "label": "A",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    814,
+    537,
+    68,
+    28
+   ],
+   "t_raw": "tum",
+   "t_norm": "tum",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.848,
+   "l_raw": "turn",
+   "l_norm": "turn",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S068",
+   "a_is_tesseract": false,
+   "label": "A",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    436,
+    1639,
+    75,
+    41
+   ],
+   "t_raw": "L/k",
+   "t_norm": "lk",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.667,
+   "l_raw": "Ljk",
+   "l_norm": "ljk",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S069",
+   "a_is_tesseract": false,
+   "label": "B",
+   "outcome": "false_alarm"
+  },
+  {
+   "doc": "C",
+   "pdf_page": 2,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\C\\page_002",
+   "sub": "single.png",
+   "box": [
+    2157,
+    2170,
+    109,
+    86
+   ],
+   "t_raw": "i",
+   "t_norm": "i",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "IV\");",
+   "l_norm": "iv",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S070",
+   "a_is_tesseract": true,
+   "label": "B",
+   "outcome": "catch"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    507,
+    2259,
+    53,
+    32
+   ],
+   "t_raw": "the",
+   "t_norm": "the",
+   "kept": true,
+   "decisions": [
+    "keep"
+   ],
+   "page_coverage": 0.973,
+   "l_raw": "die",
+   "l_norm": "die",
+   "arm_b": false,
+   "in_uniform_sample": true,
+   "id": "S071",
+   "a_is_tesseract": false,
+   "label": "B",
+   "outcome": "false_alarm"
+  }
+ ],
+ "agree": [
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1039,
+    1157,
+    116,
+    30
+   ],
+   "t_raw": "7-0460",
+   "t_norm": "70460",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G001",
+   "label": "right"
+  },
+  {
+   "doc": "D7",
+   "pdf_page": 2,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D7\\page_002",
+   "sub": "single.png",
+   "box": [
+    148,
+    269,
+    184,
+    41
+   ],
+   "t_raw": "response",
+   "t_norm": "response",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 1.0,
+   "id": "G002",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    1831,
+    1844,
+    68,
+    29
+   ],
+   "t_raw": "k=",
+   "t_norm": "k",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G003",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    1766,
+    205,
+    302,
+    57
+   ],
+   "t_raw": "__ORNL-LR-DWG",
+   "t_norm": "ornllrdwg",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G004",
+   "label": "right"
+  },
+  {
+   "doc": "D5",
+   "pdf_page": 19,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D5\\page_002",
+   "sub": "single.png",
+   "box": [
+    1245,
+    2853,
+    64,
+    37
+   ],
+   "t_raw": "“X”",
+   "t_norm": "x",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.832,
+   "id": "G005",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    1225,
+    2359,
+    60,
+    27
+   ],
+   "t_raw": "still",
+   "t_norm": "still",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.634,
+   "id": "G006",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 143,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_002",
+   "sub": "single.png",
+   "box": [
+    448,
+    224,
+    33,
+    26
+   ],
+   "t_raw": "et",
+   "t_norm": "et",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.976,
+   "id": "G007",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    1053,
+    2613,
+    35,
+    34
+   ],
+   "t_raw": "S,",
+   "t_norm": "s",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.548,
+   "id": "G008",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    735,
+    2769,
+    13,
+    15
+   ],
+   "t_raw": "6",
+   "t_norm": "6",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G009",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    116,
+    71,
+    25,
+    16
+   ],
+   "t_raw": "=1,",
+   "t_norm": "1",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.848,
+   "id": "G010",
+   "label": "wrong"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1462,
+    2628,
+    16,
+    15
+   ],
+   "t_raw": "x",
+   "t_norm": "x",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G011",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    813,
+    257,
+    58,
+    24
+   ],
+   "t_raw": "{'365",
+   "t_norm": "365",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.667,
+   "id": "G012",
+   "label": "wrong"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    232,
+    2380,
+    200,
+    32
+   ],
+   "t_raw": "megatherium",
+   "t_norm": "megatherium",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G013",
+   "label": "right"
+  },
+  {
+   "doc": "D5",
+   "pdf_page": 26,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D5\\page_003",
+   "sub": "single.png",
+   "box": [
+    492,
+    503,
+    113,
+    42
+   ],
+   "t_raw": "Band",
+   "t_norm": "band",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.949,
+   "id": "G014",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    304,
+    1640,
+    62,
+    38
+   ],
+   "t_raw": "X,;",
+   "t_norm": "x",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.667,
+   "id": "G015",
+   "label": "wrong"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    212,
+    1790,
+    41,
+    45
+   ],
+   "t_raw": "ky",
+   "t_norm": "ky",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.848,
+   "id": "G016",
+   "label": "wrong"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 143,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_002",
+   "sub": "single.png",
+   "box": [
+    434,
+    464,
+    35,
+    43
+   ],
+   "t_raw": "(g",
+   "t_norm": "g",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.976,
+   "id": "G017",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    126,
+    1260,
+    238,
+    62
+   ],
+   "t_raw": "=exp(—kyL)",
+   "t_norm": "expkyl",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.848,
+   "id": "G018",
+   "label": "wrong"
+  },
+  {
+   "doc": "D5",
+   "pdf_page": 19,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D5\\page_002",
+   "sub": "single.png",
+   "box": [
+    1762,
+    1511,
+    63,
+    38
+   ],
+   "t_raw": "“X”",
+   "t_norm": "x",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.832,
+   "id": "G019",
+   "label": "right"
+  },
+  {
+   "doc": "D5",
+   "pdf_page": 19,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D5\\page_002",
+   "sub": "single.png",
+   "box": [
+    1171,
+    1399,
+    66,
+    38
+   ],
+   "t_raw": "“X”",
+   "t_norm": "x",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.832,
+   "id": "G020",
+   "label": "right"
+  },
+  {
+   "doc": "D5",
+   "pdf_page": 19,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D5\\page_002",
+   "sub": "single.png",
+   "box": [
+    1793,
+    2110,
+    188,
+    27
+   ],
+   "t_raw": "—+—1A-07C",
+   "t_norm": "1a07c",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.832,
+   "id": "G021",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    950,
+    2916,
+    17,
+    26
+   ],
+   "t_raw": "k",
+   "t_norm": "k",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G022",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    2115,
+    925,
+    88,
+    49
+   ],
+   "t_raw": "25",
+   "t_norm": "25",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G023",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 143,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_002",
+   "sub": "single.png",
+   "box": [
+    1065,
+    1324,
+    76,
+    54
+   ],
+   "t_raw": "m?)",
+   "t_norm": "m",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.976,
+   "id": "G024",
+   "label": "wrong"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    910,
+    2189,
+    11,
+    16
+   ],
+   "t_raw": "L",
+   "t_norm": "l",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G025",
+   "label": "right"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 251,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_001",
+   "sub": "single.png",
+   "box": [
+    1409,
+    564,
+    46,
+    38
+   ],
+   "t_raw": "Pt)",
+   "t_norm": "pt",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.922,
+   "id": "G026",
+   "label": "right"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    591,
+    2255,
+    24,
+    31
+   ],
+   "t_raw": "t*",
+   "t_norm": "t",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.862,
+   "id": "G027",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 143,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_002",
+   "sub": "single.png",
+   "box": [
+    33,
+    2100,
+    103,
+    85
+   ],
+   "t_raw": "6CO,",
+   "t_norm": "6co",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.976,
+   "id": "G028",
+   "label": "wrong"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 7,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_003",
+   "sub": "single.png",
+   "box": [
+    704,
+    1289,
+    32,
+    18
+   ],
+   "t_raw": "(yr)",
+   "t_norm": "yr",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.67,
+   "id": "G029",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    327,
+    1341,
+    142,
+    28
+   ],
+   "t_raw": "setw(10)",
+   "t_norm": "setw10",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.429,
+   "id": "G030",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    593,
+    169,
+    20,
+    20
+   ],
+   "t_raw": "v",
+   "t_norm": "v",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.548,
+   "id": "G031",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1394,
+    2286,
+    65,
+    28
+   ],
+   "t_raw": "3:10",
+   "t_norm": "310",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G032",
+   "label": "right"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 75,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_002",
+   "sub": "single.png",
+   "box": [
+    398,
+    389,
+    101,
+    48
+   ],
+   "t_raw": "m3/h,",
+   "t_norm": "m3h",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.996,
+   "id": "G033",
+   "label": "right"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    1342,
+    698,
+    47,
+    37
+   ],
+   "t_raw": "At,",
+   "t_norm": "at",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.862,
+   "id": "G034",
+   "label": "wrong"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1006,
+    448,
+    926,
+    66
+   ],
+   "t_raw": "varia.tions,",
+   "t_norm": "variations",
+   "kept": false,
+   "decisions": [
+    "flag",
+    "keep"
+   ],
+   "page_coverage": 0.766,
+   "id": "G035",
+   "label": "right"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    937,
+    1990,
+    46,
+    32
+   ],
+   "t_raw": "a,",
+   "t_norm": "a",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "id": "G036",
+   "label": "wrong"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    890,
+    1736,
+    69,
+    27
+   ],
+   "t_raw": "\"\\t*",
+   "t_norm": "t",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.429,
+   "id": "G037",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    198,
+    1178,
+    210,
+    29
+   ],
+   "t_raw": "ActualT(@.5,",
+   "t_norm": "actualt5",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.429,
+   "id": "G038",
+   "label": "wrong"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    1035,
+    2257,
+    61,
+    31
+   ],
+   "t_raw": "t+",
+   "t_norm": "t",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.862,
+   "id": "G039",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    1501,
+    928,
+    37,
+    33
+   ],
+   "t_raw": "15",
+   "t_norm": "15",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G040",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    1708,
+    626,
+    38,
+    26
+   ],
+   "t_raw": "11",
+   "t_norm": "11",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.634,
+   "id": "G041",
+   "label": "right"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    305,
+    1894,
+    171,
+    42
+   ],
+   "t_raw": "proved.’",
+   "t_norm": "proved",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "id": "G042",
+   "label": "right"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 104,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_003",
+   "sub": "single.png",
+   "box": [
+    193,
+    703,
+    65,
+    30
+   ],
+   "t_raw": "I.V.",
+   "t_norm": "iv",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.5,
+   "id": "G043",
+   "label": "right"
+  },
+  {
+   "doc": "D5",
+   "pdf_page": 19,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D5\\page_002",
+   "sub": "single.png",
+   "box": [
+    1789,
+    2013,
+    188,
+    27
+   ],
+   "t_raw": "—»—1A-05C",
+   "t_norm": "1a05c",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.832,
+   "id": "G044",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    1558,
+    2242,
+    13,
+    26
+   ],
+   "t_raw": "1",
+   "t_norm": "1",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.634,
+   "id": "G045",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 7,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_003",
+   "sub": "single.png",
+   "box": [
+    322,
+    560,
+    5,
+    3
+   ],
+   "t_raw": "I",
+   "t_norm": "i",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.67,
+   "id": "G046",
+   "label": "unclear"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    347,
+    1071,
+    38,
+    34
+   ],
+   "t_raw": "0,",
+   "t_norm": "0",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.634,
+   "id": "G047",
+   "label": "wrong"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    1239,
+    2559,
+    162,
+    28
+   ],
+   "t_raw": "measure",
+   "t_norm": "measure",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.667,
+   "id": "G048",
+   "label": "right"
+  },
+  {
+   "doc": "D7",
+   "pdf_page": 2,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D7\\page_002",
+   "sub": "single.png",
+   "box": [
+    155,
+    2127,
+    229,
+    42
+   ],
+   "t_raw": "(NCLAN).",
+   "t_norm": "nclan",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 1.0,
+   "id": "G049",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 7,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_003",
+   "sub": "single.png",
+   "box": [
+    430,
+    311,
+    55,
+    16
+   ],
+   "t_raw": "0.250",
+   "t_norm": "0250",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.67,
+   "id": "G050",
+   "label": "right"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 75,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_002",
+   "sub": "single.png",
+   "box": [
+    198,
+    1243,
+    136,
+    32
+   ],
+   "t_raw": "14.6.2.",
+   "t_norm": "1462",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.996,
+   "id": "G051",
+   "label": "wrong"
+  },
+  {
+   "doc": "C",
+   "pdf_page": 1,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\C\\page_001",
+   "sub": "single.png",
+   "box": [
+    582,
+    2424,
+    56,
+    40
+   ],
+   "t_raw": "‘G",
+   "t_norm": "g",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 1.0,
+   "id": "G052",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    197,
+    1111,
+    247,
+    30
+   ],
+   "t_raw": "ActualE(dPotE,",
+   "t_norm": "actualedpote",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.429,
+   "id": "G053",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    52,
+    69,
+    46,
+    42
+   ],
+   "t_raw": "Ty",
+   "t_norm": "ty",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.848,
+   "id": "G054",
+   "label": "wrong"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    1487,
+    303,
+    142,
+    41
+   ],
+   "t_raw": "power’’",
+   "t_norm": "power",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "id": "G055",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 7,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_003",
+   "sub": "single.png",
+   "box": [
+    1470,
+    1645,
+    173,
+    34
+   ],
+   "t_raw": "‘“‘climax”",
+   "t_norm": "climax",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.67,
+   "id": "G056",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    889,
+    1769,
+    69,
+    26
+   ],
+   "t_raw": "*\\t*",
+   "t_norm": "t",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.429,
+   "id": "G057",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    1920,
+    1836,
+    123,
+    50
+   ],
+   "t_raw": "0.0625",
+   "t_norm": "00625",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G058",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    999,
+    804,
+    937,
+    64
+   ],
+   "t_raw": "textbooks",
+   "t_norm": "textbooks",
+   "kept": false,
+   "decisions": [
+    "flag",
+    "keep"
+   ],
+   "page_coverage": 0.766,
+   "id": "G059",
+   "label": "right"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 251,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_001",
+   "sub": "single.png",
+   "box": [
+    842,
+    2197,
+    119,
+    42
+   ],
+   "t_raw": "RHUs,",
+   "t_norm": "rhus",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.922,
+   "id": "G060",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1467,
+    2443,
+    16,
+    16
+   ],
+   "t_raw": "x",
+   "t_norm": "x",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G061",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1392,
+    2395,
+    63,
+    28
+   ],
+   "t_raw": "312",
+   "t_norm": "312",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G062",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    692,
+    1175,
+    118,
+    30
+   ],
+   "t_raw": "dTa@2);",
+   "t_norm": "dta2",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.429,
+   "id": "G063",
+   "label": "wrong"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1466,
+    2480,
+    16,
+    16
+   ],
+   "t_raw": "x",
+   "t_norm": "x",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G064",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    1561,
+    2858,
+    157,
+    41
+   ],
+   "t_raw": "0.693/k.",
+   "t_norm": "0693k",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G065",
+   "label": "right"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 87,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_001",
+   "sub": "single.png",
+   "box": [
+    266,
+    1792,
+    61,
+    33
+   ],
+   "t_raw": "and",
+   "t_norm": "and",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.848,
+   "id": "G066",
+   "label": "right"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    315,
+    1618,
+    120,
+    28
+   ],
+   "t_raw": "“When",
+   "t_norm": "when",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "id": "G067",
+   "label": "right"
+  },
+  {
+   "doc": "D7",
+   "pdf_page": 1,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D7\\page_001",
+   "sub": "single.png",
+   "box": [
+    267,
+    489,
+    142,
+    40
+   ],
+   "t_raw": "F.W.T.",
+   "t_norm": "fwt",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.995,
+   "id": "G068",
+   "label": "right"
+  },
+  {
+   "doc": "C",
+   "pdf_page": 1,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\C\\page_001",
+   "sub": "single.png",
+   "box": [
+    599,
+    2191,
+    55,
+    41
+   ],
+   "t_raw": "‘G’",
+   "t_norm": "g",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 1.0,
+   "id": "G069",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1009,
+    279,
+    920,
+    58
+   ],
+   "t_raw": "comparison.",
+   "t_norm": "comparison",
+   "kept": false,
+   "decisions": [
+    "flag",
+    "keep"
+   ],
+   "page_coverage": 0.766,
+   "id": "G070",
+   "label": "right"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 75,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_002",
+   "sub": "single.png",
+   "box": [
+    790,
+    1961,
+    82,
+    39
+   ],
+   "t_raw": "[34].",
+   "t_norm": "34",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.996,
+   "id": "G071",
+   "label": "right"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    1474,
+    267,
+    31,
+    35
+   ],
+   "t_raw": "0;",
+   "t_norm": "0",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.862,
+   "id": "G072",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    370,
+    2506,
+    120,
+    42
+   ],
+   "t_raw": "0.368)",
+   "t_norm": "0368",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.667,
+   "id": "G073",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    86,
+    2023,
+    88,
+    28
+   ],
+   "t_raw": "Km’s",
+   "t_norm": "kms",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G074",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    360,
+    1855,
+    20,
+    29
+   ],
+   "t_raw": "k",
+   "t_norm": "k",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G075",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_003",
+   "sub": "single.png",
+   "box": [
+    1374,
+    2359,
+    81,
+    27
+   ],
+   "t_raw": "5:97",
+   "t_norm": "597",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.766,
+   "id": "G076",
+   "label": "right"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_002",
+   "sub": "single.png",
+   "box": [
+    223,
+    2417,
+    23,
+    26
+   ],
+   "t_raw": "it",
+   "t_norm": "it",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.548,
+   "id": "G077",
+   "label": "right"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 5,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_002",
+   "sub": "single.png",
+   "box": [
+    2117,
+    1146,
+    98,
+    30
+   ],
+   "t_raw": "#=0.",
+   "t_norm": "0",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.881,
+   "id": "G078",
+   "label": "wrong"
+  },
+  {
+   "doc": "D6",
+   "pdf_page": 3,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D6\\page_001",
+   "sub": "single.png",
+   "box": [
+    0,
+    809,
+    34,
+    27
+   ],
+   "t_raw": "of",
+   "t_norm": "of",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.634,
+   "id": "G079",
+   "label": "right"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    464,
+    405,
+    164,
+    38
+   ],
+   "t_raw": "T(t*",
+   "t_norm": "tt",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.862,
+   "id": "G080",
+   "label": "wrong"
+  },
+  {
+   "doc": "D2",
+   "pdf_page": 201,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D2\\page_003",
+   "sub": "single.png",
+   "box": [
+    548,
+    1796,
+    102,
+    28
+   ],
+   "t_raw": "(dEa®1",
+   "t_norm": "dea1",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.429,
+   "id": "G081",
+   "label": "wrong"
+  },
+  {
+   "doc": "D4",
+   "pdf_page": 585,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D4\\page_003",
+   "sub": "single.png",
+   "box": [
+    878,
+    2350,
+    51,
+    39
+   ],
+   "t_raw": "aT",
+   "t_norm": "at",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.862,
+   "id": "G082",
+   "label": "wrong"
+  },
+  {
+   "doc": "D3",
+   "pdf_page": 4,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D3\\page_001",
+   "sub": "single.png",
+   "box": [
+    405,
+    1592,
+    19,
+    30
+   ],
+   "t_raw": "k",
+   "t_norm": "k",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.667,
+   "id": "G083",
+   "label": "right"
+  },
+  {
+   "doc": "D1",
+   "pdf_page": 45,
+   "page_dir": "W:\\temp\\claude\\pdf_textlayer\\work\\jobs\\D1\\page_001",
+   "sub": "single.png",
+   "box": [
+    198,
+    1480,
+    102,
+    33
+   ],
+   "t_raw": "1-3.2.",
+   "t_norm": "132",
+   "kept": false,
+   "decisions": [
+    "flag"
+   ],
+   "page_coverage": 0.973,
+   "id": "G084",
+   "label": "wrong"
+  }
+ ]
+}

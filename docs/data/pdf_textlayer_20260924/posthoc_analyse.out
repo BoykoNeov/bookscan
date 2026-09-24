@@ -1,0 +1,63 @@
+catches by (tesseract, layer) reading:
+  6 x  T='O,'           L='02'          
+  3 x  T='H,0,'         L='H202'        
+  2 x  T='Fic.'         L='FrG.'        
+  1 x  T='k,'           L='kz,'         
+  1 x  T='0,'           L='02'          
+  1 x  T='B,'           L='By'          
+  1 x  T='7,'           L='ty,'         
+  1 x  T='8.8,'         L='@.9,'        
+  1 x  T='O,'           L='0.'          
+  1 x  T='Ar'           L='At'          
+  1 x  T='6'            L='0'           
+  1 x  T='7.'           L='zy.'         
+  1 x  T='O,'           L='03'          
+  1 x  T='g/m?'         L='gjm2'        
+  1 x  T='electrdde.'   L='electr6de.'  
+  1 x  T='6.9;'         L='@.8;'        
+  1 x  T='Cassini/Hu'   L='Cassini/Huygens'
+  1 x  T='T'            L='x'           
+  1 x  T='4'            L='A'           
+  1 x  T='2'            L='k'           
+  1 x  T='0,'           L='03'          
+  1 x  T='2X'           L='kX'          
+  1 x  T='7'            L='x'           
+  1 x  T='8.8,'         L='@.8,'        
+  1 x  T='H,0,'         L='HS20'        
+  1 x  T='4/(F'         L='Aj(F'        
+  1 x  T='ws.'          L='vs.'         
+  1 x  T='Gy'           L='Gnj'         
+  1 x  T='ended.TM'     L='ended."'     
+  1 x  T='8.8,'         L='9.8,'        
+  1 x  T='dTaei,'       L='dTa@1,'      
+  1 x  T='0.8;'         L='@.8;'        
+  1 x  T='O,'           L='0,'          
+  1 x  T='Fg'           L='FE'          
+  1 x  T='2'            L='26'          
+  1 x  T='bhe'          L='the'         
+  1 x  T='29,.'         L='2'           
+  1 x  T='O,'           L='0s'          
+  1 x  T='ryp'          L='run'         
+  1 x  T='tum'          L='turn'        
+false alarms:
+  D6 T='size'         L='8ze'          label=B
+  D6 T='0-1°'         L='0.10'         label=B
+  D6 T='reactions.'   L='reaction8.'   label=A
+  D1 T='the'          L='die'          label=A
+  D3 T='1963).'       L='1%3).'        label=A
+  D3 T='(1960).'      L='(1%0).'       label=A
+  D4 T='(RHU).'       L='(RI-IU).'     label=B
+  D1 T='the'          L='die'          label=B
+  D3 T='1962,'        L='1%2,'         label=A
+  D1 T='the'          L='die'          label=A
+  D1 T='the'          L='die'          label=A
+  D1 T='the'          L='die'          label=A
+  D3 T='(15),'        L='IS)'          label=B
+  D6 T='is'           L='is8'          label=A
+  D3 T='L/k'          L='Ljk'          label=B
+  D1 T='the'          L='die'          label=B
+catches that are the O2/H2O2 formula family: 16
+without pages under 0.5 coverage: catches 41, false alarms 16, precision 0.719
+catch: 48; Tesseract token a dictionary word 31; both dictionary words 27
+false_alarm: 16; Tesseract token a dictionary word 14; both dictionary words 11
+real-document pages: 9106 words, Stage 06 flags 549 (6.0%)

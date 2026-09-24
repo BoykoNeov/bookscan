@@ -327,10 +327,23 @@ It needs a Bulgarian page carrying an English/other-language block.
   toggle first, and — from the console — queues every page at once with no
   restart. A CLI import made while the console is open still waits for its next
   start. A two-page cut of a real ABBYY scan ran through the console to the end
-  of Stage 06; no whole real book has been imported yet. Open: the text layer as
-  a second opinion (Slice 3, measurement pre-registered in
-  `docs/data/pdf_textlayer_prereg_20260924.md`); every imported single page
-  carries Stage 00's "result is PORTRAIT" warning, which is noise there.
+  of Stage 06; no whole real book has been imported yet.
+  **Slice 3 measured, not built** (RESULTS 2026-09-24): flagging a kept word where
+  the PDF's hidden text disagrees passes its pre-registered gate — 48 real
+  mistakes caught against 16 correct words flagged, 7 documents — but almost all
+  the catches are formulas and symbols (O₂, τ_df, Greek, code zeros; one chemistry
+  paper gives 20 of 48); on plain words the hidden text is wrong more often than
+  Tesseract, and without that one paper the gate fails. The dictionary-checked
+  version flags almost nothing (5). **Agreement must never clear a flag** (23 %
+  of agreed, flagged words are wrong). Owner's call whether to build the raw
+  trigger for imported PDFs, knowing it is a notation catcher.
+  **New defect: Stage 03 cuts the edges of flat scans with thin margins** —
+  UVDoc enlarges an already-flat page and pushes line starts off it (2 of 20
+  imported pages, 40 and 16 words). Next experiment: pad the page with white
+  before flattening, or skip flattening for imported pages, and count words at
+  the edge again with `docs/data/pdf_textlayer_20260924/edge_census.py`.
+  Every imported single page carries Stage 00's "result is PORTRAIT" warning,
+  which is noise there.
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at
   N = 3, Phase 1 pre-registered, nothing in the pipeline reads it.
 - ~~Caption↔figure grouping review in the editor~~ — **BUILT** (stale line

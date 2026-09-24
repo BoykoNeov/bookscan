@@ -1,0 +1,158 @@
+Blind labels, judged on letters/digits (case and punctuation ignored).
+S001 neither  printed k_dr (k subscript dr); kz / k both wrong
+S002 B        size
+S003 neither  O2 (O subscript 2); 02 has a zero, 0 drops the 2
+S004 neither  B0 (B subscript 0); By / B
+S005 neither  FIG.; FrG / Fic
+S006 neither  tau_df
+S007 B        0·1 degree -> "01"; A adds a 0
+S008 A        reactions.
+S009 neither  O2 subscript; 02 / O
+S010 A        III)
+S011 A        the
+S012 neither  0.0, in code font; @.9 / 8.8
+S013 B        mints
+S014 A        1963).
+S015 B        I:
+S016 neither  O2 subscript; O / 0
+S017 neither  Delta t (a Greek letter); Ar / At
+S018 neither  theta; 6 / 0
+S019 neither  tau_df
+S020 neither  O2 subscript
+S021 neither  O2 subscript; O / 03
+S022 neither  H2O2; H0 / H202 (zero for O)
+S023 neither  g/m2; gm / gjm2
+S024 unclear  only "e" is visible at the crop's left edge; context suggests "the" but the rest of the word is not in the image
+S025 neither  electrode (print blemish over the o); electr6de / electrdde
+S026 neither  0.0; code font; @.8 / 6.9
+S027 A        Cassini/Huygens (the printed word is whole)
+S028 neither  O2 subscript; O / 02
+S029 neither  tau; T / x
+S030 B        italic A
+S031 A        italic k
+S032 neither  O2 subscript
+S033 neither  H2O2 subscripts
+S034 unclear  crop shows "spended" at the image's left edge; the start of the word is not in the image (same page as S024)
+S035 A        kX
+S036 neither  O2 subscript
+S037 neither  O2 subscript
+S038 A        (1960).
+S039 neither  tau; x / 7
+S040 B        (RHU).
+S041 neither  0.0, code font; 8.8 / @.8
+S042 unclear  box is on a tiny subscript after L; cannot read it
+S043 neither  H2O2 subscripts
+S044 B        the
+S045 neither  A/(F; 4/(F / Aj(F
+S046 B        vs.
+S047 A        1962,
+S048 B        G_nj
+S049 A        the
+S050 A        the
+S051 B        ended."
+S052 neither  0.0, code font
+S053 neither  dTa01, code font; dTaei / dTa@1
+S054 A        the
+S055 neither  H2O2 subscripts
+S056 neither  0.0; code font; @.8 / 0.8
+S057 neither  O2 subscript; 0 / O
+S058 B        (15),
+S059 neither  FIG.; FrG / Fic
+S060 B        F_E
+S061 neither  O2 subscript
+S062 A        26
+S063 B        the
+S064 A        2%. -> "2"; the other adds a 9
+S065 neither  O2 subscript; O / 0s
+S066 B        run
+S067 A        is
+S068 A        turn
+S069 B        L/k
+S070 B        IV");
+S071 B        the
+
+--- agreement sample: is the shared reading right? ---
+G001 right    7·0460
+G002 right    response
+G003 right    k =
+G004 right    ORNL-LR-DWG
+G005 right    "X"
+G006 right    still
+G007 right    et
+G008 right    S,
+G009 right    6
+G010 wrong    printed "=", reading adds a 1
+G011 right    multiplication sign read as x (a reader accepts it)
+G012 wrong    printed 1/365 fraction; reading drops the 1
+G013 right    megatherium
+G014 right    Band
+G015 wrong    X_ss; reading X
+G016 wrong    k_df; reading ky
+G017 right    (g
+G018 wrong    exp(-k_df L); reading kyL
+G019 right    "X"
+G020 right    "X"
+G021 right    1A-07C
+G022 right    k
+G023 right    25
+G024 wrong    m^-2; reading drops the exponent
+G025 right    L (diagram label)
+G026 right    Pt)
+G027 right    t*
+G028 wrong    6CO2 (subscript); reading 6CO
+G029 right    (yr)
+G030 right    setw(10)
+G031 right    v
+G032 right    3·10
+G033 right    m3/h
+G034 wrong    Delta t read as At
+G035 right    varia-tions (line-end hyphen joined; letters match)
+G036 wrong    alpha_phi read as a
+G037 right    "\t"
+G038 wrong    ActualT(0.5, ; reading has @ for the 0
+G039 right    t* +
+G040 right    15
+G041 right    1·1
+G042 right    proved.'
+G043 right    I.V.
+G044 right    1A-05C
+G045 right    1
+G046 unclear  tiny mark at a graph's corner; cannot read
+G047 wrong    O2 subscript read as 0
+G048 right    measure
+G049 right    (NCLAN).
+G050 right    0.250
+G051 wrong    I-4.6.2. read as 14.6.2. (1 for I)
+G052 right    'G'
+G053 right    ActualE(dPotE,
+G054 wrong    tau_df read as Ty
+G055 right    power"
+G056 right    "climax"
+G057 right    "\t"
+G058 right    0.0625
+G059 right    text-books
+G060 right    RHUs,
+G061 right    multiplication sign read as x
+G062 right    3·12
+G063 wrong    dTa02); reading has @ for the 0
+G064 right    multiplication sign read as x
+G065 right    0.693/k.
+G066 right    and
+G067 right    "When
+G068 right    F.W.T.
+G069 right    'G'
+G070 right    com-parison.
+G071 right    [34].
+G072 right    0;
+G073 right    0.368)
+G074 right    Km's
+G075 right    k
+G076 right    5·97
+G077 right    it
+G078 wrong    t = 0. read as #=0.
+G079 right    of
+G080 wrong    box spans T(t* + Delta t); reading T(t* only
+G081 wrong    (dEa01 read with (R) for the 0
+G082 wrong    partial-derivative T read as aT
+G083 right    k
+G084 wrong    I-3.2. read as 1-3.2.

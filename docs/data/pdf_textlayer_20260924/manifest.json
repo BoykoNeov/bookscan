@@ -1,0 +1,109 @@
+{
+ "seed": 20260924,
+ "docs": [
+  {
+   "id": "D1",
+   "file": "M:\\backup2\\boiko\\chernobyl_insag_7.pdf",
+   "sha256": "75627db871b8cec591eaf9443ef32da70e6ccb72c34c38b01c18933e21152455",
+   "page_count": 148,
+   "pages_1based": [
+    45,
+    75,
+    104
+   ],
+   "producer": "",
+   "creator": "ABBYY FineReader"
+  },
+  {
+   "id": "D2",
+   "file": "W:\\Claude_projects\\space-station\\sources\\Introduction to Mathematical Modeling of Crop Growth_ How -- Christopher Boon Sung Teh -- How the Equations Are Derived And Assembled i.pdf",
+   "sha256": "4caffd8f9d08a692fc8bbad7171021b781d4db3de7d916fbf54e290f6daf8784",
+   "page_count": 286,
+   "pages_1based": [
+    87,
+    143,
+    201
+   ],
+   "producer": "Internet Archive PDF 1.4.18; including mupdf and pymupdf/skimage",
+   "creator": "Internet Archive (Scribe Version 5.7-initial-17-g8b14fc52)"
+  },
+  {
+   "id": "D3",
+   "file": "W:\\Claude_projects\\space-station\\sources\\olson1963.pdf",
+   "sha256": "2dc2868695ef68f4ed814278ffaab3650af572362d898dea72875432c814251e",
+   "page_count": 10,
+   "pages_1based": [
+    4,
+    5,
+    7
+   ],
+   "producer": "PDFlib PLOP 2.0.0p6 (SunOS)/Adobe Acrobat 10.1 Paper Capture Plug-in",
+   "creator": "Adobe Acrobat 10.1"
+  },
+  {
+   "id": "D4",
+   "file": "W:\\Claude_projects\\space-station\\sources\\spacecraft thermal control handbook volume \u2160_fundamental -- Gilmore, David G, D Gilmore, The Aerospace Corporation -- 2nd ed_, El Se8.pdf",
+   "sha256": "b7c00f87932c4705e17209889f7af02ae92f80d16193acfd9496fd3fc70434eb",
+   "page_count": 836,
+   "pages_1based": [
+    251,
+    419,
+    585
+   ],
+   "producer": "CVISION Technologies",
+   "creator": "PdfCompressor 3.1.32"
+  },
+  {
+   "id": "D5",
+   "file": "W:\\temp\\claude\\bore_friction\\ADA431357.pdf",
+   "sha256": "b554e58664c3fcd1a16200b9ba896ac04d80ced7ef90570563390eee3906b47f",
+   "page_count": 37,
+   "pages_1based": [
+    12,
+    19,
+    26
+   ],
+   "producer": " ; modified using iText 5.0.4 (c) 1T3XT BVBA",
+   "creator": " "
+  },
+  {
+   "id": "D6",
+   "file": "W:\\Claude_projects\\space-station\\sources\\biochemj01085-0088.pdf",
+   "sha256": "ea4eb22b8e5703b5f1dfee973e743431b939ed018b2f5a15019e79442aa5ba03",
+   "page_count": 7,
+   "pages_1based": [
+    3,
+    4,
+    5
+   ],
+   "producer": "Apex PDFWriter",
+   "creator": ""
+  },
+  {
+   "id": "D7",
+   "file": "W:\\Claude_projects\\space-station\\sources\\connor1990.pdf",
+   "sha256": "9a5927a81eb82e7df66a333f44af46b2867fa711286e9ea26fd450239256b0c8",
+   "page_count": 2,
+   "pages_1based": [
+    1,
+    2
+   ],
+   "producer": "Acrobat 3.0 Import Plug-in",
+   "creator": "Acrobat 3.0 Capture Plug-in"
+  },
+  {
+   "id": "C",
+   "file": "M:\\claud_projects\\bookscan\\jobs\\figtext_en_coins_01\\render\\page.pdf",
+   "sha256": "d07d79a16ff7edb4881dc8b972ef24c9de05e25799307d634ba6eb09ea84548b",
+   "page_count": 4,
+   "pages_1based": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "producer": "Skia/PDF m149",
+   "creator": "Chromium"
+  }
+ ]
+}

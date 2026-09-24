@@ -9258,3 +9258,72 @@ the direct run's `left.png`, so an identical text is expected and says nothing
 about a genuinely photographed or scanned single page. One scene, synthetic
 PDF, no real scanned PDF yet; not an accuracy claim. `split_eval` after the
 Stage 02 change: 19/21, worst clip 0.0 %, unchanged.
+
+## 2026-09-24 — A scanned PDF's own text layer as a second opinion (plan Slice 3): the pre-registered gate PASSES for the raw trigger, and what it catches is notation
+
+Pre-registered in `docs/data/pdf_textlayer_prereg_20260924.md` (committed
+36570e0 before any disagreement was computed; one addendum, 82eec47, after the
+site counts and before any label). Tool `tools/pdf_textlayer_eval.py`; inputs,
+blind labels, key and scores in `docs/data/pdf_textlayer_20260924/` (the PDFs
+themselves are not committed; their SHA-256 are in `manifest.json`).
+
+**Question.** Where a scanned PDF's hidden OCR text disagrees with our Tesseract
+reading on a word Stage 06 KEPT, is Tesseract wrong (a new catch) often enough,
+compared with Tesseract right (a new false alarm)?
+
+**Population.** 7 English documents, one per text-layer producer (ABBYY
+FineReader, Internet Archive, Adobe Paper Capture 10.1, CVISION, DTIC, Apex,
+Acrobat 3.0 Capture), 20 pages chosen by a fixed rule, imported with
+`pdf_import` and run through the shipped pipeline (`--mode flag --lang eng`).
+Sequence alignment of the layer against Stage 06's words (difflib,
+`autojunk=False`); 1↔1 disagreements only. 71 disagreements judged blind (the two
+readings shown as A/B in random order on a crop of `03_dewarp`) by Claude, looking.
+
+| | catches (Tesseract wrong) | false alarms (Tesseract right) | can't tell | precision | verdict |
+|---|---|---|---|---|---|
+| control (our own PDF, layer right by construction) | 4 | 0 | 0 | — | **valid** (0 % invented) |
+| **arm (a): every disagreement** | **48** | **16** | 3 | **0.75** | **BUILD** (all three gates) |
+| arm (b): dictionary-gated (EasyOCR's rule) | 5 | 0 | 1 | 1.00 | REFUSE (5 < 20 catches) |
+
+Per document, arm (a): D1 ABBYY 0/6 · D2 Internet Archive 12/0 · D3 Adobe 10.1
+8/5 · D4 CVISION 8/1 · D5 DTIC no disagreement on a kept word · D6 Apex 20/4 ·
+D7 Acrobat 3.0 no disagreement on a kept word (catches/false alarms). Four of the
+five documents with ≥ 5 judged sites are at ≥ 0.50; D1 is at 0.
+
+**What the pass is made of (post hoc, not part of the gate —
+`posthoc_analyse.out`).**
+
+1. **Scientific notation, not prose.** At 35 of the 48 catches NEITHER engine
+   was right: subscripts (O₂, H₂O₂, k_dr, τ_df, G_nj), Greek letters, code-font
+   zeros. 16 of the 48 are the O₂/H₂O₂ family of one chemistry paper (D6, 20 of
+   the 48 catches). On ordinary words the layer's disagreements are more often
+   the LAYER's mistake: about 8 prose catches (`tum`→turn, `ryp`→run, `bhe`→the,
+   `ws.`→vs., a split `Cassini/Hu|ygens`) against 16 false alarms.
+2. **A producer can be systematically wrong.** All 6 of D1's false alarms are
+   ABBYY's layer reading "the" as "die". The dictionary gate removes exactly this
+   class (0 false alarms) but also removes 43 of the 48 catches.
+3. **Without D6 the pass does not hold**: 28 catches / 12 false alarms, but only 3
+   documents at ≥ 0.50, so gate 3 fails. It rests on four documents.
+4. Without the one page aligned under 0.5 (D2 p. 201): 41/16, precision 0.72.
+5. Scale: these 20 pages have 9,106 words and Stage 06 already flags 549
+   (6.0 %). The trigger would add 64 flags (+12 % flags), about 3 per page,
+   three in four of them on a wrong word.
+6. When the two disagree on a kept word, the layer is right 13 times and
+   Tesseract 16: the layer is no better a reader. It must never supply text.
+
+**Secondary, never gating — "could agreement clear a flag?" No.** Of words
+Stage 06 flagged where the layer AGREES, 19 of 83 decidable are wrong (23 %):
+both engines make the same mistake on the same notation (τ_df → `Ty`, I-4.6.2 →
+`14.6.2`, 6CO₂ → `6CO`). Agreement is not evidence of correctness.
+
+**Incidental defect found (edge loss on flat scans).** Two "can't tell" sites
+were a word whose start was not in the image at all. Stage 03's UVDoc flattening,
+built for curved photographs, enlarges an already-flat scan slightly, and on
+a scan with thin margins that pushes line starts off the page ("suspended" →
+`spended`, "the" → `e`). `edge_census.out`: 2 of 20 imported pages (both D6)
+have 40 and 16 words cut at the edge; the other 18 have 0 or 1. Not fixed here.
+
+**Limits.** n = 7 documents, English only (no Bulgarian, German or Italian scan
+with a text layer was available); scholarly and technical print, not a book
+photographed on a sofa, so not poolable with `testset/`; the judge is a model
+looking at crops; one document carries 42 % of the catches.

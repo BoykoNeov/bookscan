@@ -1,0 +1,19 @@
+{
+ "bg_01": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "bg_02": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "bg_03": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "en_coins_01": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "en_coins_02": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "en_coins_03": "detected region covers 98% of the frame (>= 83%) - cropping ",
+ "it_geo_01": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "it_geo_02": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "it_geo_03": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "it_geo_04": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "it_geo_05": "detected region covers 97% of the frame (>= 83%) - cropping ",
+ "it_geo_06": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "it_geo_07": "detected region covers 100% of the frame (>= 83%) - cropping",
+ "de_01": "detected region covers 85% of the frame (>= 83%) - cropping ",
+ "de_02": "book box is unstable: 3 seeded GrabCut draws disagree by 12.",
+ "paleset_01": "detected region covers 92% of the frame (>= 83%) - cropping ",
+ "paleset_02": "detected region covers 100% of the frame (>= 83%) - cropping"
+}

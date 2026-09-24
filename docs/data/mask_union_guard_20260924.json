@@ -1,0 +1,936 @@
+{
+ "bg_01": {
+  "model": [
+   228,
+   321,
+   3652,
+   2712
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "frame_frac": 0.997,
+  "edges": [
+   "L",
+   "T"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "bg_02": {
+  "model": [
+   148,
+   111,
+   3848,
+   2862
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "bg_03": {
+  "model": [
+   332,
+   219,
+   3812,
+   2838
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "en_coins_01": {
+  "model": [
+   68,
+   129,
+   3996,
+   2802
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "en_coins_02": {
+  "model": [
+   148,
+   111,
+   3872,
+   2742
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   2995
+  ],
+  "frame_frac": 0.998,
+  "edges": [
+   "L",
+   "T",
+   "R"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "en_coins_03": {
+  "model": [
+   4,
+   3,
+   3996,
+   2997
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2877
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_01": {
+  "model": [
+   68,
+   141,
+   3996,
+   2928
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_02": {
+  "model": [
+   156,
+   81,
+   3908,
+   2913
+  ],
+  "mask_bbox": [
+   147,
+   0,
+   3995,
+   2936
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_03": {
+  "model": [
+   68,
+   111,
+   3832,
+   2934
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3889,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_04": {
+  "model": [
+   68,
+   3,
+   3844,
+   2802
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_05": {
+  "model": [
+   444,
+   291,
+   3616,
+   2763
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3671,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   3869,
+   2995
+  ],
+  "frame_frac": 0.966,
+  "edges": [
+   "L",
+   "T"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_06": {
+  "model": [
+   320,
+   213,
+   3804,
+   2868
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   4000,
+   3000
+  ],
+  "frame_frac": 1.0,
+  "edges": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "it_geo_07": {
+  "model": [
+   312,
+   231,
+   3696,
+   2772
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "guarded": [
+   0,
+   0,
+   3995,
+   2995
+  ],
+  "frame_frac": 0.997,
+  "edges": [
+   "L",
+   "T"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "de_01": {
+  "model": [
+   472,
+   192,
+   3512,
+   2811
+  ],
+  "mask_bbox": [
+   441,
+   323,
+   3259,
+   2789
+  ],
+  "guarded": [
+   228,
+   0,
+   3755,
+   3000
+  ],
+  "frame_frac": 0.882,
+  "edges": [
+   "T",
+   "B"
+  ],
+  "clip_guarded": 0.0,
+  "clip_model_only": 0.0,
+  "edges_within_mask_px": [
+   "T",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "de_02": {
+  "model": [
+   652,
+   81,
+   3524,
+   2946
+  ],
+  "mask_bbox": [
+   776,
+   552,
+   3271,
+   2889
+  ],
+  "guarded": [
+   422,
+   0,
+   3753,
+   3000
+  ],
+  "frame_frac": 0.833,
+  "edges": [
+   "T",
+   "B"
+  ],
+  "clip_guarded": 1.8902439024390243,
+  "clip_model_only": 1.8902439024390243,
+  "edges_within_mask_px": [
+   "T",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4000,
+   3000
+  ]
+ },
+ "zoomset_de_01": {
+  "model": [
+   318,
+   392,
+   2913,
+   2577
+  ],
+  "mask_bbox": [
+   384,
+   570,
+   2839,
+   3055
+  ],
+  "guarded": [
+   110,
+   217,
+   3120,
+   3055
+  ],
+  "frame_frac": 0.684,
+  "edges": [],
+  "clip_guarded": 0.0,
+  "clip_model_only": 0.0,
+  "edges_within_mask_px": [
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "zoomset_de_02": {
+  "model": [
+   322,
+   468,
+   2840,
+   2528
+  ],
+  "mask_bbox": [
+   354,
+   642,
+   3337,
+   3055
+  ],
+  "guarded": [
+   120,
+   303,
+   3337,
+   3055
+  ],
+  "frame_frac": 0.709,
+  "edges": [],
+  "clip_guarded": 0.0,
+  "clip_model_only": 0.0,
+  "edges_within_mask_px": [
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "zoomset_en_01": {
+  "model": [
+   596,
+   419,
+   2607,
+   2589
+  ],
+  "mask_bbox": [
+   618,
+   438,
+   3361,
+   3055
+  ],
+  "guarded": [
+   435,
+   245,
+   3361,
+   3055
+  ],
+  "frame_frac": 0.659,
+  "edges": [],
+  "clip_guarded": 0.0,
+  "clip_model_only": 0.0,
+  "edges_within_mask_px": [
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "zoomset_en_02": {
+  "model": [
+   612,
+   600,
+   2587,
+   2567
+  ],
+  "mask_bbox": [
+   612,
+   282,
+   3499,
+   3055
+  ],
+  "guarded": [
+   454,
+   282,
+   3499,
+   3055
+  ],
+  "frame_frac": 0.676,
+  "edges": [],
+  "clip_guarded": 0.0,
+  "clip_model_only": 1.187214611872146,
+  "edges_within_mask_px": [
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "paleset_01": {
+  "model": [
+   4,
+   407,
+   3199,
+   2674
+  ],
+  "mask_bbox": [
+   90,
+   414,
+   3997,
+   3055
+  ],
+  "guarded": [
+   0,
+   225,
+   3997,
+   3055
+  ],
+  "frame_frac": 0.906,
+  "edges": [
+   "L"
+  ],
+  "clip_guarded": 0.0,
+  "clip_model_only": 0.0,
+  "edges_within_mask_px": [
+   "L",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "paleset_02": {
+  "model": [
+   335,
+   539,
+   3191,
+   2390
+  ],
+  "mask_bbox": [
+   0,
+   54,
+   4075,
+   3055
+  ],
+  "guarded": [
+   0,
+   54,
+   4075,
+   3055
+  ],
+  "frame_frac": 0.98,
+  "edges": [
+   "L"
+  ],
+  "clip_guarded": 0.0,
+  "clip_model_only": 0.0,
+  "edges_within_mask_px": [
+   "L",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "sofa1": {
+  "model": [
+   649,
+   765,
+   2322,
+   2396
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   4075,
+   3055
+  ],
+  "guarded": [
+   0,
+   0,
+   4075,
+   3055
+  ],
+  "frame_frac": 0.997,
+  "edges": [
+   "L",
+   "T"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "sofa2": {
+  "model": [
+   273,
+   551,
+   2640,
+   2411
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   2923,
+   3055
+  ],
+  "guarded": [
+   0,
+   0,
+   2923,
+   3055
+  ],
+  "frame_frac": 0.715,
+  "edges": [
+   "L",
+   "T"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "sofa3": {
+  "model": [
+   420,
+   633,
+   2644,
+   2362
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   4075,
+   3055
+  ],
+  "guarded": [
+   0,
+   0,
+   4075,
+   3055
+  ],
+  "frame_frac": 0.997,
+  "edges": [
+   "L",
+   "T"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "R",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "sofa4": {
+  "model": [
+   465,
+   624,
+   2709,
+   2368
+  ],
+  "mask_bbox": [
+   0,
+   0,
+   2701,
+   3055
+  ],
+  "guarded": [
+   0,
+   0,
+   2888,
+   3055
+  ],
+  "frame_frac": 0.707,
+  "edges": [
+   "L",
+   "T"
+  ],
+  "clip_guarded": null,
+  "clip_model_only": null,
+  "edges_within_mask_px": [
+   "L",
+   "T",
+   "B"
+  ],
+  "edge_tol_px": 6,
+  "frame": [
+   4080,
+   3060
+  ]
+ },
+ "_doc": "Probe for docs/data/mask_union_guard_prereg_20260924.md. 'edges' is exact equality; the mask bbox is computed at work_w=680, so its far edges land ~5 px short of the frame - 'edges_within_mask_px' uses one mask pixel of tolerance and is the column the verdict reads."
+}

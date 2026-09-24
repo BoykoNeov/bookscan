@@ -294,3 +294,42 @@ def test_a_single_draw_never_trips_the_stability_rule():
     bb = BB.find_book(img, p)
     assert bb.applied, bb.reason
     assert bb.diag["gc_jitter"] == 0.0
+
+
+def _three_edge_frame(monkeypatch):
+    """A cluttered frame whose GrabCut draws all run to the left, top and bottom
+    edges — the owner's sofa spreads 2 and 4, where every draw agrees."""
+    img, (x0, y0, x1, y1) = _cluttered_frame(box=(300, 300, 1100, 1200))
+    h, w = img.shape[:2]
+    monkeypatch.setattr(BB, "grabcut_box",
+                        lambda image, p, rng_seed=None: (0, 0, x1 + 40, h))
+    return img
+
+
+def test_three_edge_cue_is_off_by_default(monkeypatch):
+    """Off by default: the shipped behaviour is unchanged, only recorded."""
+    img = _three_edge_frame(monkeypatch)
+    bb = BB.find_book(img)
+    assert bb.applied, bb.reason
+    assert bb.diag["emit_at_frame_edges"] == ["left", "top", "bottom"]
+
+
+def test_three_edge_cue_refuses_when_on(monkeypatch):
+    img = _three_edge_frame(monkeypatch)
+    p = dict(BB.DEFAULTS)
+    p["three_edge_abstain"] = True
+    bb = BB.find_book(img, p)
+    assert not bb.applied
+    assert "3 frame edges" in bb.reason
+    assert bb.emit == (0, 0, img.shape[1], img.shape[0])
+    assert bb.evidence
+    assert bb.reason.isascii() and bb.evidence.isascii()
+
+
+def test_three_edge_cue_leaves_an_ordinary_crop_alone():
+    img, _ = _cluttered_frame()
+    p = dict(BB.DEFAULTS)
+    p["three_edge_abstain"] = True
+    bb = BB.find_book(img, p)
+    assert bb.applied, bb.reason
+    assert len(bb.diag["emit_at_frame_edges"]) < 3

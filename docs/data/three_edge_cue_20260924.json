@@ -1,0 +1,1806 @@
+{
+ "prereg": "docs/data/three_edge_cue_prereg_20260924.md",
+ "params": {
+  "gc_draws": 3,
+  "emit_pad": 0.06,
+  "search_pad": 0.08
+ },
+ "G1": {
+  "rows": [
+   {
+    "id": "bg_01",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 1907,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 1907,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "bg_02",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 1940,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 1940,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "bg_03",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2011,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 2011,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "en_coins_01",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 1960,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 1960,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "en_coins_02",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 1994,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 1994,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "en_coins_03",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 61
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2024,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 2024,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "it_geo_01",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2091,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 2091,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "it_geo_02",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2099,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 2099,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "it_geo_03",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2082,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 2082,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "it_geo_04",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 1941,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 1941,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "it_geo_05",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 107,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2012,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 2012,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "it_geo_06",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2089,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 2089,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "it_geo_07",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2040,
+     "hit": true,
+     "clip": null
+    },
+    "on": {
+     "gx": 2040,
+     "hit": true,
+     "clip": null
+    }
+   },
+   {
+    "id": "de_01",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 202,
+     "top": 34,
+     "right": 287,
+     "bottom": 44
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 1983,
+     "hit": true,
+     "clip": 0.0
+    },
+    "on": {
+     "gx": 1983,
+     "hit": true,
+     "clip": 0.0
+    }
+   },
+   {
+    "id": "de_02",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 149,
+     "top": 0,
+     "right": 284,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2047,
+     "hit": true,
+     "clip": 0.0
+    },
+    "on": {
+     "gx": 2047,
+     "hit": true,
+     "clip": 0.0
+    }
+   },
+   {
+    "id": "zoomset_de_01",
+    "applied": true,
+    "emit": [
+     157,
+     267,
+     3071,
+     3060
+    ],
+    "touched": [
+     "bottom"
+    ],
+    "fires": false,
+    "gc_margin": {
+     "left": 157,
+     "top": 267,
+     "right": 1009,
+     "bottom": 337
+    },
+    "search_touched": [
+     "bottom"
+    ],
+    "off": {
+     "gx": 1684,
+     "hit": true,
+     "clip": 0.0
+    },
+    "on": {
+     "gx": 1684,
+     "hit": true,
+     "clip": 0.0
+    }
+   },
+   {
+    "id": "zoomset_de_02",
+    "applied": true,
+    "emit": [
+     33,
+     331,
+     3536,
+     3060
+    ],
+    "touched": [
+     "bottom"
+    ],
+    "fires": false,
+    "gc_margin": {
+     "left": 33,
+     "top": 331,
+     "right": 544,
+     "bottom": 0
+    },
+    "search_touched": [
+     "bottom"
+    ],
+    "off": {
+     "gx": 1626,
+     "hit": true,
+     "clip": 0.0
+    },
+    "on": {
+     "gx": 1626,
+     "hit": true,
+     "clip": 0.0
+    }
+   },
+   {
+    "id": "zoomset_en_01",
+    "applied": true,
+    "emit": [
+     390,
+     286,
+     4037,
+     3060
+    ],
+    "touched": [
+     "bottom"
+    ],
+    "fires": false,
+    "gc_margin": {
+     "left": 390,
+     "top": 286,
+     "right": 43,
+     "bottom": 0
+    },
+    "search_touched": [
+     "bottom"
+    ],
+    "off": {
+     "gx": 1616,
+     "hit": true,
+     "clip": 0.0
+    },
+    "on": {
+     "gx": 1616,
+     "hit": true,
+     "clip": 0.0
+    }
+   },
+   {
+    "id": "zoomset_en_02",
+    "applied": true,
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "touched": [
+     "bottom"
+    ],
+    "fires": false,
+    "gc_margin": {
+     "left": 426,
+     "top": 395,
+     "right": 189,
+     "bottom": 0
+    },
+    "search_touched": [
+     "bottom"
+    ],
+    "off": {
+     "gx": 1623,
+     "hit": true,
+     "clip": 0.0
+    },
+    "on": {
+     "gx": 1623,
+     "hit": true,
+     "clip": 0.0
+    }
+   },
+   {
+    "id": "paleset_01",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 250,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": 2741,
+     "hit": false,
+     "clip": 0.0
+    },
+    "on": {
+     "gx": 2741,
+     "hit": false,
+     "clip": 0.0
+    }
+   },
+   {
+    "id": "paleset_02",
+    "applied": false,
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "touched": [],
+    "fires": false,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    },
+    "search_touched": [
+     "left",
+     "top",
+     "right",
+     "bottom"
+    ],
+    "off": {
+     "gx": null,
+     "hit": false,
+     "clip": 0.0
+    },
+    "on": {
+     "gx": null,
+     "hit": false,
+     "clip": 0.0
+    }
+   }
+  ],
+  "n_crop": 4,
+  "pass_off": 19,
+  "pass_on": 19,
+  "worst_clip_on": 0.0,
+  "same_rows": true,
+  "PASS": true
+ },
+ "G2": {
+  "rows": [
+   {
+    "id": "de_01",
+    "frame": [
+     4000,
+     3000
+    ],
+    "label": [
+     400,
+     170,
+     3490,
+     2810
+    ],
+    "padded_emit": [
+     214,
+     11,
+     3675,
+     2968
+    ],
+    "touched_emit_pad": [],
+    "touched_search_pad": [
+     "top",
+     "bottom"
+    ]
+   },
+   {
+    "id": "de_02",
+    "frame": [
+     4000,
+     3000
+    ],
+    "label": [
+     360,
+     90,
+     3640,
+     2960
+    ],
+    "padded_emit": [
+     163,
+     0,
+     3836,
+     3000
+    ],
+    "touched_emit_pad": [
+     "top",
+     "bottom"
+    ],
+    "touched_search_pad": [
+     "top",
+     "bottom"
+    ]
+   },
+   {
+    "id": "zoomset_de_01",
+    "frame": [
+     4080,
+     3060
+    ],
+    "label": [
+     330,
+     400,
+     2860,
+     2530
+    ],
+    "padded_emit": [
+     178,
+     272,
+     3011,
+     2657
+    ],
+    "touched_emit_pad": [],
+    "touched_search_pad": []
+   },
+   {
+    "id": "zoomset_de_02",
+    "frame": [
+     4080,
+     3060
+    ],
+    "label": [
+     300,
+     480,
+     2880,
+     2510
+    ],
+    "padded_emit": [
+     145,
+     358,
+     3034,
+     2631
+    ],
+    "touched_emit_pad": [],
+    "touched_search_pad": []
+   },
+   {
+    "id": "zoomset_en_01",
+    "frame": [
+     4080,
+     3060
+    ],
+    "label": [
+     640,
+     420,
+     2350,
+     2570
+    ],
+    "padded_emit": [
+     537,
+     291,
+     2452,
+     2699
+    ],
+    "touched_emit_pad": [],
+    "touched_search_pad": []
+   },
+   {
+    "id": "zoomset_en_02",
+    "frame": [
+     4080,
+     3060
+    ],
+    "label": [
+     620,
+     560,
+     2620,
+     2750
+    ],
+    "padded_emit": [
+     500,
+     428,
+     2740,
+     2881
+    ],
+    "touched_emit_pad": [],
+    "touched_search_pad": []
+   },
+   {
+    "id": "paleset_01",
+    "frame": [
+     4080,
+     3060
+    ],
+    "label": [
+     0,
+     400,
+     3050,
+     2760
+    ],
+    "padded_emit": [
+     0,
+     258,
+     3233,
+     2901
+    ],
+    "touched_emit_pad": [
+     "left"
+    ],
+    "touched_search_pad": [
+     "left"
+    ]
+   },
+   {
+    "id": "paleset_02",
+    "frame": [
+     4080,
+     3060
+    ],
+    "label": [
+     340,
+     495,
+     3150,
+     2430
+    ],
+    "padded_emit": [
+     171,
+     378,
+     3318,
+     2546
+    ],
+    "touched_emit_pad": [],
+    "touched_search_pad": []
+   }
+  ],
+  "PASS": true
+ },
+ "G3": {
+  "rows": [
+   {
+    "frame": "jobs/20260818-144545-7c21f083/page_001/01_fuse/anchor.png",
+    "scene": "S1 coin book on grey sofa (08-18)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [
+     "bottom",
+     "left",
+     "right",
+     "top"
+    ],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260818-144649-0d501ac9/page_001/01_fuse/anchor.png",
+    "scene": "S1 coin book on grey sofa (08-18)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [
+     "bottom",
+     "left",
+     "right",
+     "top"
+    ],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260819-064025-6b4cc4ac/page_001/01_fuse/anchor.png",
+    "scene": "S2 guidebook on lap (08-19)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     157,
+     267,
+     3071,
+     3060
+    ],
+    "touched": [
+     "bottom"
+    ],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 157,
+     "top": 267,
+     "right": 1009,
+     "bottom": 337
+    }
+   },
+   {
+    "frame": "jobs/20260819-064025-6b4cc4ac/page_002/01_fuse/anchor.png",
+    "scene": "S2 guidebook on lap (08-19)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     33,
+     331,
+     3536,
+     3060
+    ],
+    "touched": [
+     "bottom"
+    ],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 33,
+     "top": 331,
+     "right": 544,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260819-064025-6b4cc4ac/page_003/01_fuse/anchor.png",
+    "scene": "S2 guidebook on lap (08-19)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     42,
+     0,
+     3688,
+     2773
+    ],
+    "touched": [
+     "top"
+    ],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 42,
+     "top": 0,
+     "right": 392,
+     "bottom": 287
+    }
+   },
+   {
+    "frame": "jobs/20260819-064025-6b4cc4ac/page_004/01_fuse/anchor.png",
+    "scene": "S2 guidebook on lap (08-19)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     426,
+     395,
+     3891,
+     3060
+    ],
+    "touched": [
+     "bottom"
+    ],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 426,
+     "top": 395,
+     "right": 189,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260828-092505-15c41a76/page_001/01_fuse/anchor.png",
+    "scene": "S3a coin book on lap (08-28)",
+    "applied": false,
+    "reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 250,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260828-092505-15c41a76/page_002/01_fuse/anchor.png",
+    "scene": "S3b coin book on grey sofa (08-28)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260828-094929-677fd774/page_001/01_fuse/anchor.png",
+    "scene": "S4 coin book on yellow mat (08-28)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     11,
+     343,
+     3438,
+     2818
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 11,
+     "top": 343,
+     "right": 642,
+     "bottom": 242
+    }
+   },
+   {
+    "frame": "jobs/20260828-095443-6f59677f/page_001/01_fuse/anchor.png",
+    "scene": "S5 tight text spreads (08-28)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [
+     "bottom",
+     "left",
+     "right",
+     "top"
+    ],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260828-095443-6f59677f/page_002/01_fuse/anchor.png",
+    "scene": "S5 tight text spreads (08-28)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [
+     "bottom",
+     "left",
+     "right",
+     "top"
+    ],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260828-095443-6f59677f/page_003/01_fuse/anchor.png",
+    "scene": "S5 tight text spreads (08-28)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4000,
+     3000
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [
+     "bottom",
+     "left",
+     "right",
+     "top"
+    ],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260829-082508-b9e6fec9/page_001/01_fuse/anchor.png",
+    "scene": "S6 owner's guidebook on sofa (08-29)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_001/01_fuse/anchor.png",
+    "scene": "S6 owner's guidebook on sofa (08-29)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 0,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_002/01_fuse/anchor.png",
+    "scene": "S6 owner's guidebook on sofa (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     0,
+     0,
+     2971,
+     3060
+    ],
+    "touched": [
+     "left",
+     "top",
+     "bottom"
+    ],
+    "fires": true,
+    "reach": [],
+    "verdict": "true",
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 1109,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_003/01_fuse/anchor.png",
+    "scene": "S6 owner's guidebook on sofa (08-29)",
+    "applied": false,
+    "reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 1281,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_004/01_fuse/anchor.png",
+    "scene": "S6 owner's guidebook on sofa (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     0,
+     0,
+     2863,
+     3060
+    ],
+    "touched": [
+     "left",
+     "top",
+     "bottom"
+    ],
+    "fires": true,
+    "reach": [],
+    "verdict": "true",
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 1217,
+     "bottom": 0
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_005/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     474,
+     438,
+     3044,
+     2561
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 474,
+     "top": 438,
+     "right": 1036,
+     "bottom": 499
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_006/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     174,
+     302,
+     3088,
+     2595
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 174,
+     "top": 302,
+     "right": 992,
+     "bottom": 465
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_007/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     271,
+     420,
+     2966,
+     2562
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 271,
+     "top": 420,
+     "right": 1114,
+     "bottom": 498
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_008/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     215,
+     435,
+     3005,
+     2615
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 215,
+     "top": 435,
+     "right": 1075,
+     "bottom": 445
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_009/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     395,
+     456,
+     2995,
+     2551
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 395,
+     "top": 456,
+     "right": 1085,
+     "bottom": 509
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_010/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     172,
+     380,
+     2980,
+     2636
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 172,
+     "top": 380,
+     "right": 1100,
+     "bottom": 424
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_011/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     177,
+     418,
+     2899,
+     2589
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 177,
+     "top": 418,
+     "right": 1181,
+     "bottom": 471
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_012/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     400,
+     456,
+     3084,
+     2551
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 400,
+     "top": 456,
+     "right": 996,
+     "bottom": 509
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_013/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     266,
+     403,
+     2912,
+     2545
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 266,
+     "top": 403,
+     "right": 1168,
+     "bottom": 515
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_014/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     168,
+     359,
+     2890,
+     2530
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 168,
+     "top": 359,
+     "right": 1190,
+     "bottom": 530
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_015/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     534,
+     571,
+     3085,
+     2598
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 534,
+     "top": 571,
+     "right": 995,
+     "bottom": 462
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_016/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     311,
+     484,
+     2900,
+     2549
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 311,
+     "top": 484,
+     "right": 1180,
+     "bottom": 511
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_017/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     299,
+     408,
+     3116,
+     2617
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 299,
+     "top": 408,
+     "right": 964,
+     "bottom": 443
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_018/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     185,
+     455,
+     2907,
+     2578
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 185,
+     "top": 455,
+     "right": 1173,
+     "bottom": 482
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_019/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     478,
+     478,
+     3124,
+     2649
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 478,
+     "top": 478,
+     "right": 956,
+     "bottom": 411
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_020/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     159,
+     388,
+     3035,
+     2662
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 159,
+     "top": 388,
+     "right": 1045,
+     "bottom": 398
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_021/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     0,
+     0,
+     3061,
+     2619
+    ],
+    "touched": [
+     "left",
+     "top"
+    ],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 0,
+     "top": 0,
+     "right": 1019,
+     "bottom": 441
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_022/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     113,
+     382,
+     2911,
+     2591
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 113,
+     "top": 382,
+     "right": 1169,
+     "bottom": 469
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_023/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     452,
+     418,
+     3261,
+     2912
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 452,
+     "top": 418,
+     "right": 819,
+     "bottom": 148
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_024/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": true,
+    "reason": "cropped to detected book",
+    "emit": [
+     26,
+     329,
+     3024,
+     2899
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 26,
+     "top": 329,
+     "right": 1056,
+     "bottom": 161
+    }
+   },
+   {
+    "frame": "jobs/20260829-084115-de3c20d3/page_025/01_fuse/anchor.png",
+    "scene": "S7 owner's guidebook on dark chair (08-29)",
+    "applied": false,
+    "reason": "book box is unstable: 3 seeded GrabCut draws disagree by 9.3% of the box on one edge (> 6%, the pad that covers inward error) - not cropping",
+    "emit": [
+     0,
+     0,
+     4080,
+     3060
+    ],
+    "touched": [],
+    "fires": false,
+    "reach": [],
+    "verdict": null,
+    "gc_margin": {
+     "left": 182,
+     "top": 331,
+     "right": 957,
+     "bottom": 26
+    }
+   }
+  ],
+  "false_fires": [],
+  "true_fires": [
+   "jobs/20260829-084115-de3c20d3/page_002/01_fuse/anchor.png",
+   "jobs/20260829-084115-de3c20d3/page_004/01_fuse/anchor.png"
+  ],
+  "n_crop": 27,
+  "PASS": true
+ },
+ "positives_fire": true
+}

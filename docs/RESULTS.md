@@ -8969,3 +8969,58 @@ its table is miscounted — "11 pictures × 1, two 3-piece pictures × 2, the ma
 three-piece pictures × 2 + the 7-piece map × 1 = 15**, which is the total the
 committed JSON records. The removed-piece count (10 + 4 + 6 = 20, matching
 143 → 123) was right.
+
+## 2026-09-24 — The "three frame edges" cue for the sofa crop (P1 mode c): passes its gates, ships OFF, and was never tested where it could be wrong
+
+Pre-registration `docs/data/three_edge_cue_prereg_20260924.md` and eye labels
+`docs/data/three_edge_cue_labels_20260924.json`, both committed (f53ae82)
+before the probe ran; probe `docs/data/three_edge_cue_probe_20260924.py`,
+output `docs/data/three_edge_cue_20260924.json`. Code: `pipeline/book_boundary.py`
+(`three_edge_abstain`, default False; `diag.emit_at_frame_edges` always
+recorded), `config.yaml` (`book_crop.three_edge_abstain: false`). Machine: the
+owner's (Windows, OpenCV 5.0.0), shipped params (three seeded draws).
+
+**Cue.** Refuse a crop whose emitted box sits exactly on ≥ 3 frame edges.
+
+| gate | population | result |
+|---|---|---|
+| G1 split_eval with the cue on | 21 rows | **PASS**: same 19 rows, worst clip 0.0 %. **Only 4 rows crop at all** (the zoomsets, each touching one edge); the other 17 abstain earlier, so G1 exercises the cue on 4 frames |
+| G2 the labelled books, padded by `emit_pad` | 8 labels | **PASS**: none touches ≥ 3. `paleset_01` touches 1 (left); `de_02` touches 2 (top, bottom) — the closest. With the search pad (0.08) the same |
+| G3 phone anchors vs eye labels | 38 frames, 8 scenes | **PASS**: 27 crop, 2 fire (owner's spreads 2 and 4), both true fires, 0 false |
+| required positives | spreads 2, 4 | fire |
+
+**What the pass does not show.** A false fire needs a crop that is right and
+touches three edges, i.e. a book that really fills three sides of the frame.
+Every such frame in the population (5 tight scans in G3, the 13 tight testset
+rows) **abstains at the area gate before the cue is reached**. So no frame in
+the population could have produced a false fire, and 0 false fires is not
+evidence about that case. G2 is the only check aimed at it, and it uses labels
+padded arithmetically, not the detector. The positives are one scene
+(the owner's book on the sofa, 2026-08-29). The cue therefore ships **off by
+default**, as the pre-registration said a pass would license.
+
+**It is not a fix.** With the cue on, spreads 2 and 4 go from sofa on three
+sides to no crop (sofa on four sides). What it buys is an honest reason
+("book box runs to 3 frame edges") in place of "cropped to detected book",
+and the abstain path, where `vlm_box` and a drawn `book_box.json` act.
+
+**Found on the way (not graded, not fixed).** The owner's spread 21
+(`page_021`, dark chair, a different scene) emits (0, 0, 3061, 2619): a wrong
+crop that takes in a patterned cushion on the left and the chair above the
+book. It touches **two** edges, so the cue misses it. Nothing is clipped (the
+book is inside the box), so it costs no content; whether it costs the dewarp
+was not checked. Mode (c) is not only a pale-surface failure.
+
+**Diagnostic (grades nothing): the model's box on spread 4**, never asked
+before (RESULTS 2026-09-24 item 5). `vlm_box` (qwen3.6:27b, shipped prompt)
+returns (465, 624, 2709, 2368); drawn on the frame it is on the book, and
+**tight** — its left and bottom edges sit within a few quarter-scale pixels of
+the page edge. Spread 2 re-asked: (273, 551, 2640, 2411), identical to the
+recorded answer (the model is deterministic, as recorded 2026-08-29). A model
+box that cuts would need the outward pad the operator box gets; this is the
+P1 experiment-3 question, unchanged.
+
+Tests: 3 new in `pipeline/tests/test_book_boundary.py` (off by default and
+recorded; refuses when on, ASCII reason and evidence; leaves an ordinary crop
+alone). `test_book_boundary`, `test_stage02_split`, `test_vlm_box`: 59 pass.
+`tools/split_eval` after the change: 19/21, 0.0 %, exit 1 as before.

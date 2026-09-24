@@ -191,6 +191,15 @@ DEFAULTS = {
     "min_area_frac": 0.10,      # degenerate
     "aspect_min": 0.5,
     "aspect_max": 4.0,
+    # Refuse a crop whose emitted box sits exactly on >= 3 frame edges. OFF by
+    # default: it passed its pre-registered gates (RESULTS 2026-09-24,
+    # docs/data/three_edge_cue_prereg_20260924.md), but every frame it fires on
+    # is one scene (the owner's sofa spreads 2 and 4), and no tightly framed
+    # frame ever reached it - they all abstain earlier - so it has never been
+    # tested where it could be wrong. It is also not a fix: the frame goes from
+    # sofa on three sides to no crop at all; what it buys is an honest refusal
+    # and the abstain path (vlm search window, a drawn book_box.json).
+    "three_edge_abstain": False,
 }
 
 Box = tuple[int, int, int, int]   # x0, y0, x1, y1 in ORIGINAL image pixels
@@ -633,6 +642,22 @@ def find_book(image: np.ndarray, p: dict | None = None) -> BookBoundary:
             f"book box aspect {aspect:.2f} outside "
             f"[{p['aspect_min']}, {p['aspect_max']}] — implausible, not cropping",
             diag)
+    at_edge = [n for n, t in zip(("left", "top", "right", "bottom"),
+                                 (ex0 <= 0, ey0 <= 0, ex1 >= w, ey1 >= h)) if t]
+    diag["emit_at_frame_edges"] = at_edge
+    if p.get("three_edge_abstain", False) and len(at_edge) >= 3:
+        # ASCII only: drawn onto the debug overlay (see the area gate above).
+        return refuse(
+            f"book box runs to {len(at_edge)} frame edges ({', '.join(at_edge)})"
+            f" - not cropping",
+            diag,
+            evidence=(
+                "A box that reaches three sides of the frame and stops on the "
+                "fourth is the shape of the detector reading the surface as "
+                "paper (owner's sofa spreads 2 and 4, RESULTS 2026-09-24), but "
+                "a book that really fills three sides has it too; the rule was "
+                "never exercised on such a frame. A drawn book_box.json or the "
+                "model's search window applies here as on any other abstain."))
 
     return BookBoundary(applied=True, reason="cropped to detected book",
                         emit=ebox, search=sbox, diag=diag)

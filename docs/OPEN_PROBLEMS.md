@@ -34,7 +34,7 @@ the route tables). It is the crop.
 |---|---|---|---|
 | (a) abstains | the paper mask merges book and background, area gate refuses | `paleset_01/02`, owner's spreads 1 and 3 | `vlm_box` aims the spine search (shipped, 21/21 with `--vlm`), nothing is cut |
 | (b) unstable | GrabCut's random init decides between abstain and a 12 % clip | raw `de_02` (RESULTS 2026-09-02); the real anchor confirmed 2026-09-24, draws disagree by 12.9 % | **caught 2026-09-02**: seeded draws must agree within the emit pad, else abstain |
-| (c) confidently wrong, stable | every draw agrees on a wrong box | raw `de_02`'s top edge (header band, 4.6 %, clips content); owner's spreads 2 and 4: identical box on 8 of 8 seeds (RESULTS 2026-09-24), starting at the frame's left edge at full height, so sofa is kept on **three** sides; the right edge sits in open sofa 150–350 px past the book, set by something not yet established. The detector's own paper mask runs to the left, top and bottom frame edges — it reads the sofa as paper there — and GrabCut, seeded from it, agrees. Spread 3 has the same GrabCut box and escaped only because its search box is the whole frame, so the area gate fired | **open** — confirmed 2026-09-24 that seeding does not reach it; no cue found; see below |
+| (c) confidently wrong, stable (also on a dark chair: spread 21, two edges) | every draw agrees on a wrong box | raw `de_02`'s top edge (header band, 4.6 %, clips content); owner's spreads 2 and 4: identical box on 8 of 8 seeds (RESULTS 2026-09-24), starting at the frame's left edge at full height, so sofa is kept on **three** sides; the right edge sits in open sofa 150–350 px past the book, set by something not yet established. The detector's own paper mask runs to the left, top and bottom frame edges — it reads the sofa as paper there — and GrabCut, seeded from it, agrees. Spread 3 has the same GrabCut box and escaped only because its search box is the whole frame, so the area gate fired | **open** — confirmed 2026-09-24 that seeding does not reach it; no cue found; see below |
 
 **What is REFUSED (do not re-attempt):**
 - Retuning the HSV paper thresholds (plan §5; the pale surface *is* paper-coloured).
@@ -73,14 +73,20 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
    needs one to be turned on. **It does not reach mode (c) by itself:** the
    model is asked only when the detector abstains or finds no spine, so spread 4
    was never asked and spread 2's answer only aimed the search.
-4. **A cue for mode (c) that is not a threshold.** The cue first written here
-   ("top or bottom edge at the frame edge, side edges well inside") is **dead as
-   written**: it fires on neither spread 2 nor 4, whose left edge is also at the
-   frame edge (RESULTS 2026-09-24). A "box touches three frame edges" variant is
-   a new, unmeasured idea. Before building it, count how many of the 19 correct
-   rows have that shape — if any do, it is dead — and check `paleset_01`, whose
-   book runs off the frame edge, which is exactly that shape for a right reason.
-5. Shoot the fixtures. Nothing above replaces this.
+4. **DONE 2026-09-24 — the "three frame edges" cue** (RESULTS 2026-09-24,
+   pre-registered). Passes all gates, fires on spreads 2 and 4 only, 0 false
+   fires; shipped as `book_crop.three_edge_abstain`, **off**. Why off: every
+   frame that could false-fire (a book really filling three sides) abstains at
+   the area gate first, so the cue has never met one; the positives are one
+   scene. It is not a fix either — it turns a wrong crop into no crop. Turning
+   it on is worth it only together with experiment 3 (so the abstain lands on
+   a model box that cuts) and after the fixture shoot supplies tight frames
+   that reach it. **New, found on the way:** spread 21 (dark chair) is a wrong
+   crop touching **two** edges (a cushion kept on the left) — mode (c) is not
+   only a pale-surface failure, and this cue cannot see it. No content lost.
+5. Shoot the fixtures. Nothing above replaces this. The shot list should now
+   include tight frames where the book fills three sides (the cue's missing
+   negatives).
 
 ---
 

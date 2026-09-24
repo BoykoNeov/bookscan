@@ -701,3 +701,16 @@ rules for it:
   shape survives normalize + PUT, reads as edited, renders as one picture with
   the re-pointed caption from the page crop rather than the stale close-up;
   4 browser: merge below, pull-in, refusals, picker + undo).
+
+### 2026-09-24 — sofa crop: the "three frame edges" cue
+
+- Pre-registered, eye-labelled 38 phone frames before computing, then ran it
+  (RESULTS 2026-09-24, "three frame edges"). All gates pass; fires on spreads
+  2 and 4 only; 0 false fires — but no frame that could false-fire ever
+  reaches the cue (tight scans abstain earlier), and the positives are one
+  scene. Shipped as `book_crop.three_edge_abstain`, **off**.
+- Not a fix: with it on, the sofa spreads get no crop instead of a wrong one.
+- Found: spread 21 (dark chair) is a wrong crop touching two edges (a cushion
+  kept on the left) — mode (c) is not only a pale-surface failure; costs no
+  content.
+- Asked the local model for spread 4's box for the first time: right, and tight.

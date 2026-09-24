@@ -675,3 +675,29 @@ rules for it:
   made after seeing the errors → a hypothesis for a second book, not a result.
 - P3 now ranks the operator's lever first: a "merge with the figure below"
   action in the editor, which does not exist yet.
+
+### 2026-09-24 — pictures split in two: the operator's merge button
+
+- **Built** in the editor page (so both `pipeline/editor.py` and the console
+  have it): "Merge with the picture below" on a selected picture, and a picker
+  for any other picture on the page. The split rules hold in reverse — the
+  selected block keeps its id, nothing is allocated, the removed pieces'
+  captions are re-pointed, `structure_edited` is set by hand, nobody else is
+  renumbered (a gap is left; renumbering would clear order-review markers).
+- **Pull-in:** a picture the joined box overlaps joins in the same click and is
+  named on the button; the joined box is outlined on the page before the click.
+  Surface-flagged blocks never join and cannot be merged. A caption on another
+  page pointing at a piece that would vanish blocks the merge (undo only covers
+  the current page). Warnings before the click: two captions on one picture,
+  different printed figure numbers, text that newly lands inside or across the
+  picture, a close-up asset that stops being used, a caption held only by
+  adjacency that would come loose.
+- **Checked** (RESULTS 2026-09-24): `tools/figure_merge_check.py` drives the
+  real page over a copy of the owner's job — 13/13 labelled pictures rejoined
+  exactly, 15 clicks, 0 pieces taken in by mistake, 143 → 123 rendered
+  pictures. One wart: a junk OCR block inside the page-23 map is painted out as
+  a pale patch; needs a "delete block" action.
+- Tests: 7 new in `pipeline/tests/test_editor.py` (3 Python-layer: the merged
+  shape survives normalize + PUT, reads as edited, renders as one picture with
+  the re-pointed caption from the page crop rather than the stale close-up;
+  4 browser: merge below, pull-in, refusals, picker + undo).

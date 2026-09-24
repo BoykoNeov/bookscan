@@ -50,8 +50,9 @@ The three things that cost the deliverable most today, in order:
    census (2026-09-24, labels committed; the old 45 does not reproduce); the
    pixel-continuity test and a two-question local-model check were both
    measured and refused (4 and 10 wrong merges; their mistakes are disjoint,
-   noticed after scoring). Next is a hand "merge with the figure below" in the
-   editor, which does not exist yet.
+   noticed after scoring). The operator's "merge with the picture below" in the
+   editor shipped 2026-09-24 and rejoins all 13 pictures in 15 clicks with
+   nothing glued on by mistake; the automatic merge still needs a second book.
 3. **Panorama** (P4) is parked, not refused: Phase 1 needs per-region
    admission and a text spread swept on the phone before any code.
 

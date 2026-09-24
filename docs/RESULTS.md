@@ -8907,3 +8907,58 @@ prompts are **not** to be re-tuned on these 55 pairs (for example by dropping
 the "caption" clause, which the table above points at): that would be fitting
 to the labels. **Not checked:** a second book; side-by-side splits; whether
 `gemma4:31b` differs (a new pre-registration, by the rule written in this one).
+
+## Split pictures: the operator's merge button (P3) — 13/13 pictures rejoined exactly, 15 clicks, 0 pieces taken in by mistake — 2026-09-24
+
+**What was built.** The editor (`pipeline/assets/editor/index.html`, served by
+both `pipeline/editor.py` and the console) now offers **"Merge with the picture
+below"** on a selected picture, plus a picker for any other picture on the page.
+The selected block keeps its id and takes the joined box; the other pieces are
+removed; captions on the page that pointed at a removed piece are re-pointed;
+`structure_edited` is set by hand; nobody else is renumbered. The joined box is
+drawn on the page before the click.
+
+**The one rule that could go wrong unseen: the pull-in.** If the joined box
+overlaps a further picture, the same click takes it in, and the button names it
+("… — #13 (also takes in #19, #20, #21, #22, #23)"). Refusing instead would
+deadlock on the owner's map, whose large detector box #23 lies across all six
+strips. Detector boxes spill 6–9 px past the printed edge (this date, continuity
+census), so the risk was gluing on a picture the labels call separate. Blocks
+flagged `is_surface` are never pulled in (they do not print).
+
+**Check.** `python -m tools.figure_merge_check` drives the real editor page in
+headless Chromium over a **copy** of `jobs/20260829-084115-de3c20d3` (the
+owner's job is never opened for writing). For each of the 13 labelled pictures
+(`docs/data/figure_split_vlm_groups_20260924.json`, written before either
+refused method ran) it selects the topmost piece and presses the button until the
+picture is whole. Output committed: `docs/data/figure_merge_editor_20260924.json`.
+
+| | |
+|---|---|
+| pictures rejoined exactly (labelled pieces = removed pieces + kept) | **13 / 13** |
+| blocks removed that lie outside a labelled picture | **0** |
+| clicks | **15** (11 pictures × 1, two 3-piece pictures × 2, the 7-piece map × 1) |
+| pictures rendered | 143 → 123 (−20 = the 20 removed pieces) |
+| saved document reads as edited (safe from re-assemble) | yes |
+
+The owner was told "about 20 clicks" before this ran; the true number is 15.
+
+**One visible side effect, warned but not fixed.** On `page_023__right` the
+joined box now contains text block #15 ("N are,", map-seam OCR junk). Stage 08's
+existing rule paints text inside a picture out of it, so the map shows a pale
+patch there and the junk still prints as its own line. Before the merge the
+junk printed too and the map had a gap there, so this is better than before and
+still not clean. The button shows the warning before the click. The fix is an
+editor action to delete a block (or declare it part of the picture), which does
+not exist. `page_018__right`'s text blocks #20/#21 already overlapped a piece
+before the merge, so nothing changes for them and no warning is raised.
+
+**Limits.** The check shows the button *can* rejoin every labelled picture
+without collateral damage when the operator starts from the top piece; it does
+not show that an operator will pick the right pieces — that is the operator's
+call by design, and undo reverses a wrong one. One book; the same 55 labelled
+pairs both refused methods were read against (fine here: nothing was tuned on
+them — the pull-in rule was chosen before a first simulation against these
+labels ran, and did not change after it).
+No labelled separate pair lies inside any picture's merge, but the check never
+presses the button on a separate pair, because the operator would not.

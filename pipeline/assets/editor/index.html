@@ -51,6 +51,10 @@
                   background:rgba(176,125,224,.14); }
   .bbox.sel { border-color:var(--accent); border-style:solid;
               background:rgba(90,169,255,.06); }
+  /* merge preview: the joined box, and the pieces it will take in */
+  .mergebox { border:2px dashed var(--edited); pointer-events:none; }
+  .bbox.mergein { border-color:var(--edited); border-style:solid; border-width:2px;
+                  background:rgba(90,209,139,.10); }
   .bbox .lbl { position:absolute; top:-16px; left:0; font-size:11px; padding:0 4px;
                background:var(--accent); color:#0a1120; border-radius:3px;
                white-space:nowrap; }
@@ -155,7 +159,8 @@
 <script>
 const BLOCK_TYPES = ["title","paragraph","heading","list","table","figure",
   "caption","footnote","header","page_number","other"];
-const state = { doc:null, pageIndex:0, selBlock:null, selWord:null, dirty:false, undo:[] };
+const state = { doc:null, pageIndex:0, selBlock:null, selWord:null, dirty:false, undo:[],
+                mergeTarget:null };   // picture chosen in the merge picker (null = the one below)
 
 const $ = s => document.querySelector(s);
 const el = (t, cls, txt) => { const e=document.createElement(t);
@@ -411,6 +416,177 @@ function splitBlock(blk, wi){
   markDirty(); selectBlock(newId);
 }
 
+// ---- merge pictures ------------------------------------------------------------
+// The layout detector sometimes cuts one printed picture into two or more stacked
+// FIGURE blocks (docs/OPEN_PROBLEMS.md P3: 21 such splits = 13 pictures in the owner's
+// guidebook). Two automatic rejoin rules were measured and refused — each wrongly
+// merged separate pictures — so the rejoin is the operator's: select the upper piece
+// and merge it with the picture below. Nothing is merged that the operator did not
+// click, and undo reverses it.
+//
+// The split rules hold in reverse:
+//  * The SELECTED block keeps its id and allocates nothing (ids are pointers: a
+//    caption's figure_ref names one). The other pieces are removed, and every caption
+//    on this page that pointed at one of them is re-pointed to the survivor.
+//  * It takes the union box, and `structure_edited` is set BY HAND — a bbox change is
+//    not a divergence normalize_edits can infer, so without the flag a re-assemble
+//    would silently undo the merge.
+//  * Nobody else is renumbered. The survivor moves to the earliest reading position
+//    of the pieces and the removed pieces leave a gap; reading_order is only a sort
+//    key, and renumbering bystanders would clear their order-review markers.
+//
+// PULL-IN. If the joined box overlaps another picture, that picture is taken in too
+// (repeated until nothing new overlaps), and the button names every piece. Refusing
+// instead would deadlock on the real case: the owner's 7-piece map has one large
+// detector box lying across all its strips. Checked against the committed eye labels
+// before this shipped (13/13 pictures rejoined exactly, no separate picture pulled in).
+// Blocks marked as the surface the book lay on never print, so they are neither
+// pulled in nor mergeable.
+
+function mergeEligible(b){ return isFigure(b) && !b.is_surface; }
+function boxesOverlap(a, b){
+  return Math.min(a.x+a.w, b.x+b.w) > Math.max(a.x, b.x)
+      && Math.min(a.y+a.h, b.y+b.h) > Math.max(a.y, b.y);
+}
+function boxInside(inner, outer){
+  return inner.x >= outer.x && inner.y >= outer.y
+      && inner.x+inner.w <= outer.x+outer.w && inner.y+inner.h <= outer.y+outer.h;
+}
+function unionOfBoxes(boxes){
+  const x0=Math.min(...boxes.map(b=>b.x)), y0=Math.min(...boxes.map(b=>b.y));
+  const x1=Math.max(...boxes.map(b=>b.x+b.w)), y1=Math.max(...boxes.map(b=>b.y+b.h));
+  return { x:x0, y:y0, w:x1-x0, h:y1-y0 };
+}
+
+function mergeBlockedReason(blk){
+  if(!isFigure(blk)) return "only pictures can be merged";
+  if(blk.is_surface)
+    return "this block is marked as the surface the book was lying on, so it does not print at all";
+  return null;
+}
+
+// The picture directly under this one: sideways overlap, centre lower down, and the
+// smallest gap between this block's bottom edge and its top edge.
+function pictureBelow(blk){
+  const bb = blk.bbox;
+  let best = null, bestKey = null;
+  for(const b of page().blocks){
+    if(b.id===blk.id || !mergeEligible(b)) continue;
+    if(Math.min(bb.x+bb.w, b.bbox.x+b.bbox.w) - Math.max(bb.x, b.bbox.x) <= 0) continue;
+    if(b.bbox.y + b.bbox.h/2 <= bb.y + bb.h/2) continue;
+    const key = [b.bbox.y - (bb.y+bb.h), b.bbox.y, b.id];
+    if(!bestKey || key[0]<bestKey[0] || (key[0]===bestKey[0] && (key[1]<bestKey[1]
+       || (key[1]===bestKey[1] && key[2]<bestKey[2])))){ best=b; bestKey=key; }
+  }
+  return best;
+}
+function mergeTargetFor(blk){
+  if(state.mergeTarget===-1) return null;           // the operator chose "none" in the picker
+  if(state.mergeTarget!=null){
+    const t = findBlock(state.mergeTarget);
+    if(t && t.id!==blk.id && mergeEligible(t)) return t;
+  }
+  return pictureBelow(blk);
+}
+
+// Everything one click would do, computed WITHOUT touching the document, so the
+// button label, the warnings and the page preview all describe the same merge.
+function planMerge(head, target){
+  const p = page();
+  const ids = new Set([head.id, target.id]);
+  let box;
+  for(;;){
+    box = unionOfBoxes([...ids].map(i=>findBlock(i).bbox));
+    const more = p.blocks.filter(b=>!ids.has(b.id) && mergeEligible(b) && boxesOverlap(box, b.bbox));
+    if(!more.length) break;
+    more.forEach(b=>ids.add(b.id));
+  }
+  const members = p.blocks.filter(b=>ids.has(b.id)).sort((a,b)=>a.reading_order-b.reading_order);
+  const absorbed = members.filter(b=>b.id!==head.id);
+  const absorbedIds = new Set(absorbed.map(b=>b.id));
+  const pulled = absorbed.filter(b=>b.id!==target.id).map(b=>b.id);
+
+  // A caption on ANOTHER page pointing at a piece that would disappear cannot be
+  // re-pointed safely: undo only snapshots the current page. Refuse instead.
+  const offPage = [];
+  for(const pg of state.doc.pages){
+    if(pg.page_id===p.page_id) continue;
+    for(const b of pg.blocks)
+      if(b.figure_ref && b.figure_ref.page_id===p.page_id && absorbedIds.has(b.figure_ref.block_id))
+        offPage.push(`${pg.page_id} #${b.id}`);
+  }
+  const blocked = offPage.length
+    ? `a caption on another page (${offPage.join(", ")}) is paired to a piece that would be removed — unpair it there first`
+    : null;
+
+  const warnings = [];
+  const caps = p.blocks.filter(b=>isCaption(b) && b.figure_ref && b.figure_ref.page_id===p.page_id
+                                && ids.has(b.figure_ref.block_id));
+  if(caps.length > 1)
+    warnings.push(`${caps.length} captions (${caps.map(c=>"#"+c.id).join(", ")}) belong to these pieces;`
+      + " a picture holds one caption, so the others will print on their own");
+  // A caption printed with a piece only because it came right after it in reading
+  // order (no pairing recorded) can come loose when that piece is removed.
+  const seq = orderedBlocks();
+  const freeCapAfter = (list, i) => { const n = list[i+1];
+    return n && isCaption(n) && !n.figure_ref && n.pair_source!=="user" ? n : null; };
+  const before = new Set();
+  seq.forEach((b,i)=>{ if(ids.has(b.id)){ const c=freeCapAfter(seq,i); if(c) before.add(c.id); } });
+  // After the merge the survivor sits where the earliest piece sat; the rest vanish.
+  const afterSeq = seq.flatMap(b => b.id===members[0].id ? [head] : (ids.has(b.id) ? [] : [b]));
+  const kept = freeCapAfter(afterSeq, afterSeq.indexOf(head));
+  const lost = [...before].filter(id=>!kept || kept.id!==id);
+  if(lost.length)
+    warnings.push(`caption ${lost.map(i=>"#"+i).join(", ")} printed with a piece only because it came`
+      + " right after it; after the merge it will print on its own — pair it to the merged picture if it belongs there");
+  const nums = [...new Set(members.map(b=>b.figure_number).filter(n=>n!=null))];
+  if(nums.length > 1)
+    warnings.push(`the pieces carry different printed figure numbers (${nums.join(", ")}) — they may be separate pictures`);
+  const text = p.blocks.filter(b=>!ids.has(b.id) && !isFigure(b) && !b.is_surface
+                                 && ((b.words && b.words.length) || b.text!=null));
+  const nowInside = text.filter(b=>boxInside(b.bbox, box) && !members.some(m=>boxInside(b.bbox, m.bbox)));
+  const nowPartly = text.filter(b=>!boxInside(b.bbox, box) && boxesOverlap(b.bbox, box)
+                                 && !members.some(m=>boxesOverlap(b.bbox, m.bbox)));
+  if(nowInside.length)
+    warnings.push(`text block ${nowInside.map(b=>"#"+b.id).join(", ")} will sit inside the merged picture:`
+      + " it is painted out of the picture and printed as text on its own");
+  if(nowPartly.length)
+    warnings.push(`text block ${nowPartly.map(b=>"#"+b.id).join(", ")} will be partly inside the merged picture,`
+      + " so its words show in the picture and again as text");
+  const sharp = members.filter(b=>b.figure_asset);
+  if(sharp.length)
+    warnings.push(`${sharp.map(b=>"#"+b.id).join(", ")} has a sharper version cut from a close-up;`
+      + " the merged picture is cut from the page photo instead, so it will be a little softer");
+  return { box, members, absorbed, pulled, blocked, warnings };
+}
+
+function mergeFigures(head, target){
+  if(mergeBlockedReason(head) || !target || !mergeEligible(target) || target.id===head.id) return;
+  const plan = planMerge(head, target);
+  if(plan.blocked) return;
+  pushUndo("merge pictures");
+  const p = page();
+  const gone = new Set(plan.absorbed.map(b=>b.id));
+  head.bbox = plan.box;
+  head.reading_order = plan.members[0].reading_order;
+  // Words are kept as provenance (a figure renders from pixels, not words), re-homed.
+  head.words = plan.members.flatMap(b=>(b.words||[]).map(w=>Object.assign({}, w, { block_id: head.id })));
+  if(head.figure_number==null){
+    const n = plan.members.find(b=>b.figure_number!=null);
+    if(n) head.figure_number = n.figure_number;
+  }
+  // figure_asset stays: stage08_render uses it only while figure_asset_box equals the
+  // live bbox, so after the merge it falls back to the page crop by itself.
+  head.structure_edited = true;
+  for(const b of p.blocks)
+    if(b.figure_ref && b.figure_ref.page_id===p.page_id && gone.has(b.figure_ref.block_id))
+      b.figure_ref = { page_id: p.page_id, block_id: head.id };
+  p.blocks = p.blocks.filter(b=>!gone.has(b.id));
+  state.mergeTarget = null;
+  markDirty(); selectBlock(head.id);
+  setStatus(`merged ${plan.absorbed.map(b=>"#"+b.id).join(", ")} into #${head.id} — unsaved`);
+}
+
 // ---- load ----
 async function load(){
   const meta = await (await fetch("api/meta")).json();
@@ -440,6 +616,20 @@ function drawOverlays(){
   const blocks = [...p.blocks].sort((a,b)=>a.reading_order-b.reading_order);
   const sel = state.selBlock==null ? null : findBlock(state.selBlock);
   const partner = sel ? partnerId(sel) : null;
+  // Merge preview: with a picture selected, show the box one click would produce and
+  // the pieces it would take in, so the operator sees the merge before making it.
+  let mergeIn = new Set();
+  if(sel && !mergeBlockedReason(sel)){
+    const t = mergeTargetFor(sel);
+    if(t){
+      const plan = planMerge(sel, t);
+      mergeIn = new Set(plan.absorbed.map(b=>b.id));
+      const mb = el("div","box mergebox");
+      mb.style.left=pct(plan.box.x,W); mb.style.top=pct(plan.box.y,H);
+      mb.style.width=pct(plan.box.w,W); mb.style.height=pct(plan.box.h,H);
+      ovB.appendChild(mb);
+    }
+  }
   for(const blk of p.blocks){
     const b = el("div","box bbox"); const bb=blk.bbox;
     b.style.left=pct(bb.x,W); b.style.top=pct(bb.y,H);
@@ -449,6 +639,7 @@ function drawOverlays(){
     if(needsRev) b.classList.add("review");
     if(needsPair) b.classList.add("pairing");
     if(partner===blk.id) b.classList.add("partner");   // the caption/figure of the selection
+    if(mergeIn.has(blk.id)) b.classList.add("mergein"); // would be merged into the selection
     if(state.selBlock===blk.id) b.classList.add("sel");
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
     const pairMark = fig ? (captionClaimLost(blk) ? ` →#${fig.id} ⚠` : ` →#${fig.id}`)
@@ -470,8 +661,10 @@ function drawOverlays(){
 
 // ---- selection ----
 function findBlock(id){ return page().blocks.find(b=>b.id===id); }
-function selectBlock(id){ state.selBlock=id; state.selWord=null; renderPage(); renderInspector(); renderBlockList(); }
-function selectWord(blockId, wi){ state.selBlock=blockId; state.selWord=wi; renderPage(); renderInspector(); renderBlockList(); }
+function selectBlock(id){ if(id!==state.selBlock) state.mergeTarget=null;
+  state.selBlock=id; state.selWord=null; renderPage(); renderInspector(); renderBlockList(); }
+function selectWord(blockId, wi){ if(blockId!==state.selBlock) state.mergeTarget=null;
+  state.selBlock=blockId; state.selWord=wi; renderPage(); renderInspector(); renderBlockList(); }
 
 // ---- inspector ----
 function renderInspector(){
@@ -580,6 +773,7 @@ function blockEditor(blk){
   }
 
   if(isCaption(blk) || isFigure(blk)) c.appendChild(pairingField(blk));
+  if(isFigure(blk)) c.appendChild(mergeField(blk));
 
   const f3 = el("div","field");
   f3.appendChild(el("label","small muted","translation / block-level text override (supersedes words when set)"));
@@ -625,6 +819,65 @@ function splitField(blk){
     + (orderMode()==="review"
        ? " In review mode this renumbers every later block, which clears their order-review marker."
        : "")));
+  return f;
+}
+
+// ---- merge control ----
+// Default target is the picture directly below; the picker covers side-by-side
+// pieces. The button names every piece the click takes in (see planMerge's pull-in),
+// and the same merge is outlined on the page.
+function mergeField(blk){
+  const f = el("div","field mergefield"); f.style.marginTop="10px";
+  f.appendChild(el("label","small muted","merge pictures (one picture cut into pieces)"));
+  const why = mergeBlockedReason(blk);
+  if(why){ f.appendChild(el("div","small muted","merge unavailable — " + why)); return f; }
+  const others = pageFigures().filter(b=>b.id!==blk.id && mergeEligible(b));
+  if(!others.length){ f.appendChild(el("div","small muted","no other picture on this page to merge with")); return f; }
+  const below = pictureBelow(blk);
+  const target = mergeTargetFor(blk);
+
+  const sel = el("select"); sel.className = "mergepick";
+  const none = el("option",null,"— choose a picture —"); none.value=""; sel.appendChild(none);
+  for(const b of others){
+    const o = el("option",null,`Block #${b.id} · order ${b.reading_order}${below && b.id===below.id ? " (below)" : ""}`);
+    o.value = String(b.id);
+    if(target && b.id===target.id) o.selected = true;
+    sel.appendChild(o);
+  }
+  if(!target) none.selected = true;
+  sel.onchange = () => { state.mergeTarget = sel.value==="" ? null : parseInt(sel.value,10);
+    if(state.mergeTarget==null && below) state.mergeTarget = -1;   // explicit "none"
+    drawOverlays(); renderInspector(); };
+  f.appendChild(sel);
+  if(!target){
+    f.appendChild(el("div","small muted", below ? "choose the picture to merge with"
+      : "no picture directly below — choose one to merge with"));
+    return f;
+  }
+
+  const plan = planMerge(blk, target);
+  const label = (below && target.id===below.id)
+    ? `Merge with the picture below — #${target.id}` : `Merge with #${target.id}`;
+  const btn = el("button", "mergebtn",
+    label + (plan.pulled.length ? ` (also takes in ${plan.pulled.map(i=>"#"+i).join(", ")})` : ""));
+  btn.style.marginTop = "6px";
+  if(plan.blocked){
+    btn.disabled = true;
+    f.appendChild(btn);
+    f.appendChild(el("div","small muted","merge unavailable — " + plan.blocked));
+    return f;
+  }
+  btn.onclick = () => mergeFigures(blk, target);
+  f.appendChild(btn);
+  f.appendChild(el("div","small muted",
+    `#${blk.id} grows to the green dashed box on the page and the other `
+    + (plan.absorbed.length>1 ? `${plan.absorbed.length} pieces are` : "piece is")
+    + " removed" + (plan.pulled.length ? "; the extra pieces are taken in because the joined box overlaps them" : "")
+    + ". Undo reverses it."));
+  for(const w of plan.warnings){
+    const d = el("div","small mergewarn"); d.style.color = "var(--review)";
+    d.textContent = "⚠ " + w; f.appendChild(d);
+  }
   return f;
 }
 

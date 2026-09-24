@@ -31,7 +31,7 @@ import pytest
 
 from pipeline import editor as ED
 from pipeline.page_model import (
-    Block, BlockRef, BlockType, Document, DocPage, DocSettings, PairSource, Word,
+    BBox, Block, BlockRef, BlockType, Document, DocPage, DocSettings, PairSource, Word,
     WordDecision,
 )
 
@@ -904,6 +904,340 @@ def test_e2e_undo_after_save_needs_a_second_save(job: Path):
     # normalize_edits only ever SETS a flag from a divergence, so a restored snapshot
     # whose text matches text_ocr again is written back un-flagged rather than stuck.
     assert w.text == "wrold" and w.edited is False and w.flag_visible is True
+
+
+# --------------------------------------------------------------------------
+# Merge pictures — the operator's rejoin for a picture the detector cut in two
+#
+# docs/OPEN_PROBLEMS.md P3: two automatic rejoin rules were measured and refused, so
+# the editor offers "merge with the picture below". The fixture page:
+#
+#   #0 heading
+#   #1 FIGURE, upper piece       y  40..100  x 10..190  (has a close-up asset for THIS box)
+#   #2 other text in the gap     y 102..108             (inside the joined box, in neither piece)
+#   #3 FIGURE, lower piece       y 110..170  x 10..190
+#   #4 CAPTION paired to #3 by printed number
+#   #5 FIGURE, right column      x 300..390             (never touches the joined box)
+#   #6 FIGURE flagged is_surface y 165..250             (overlaps the joined box; never pulled in)
+#
+# The Python layer checks what a browser test cannot: the merged shape survives
+# normalize/save, still reads as protected work, and RENDERS as one picture holding
+# the re-pointed caption — cut from the page, because #1's close-up asset was cut for
+# its old, smaller box.
+# --------------------------------------------------------------------------
+
+_MERGE_PAGE = "page_001__single"
+
+
+def _fig(i: int, x: int, y: int, w: int, h: int, order: int, **kw) -> Block:
+    return Block(id=i, type=BlockType.FIGURE, bbox={"x": x, "y": y, "w": w, "h": h},
+                 reading_order=order, type_auto=BlockType.FIGURE, order_auto=order, **kw)
+
+
+def _merge_doc() -> Document:
+    heading = Block(
+        id=0, type=BlockType.HEADING, bbox={"x": 10, "y": 5, "w": 180, "h": 20},
+        reading_order=0, type_auto=BlockType.HEADING, order_auto=0,
+        words=[Word(text="Hut", text_ocr="Hut", bbox={"x": 10, "y": 5, "w": 40, "h": 18},
+                    conf=95.0, decision=WordDecision.KEEP, line_id=0, block_id=0)])
+    gap_text = Block(
+        id=2, type=BlockType.OTHER, bbox={"x": 60, "y": 102, "w": 40, "h": 6},
+        reading_order=2, type_auto=BlockType.OTHER, order_auto=2,
+        words=[Word(text="2150m", text_ocr="2150m", bbox={"x": 60, "y": 102, "w": 40, "h": 6},
+                    conf=80.0, decision=WordDecision.KEEP, line_id=1, block_id=2)])
+    cap = Block(
+        id=4, type=BlockType.CAPTION, bbox={"x": 10, "y": 175, "w": 180, "h": 15},
+        reading_order=4, type_auto=BlockType.CAPTION, order_auto=4,
+        caption_number=3, pair_source=PairSource.NUMBER,
+        figure_ref=BlockRef(page_id=_MERGE_PAGE, block_id=3),
+        words=[Word(text="Rifugio", text_ocr="Rifugio",
+                    bbox={"x": 10, "y": 175, "w": 60, "h": 15}, conf=90.0,
+                    decision=WordDecision.KEEP, line_id=2, block_id=4)])
+    blocks = [
+        heading,
+        _fig(1, 10, 40, 180, 60, 1, figure_asset="document_assets/fig1_hires.png",
+             figure_asset_box={"x": 10, "y": 40, "w": 180, "h": 60}, figure_asset_scale=2.0),
+        gap_text,
+        _fig(3, 10, 110, 180, 60, 3, figure_number=3),
+        cap,
+        _fig(5, 300, 40, 90, 60, 5),
+        _fig(6, 10, 165, 180, 85, 6, is_surface=True),
+    ]
+    return Document(
+        document_id="merge", job_id="merge",
+        settings=DocSettings(source_language="eng", uncertainty_mode="flag"),
+        pages=[DocPage(page_id=_MERGE_PAGE, source_spread="page_001", subpage="single",
+                       width=400, height=300,
+                       image_asset=f"document_assets/{_MERGE_PAGE}.png", blocks=blocks)])
+
+
+def _write_job(tmp: Path, doc: Document) -> Path:
+    (tmp / "document_assets").mkdir(exist_ok=True)
+    img = np.full((300, 400, 3), 255, np.uint8)
+    img[40:170, 10:190] = (40, 120, 200)           # one picture, spanning both pieces
+    img[102:108, 60:100] = 0                       # the gap text, printed on the picture
+    cv2.imwrite(str(tmp / "document_assets" / f"{_MERGE_PAGE}.png"), img)
+    # #1's higher-resolution asset: twice the pixels of its ORIGINAL 180x60 box
+    cv2.imwrite(str(tmp / "document_assets" / "fig1_hires.png"),
+                np.full((120, 360, 3), 90, np.uint8))
+    (tmp / "document.json").write_text(doc.model_dump_json(indent=2), encoding="utf-8")
+    return tmp
+
+
+@pytest.fixture
+def merge_job(tmp_path: Path) -> Path:
+    return _write_job(tmp_path, _merge_doc())
+
+
+def _merge_shaped(doc: Document) -> Document:
+    """What the editor's merge of #1 with the picture below (#3) writes: #1 keeps its
+    id, takes the union box and #3's words, is flagged by hand; #3 is gone; the
+    caption that pointed at #3 points at #1; nobody else is renumbered."""
+    pg = doc.pages[0]
+    b = {x.id: x for x in pg.blocks}
+    head, tail = b[1], b[3]
+    head.bbox = BBox(x=10, y=40, w=180, h=130)
+    head.words = [w.model_copy(update={"block_id": 1}) for w in head.words + tail.words]
+    head.figure_number = tail.figure_number
+    head.structure_edited = True
+    b[4].figure_ref = BlockRef(page_id=_MERGE_PAGE, block_id=1)
+    pg.blocks = [x for x in pg.blocks if x.id != 3]
+    return Document.model_validate_json(doc.model_dump_json())   # re-validate the shape
+
+
+def test_merge_shaped_document_survives_normalize_and_reads_as_edited(merge_job: Path):
+    doc = ED.load_document(merge_job)
+    assert ED._document_has_edits(doc) is False
+    doc = _merge_shaped(doc)
+    ED.normalize_edits(doc)
+    head = {x.id: x for x in doc.pages[0].blocks}[1]
+    assert head.structure_edited is True
+    # A bbox change is invisible to normalize_edits' divergence check (type and order
+    # still equal their *_auto), so the flag set by hand is the only thing keeping a
+    # re-assemble from silently undoing the merge.
+    assert head.type == head.type_auto and head.reading_order == head.order_auto
+    assert ED._document_has_edits(doc) is True
+
+
+def test_http_put_persists_a_merge(merge_job: Path):
+    doc = _merge_shaped(ED.load_document(merge_job))
+    with _Server(merge_job) as srv:
+        req = urllib.request.Request(
+            srv.url("/api/document"), data=doc.model_dump_json().encode("utf-8"),
+            headers={"Content-Type": "application/json"}, method="PUT")
+        body = json.loads(urllib.request.urlopen(req).read())
+    assert body["ok"] is True and body["has_edits"] is True
+    blocks = {x.id: x for x in ED.load_document(merge_job).pages[0].blocks}
+    assert sorted(blocks) == [0, 1, 2, 4, 5, 6]
+    assert blocks[1].bbox.h == 130 and blocks[1].structure_edited is True
+    assert blocks[4].figure_ref.block_id == 1
+
+
+def _figure_imgs(html_str: str) -> list[np.ndarray]:
+    import base64
+    import re
+    out = []
+    for m in re.finditer(r'<img class="figure" src="data:image/png;base64,([^"]+)"', html_str):
+        buf = np.frombuffer(base64.b64decode(m.group(1)), np.uint8)
+        out.append(cv2.imdecode(buf, cv2.IMREAD_COLOR))
+    return out
+
+
+def test_merged_picture_renders_once_with_its_caption_from_the_page_crop(merge_job: Path):
+    from pipeline import stage08_render as S8
+    before = S8.render_html(ED.load_document(merge_job), merge_job)
+    after = S8.render_html(_merge_shaped(ED.load_document(merge_job)), merge_job)
+    # #1, #3, #5 before (the surface block never prints); #1 and #5 after
+    assert before.count('<figure class="figure-block">') == 3
+    assert after.count('<figure class="figure-block">') == 2
+    # the caption that belonged to the lower piece now prints inside the merged picture
+    first = after.split('<figure class="figure-block">')[1].split("</figure>")[0]
+    assert "Rifugio" in first
+    # Before the merge #1 used its close-up asset (360x120). That asset was cut for the
+    # OLD 180x60 box, so after the merge the picture is the page crop at the joined
+    # 180x130 box — never the stale asset stretched over a bigger rectangle.
+    assert _figure_imgs(before)[0].shape[:2] == (120, 360)
+    merged = _figure_imgs(after)[0]
+    assert merged.shape[:2] == (130, 180)
+    # The gap text now lies inside the picture: painted out of it (with the colour
+    # sampled from the crop's border), and still printed as text on its own.
+    assert "2150m" in after
+    assert tuple(merged[102 - 40 + 3, 60 - 10 + 20]) == (40, 120, 200)
+
+
+def _select_row(pg, block_id: int) -> None:
+    """Click the block-list row of ``block_id`` (rows are in reading order)."""
+    order = [b for b, _ in _blocklist_state(pg)]
+    pg.query_selector_all("#blocklist .blockrow")[order.index(block_id)].click()
+
+
+def _page_blocks(pg) -> dict:
+    return {b["id"]: b for b in pg.evaluate("() => page().blocks")}
+
+
+@pytest.mark.e2e
+def test_e2e_merge_with_the_picture_below(merge_job: Path):
+    """Select the upper piece: the button names the piece below, the joined box is
+    outlined on the page before anything changes, and one click merges — the upper
+    piece keeps its id, the caption follows, and nobody else is renumbered."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(merge_job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            _select_row(pg, 1)
+            btn = pg.wait_for_selector("#inspector button.mergebtn")
+            assert btn.text_content() == "Merge with the picture below — #3"
+            # preview only: the joined box and the piece it takes in, nothing changed yet
+            assert pg.query_selector("#ovBlocks .mergebox") is not None
+            assert len(pg.query_selector_all("#ovBlocks .bbox.mergein")) == 1
+            assert sorted(_page_blocks(pg)) == [0, 1, 2, 3, 4, 5, 6]
+            warn = pg.text_content("#inspector .mergefield")
+            assert "#2 will sit inside the merged picture" in warn          # the gap text
+            assert "sharper version" in warn                                # #1's asset
+            btn.click()
+            blocks = _page_blocks(pg)
+            assert sorted(blocks) == [0, 1, 2, 4, 5, 6]         # #3 gone, no id allocated
+            assert blocks[1]["bbox"] == {"x": 10, "y": 40, "w": 180, "h": 130}
+            assert blocks[1]["structure_edited"] is True
+            assert blocks[1]["figure_number"] == 3             # inherited from the lower piece
+            assert blocks[4]["figure_ref"] == {"page_id": _MERGE_PAGE, "block_id": 1}
+            # nobody renumbered: a gap is left where #3 was
+            assert _blocklist_state(pg) == [(0, 0), (1, 1), (2, 2), (4, 4), (5, 5), (6, 6)]
+            assert blocks[6]["bbox"]["h"] == 85                # the sofa was not pulled in
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+        finally:
+            browser.close()
+
+    doc = ED.load_document(merge_job)
+    blocks = {b.id: b for b in doc.pages[0].blocks}
+    assert sorted(blocks) == [0, 1, 2, 4, 5, 6]
+    assert blocks[1].structure_edited and blocks[1].bbox.h == 130
+    assert blocks[4].figure_ref.block_id == 1 and blocks[4].pair_source is PairSource.NUMBER
+    assert ED._document_has_edits(doc) is True
+
+
+@pytest.mark.e2e
+def test_e2e_merge_takes_in_a_picture_the_joined_box_overlaps(tmp_path: Path):
+    """A third piece that the joined box overlaps is taken in by the same click, and
+    the button says so before it is pressed. The surface block, which also overlaps,
+    is not — it never prints."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    doc = _merge_doc()
+    doc.pages[0].blocks.append(_fig(7, 150, 160, 110, 40, 7))   # overlaps #3's bottom corner
+    job = _write_job(tmp_path, doc)
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            _select_row(pg, 1)
+            btn = pg.wait_for_selector("#inspector button.mergebtn")
+            assert btn.text_content() == "Merge with the picture below — #3 (also takes in #7)"
+            assert len(pg.query_selector_all("#ovBlocks .bbox.mergein")) == 2
+            btn.click()
+            blocks = _page_blocks(pg)
+            assert sorted(blocks) == [0, 1, 2, 4, 5, 6]
+            assert blocks[1]["bbox"] == {"x": 10, "y": 40, "w": 250, "h": 160}
+            assert blocks[6]["is_surface"] is True               # still there, untouched
+        finally:
+            browser.close()
+
+
+@pytest.mark.e2e
+def test_e2e_merge_refusals(tmp_path: Path):
+    """No merge on a surface block (it does not print), none offered on a text block,
+    and none when a caption on ANOTHER page points at the piece that would vanish
+    (undo only covers the current page, so re-pointing it would be unrecoverable)."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    doc = _merge_doc()
+    other = doc.pages[0].model_copy(deep=True)
+    other.page_id = "page_002__single"
+    other.blocks = [Block(
+        id=0, type=BlockType.CAPTION, bbox={"x": 10, "y": 10, "w": 100, "h": 15},
+        reading_order=0, type_auto=BlockType.CAPTION, order_auto=0,
+        pair_source=PairSource.USER, figure_ref=BlockRef(page_id=_MERGE_PAGE, block_id=3),
+        words=[Word(text="Panorama", text_ocr="Panorama",
+                    bbox={"x": 10, "y": 10, "w": 100, "h": 15}, conf=90.0,
+                    decision=WordDecision.KEEP, line_id=0, block_id=0)])]
+    doc.pages.append(other)
+    job = _write_job(tmp_path, doc)
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            _select_row(pg, 6)                                   # the sofa
+            body = pg.text_content("#inspector")
+            assert "merge unavailable" in body and "surface the book was lying on" in body
+            assert pg.query_selector("#inspector button.mergebtn") is None
+            assert pg.query_selector("#ovBlocks .mergebox") is None
+            _select_row(pg, 0)                                   # a heading
+            assert pg.query_selector("#inspector .mergefield") is None
+            _select_row(pg, 1)                                   # would remove #3
+            btn = pg.wait_for_selector("#inspector button.mergebtn")
+            assert btn.is_disabled()
+            assert "page_002__single #0" in pg.text_content("#inspector .mergefield")
+            btn.click(force=True)
+            assert sorted(_page_blocks(pg)) == [0, 1, 2, 3, 4, 5, 6]   # nothing happened
+        finally:
+            browser.close()
+
+
+@pytest.mark.e2e
+def test_e2e_merge_picker_and_undo(merge_job: Path):
+    """The picker merges side-by-side pieces too; undo puts every piece, box and
+    caption pointer back."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+
+    with _Server(merge_job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            before = _page_blocks(pg)
+            _select_row(pg, 1)
+            pg.select_option("#inspector select.mergepick", "5")
+            btn = pg.wait_for_selector("#inspector button.mergebtn")
+            # #1 + #5 spans x 10..390 but stays above y 100, so #3 is not taken in
+            assert btn.text_content() == "Merge with #5"
+            pg.select_option("#inspector select.mergepick", "")
+            assert pg.query_selector("#inspector button.mergebtn") is None
+            assert pg.query_selector("#ovBlocks .mergebox") is None
+            pg.select_option("#inspector select.mergepick", "3")
+            pg.click("#inspector button.mergebtn")
+            assert sorted(_page_blocks(pg)) == [0, 1, 2, 4, 5, 6]
+            pg.click("#undo")
+            assert _page_blocks(pg) == before
+            assert "unsaved" in pg.text_content("#status")
+        finally:
+            browser.close()
 
 
 if __name__ == "__main__":

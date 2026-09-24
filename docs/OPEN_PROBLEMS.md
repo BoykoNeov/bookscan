@@ -104,7 +104,7 @@ the panel), which is P5.
 
 ---
 
-## P3. Pictures split in two — 21 stacked splits found; no automatic merge survives
+## P3. Pictures split in two — 21 stacked splits found; the operator can now rejoin them, no automatic merge survives
 
 **Size, re-counted 2026-09-24** (RESULTS 2026-09-24, census). The earlier "45
 pairs" had no committed method and does not reproduce. The pre-registered rule
@@ -143,17 +143,24 @@ are **disjoint**. Requiring both gives 16/21 pairs, 9/13 pictures and 0 of the
 `is_surface` blocks would remove. The combination was chosen *after* seeing
 the errors, so it needs pairs neither method was read off.
 
+**SHIPPED 2026-09-24 — the operator's lever.** The editor has "Merge with the
+picture below" (plus a picker for any picture on the page). The selected piece
+keeps its id and takes the joined box, captions follow, nothing else is
+renumbered, and the joined box is drawn before the click. A picture the joined
+box overlaps is taken in by the same click and named on the button — the map's
+big detector box lies across all its strips, so refusing would deadlock. Driven
+through the real page over a copy of the owner's job
+(`tools/figure_merge_check.py`, RESULTS 2026-09-24): **13 of 13 pictures
+rejoined exactly in 15 clicks, 0 pieces taken in by mistake**, 143 → 123
+rendered pictures. Known wart: on `page_023__right` a junk OCR block (#15)
+ends up inside the map, gets painted out as a pale patch and still prints; the
+button warns, and the fix is a "delete block" editor action that does not exist.
+
 **Next experiment, ranked:**
-1. **The operator's lever: "merge with the figure below" in the editor.** The
-   editor can split, reorder and undo, but not merge. Rejoining the 13
-   pictures is 20 merges in a 50-page book (the map alone is 7 blocks), needs
-   no model, and cannot make a wrong merge the operator did not choose. The
-   split action's constraints apply (commit f8d6301, `pipeline/editor.py`):
-   keep the head block's id and allocate nothing (ids are pointers),
-   take the union bbox, and set `structure_edited` by hand.
-   Optionally the pixel ∧ model agreement can **suggest** a merge as a marker
-   the operator accepts or dismisses. A flag is not a merge, so a wrong
-   suggestion costs a click, not a picture.
+1. **Suggest merges** as markers the operator accepts or dismisses, from the
+   pixel ∧ model agreement. A flag is not a merge, so a wrong suggestion costs
+   a click, not a picture. Worth it only if a second book shows the 15 clicks
+   are a real burden; on one book they are not.
 2. **The automatic merge**, only after 1: pre-register pixel ∧ model (and
    `is_surface` excluded) on a new population. That needs a second book with
    stacked figures, adjudicated by eye before either method runs. **Blocked on

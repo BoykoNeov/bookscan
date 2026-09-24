@@ -1,0 +1,316 @@
+{
+  "job": "jobs\\20260829-084115-de3c20d3",
+  "groups_file": "docs\\data\\figure_split_vlm_groups_20260924.json",
+  "pictures": [
+    {
+      "picture": "p009R_a",
+      "page_id": "page_009__right",
+      "kept": 1,
+      "labelled_blocks": [
+        1,
+        2
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #2",
+          "removed": [
+            2
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p011L_glacier",
+      "page_id": "page_011__left",
+      "kept": 1,
+      "labelled_blocks": [
+        1,
+        2
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #2",
+          "removed": [
+            2
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p011L_crampon",
+      "page_id": "page_011__left",
+      "kept": 3,
+      "labelled_blocks": [
+        3,
+        4
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #4",
+          "removed": [
+            4
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p011L_phones",
+      "page_id": "page_011__left",
+      "kept": 11,
+      "labelled_blocks": [
+        11,
+        13
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #13",
+          "removed": [
+            13
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p011R_a",
+      "page_id": "page_011__right",
+      "kept": 2,
+      "labelled_blocks": [
+        2,
+        3
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #3",
+          "removed": [
+            3
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p012R_a",
+      "page_id": "page_012__right",
+      "kept": 0,
+      "labelled_blocks": [
+        0,
+        1
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #1",
+          "removed": [
+            1
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p015L_a",
+      "page_id": "page_015__left",
+      "kept": 10,
+      "labelled_blocks": [
+        10,
+        11
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #11",
+          "removed": [
+            11
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p018R_a",
+      "page_id": "page_018__right",
+      "kept": 19,
+      "labelled_blocks": [
+        19,
+        22,
+        23
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #22",
+          "removed": [
+            22
+          ],
+          "warnings": []
+        },
+        {
+          "button": "Merge with the picture below — #23",
+          "removed": [
+            23
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p023R_a",
+      "page_id": "page_023__right",
+      "kept": 14,
+      "labelled_blocks": [
+        14,
+        16,
+        17
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #16",
+          "removed": [
+            16
+          ],
+          "warnings": [
+            "⚠ text block #15 will sit inside the merged picture: it is painted out of the picture and printed as text on its own"
+          ]
+        },
+        {
+          "button": "Merge with the picture below — #17",
+          "removed": [
+            17
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p025L_rock",
+      "page_id": "page_025__left",
+      "kept": 1,
+      "labelled_blocks": [
+        1,
+        2
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #2",
+          "removed": [
+            2
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p025L_hut1",
+      "page_id": "page_025__left",
+      "kept": 5,
+      "labelled_blocks": [
+        5,
+        7
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #7",
+          "removed": [
+            7
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "p025L_hut2",
+      "page_id": "page_025__left",
+      "kept": 10,
+      "labelled_blocks": [
+        10,
+        14
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #14",
+          "removed": [
+            14
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    },
+    {
+      "picture": "map_025L",
+      "page_id": "page_025__left",
+      "kept": 12,
+      "labelled_blocks": [
+        12,
+        13,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "clicks": [
+        {
+          "button": "Merge with the picture below — #13 (also takes in #19, #20, #21, #22, #23)",
+          "removed": [
+            13,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "warnings": []
+        }
+      ],
+      "not_merged": [],
+      "removed_outside_label": [],
+      "exact": true
+    }
+  ],
+  "summary": {
+    "pictures": 13,
+    "exact": 13,
+    "clicks": 15,
+    "removed_outside_label": 0,
+    "figures_rendered_before": 143,
+    "figures_rendered_after": 123,
+    "saved_document_reads_as_edited": true
+  }
+}

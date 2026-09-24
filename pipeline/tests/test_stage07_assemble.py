@@ -180,42 +180,5 @@ def test_empty_job_raises(tmp_path: Path):
         S7.run(tmp_path / "empty", CFG)
 
 
-def test_a_panel_retyped_figure_still_gets_the_hires_search(tmp_path: Path, monkeypatch):
-    """unreadable_panel re-types a block FIGURE after the per-page hires pass has
-    run, so without a second pass such a picture always printed from the page
-    crop (the 25-vs-24 discrepancy, RESULTS 2026-09-24). The re-typed block must
-    be searched once, and a block that was text during the per-page pass must
-    not be searched as text."""
-    from pipeline import unreadable_panel as UP
-    job = _build_job(tmp_path)
-    monkeypatch.setattr(S7.UP, "scan",
-                        lambda pages, params=None: UP.PanelScan(
-                            reference_conf=90.0, converted={(0, 0): 20.0}))
-    class _Frame:                       # a spread with one capture that decodes
-        name, decode_failed = "frame_00.png", False
-
-        def release(self):
-            pass
-
-    monkeypatch.setattr(S7, "_capture_frames", lambda pd, params: [_Frame()])
-    calls = []
-
-    def fake_upgrade(blk, page_bgr, frames, params, assets_dir, prefix):
-        calls.append((blk.id, blk.type.value, prefix, page_bgr.shape[:2]))
-        blk.figure_asset = "document_assets/x.png"
-        blk.figure_asset_box = blk.bbox.model_copy()
-        return {"scale": 1.3, "size": [260, 156], "sources": []}
-
-    monkeypatch.setattr(S7, "_upgrade_figure", fake_upgrade)
-    doc = S7.run(job, {**CFG, "figure_surface": {"enabled": False}},
-                 group_figures=False)
-    assert calls == [(0, "figure", "page_001__single", (120, 200))]
-    blk = doc.pages[0].blocks[0]
-    assert blk.type.value == "figure" and blk.figure_asset == "document_assets/x.png"
-    meta = json.loads((job / "document.meta.json").read_text(encoding="utf-8"))
-    assert meta["params"]["figures_upgraded"] == 1
-    assert meta["params"]["figure_hires_sources"][0]["after_panel_conversion"] is True
-
-
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

@@ -460,44 +460,6 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                      "blocks": UP.apply_to_blocks(list(dp.blocks), panel_scan, pi)})
                  for pi, dp in enumerate(pages)]
 
-    # --- higher-resolution assets for the panels just re-typed FIGURE ----------
-    # The per-page hires pass above only sees blocks that are FIGURE at that
-    # point, and these became FIGURE afterwards, so without this they always
-    # printed from the page crop. This was the "25 offline vs 24 shipped"
-    # discrepancy of RESULTS 2026-08-29: page_022__left #5 is a converted panel,
-    # and an offline sweep over the finished document's figures searched it
-    # (RESULTS 2026-09-24). Same call, same params; the spread's captures are
-    # indexed again only for spreads that have a converted panel.
-    # NOT added here: the surface check. figure_surface was measured on
-    # detector figures, and extending it to converted panels is unmeasured.
-    if hires_on and panel_scan.converted:
-        by_dir: dict[str, list[tuple[DocPage, Block]]] = {}
-        for pi, bid in sorted(panel_scan.converted):
-            dp = pages[pi]
-            blk = next((b for b in dp.blocks if b.id == bid), None)
-            if blk is not None and blk.type is BlockType.FIGURE and not blk.figure_asset:
-                by_dir.setdefault(dp.page_id.split("__")[0], []).append((dp, blk))
-        for pd_name, todo in by_dir.items():
-            frame_index = _capture_frames(job_dir / pd_name, hires_params)
-            for dp, blk in todo:
-                page_bgr_h = cv2.imread(str(job_dir / dp.image_asset), cv2.IMREAD_COLOR)
-                if page_bgr_h is None:
-                    continue
-                up = _upgrade_figure(blk, page_bgr_h, frame_index, hires_params,
-                                     assets_dir, dp.page_id)
-                if up is None:
-                    continue
-                n_hires += 1
-                hires_log.append({"page": dp.page_id, "block": blk.id,
-                                  "after_panel_conversion": True, **up})
-            for fi in frame_index:
-                if fi.decode_failed:
-                    decode_failures.append(f"{pd_name}/00_ingest/{fi.name}")
-                    warnings.append(
-                        f"figure_hires: {pd_name}/00_ingest/{fi.name} could not be "
-                        f"decoded and was skipped for the converted panels on that spread")
-                fi.release()
-
     if len(modes_seen) > 1:
         warnings.append(
             f"pages were resolved under differing uncertainty modes {sorted(modes_seen)}; "

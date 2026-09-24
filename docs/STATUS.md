@@ -727,9 +727,11 @@ rules for it:
 
 - P7: assembled the owner's book twice on a copy — identical to each other and
   to 2026-08-29 (24, no decode failures). The missing 25th is an icon panel
-  `unreadable_panel` turns into a picture after the hires pass ran. Stage 07
-  now searches converted panels too: 25, the 24 unchanged. 1 of 22 converted
-  panels has a usable capture.
+  `unreadable_panel` turns into a picture after the hires pass ran. A fix that
+  searched converted panels was built, then REVERTED: rendered, its one upgrade
+  is softer than the page crop (the checkerboard had been misread). A census of
+  the 24 shipped upgrades: 6 measure softer; by eye at least 4 are. Nothing
+  measures focus; P7 reopened on that.
 - P6: columns from the psm-6 re-read, pre-registered — refused (the target
   still reads as one column; a two-line block grids 2 × 6). Code removed.
 - Editor: "not part of the book — do not print" checkbox in the block

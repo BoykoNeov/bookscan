@@ -257,18 +257,27 @@ help); `deu` for the numeric cells.
 
 ---
 
-## P7. Figure upgrades — CLOSED 2026-09-24
+## P7. Figure upgrades — the 24-vs-25 gap is explained; the upgrades themselves are in question
 
-The 24-vs-25 discrepancy was neither a decode failure nor the RANSAC draw
-(both runs identical, no decode failures; the block upgrades in isolation and
-in a batch replay). `page_022__left` #5 is an icon panel that
-`unreadable_panel` re-types FIGURE **after** the per-page hires pass, so the
-pass never saw it. Fixed: converted panels now get the same search; 25
-upgrades, the 24 unchanged (RESULTS 2026-09-24). Only 1 of the 22 converted
-panels has a usable capture — the panels' problem is still the pixels (P2).
-**Still unmeasured:** the surface check is not run on converted panels.
+**Explained 2026-09-24:** the missing 25th (`page_022__left` #5) is an icon
+panel that `unreadable_panel` turns into a picture after the hires pass ran —
+not a decode failure, not the RANSAC draw (both runs identical to 2026-08-29).
+A fix that searched converted panels was built and **reverted the same day**:
+the only upgrade it added is softer than the page crop (RESULTS 2026-09-24).
+
+**Open, and more important:** "higher resolution" is not "sharper". Of the 24
+shipped upgrades, 6 measure softer than the page crop on two focus statistics,
+and by eye the page crop shows more detail in **at least 4**; 2 are ambiguous
+(crisper crop with sharpening halos). The gates measure scale, coverage,
+inliers and NCC — nothing measures focus. The 18 others are not adjudicated.
+**Next experiment:** pre-register a focus criterion (e.g. asset-at-crop-size
+gradient ratio) on a population that was not read here — another book, or the
+owner's own by-eye verdicts collected before any number — then decide whether
+the upgrade must beat the crop to ship. Until then an upgrade can be a
+downgrade, and the owner is the check.
 **REFUSED (unchanged):** lowering `min_coverage` below 0.90; `min_ncc` below
-0.60. Verify pictures by checkerboard, never side by side.
+0.60. Checkerboards check alignment only — they do not say which side is
+sharper (misread once, 2026-09-24).
 
 ---
 

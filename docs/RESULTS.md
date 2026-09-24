@@ -9151,3 +9151,52 @@ that fixes nothing is not kept); gap thresholds not tuned on these blocks, per
 the pre-registration. The chart stays a known miss; what would reach it is
 evidence the bridging fragments are one word (they are `INFERIORE` split
 across the printed rule), which neither read supplies.
+
+**Correction, same day (2026-09-24), to the P7 row above ("Fixed: 25").** The
+fix is **reverted**. Rendering the copy (Stage 08) and looking at the page
+showed the one upgrade it adds, `page_022__left` #5, is **softer** than the page
+crop it replaces: at the crop's own size its Laplacian variance is 373 vs 431
+and its mean gradient 84 vs 105, and by eye the icons and "Sehr schön / Gut /
+Diff. C" are visibly blurred. The checkerboard in the row above was **misread**:
+the crisp tiles were the page crop, not the upgrade. A checkerboard checks
+alignment; it does not say which side is sharper, and the row treated it as if
+it did. What stands: the diagnosis (the block is a panel converted after the
+hires pass; not decode, not RANSAC). What does not: "fixed", and "the upgrade is
+visibly sharper". The owner's book stays at 24.
+
+## 2026-09-24 — Are the 24 shipped figure upgrades sharper than the page crop? At least 4 are not
+
+Pre-registration `docs/data/hires_sharpness_prereg_20260924.md` (written before
+any number); data `docs/data/hires_sharpness_20260924.json`. Owner's book, the
+24 upgrades (identical on the copy). Statistic: the asset resized DOWN to the
+crop's size, then Laplacian variance and mean |Sobel| gradient, each as a ratio
+to the page crop. Diagnostic only.
+
+**6 of 24 are below 1 on both ratios**: `page_007__right` #0, `page_009__right`
+#0, `page_013__right` #1, `page_018__right` #0, `page_022__right` #3,
+`page_023__right` #0. Looked at by eye, 300 px windows at equal size:
+
+* **the page crop shows more detail in 4** — `page_009__right` #0 (rock
+  structure on the mountain face), `page_013__right` #1 (climber and wall
+  texture), `page_018__right` #0 (the poster text "MONTAGNA RICCO … PONTE
+  TIBETANO" is crisper), `page_023__right` #0 (the peaks);
+* **ambiguous in 2** — `page_007__right` #0 and `page_022__right` #3: the page
+  crop is crisper but carries white sharpening halos along every edge, which
+  the upgrade does not; which one a reader prefers is not something the two
+  numbers can decide.
+
+The 18 others were **not adjudicated**. The two ratios disagree on most of them
+(Laplacian up, gradient down), and Laplacian variance also rises with noise and
+halos, so "not flagged" is not "sharper".
+
+**Mechanism, consistent with RESULTS 2026-08-19 (close-ups are softer than the
+anchor):** `figure_hires` admits a source on scale (source pixels per page
+pixel), coverage, inliers and NCC. None of those measures focus. A close-up at
+1.4× its page crop's pixel count can still hold less detail than the heavily
+sharpened anchor frame the page was cut from.
+
+**Not done:** no gate, no change to the shipped upgrades. A focus criterion is a
+new parameter and needs its own pre-registration on a population not read
+here; the 6 flagged figures are now contaminated for that purpose. Until then the
+owner can compare any upgrade against its page crop by eye; the editor falls back
+to the page crop if a figure's box is edited.

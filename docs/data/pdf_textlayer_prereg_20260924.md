@@ -131,3 +131,13 @@ refusal in `docs/RESULTS.md`, like any other.
 English only; seven producers, one document each; the judge is a model looking at
 crops, not a person; the population is scholarly and technical print, not books
 photographed on a sofa, so imported-PDF numbers are not pooled with `testset/`.
+
+## Addendum, 2026-09-24 — written after the site COUNTS, before any label
+
+`sites` reported the control's 4 disagreements all on words Stage 06 had
+flagged, so the primary rule (kept words only) gave the control nothing to judge
+and its validity check could not run. The control paragraph above says every
+disagreement in the control is examined; so all control disagreements, kept or
+flagged, go into the blind set, and the 20 % rule is applied to them. Nothing
+else changes. Also fixed before labelling: the crop step looked for
+`<name>.png.png` (Stage 06 page names already end in `.png`).

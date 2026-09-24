@@ -242,6 +242,10 @@ def sites(work: Path) -> None:
                     kept_sites.append(s)
                 else:
                     stats["sites_flagged"] += 1
+                    if d["id"] == "C":
+                        # The control's check is over EVERY disagreement it has
+                        # (prereg, "Control"), kept or flagged; see the addendum.
+                        kept_sites.append(s)
         src.close()
         rng = random.Random(f"{SEED}-{d['id']}")
         if len(kept_sites) <= CAP_PRIMARY:
@@ -308,7 +312,8 @@ def _font(size: int):
 
 def _crop(site: dict, tile_w: int, crop_h: int):
     from PIL import Image, ImageDraw
-    img = Image.open(Path(site["page_dir"]) / "03_dewarp" / f"{site['sub']}.png").convert("RGB")
+    name = site["sub"] if site["sub"].endswith(".png") else f"{site['sub']}.png"
+    img = Image.open(Path(site["page_dir"]) / "03_dewarp" / name).convert("RGB")
     x, y, w, h = site["box"]
     line_h = max(20, min(h, 80))
     pad_y = int(line_h * 1.2)

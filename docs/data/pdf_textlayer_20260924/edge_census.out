@@ -1,24 +1,24 @@
-C/page_001:   0 of  242 words touch the edge; edge ink 0.0000 -> 0.0000
-C/page_002:   0 of  148 words touch the edge; edge ink 0.0000 -> 0.0000
-C/page_003:   0 of  271 words touch the edge; edge ink 0.0000 -> 0.0000
-C/page_004:   0 of   74 words touch the edge; edge ink 0.0000 -> 0.0000
-D1/page_001:   0 of  480 words touch the edge; edge ink 0.0000 -> 0.0000
-D1/page_002:   0 of  490 words touch the edge; edge ink 0.0000 -> 0.0000
-D1/page_003:   0 of  348 words touch the edge; edge ink 0.0000 -> 0.0000
-D2/page_001:   0 of  268 words touch the edge; edge ink 0.0000 -> 0.0000
-D2/page_002:   0 of  208 words touch the edge; edge ink 0.0000 -> 0.0000
-D2/page_003:   0 of  350 words touch the edge; edge ink 0.0000 -> 0.0000
-D3/page_001:   0 of  856 words touch the edge; edge ink 0.0000 -> 0.0000
-D3/page_002:   0 of  608 words touch the edge; edge ink 0.0000 -> 0.0000
-D3/page_003:   0 of  718 words touch the edge; edge ink 0.0000 -> 0.0000
-D4/page_001:   0 of  248 words touch the edge; edge ink 0.0000 -> 0.0000
-D4/page_002:   1 of  126 words touch the edge; edge ink 0.0000 -> 0.0040
-D4/page_003:   0 of  304 words touch the edge; edge ink 0.0000 -> 0.0000
-D5/page_001:   0 of  155 words touch the edge; edge ink 0.1973 -> 0.0000
-D5/page_002:   0 of  150 words touch the edge; edge ink 0.1748 -> 0.0002
-D5/page_003:   0 of  229 words touch the edge; edge ink 0.1973 -> 0.0001
-D6/page_001:  40 of 1065 words touch the edge; edge ink 0.0000 -> 0.0753
-D6/page_002:   0 of  956 words touch the edge; edge ink 0.0000 -> 0.0000
-D6/page_003:  16 of  686 words touch the edge; edge ink 0.0000 -> 0.0339
-D7/page_001:   0 of  442 words touch the edge; edge ink 0.0000 -> 0.0000
-D7/page_002:   0 of  419 words touch the edge; edge ink 0.0000 -> 0.0000
+C/page_001: of  242 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+C/page_002: of  148 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+C/page_003: of  271 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+C/page_004: of   74 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D1/page_001: of  480 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0012
+D1/page_002: of  490 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D1/page_003: of  348 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D2/page_001: of  268 words   0 touch left/right,   1 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0051
+D2/page_002: of  208 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0023
+D2/page_003: of  350 words   0 touch left/right,   1 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0041
+D3/page_001: of  856 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D3/page_002: of  608 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D3/page_003: of  718 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D4/page_001: of  248 words   0 touch left/right,   1 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0090
+D4/page_002: of  126 words   1 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0040, top/bottom 0.0000 -> 0.0000
+D4/page_003: of  304 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D5/page_001: of  155 words   0 touch left/right,   0 top/bottom; ink left/right 0.1973 -> 0.0000, top/bottom 0.0923 -> 0.0000
+D5/page_002: of  150 words   0 touch left/right,   0 top/bottom; ink left/right 0.1748 -> 0.0002, top/bottom 0.1309 -> 0.0000
+D5/page_003: of  229 words   0 touch left/right,   0 top/bottom; ink left/right 0.1973 -> 0.0001, top/bottom 0.1295 -> 0.0000
+D6/page_001: of 1065 words  40 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0753, top/bottom 0.0000 -> 0.0000
+D6/page_002: of  956 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D6/page_003: of  686 words  16 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0339, top/bottom 0.0000 -> 0.0079
+D7/page_001: of  442 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000
+D7/page_002: of  419 words   0 touch left/right,   0 top/bottom; ink left/right 0.0000 -> 0.0000, top/bottom 0.0000 -> 0.0000

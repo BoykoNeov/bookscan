@@ -9327,3 +9327,19 @@ have 40 and 16 words cut at the edge; the other 18 have 0 or 1. Not fixed here.
 with a text layer was available); scholarly and technical print, not a book
 photographed on a sofa, so not poolable with `testset/`; the judge is a model
 looking at crops; one document carries 42 % of the catches.
+
+**Correction (2026-09-24, same day), to the row above.** Item 3 is wrong as
+worded. The per-document clause passes at exactly its minimum, 4 of the 5
+documents with ≥ 5 judged sites, so removing ANY one of D2, D3, D4 or D6 — not
+D6 specifically — drops it to 3 and fails that clause. Without D6 the pooled
+clauses still pass (28 catches / 12 false alarms, 0.70); D6 is special only in
+carrying 20 of the 48 catches. The pre-registered verdict (BUILD for the raw
+trigger) stands; items 1–6 describe what it catches, they do not overturn it.
+Two limits the row understated: (i) `edge_census` is a LOWER bound — a word
+pushed wholly off the image leaves nothing to count — and, extended to the top
+and bottom edges, it also finds one word at the edge on each of D2 p1, D2 p3 and
+D4 p1 and new ink in the top/bottom border strip on five pages after flattening:
+the enlargement is general, and the damage depends on how thin the margin is;
+(ii) the blinding leaked a little: the red box is always Tesseract's box, so
+where the two readings cover different spans (S027, `Cassini/Hu`) the box hints
+which reading is Tesseract's.

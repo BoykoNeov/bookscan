@@ -333,13 +333,15 @@ It needs a Bulgarian page carrying an English/other-language block.
   mistakes caught against 16 correct words flagged, 7 documents — but almost all
   the catches are formulas and symbols (O₂, τ_df, Greek, code zeros; one chemistry
   paper gives 20 of 48); on plain words the hidden text is wrong more often than
-  Tesseract, and without that one paper the gate fails. The dictionary-checked
+  Tesseract. The per-document clause passes at exactly its minimum (4 of 5), so
+  losing any one passing document would fail it. The dictionary-checked
   version flags almost nothing (5). **Agreement must never clear a flag** (23 %
   of agreed, flagged words are wrong). Owner's call whether to build the raw
   trigger for imported PDFs, knowing it is a notation catcher.
   **New defect: Stage 03 cuts the edges of flat scans with thin margins** —
   UVDoc enlarges an already-flat page and pushes line starts off it (2 of 20
-  imported pages, 40 and 16 words). Next experiment: pad the page with white
+  imported pages, 40 and 16 words at the left/right edge; 3 more with one word at
+  the top/bottom; the count is a lower bound). Next experiment: pad the page with white
   before flattening, or skip flattening for imported pages, and count words at
   the edge again with `docs/data/pdf_textlayer_20260924/edge_census.py`.
   Every imported single page carries Stage 00's "result is PORTRAIT" warning,

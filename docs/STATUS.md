@@ -862,3 +862,9 @@ rules for it:
 - Not built: whether to ship the raw trigger for imported PDFs is the owner's
   call; the measurement says it would add ~3 flags a page, three in four right,
   almost all in formulas.
+- **Correction, same day:** "without that paper the gate's per-document clause
+  fails" was wrong as worded — the clause passes at exactly 4 of 5, so losing
+  ANY passing document fails it; the chemistry paper is special only in carrying
+  20 of the 48 catches. The edge count is a lower bound, and at the top/bottom it
+  finds 3 more pages with one word at the edge. The blinding leaked slightly (the
+  red box is always Tesseract's). RESULTS carries the correction clause.

@@ -32,9 +32,9 @@ against a page — many scans carry an invisible OCR layer. Its words are saved 
 page as ``page_NNN/pdf_text_layer.json`` (Slice 3): Stage 05 compares them with
 Tesseract and may only ADD a marker, never text (``pipeline/pdf_text_layer.py``).
 Every page's ``page_layout.json`` also says ``"origin": "pdf_import"``: it tells an
-imported page from a phone page for any later stage that needs to. Nothing acts
-on it yet — a white border before Stage 03, meant to stop flattening from cutting
-the edges of thin-margin scans, was measured and REFUSED (RESULTS 2026-09-24).
+imported page from a phone page. Stage 03 reads it (via split.json) and does NOT
+flatten an imported page — flattening enlarged already-flat scans and cut the
+starts of lines off thin margins (RESULTS 2026-09-24).
 
 **All or nothing.** The console's startup scan enqueues any page folder with
 files in ``raw/`` and no ``run_all.json``, so a half-written import would be

@@ -29,6 +29,19 @@ Two arms behind one seam (CLAUDE.md ``models.dewarp: uvdoc``):
     the vertical curl is corrected (horizontal foreshortening near the gutter is
     left — it barely hurts OCR); recorded in meta.warnings.
 
+**An imported PDF page is not flattened (v0.3.0).** When split.json says
+``layout_origin == "pdf_import"`` (the importer's marker, passed through by Stage
+02; a phone page never has it), the page is written UNCHANGED, method
+``skipped-import``, and UVDoc is not even loaded if every page is one. Measured,
+not assumed (RESULTS 2026-09-24, prereg ``docs/data/pdf_whiteborder_prereg_20260924.md``):
+UVDoc was trained to find a page in a photograph and fill the output with it; on
+an already-flat scan it enlarges the page 3-14 % past its frame and, on thin
+margins, cut the starts of lines off ("suspended" -> "spended"; 24 cut words on
+two pages). Skipping it restored all of them and read the other 22 test pages
+0.7 % better (worst page -1.6 %). A white border before UVDoc was REFUSED: it makes
+UVDoc bend flat pages. The cost, unmeasured: a crooked or curved page inside a PDF
+(a book photographed and bound into a file) is not straightened.
+
 Honesty rule (advisor): a "fallback" that is a silent passthrough is worse than
 none — it would distort a before/after WER comparison by looking like a real
 arm. So when there is no usable curl signal (too few baselines, or the fit's max
@@ -54,7 +67,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import StageMeta
 
 STAGE = "stage03_dewarp"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -515,7 +528,10 @@ def run(page_dir: Path, cfg: dict, method: str = "auto", debug: bool = False
     # Load UVDoc ONCE for the whole spread (both half-pages); release in finally
     # so VRAM is freed even if a page errors (CLAUDE.md release-on-exit — matters
     # for long-lived callers like the eventual server, not just the CLI).
-    uv = make_dewarper(method, cfg, warnings)
+    # An imported PDF page is written unchanged (module docstring). Keyed on where
+    # the PIXELS came from, never on who chose the layout.
+    imported = manifest.get("layout_origin", "") == "pdf_import"
+    uv = None if imported else make_dewarper(method, cfg, warnings)
     t_dew = time.perf_counter()
     try:
         for page in pages:
@@ -524,7 +540,13 @@ def run(page_dir: Path, cfg: dict, method: str = "auto", debug: bool = False
             img = cv2.imread(str(src), cv2.IMREAD_COLOR)
             if img is None:
                 raise RuntimeError(f"unreadable subpage image: {src}")
-            out, pd, baselines = dewarp_page(img, method, cfg, p, warnings, uv)
+            if imported:
+                out, pd, baselines = img, PageDewarp(
+                    name=name, method="skipped-import", applied=False,
+                    note="imported PDF page: flattening skipped (UVDoc enlarges an "
+                         "already-flat scan and cuts thin margins; RESULTS 2026-09-24)"), []
+            else:
+                out, pd, baselines = dewarp_page(img, method, cfg, p, warnings, uv)
             pd.name = name
             cv2.imwrite(str(out_dir / name), out)
             results.append(pd)

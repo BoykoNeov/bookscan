@@ -223,9 +223,9 @@ class PageLayout(BaseModel):
     # writes "pdf_import" on every page it makes, including pages whose layout the
     # operator overrode (``source`` is then "operator", which is also what a
     # hand-written file on a phone page says). Anything that must treat an
-    # imported page differently keys on this, never on ``source``; nothing does
-    # yet (the Stage 03 white border was refused, RESULTS 2026-09-24). Empty on
-    # every phone page and older import.
+    # imported page differently keys on this, never on ``source``: Stage 03
+    # skips flattening on it (RESULTS 2026-09-24). Empty on every phone page and
+    # on imports made before 2026-09-24 (those are still flattened).
     origin: str = ""
 
 

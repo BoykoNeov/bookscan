@@ -9,8 +9,13 @@ STRAIGHTER after dewarp; a genuinely flat page is left unchanged but FLAGGED
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
+import cv2
 import numpy as np
 
+from pipeline import stage03_dewarp as S3
 from pipeline.stage03_dewarp import DEFAULTS, dewarp_classical, detect_baselines
 
 
@@ -72,8 +77,66 @@ def test_blank_page_too_few_lines_flagged():
     assert np.array_equal(out, blank)
 
 
+# --------------------------------------------------------------------------
+# An imported PDF page is not flattened (v0.3.0; RESULTS 2026-09-24). UVDoc is a
+# stub here that shrinks what it is given, so a test can tell whether it ran.
+# --------------------------------------------------------------------------
+
+
+class _StubUV:
+    def __init__(self):
+        self.calls = 0
+
+    def dewarp(self, bgr):
+        self.calls += 1
+        return bgr[1:-1, 1:-1].copy(), S3.PageDewarp(name="", method="uvdoc", applied=True)
+
+    def close(self):
+        pass
+
+
+def _split_page(tmp: Path, img: np.ndarray, origin: str | None) -> Path:
+    page_dir = tmp / "page_001"
+    (page_dir / "02_split").mkdir(parents=True)
+    cv2.imwrite(str(page_dir / "02_split" / "single.png"), img)
+    split = {"pages": [{"name": "single.png"}]}
+    if origin is not None:
+        split["layout_origin"] = origin
+    (page_dir / "02_split" / "split.json").write_text(json.dumps(split), encoding="utf-8")
+    return page_dir
+
+
+def test_an_imported_page_is_written_unchanged_and_uvdoc_is_never_loaded(tmp_path, monkeypatch):
+    loaded = []
+    monkeypatch.setattr(S3, "make_dewarper",
+                        lambda method, cfg, warnings: loaded.append(1) or _StubUV())
+    img = _lined_page(400, 600)
+    page_dir = _split_page(tmp_path, img, "pdf_import")
+    res = S3.run(page_dir, {})
+    out = cv2.imread(str(page_dir / "03_dewarp" / "single.png"), cv2.IMREAD_COLOR)
+    assert np.array_equal(out, img)
+    assert loaded == []
+    assert (res.pages[0].method, res.pages[0].applied) == ("skipped-import", False)
+    meta = json.loads((page_dir / "03_dewarp" / "meta.json").read_text(encoding="utf-8"))
+    assert meta["version"] == S3.VERSION and any("flattening skipped" in w for w in meta["warnings"])
+
+
+def test_a_phone_page_is_still_flattened(tmp_path, monkeypatch):
+    img = _lined_page(400, 600)
+    for origin in (None, ""):
+        uv = _StubUV()
+        monkeypatch.setattr(S3, "make_dewarper", lambda method, cfg, warnings, uv=uv: uv)
+        page_dir = _split_page(tmp_path / f"o{origin}", img, origin)
+        res = S3.run(page_dir, {})
+        assert uv.calls == 1 and res.pages[0].method == "uvdoc"
+        out = cv2.imread(str(page_dir / "03_dewarp" / "single.png"), cv2.IMREAD_COLOR)
+        assert out.shape == (598, 398, 3)
+
+
 def _run() -> int:
-    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
+    import inspect
+    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")
+           and not inspect.signature(v).parameters]      # fixture tests need pytest
     for fn in fns:
         fn()
         print(f"ok  {fn.__name__}")

@@ -8724,3 +8724,9 @@ its label.
 zoomset and paleset rows have always carried the same dependence. If a future
 machine's table differs on `de_*` alone, compare decoded hashes against the
 data file before reading it as a detector change.
+
+Addendum, same day: `tools/vlm_box_eval.py` imports `split_eval.load_anchor`,
+so it too now reads `de_01.jpg`/`de_02.jpg` instead of the `jobs/` anchors —
+identical pixels, so none of its numbers can move, and it no longer needs
+`jobs/` for those rows either. No other tool reads the `anchor` field
+(grep of `tools/`, `pipeline/`, `server/`).

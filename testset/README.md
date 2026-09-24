@@ -275,8 +275,11 @@ The images are the Stage 01 anchors the failing job actually saw: each committed
 JPEG decodes byte-for-byte identical to
 `jobs/20260828-092505-15c41a76/page_00N/01_fuse/anchor.png` (verified, and Stage
 00 applied no rotation to either), so these rows need no gitignored `jobs/` input
-— unlike the `de_01`/`de_02` rows, which still reach into `jobs/orient_fix_de*`
-through `split_eval`'s `ANCHOR_OVERRIDE`. Originals and every other photograph
+— and since 2026-09-24 neither do the `de_01`/`de_02` rows: `de_01.jpg` and
+`de_02.jpg`, decoded with EXIF orientation ignored (their tags, 6 and 8, are
+spurious), are pixel-identical to the `jobs/orient_fix_de*` anchors that
+`split_eval` used to reach into (`docs/data/de_anchor_identity_20260924.json`).
+Every `split_eval` row now grades from a clean clone. Originals and every other photograph
 this project has taken are archived outside the repo in
 `M:\claud_projects\bookscan_captures` (`manifest.csv` there, deduplicated by
 content hash).

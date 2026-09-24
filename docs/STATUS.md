@@ -634,3 +634,10 @@ rules for it:
   Nor is it established that they caused spread 3's escape: its own search box
   is the whole frame. On spreads 2 and 4 the detector's paper mask runs to the
   left, top and bottom frame edges — it reads the sofa as paper there.
+- **`split_eval` no longer needs `jobs/`.** The committed `de_01.jpg`/`de_02.jpg`
+  decode pixel-identical to the gitignored anchors the two rows used to read
+  (EXIF orientation ignored — their tags are spurious), so the
+  `ANCHOR_OVERRIDE` special case is gone and both rows name their JPEG. Checked
+  from a clean worktree with no `jobs/`: 21 of 21 graded, 19/21, 0.0 %
+  (RESULTS 2026-09-24). Closes OPEN_PROBLEMS P1 experiment 2 and the P9
+  "anchors outside the repo" debt.

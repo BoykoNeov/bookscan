@@ -64,9 +64,9 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
    real `de_02` anchor is unstable (12.9 %) and abstains; sofa spreads 2 and 4
    do **not** jitter (0.0 over 8 seeds). Mode (c) is real. **The fix available
    today for those two spreads is a hand-drawn box** (`tools/book_box_editor`).
-2. **Owner, five minutes:** copy `jobs/orient_fix_de*/page_001/01_fuse/anchor.png`
-   into `testset/` as PNG and point `gutter.json`'s `anchor` at them, as the
-   zoomset rows already do — the guard then runs from a clean clone.
+2. **DONE 2026-09-24**, with no new file: the committed `de_01.jpg`/`de_02.jpg`
+   are pixel-identical to those anchors, so both rows now name them. Verified
+   from a clean worktree with no `jobs/`: 21 of 21 rows graded, 19/21, 0.0 %.
 3. **Build, opt-in, off by default:** the inward-only guard for the model box
    (option 1 of the postponed decision) behind `vlm_box.cut: false`, measured on
    `split_eval --vlm` for clipping. It needs no owner decision to *exist*; it
@@ -217,8 +217,9 @@ fixtures, the only ones where that gate runs.
   the two `findHomography` calls; the *gates* on those homographies are still
   single-draw. Any new call into OpenCV's RANSAC, k-means, or GrabCut must seed
   or draw several times. Never threshold one draw.
-- **Anchors outside the repo.** `de_01`/`de_02` grade gitignored pixels (P1,
-  experiment 2).
+- **Anchors outside the repo — CLOSED 2026-09-24.** Every `split_eval` row now
+  grades from `testset/`. Pixel identity rests on this machine's JPEG decoder
+  (OpenCV 5.0.0), as the zoomset and paleset rows already did.
 - **Cross-arm comparisons.** `layout_order_eval` with and without `--no-stage05`
   are different quantities; the tau column especially. Never compare across.
 - **The clipping metric divides by the label area**, so a 20 px label error

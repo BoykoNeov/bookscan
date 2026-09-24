@@ -314,10 +314,11 @@ bookscan/
   is known also updates `docs/OPEN_PROBLEMS.md` (rewritten in place) and
   appends to `docs/STATUS.md`; the guardrail list in this file changes only
   when a measurement earns a new rule or retires one.
-- `tools/split_eval` grades two rows (`de_01`/`de_02`) on anchors that live in
-  gitignored `jobs/`; off the owner's machine they print `UNAVAILABLE` and the
-  run still exits 1. The 19 rows it can grade from the repo are the
-  non-regression bar everywhere else.
+- `tools/split_eval` grades all 21 rows from `testset/` alone (since
+  2026-09-24 `de_01`/`de_02` read their committed JPEGs, verified
+  pixel-identical to the Stage 01 anchors), so **19/21 with worst clip 0.0 %
+  is the bar on every machine**. A row printing `UNAVAILABLE` means a checkout
+  is missing an image, and is not a pass.
 - **The Android app is installed over Wi-Fi debugging. That is the method this
   project uses** — not a USB cable, and not sideloading the APK through a
   browser. Build with `./gradlew assembleDebug` in `app-android/`, then push it

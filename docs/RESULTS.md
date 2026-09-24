@@ -8684,3 +8684,43 @@ its left, top and bottom. On spreads 2 and 4 the same search box is
 left, top and bottom frame edges**, i.e. it reads the sofa as paper on those
 sides, and GrabCut, seeded from it, agrees. Unchanged: the three-sides finding,
 the eight-seed stability, the spread-2 model correction, experiment 4's cue.
+
+## 2026-09-24 — `split_eval` grades all 21 rows from the repo: the `de_*` JPEGs are the anchors
+
+Data `docs/data/de_anchor_identity_20260924.json` (script
+`docs/data/de_anchor_identity_20260924.py`); code `tools/split_eval.py`
+(`ANCHOR_OVERRIDE` removed); labels `testset/gt/gutter.json`,
+`testset/gt/book_box.json` (an `anchor` field on the two rows plus a dated
+addendum; every label value asserted unchanged). Machine: the owner's
+(Windows, OpenCV 5.0.0).
+
+**Closes the 2026-09-02 caveat** "pixel identity with the JPEG is not
+established". It is now: `testset/de_01.jpg` and `testset/de_02.jpg`, decoded
+the way `split_eval` reads every row (`IMREAD_COLOR | IMREAD_IGNORE_ORIENTATION`),
+are identical to `jobs/orient_fix_de1|2/page_001/01_fuse/anchor.png` — shape
+3000×4000×3 each, maximum difference 0, 0 differing pixels, identical sha256
+of the decoded arrays. The "orientation normalization" those anchors stood for
+was Stage 00 *ignoring* the spurious EXIF tags the two captures carry (6 and 8,
+`gt/orientation.json` records `raw_is_upright: true`); no rotation was ever
+applied to the pixels. So no PNG needed committing.
+
+**Verification that the guard now runs from a clean clone** — the thing an
+identical table on the owner's machine cannot show, since there the old and new
+paths read identical pixels. A detached `git worktree` of the commit, which has
+no `jobs/` folder, run as `PYTHONPATH=<worktree> python -P -m tools.split_eval`
+(the `-P` keeps the working directory's copy of the code off the import path;
+`tools.split_eval.__file__` and `REPO` checked to resolve inside the worktree):
+**21 of 21 rows graded, no `UNAVAILABLE`, 19/21, worst clip 0.0 %**, every row
+identical to the run on the owner's tree (`de_01` 1983, `de_02` 2047, both by
+pinch, no crop). The 56 tests in `test_book_boundary.py`,
+`test_stage02_split.py` and `test_vlm_box.py` pass.
+
+Corroboration, not proof: the 2026-09-02 container run on the JPEG and the
+2026-09-24 run on the PNG both have `de_02` abstaining and splitting 7 px from
+its label.
+
+**Honest limit.** Identity is established for this machine's JPEG decoder
+(OpenCV 5.0.0's libjpeg). A different decoder may round differently; the
+zoomset and paleset rows have always carried the same dependence. If a future
+machine's table differs on `de_*` alone, compare decoded hashes against the
+data file before reading it as a detector change.

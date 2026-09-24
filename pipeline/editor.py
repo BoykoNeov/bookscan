@@ -25,7 +25,8 @@ server-side regardless of what the browser sent:
     (this is also what clears the owner's per-word ``flag_visible`` marker and makes
     patch-mode render the correction instead of the stale crop);
   * block ``type``/``reading_order`` diverged from ``type_auto``/``order_auto``
-    -> ``structure_edited = True``.
+    -> ``structure_edited = True``;
+  * block ``deleted`` (only the editor sets it) -> ``structure_edited = True``.
 ``order_confirmed`` (the review-mode "accept auto order" action) and ``pair_source =
 "user"`` (a caption<->figure pairing the human set or cleared) are sent by the browser
 and saved as-is — neither can be inferred from a divergence, because accepting the auto
@@ -101,6 +102,10 @@ def normalize_edits(doc: Document) -> Document:
             if blk.type_auto is not None and blk.type != blk.type_auto:
                 blk.structure_edited = True
             if blk.order_auto is not None and blk.reading_order != blk.order_auto:
+                blk.structure_edited = True
+            # Only the editor ever sets ``deleted``, so it is always a hand edit.
+            # (A Restore leaves the flag set: additive, like every flag here.)
+            if blk.deleted:
                 blk.structure_edited = True
             for w in blk.words:
                 if w.text_ocr is not None and w.text != w.text_ocr:

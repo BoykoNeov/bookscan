@@ -277,6 +277,20 @@ class Block(BaseModel):
     # is a different risk class from one that silently vanished.
     is_surface: bool = False
 
+    # --- deleted by the operator in the editor (never set by the pipeline) ---
+    # A REVERSIBLE hide, not a removal: the block keeps its id, bbox, words and
+    # place in reading order, and the editor's "Restore" puts it back. Stage 08
+    # drops it before doing anything else with the page, so a deleted block
+    # neither prints, nor paints itself out of a picture it sits inside, nor
+    # binds as a caption. The case it exists for: junk OCR read off the artwork
+    # of a picture (a map's lettering read as a text block) would otherwise print
+    # as garbage AND leave a pale patch in the picture.
+    #
+    # Only a human sets it, so ``normalize_edits`` can infer ``structure_edited``
+    # from it (unlike ``is_surface``, which the pipeline also sets) — the removal
+    # is work a re-assemble must not silently undo.
+    deleted: bool = False
+
     # --- the language this block is actually printed in (Stage 05; block_lang) -
     # A real book carries several languages on one page — this corpus's guide
     # prints the German route description, the English one and the Italian one

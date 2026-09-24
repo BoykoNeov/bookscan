@@ -76,7 +76,7 @@ from pipeline import stage04_layout as S4
 from pipeline.second_opinion import load_lexicon, normalize_token
 
 STAGE = "stage08_render"
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -561,7 +561,14 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
     mode = doc.settings.uncertainty_mode
     page_bgr = cv2.imread(str(job_dir / page.image_asset), cv2.IMREAD_COLOR)
 
-    blocks = sorted(page.blocks, key=lambda b: b.reading_order)
+    # A block the operator deleted in the editor is dropped HERE, before anything
+    # else reads the list, not skipped in the loop below like ``is_surface``: the
+    # same list feeds caption binding, the adjacency fallback and the figure text
+    # mask, and a deleted block must not bind as a caption or paint a pale patch
+    # into the picture it sits inside (it is usually OCR of that picture's own
+    # lettering, so the picture's pixels are exactly what should show there).
+    blocks = sorted((b for b in page.blocks if not b.deleted),
+                    key=lambda b: b.reading_order)
     cap_for_fig, bound_caps = _caption_bindings(page, blocks)
 
     parts: list[str] = [f'<section class="page" data-page="{html.escape(page.page_id)}">']
@@ -850,6 +857,7 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
     n_flag = sum(w.flag_visible for p in doc.pages for b in p.blocks for w in b.words)
     n_trans = sum(1 for p in doc.pages for b in p.blocks if b.text is not None)
     n_fig = sum(1 for p in doc.pages for b in p.blocks if b.type is BlockType.FIGURE)
+    n_deleted = sum(1 for p in doc.pages for b in p.blocks if b.deleted)
     order_mode = doc.settings.order_mode
     n_order_unreviewed = sum(
         b.order_review_visible(order_mode) for p in doc.pages for b in p.blocks)
@@ -870,6 +878,7 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
         params={
             "pages": len(doc.pages), "blocks": n_blocks, "words": n_words,
             "flag_visible": n_flag, "translated_blocks": n_trans, "figures": n_fig,
+            "deleted_blocks": n_deleted,
             "mode": doc.settings.uncertainty_mode,
             "order_mode": order_mode,
             "order_unreviewed": n_order_unreviewed,

@@ -8962,3 +8962,10 @@ them — the pull-in rule was chosen before a first simulation against these
 labels ran, and did not change after it).
 No labelled separate pair lies inside any picture's merge, but the check never
 presses the button on a separate pair, because the operator would not.
+
+**Correction (2026-09-24, same day), to the row above:** the click breakdown in
+its table is miscounted — "11 pictures × 1, two 3-piece pictures × 2, the map
+× 1" sums to 16. The true breakdown is **10 two-piece pictures × 1 + 2
+three-piece pictures × 2 + the 7-piece map × 1 = 15**, which is the total the
+committed JSON records. The removed-piece count (10 + 4 + 6 = 20, matching
+143 → 123) was right.

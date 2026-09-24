@@ -159,8 +159,15 @@ button warns, and the fix is a "delete block" editor action that does not exist.
 **Next experiment, ranked:**
 1. **Suggest merges** as markers the operator accepts or dismisses, from the
    pixel ∧ model agreement. A flag is not a merge, so a wrong suggestion costs
-   a click, not a picture. Worth it only if a second book shows the 15 clicks
-   are a real burden; on one book they are not.
+   a click, not a picture. Worth building only if the owner finds 15 clicks
+   per book too many — their call, not a measurement.
+
+**Gap found while building the merge (not fixed):** the editor has no control
+to clear `is_surface`, although `page_model.py`'s comment and the guardrail "a
+flag is not a deletion" both say it can. A real picture the local model wrongly
+called sofa can therefore neither be restored nor merged from the editor (merge
+refuses surface blocks because they do not print). The fix is a checkbox in the
+block inspector; owner to decide when.
 2. **The automatic merge**, only after 1: pre-register pixel ∧ model (and
    `is_surface` excluded) on a new population. That needs a second book with
    stacked figures, adjudicated by eye before either method runs. **Blocked on

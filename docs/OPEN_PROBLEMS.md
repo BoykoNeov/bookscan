@@ -324,8 +324,10 @@ It needs a Bulgarian page carrying an English/other-language block.
   `python -m pipeline.pdf_import book.pdf` makes a job (one page folder per PDF
   page, all or nothing, pages made by software refused), and Stage 02 honours
   a declared single page. Proven only on pixels cut from one testset spread; no
-  real scanned PDF has been through it. Open: the console import button
-  (Slice 2); the text layer as a second opinion through `second_opinion.py`,
+  real scanned PDF has been through it. The console queues imported pages
+  only when it starts (its queue is in memory), so an import made while it is
+  open waits for a restart. Open: the console import button (Slice 2), which
+  would queue them directly; the text layer as a second opinion through `second_opinion.py`,
   never the text source (Slice 3); every imported single page carries Stage
   00's "result is PORTRAIT" warning, which is noise there.
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at

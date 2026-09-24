@@ -334,6 +334,8 @@ class Block(BaseModel):
         conservatively still shows as needing review until explicitly confirmed."""
         if order_mode != OrderMode.REVIEW.value:
             return False
+        if self.deleted:        # not printed, so its place in the order does not matter
+            return False
         if self.order_confirmed:
             return False
         if self.order_auto is not None and self.reading_order != self.order_auto:

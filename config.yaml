@@ -435,5 +435,9 @@ figure_hires:
 # --- Paths ---
 paths:
   jobs: "jobs"
+  # Where pipeline/pdf_import.py renders a PDF before publishing it into jobs/
+  # all at once (a half-written import would be processed as a shorter book).
+  # Machine-local scratch; if this folder cannot be used, the OS temp dir is.
+  import_staging: 'W:\temp\claude\pdf_import\staging'
   testset: "testset"
   results: "docs/RESULTS.md"

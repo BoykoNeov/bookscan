@@ -852,15 +852,17 @@ def run(job_dir: Path, cfg: dict, debug: bool = False) -> Path:
     wrote_pdf, pdf_note = try_render_pdf(
         html_str, out_dir / "page.pdf", backend=backend, html_path=html_path)
 
-    n_blocks = sum(len(p.blocks) for p in doc.pages)
-    n_words = sum(bool(w.text.strip()) for p in doc.pages for b in p.blocks for w in b.words)
-    n_flag = sum(w.flag_visible for p in doc.pages for b in p.blocks for w in b.words)
-    n_trans = sum(1 for p in doc.pages for b in p.blocks if b.text is not None)
-    n_fig = sum(1 for p in doc.pages for b in p.blocks if b.type is BlockType.FIGURE)
+    # Counts describe what renders: a block the operator deleted is left out of
+    # every one of them (and counted on its own), as the editor shows it.
+    live = [b for p in doc.pages for b in p.blocks if not b.deleted]
+    n_blocks = len(live)
+    n_words = sum(bool(w.text.strip()) for b in live for w in b.words)
+    n_flag = sum(w.flag_visible for b in live for w in b.words)
+    n_trans = sum(1 for b in live if b.text is not None)
+    n_fig = sum(1 for b in live if b.type is BlockType.FIGURE)
     n_deleted = sum(1 for p in doc.pages for b in p.blocks if b.deleted)
     order_mode = doc.settings.order_mode
-    n_order_unreviewed = sum(
-        b.order_review_visible(order_mode) for p in doc.pages for b in p.blocks)
+    n_order_unreviewed = sum(b.order_review_visible(order_mode) for b in live)
 
     embedded = [fam for fname, fam, *_ in _FONT_FACES if (FONTS_DIR / fname).exists()]
     if embedded:

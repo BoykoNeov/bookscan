@@ -39,6 +39,12 @@ nothing in ``jobs/``. Publishing copies it in with each page's frames under
 ``raw.importing/`` — invisible to that scan — and only then renames every one to
 ``raw/`` and writes ``job.json``.
 
+**Processing starts when the console does.** The importer does not talk to a
+running server: the console's queue lives in memory and is filled from disk
+only at startup (``server/reconcile.py``), so an import made while the console
+is open waits for its next start. The console import button (Slice 2) is what
+would enqueue directly.
+
 Usage::
 
     python -m pipeline.pdf_import book.pdf [--dpi 300] [--layout detect|single|spread]
@@ -53,6 +59,7 @@ import json
 import re
 import shutil
 import sys
+import tempfile
 import time
 import uuid
 from datetime import datetime, timezone
@@ -63,12 +70,11 @@ from pydantic import BaseModel, Field
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERSION = "0.1.0"
-DEFAULT_STAGING = Path(r"W:\temp\claude\pdf_import\staging")
 SCAN_COVERAGE = 0.90         # union of placed images / visible page area
 SPREAD_ASPECT = 1.0          # width / height above which a page is a spread
 MODES = ("flag", "best_guess", "patch")          # same values as server/jobs.py
 LANG_RE = re.compile(r"^[a-z]{3}(?:\+[a-z]{3})*$")  # same rule as server/jobs.py
-JOB_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
+JOB_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")  # server/jobs.py's rule, length-capped
 COVERAGE_GRID = 256          # raster used to union image rectangles
 
 
@@ -124,14 +130,20 @@ def image_coverage(page) -> float:
     A union, not a sum: a compressed scan often stacks a background image under
     a mask of the same size, and a tiled scan cuts the page into strips — a sum
     over-counts the first and a largest-image rule under-counts the second.
+
+    Image boxes come back in the page's UNROTATED space while ``page.rect`` is the
+    displayed (rotated) one, so each box is turned by ``rotation_matrix`` first —
+    without that a scan stored with ``/Rotate 90`` measured 71 % and was refused.
     """
+    import fitz
+
     rect = page.rect
     if rect.width <= 0 or rect.height <= 0:
         return 0.0
     grid = np.zeros((COVERAGE_GRID, COVERAGE_GRID), bool)
     sx, sy = COVERAGE_GRID / rect.width, COVERAGE_GRID / rect.height
     for info in page.get_image_info():
-        x0, y0, x1, y1 = info["bbox"]
+        x0, y0, x1, y1 = fitz.Rect(info["bbox"]) * page.rotation_matrix
         x0, x1 = max(x0, rect.x0), min(x1, rect.x1)
         y0, y1 = max(y0, rect.y0), min(y1, rect.y1)
         if x1 <= x0 or y1 <= y0:
@@ -184,7 +196,7 @@ def survey(pdf_path: Path, dpi: int = 300, layout: str = "detect") -> tuple[list
 def import_pdf(pdf_path: Path, jobs_root: Path, *, dpi: int = 300,
                layout: str = "detect", mode: str = "flag", lang: str | None = None,
                job_id: str | None = None, allow_vector: bool = False,
-               staging_root: Path = DEFAULT_STAGING) -> ImportResult:
+               staging_root: Path | None = None) -> ImportResult:
     """Render every page of ``pdf_path`` into a new job under ``jobs_root``.
 
     Raises ``ImportRefused`` (and writes nothing to ``jobs_root``) when the PDF is
@@ -232,7 +244,7 @@ def import_pdf(pdf_path: Path, jobs_root: Path, *, dpi: int = 300,
         created_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         pages=pages, warnings=warnings)
 
-    staging = staging_root / job_id
+    staging = (staging_root or staging_dir({})) / job_id
     if staging.exists():
         shutil.rmtree(staging)
     staging.mkdir(parents=True)
@@ -271,6 +283,24 @@ def import_pdf(pdf_path: Path, jobs_root: Path, *, dpi: int = 300,
     return result
 
 
+def staging_dir(cfg: dict) -> Path:
+    """``paths.import_staging`` from config.yaml (relative to the repo root), or
+    the OS temp dir when it is unset or its drive does not exist here."""
+    raw = ((cfg or {}).get("paths") or {}).get("import_staging")
+    if raw:
+        p = Path(raw)
+        p = p if p.is_absolute() else REPO_ROOT / p
+        if Path(p.anchor or ".").exists():
+            return p
+    return Path(tempfile.gettempdir()) / "bookscan_pdf_import"
+
+
+def jobs_dir(cfg: dict) -> Path:
+    """``paths.jobs`` from config.yaml, resolved the way server/jobs.py does."""
+    p = Path(((cfg or {}).get("paths") or {}).get("jobs", "jobs"))
+    return p if p.is_absolute() else REPO_ROOT / p
+
+
 def _publish(staging: Path, final: Path, job: dict) -> None:
     """Copy the staged job into place so that no page becomes processable until
     every page is there: frames travel under ``raw.importing/`` and are renamed to
@@ -294,8 +324,11 @@ def main(argv: list[str] | None = None) -> int:
                     help="the job's uncertainty mode (job.json)")
     ap.add_argument("--lang", default=None, help="the job's OCR language, e.g. deu")
     ap.add_argument("--job-id", default=None)
-    ap.add_argument("--jobs-root", type=Path, default=REPO_ROOT / "jobs")
-    ap.add_argument("--staging", type=Path, default=DEFAULT_STAGING)
+    ap.add_argument("--config", type=Path, default=REPO_ROOT / "config.yaml")
+    ap.add_argument("--jobs-root", type=Path, default=None,
+                    help="default: paths.jobs from config.yaml")
+    ap.add_argument("--staging", type=Path, default=None,
+                    help="default: paths.import_staging from config.yaml")
     ap.add_argument("--allow-vector", action="store_true",
                     help="also import pages that are not scans (made by software)")
     ap.add_argument("--dry-run", action="store_true",
@@ -305,6 +338,11 @@ def main(argv: list[str] | None = None) -> int:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
+    import yaml
+    cfg = (yaml.safe_load(args.config.read_text(encoding="utf-8")) or {}
+           if args.config.exists() else {})
+    args.jobs_root = args.jobs_root or jobs_dir(cfg)
+    args.staging = args.staging or staging_dir(cfg)
 
     try:
         if args.dry_run:
@@ -331,8 +369,9 @@ def main(argv: list[str] | None = None) -> int:
     for w in res.warnings:
         print(f"  warning: {w}")
     print(f"imported {res.page_count} pages into {args.jobs_root / res.job_id} "
-          f"in {time.perf_counter() - t0:.1f}s. Start the console (bookscan.bat) "
-          f"to process them, or run: python -m pipeline.run_all "
+          f"in {time.perf_counter() - t0:.1f}s. The console picks up new pages only "
+          f"when it STARTS: start it (bookscan.bat), or restart it if it is already "
+          f"open. One page by hand: python -m pipeline.run_all "
           f"{args.jobs_root / res.job_id / 'page_001'}")
     return 0
 

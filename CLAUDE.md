@@ -370,7 +370,8 @@ python -m pipeline.stage05_ocr jobs/demo/page_001/
 python -m pipeline.run_all --input testset/spread_03/ --job demo --mode flag
 
 # import a scanned PDF as a new job (one page folder per PDF page; --dry-run
-# shows each page's spread/single verdict first; the console then processes it)
+# shows each page's spread/single verdict first). The console queues the pages
+# when it STARTS — restart it if it is already open
 python -m pipeline.pdf_import book.pdf [--lang deu] [--layout detect|single|spread]
 
 # draw the book box by hand when the detector could not find the book

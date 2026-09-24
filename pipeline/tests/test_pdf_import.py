@@ -107,6 +107,33 @@ def test_a_tiled_scan_is_a_scan(tmp_path: Path):
     assert pages[0].is_scan and pages[0].image_coverage >= PI.SCAN_COVERAGE
 
 
+@pytest.mark.parametrize("rotation", [90, 180, 270])
+def test_a_rotated_scan_is_a_scan_and_judged_by_its_displayed_shape(tmp_path: Path,
+                                                                     rotation: int):
+    """Scanned PDFs often store pages with /Rotate. Image boxes come back in the
+    unrotated space; before they were turned into the page's, a /Rotate 90 scan
+    measured 71 % coverage and the whole import was refused."""
+    img = _picture(200, 280, 6)                       # portrait as stored
+    doc = fitz.open()
+    _add_scan_page(doc, img)
+    doc[0].set_rotation(rotation)
+    pdf = tmp_path / "rot.pdf"
+    doc.save(pdf)
+    doc.close()
+    res = PI.import_pdf(pdf, tmp_path / "jobs", dpi=DPI, job_id="rot",
+                        staging_root=tmp_path / "st")
+    p = res.pages[0]
+    assert p.is_scan and p.image_coverage == 1.0
+    turned = rotation in (90, 270)
+    assert (p.width, p.height) == ((280, 200) if turned else (200, 280))
+    assert p.layout == ("spread" if turned else "single")
+    out = cv2.imread(str(tmp_path / "jobs" / "rot" / "page_001" / "raw" / "frame_00.png"),
+                     cv2.IMREAD_COLOR)
+    assert out.shape[:2] == (p.height, p.width)       # the survey promised this size
+    want = np.rot90(img, k=-rotation // 90)           # /Rotate is clockwise
+    assert np.abs(out.astype(int) - want.astype(int)).mean() < 2.0
+
+
 def test_layout_override_is_recorded_as_the_operators(tmp_path: Path):
     pdf, _ = _scan_pdf(tmp_path)
     res = PI.import_pdf(pdf, tmp_path / "jobs", dpi=DPI, layout="single",

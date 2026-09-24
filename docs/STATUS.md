@@ -788,3 +788,20 @@ rules for it:
 - Not built: the console button (Slice 2), the text layer as a second opinion
   (Slice 3). Known wart: Stage 00 warns "result is PORTRAIT" on every imported
   single page.
+
+### 2026-09-24 — PDF import, follow-ups from review
+
+- **Rotated pages were refused (bug, fixed).** Image boxes come back in the
+  page's unrotated space; a scan stored with `/Rotate 90` measured 71 % image
+  coverage and would have refused the whole import. Boxes are now turned into
+  the displayed page first: 100 % at 90/180/270, and the spread/single call
+  follows the displayed shape. Test `test_a_rotated_scan_is_a_scan_...`.
+- **The console does not see an import while it is running.** Its queue is in
+  memory and filled from disk only at startup (`server/reconcile.py`). The CLI
+  message and the docs now say so; `server/tests/test_pdf_import_reconcile.py`
+  pins that the startup scan finds every imported page and none mid-publish.
+- Job ids now follow the server's rule (no dots); the staging folder comes from
+  `paths.import_staging` in config.yaml (OS temp dir if that drive is absent).
+- Deleted blocks: `Block.order_review_visible` now skips them like the editor
+  does, and Stage 08's meta counts (blocks, words, flags, figures, unreviewed)
+  count only what renders.

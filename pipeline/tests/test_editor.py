@@ -203,6 +203,15 @@ def test_order_review_none_order_auto_is_conservative():
     assert b.order_review_visible("review") is True
 
 
+def test_order_review_skips_a_deleted_block():
+    """Mirrors the editor's orderNeedsReview: a deleted block does not print, so
+    its place in the order needs no review (and Stage 08's meta does not count it)."""
+    b = _review_block()
+    assert b.order_review_visible("review") is True
+    b.deleted = True
+    assert b.order_review_visible("review") is False
+
+
 def test_confirming_order_marks_document_edited(job: Path):
     """order_confirmed is real review work — it must protect the doc from a
     re-assemble even though no number diverged."""

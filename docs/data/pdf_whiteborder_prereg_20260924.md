@@ -109,3 +109,10 @@ Also reported: D5 (flattening was what removed its black scanner frame; without
 it the frame stays — look for junk blocks or words), and the same re-check of the
 text-layer marker's labelled sites. Stated limit: none of the 20 scanned pages is
 a crooked scan, so what is lost by not straightening one is NOT measured here.
+
+## Note, 2026-09-24 — after scoring
+
+The addendum's "other pages" figures were computed over 18 pages (the script
+also excluded the control); recomputed over the 22 registered here: 15 %
+−2.60 %, 25 % −4.88 %, skip +0.73 %. No verdict changes. See the RESULTS
+correction clause.

@@ -1,0 +1,88 @@
+D6 page_001: 40 edge words -> 119 layer tokens
+  work      : read right 113, read wrong   6, not read at all   0
+  skip_run  : read right 114, read wrong   5, not read at all   0
+      layer 'The'              audited 'The'              skip 'The'
+      layer 'reactions'        audited 'reactions'        skip 'reactions'
+      layer 'giving'           audited 'giving'           skip 'giving'
+      layer 'rise'             audited 'rise'             skip 'rise'
+      layer 'to'               audited 'to'               skip 'to'
+      layer 'these'            audited 'these'            skip 'these'
+      layer 'waves'            audited 'waves'            skip 'waves'
+      layer 'differ'           audited 'differ'           skip 'differ'
+      layer 'from'             audited 'from'             skip 'from'
+      layer 'those'            audited 'those'            skip 'those'
+      layer 'which'            audited 'which'            skip 'which'
+      layer 'produce'          audited 'produce'          skip 'produce'
+  border_run: read right 115, read wrong   4, not read at all   0
+D6 page_003: 16 edge words -> 80 layer tokens
+  work      : read right  78, read wrong   2, not read at all   0
+  skip_run  : read right  79, read wrong   1, not read at all   0
+      layer 'mm.'              audited 'mm.'              skip 'mm.'
+      layer 'at'               audited 'at'               skip 'at'
+      layer 'the'              audited 'the'              skip 'the'
+      layer 'worst'            audited 'worst'            skip 'worst'
+      layer 'point.'           audited 'point.'           skip 'point.'
+      layer 'This'             audited 'This'             skip 'This'
+      layer 'could'            audited 'could'            skip 'could'
+      layer 'be'               audited 'be'               skip 'be'
+      layer 'due'              audited 'due'              skip 'due'
+      layer 'to'               audited 'to'               skip 'to'
+      layer 'friction'         audited 'friction'         skip 'friction'
+      layer 'between'          audited 'between'          skip 'between'
+  border_run: read right  79, read wrong   1, not read at all   0
+-- the edge words themselves (audited run) --
+D6 page_001: 40 edge words: 10 match the layer exactly; not matching: 30
+    ('replace', 'O,', '02')
+    ('replace', 'H,0;', 'H202')
+    ('replace', 'bhe', 'the')
+    ('replace', 'vave', 'wave')
+    ('delete', 'Chey', '')
+    ('delete', 'ollowing', '')
+    ('delete', '[hese', '')
+    ('delete', 'nethod', '')
+    ('delete', 'rery', '')
+    ('delete', 'ormed', '')
+    ('delete', 'H,0,', '')
+    ('delete', 'f,', '')
+    ('delete', '‘urther', '')
+    ('delete', 'eaction', '')
+    ('delete', 'vere.', '')
+    ('delete', 'interere', '')
+    ('delete', 'atalase', '')
+    ('delete', '~urrent', '')
+    ('replace', 'slectrode', '10-3-10-7 M.')
+    ('replace', 'or', '10-3-10-7 M.')
+    ('replace', 'he', '10-3-10-7 M.')
+    ('replace', 'Fig.', '10-3-10-7 M.')
+    ('replace', 'nto', '10-3-10-7 M.')
+    ('replace', 'lectrode.', '10-3-10-7 M.')
+    ('replace', 'was', '10-3-10-7 M.')
+    ('replace', '>xygen', '10-3-10-7 M.')
+    ('replace', 'jiffusion', '10-3-10-7 M.')
+    ('replace', 'jevise', '10-3-10-7 M.')
+    ('replace', 'ould', '10-3-10-7 M.')
+    ('replace', 'contact', '10-3-10-7 M.')
+D6 page_003: 16 edge words: 5 match the layer exactly; not matching: 11
+    ('delete', 'inverse', '')
+    ('delete', 'substrate,', '')
+    ('delete', '>Xygen', '')
+    ('delete', 'naximum', '')
+    ('delete', 'ffinity', '')
+    ('delete', '2.', '')
+    ('delete', 'The', '')
+    ('delete', 'of', '')
+    ('delete', 'equation', '')
+    ('replace', 'spended', 'suspended')
+    ('replace', 'e', 'the')
+
+-- truncated forms / whole forms counted on each arm (D6) --
+page_001 work       truncated forms:  19   (ollowing:1, hese:1, nethod:1, rery:1, ormed:1, eaction:1, atalase:1, urrent:1, urther:1, vere:1, vave:1, bhe:1, lectrode:1, slectrode:1, xygen:1, jiffusion:1, jevise:1, ould:1, nto:1)
+page_001 skip_run   truncated forms:   0   ()
+page_001 border_run truncated forms:   0   ()
+page_003 work       truncated forms:   5   (xygen:1, naximum:1, ffinity:1, spended:1, e:1)
+page_003 skip_run   truncated forms:   0   ()
+page_003 border_run truncated forms:   0   ()
+
+-- D6 page 1: agreeing tokens gained / lost by skipping flattening --
+gained: 7 ['h', 'in', 'oh', 'the', 'wave', 'wire', 'x']
+lost:   15 ['0', '01', '03', '04', '05', '06', '07', '08', '09', '10', '11', '2', 'applied', 'kolthoff', 'potential']

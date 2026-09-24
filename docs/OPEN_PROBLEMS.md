@@ -343,7 +343,8 @@ It needs a Bulgarian page carrying an English/other-language block.
   2026-09-24): it removes the edge cuts but makes UVDoc bend flat pages (D3 page 1
   lost 24 % of its readable words); do not retry border widths or colours.
   **Skipping flattening for imported pages passes the same gate** (edges 60 → 0,
-  other pages +0.8 %, worst −1.6 %, control up) and is NOT shipped: it waits on
+  the other 22 pages +0.7 %, worst −1.6 %; the 24 cut-off words on D6 all read
+  whole again) and is NOT shipped: it waits on
   the owner, and what it costs on a crooked scan is unmeasured (no crooked page
   in the test). If shipped: key it on `layout_origin == "pdf_import"` (already
   written by the importer, read by nothing yet), and re-judge the text-layer

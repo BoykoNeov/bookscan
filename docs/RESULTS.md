@@ -9399,3 +9399,23 @@ Evidence: `docs/data/pdf_whiteborder_20260924/` (overshoot, run and measure
 scripts, the three arms' outputs and JSON). Limits: the same 24 pages derived
 the border width and tested it (geometry only); English technical print; phone
 pages untouched in every arm.
+
+**Correction (2026-09-24, same day), to the row above.** Gate clause 2 was
+computed over 18 pages, not the pre-registered 22: the measuring script's
+"other pages" left out the 4 control pages as well as D6 p1/p3, and the table,
+the prereg addendum, STATUS and the commit message carry that wrong label.
+Over the 22 pages as registered (baseline 6267 agreeing tokens): white border
+15 % → 6104 (−2.60 %, worst D3 p1 −23.6 %); 25 % → 5961 (−4.88 %, worst the
+control's page 4, −30.4 %); skip flattening → 6313 (**+0.73 %**, worst D5 p2
+−1.61 %). **No verdict changes.**
+Second, a direct check the agreement count could not give
+(`docs/data/pdf_whiteborder_20260924/edge_recovery.out`). "Words at an edge"
+reaching 0 is nearly automatic once nothing enlarges the page, and D6 p1's
+agreement FELL by 8 without flattening — so the cut words were counted
+directly. Truncated forms on D6 (`ollowing`, `nethod`, `eaction`, `>xygen`,
+`spended`, …): page 1 19 → **0**, page 3 5 → **0**, on both the skip and the
+border arms. The words skipping flattening costs D6 p1 are a chart's axis
+numbers (0.1–1.1) and three words (`applied`, `potential`, `Kolthoff`); the
+recovered words do not show as agreement because the layer orders that region
+differently (page coverage 0.63). So skipping flattening DOES restore the cut
+words; the agreement count understates it.

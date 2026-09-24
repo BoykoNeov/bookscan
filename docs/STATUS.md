@@ -889,3 +889,7 @@ rules for it:
   cost on a crooked scan is unmeasured.
 - The marker's measured precision belongs to today's Stage 03 output: on the
   changed pages about 30 of 71 judged spots disappear and ~20 new ones appear.
+- **Correction, same day:** the "other pages" figure was over 18 pages, not the
+  registered 22; recomputed (15 % −2.60 %, 25 % −4.88 %, skip +0.73 %), no
+  verdict changes. A direct count shows skipping flattening restores all 24
+  cut-off words on D6 (the agreement count had understated it).

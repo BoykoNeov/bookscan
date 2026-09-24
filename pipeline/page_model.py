@@ -124,6 +124,14 @@ class Word(BaseModel):
     # THIS word), exactly like a confidence flag — no separate un-clearable marker.
     engine_disagree: bool = False
 
+    # The same kind of trigger from a different, separately measured rule: an
+    # imported PDF's own hidden text layer reads this word differently (Stage 05,
+    # ``pipeline/pdf_text_layer.py``; RESULTS 2026-09-24). Kept apart from
+    # ``engine_disagree`` so an audit can tell which rule fired — EasyOCR's is
+    # dictionary-gated, this one is not, and each was measured on its own. The
+    # layer's reading is deliberately NOT stored: it may add a marker, never text.
+    layer_disagree: bool = False
+
     # --- table cell membership (Stage 05; see pipeline/table_grid.py) ---
     # WHICH CELL OF ITS TABLE THIS WORD SITS IN. Only ever set inside a block
     # typed TABLE, and only when the grid pass did not abstain; None everywhere

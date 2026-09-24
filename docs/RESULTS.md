@@ -8581,3 +8581,84 @@ fixture, and it was a coin flip.
   land in one mode about one time in six on that frame; `gc_draws` is a knob
   and the union is emitted either way. Raising it is a cost decision the
   owner can make with the numbers above; it is not a tuning decision.
+
+## 2026-09-24 — The owner's sofa spreads 2 and 4 are not unstable: seeding does not reach them, and the box is wrong on three sides, not one
+
+Data `docs/data/gc_jitter_sofa_20260924.json` (script
+`docs/data/gc_jitter_sofa_probe_20260924.py`), previews
+`docs/data/gc_jitter_sofa_{1..4}_20260924.jpg` (quarter scale; green = the box
+`find_book` emits, red = GrabCut draw 0; script
+`docs/data/gc_jitter_sofa_thumbs_20260924.py`). Machine: the owner's (Windows,
+OpenCV 5.0.0). This closes the two "must be on the owner's machine" items of the
+2026-09-02 row.
+
+**Population.** The real `de_02` anchor (`jobs/orient_fix_de2/page_001/01_fuse/anchor.png`)
+and the first four spreads of the owner's job `jobs/20260829-084115-de3c20d3`
+(`page_001..004/01_fuse/anchor.png`, 4080×3060). **n = 2 scenes**: the four
+sofa spreads are one book on one sofa in one session.
+
+**Method.** In memory, not a Stage 02 re-run: `find_book` with
+`config.yaml`'s `book_crop` merged over the defaults (the shipped path: three
+seeded draws), then `grabcut_box` alone at seeds 0–7. Statistic: the largest
+edge disagreement across the draws as a fraction of their union box — the same
+`gc_jitter` the rule acts on — over seeds 0–2 and over 0–7. The job's own
+Stage 02 folders were not rewritten, so its downstream stages are not stale.
+
+**`split_eval`**, same day: **19/21, worst clip 0.0 %**, exit 1 — as the
+2026-09-02 row predicted. `de_02` splits at 2047 against 2040 (pinch), no crop.
+
+| frame | `gc_jitter` seeds 0–2 | seeds 0–7 | outcome |
+|---|---|---|---|
+| `de_02` (real anchor) | **0.129** | 0.129 | abstains: "unstable" (> 0.06) |
+| sofa 1 | 0.000 | 0.000 | abstains: GrabCut returns the whole frame |
+| sofa 2 | **0.000** | **0.000** | **crops to (0, 0, 2971, 3060)** |
+| sofa 3 | 0.000 | 0.000 | abstains: area ≥ 83 % (see below) |
+| sofa 4 | **0.000** | **0.000** | **crops to (0, 0, 2863, 3060)** |
+
+1. **The real `de_02` anchor jitters the same way the committed JPEG did**:
+   seeds 0–2 already produce three different boxes (left edge 610 vs 149, top
+   224 vs 0 vs 221), and seeds 3–7 add nothing outside that range. The rule
+   refuses it for its stated reason and the gutter is still found.
+2. **Sofa spreads 2 and 4 give the identical box on all eight seeds**, and it is
+   the same box the job's 2026-08-29 Stage 02 run (before seeding) emitted. They
+   were never mode (b). **Mode (c) — stable and wrong — is real, and the
+   2026-09-02 change does nothing for it.**
+3. **Correction to how mode (c) has been described** (STATUS 2026-08-29,
+   OPEN_PROBLEMS P1: "a box keeping the full frame height", "confidently wrong
+   in one axis"). Looked at, the box is wrong on **three** sides. The book spans
+   roughly the middle 55–60 % of the frame in each direction; the emitted box starts at the
+   frame's left edge and spans its full height, so sofa is kept on the left,
+   top and bottom. Its one inward edge, the right one, stops at a stack of
+   loose white sheets lying on the sofa at the frame's right edge, not at the
+   book. The surface itself is a grey-green textured sofa; the paper-coloured
+   distractor is the sheets.
+4. **Sofa spread 3 has the same wrong GrabCut box** — (0, 0, 2799, 3060) on all
+   eight seeds — and was saved by a different check: the emit box is the
+   union of the GrabCut box and the paper-mask search box, and the search box
+   reached the white sheets, so the union covers 100 % of the frame and the
+   `abstain_area_frac` (0.83) refusal fires. It is luck of the union, not a
+   detection. Three of the four sofa spreads share the GrabCut failure; that is
+   still one scene.
+5. **Correction to STATUS 2026-08-29 ("so the model was never asked").** True
+   of spread 4 (`book_crop_source: detector`), false of spread 2: its
+   `split.json` records `detector+vlm-search` and a `vlm_box` answer, because a
+   second trigger — no spine found inside the detected book — retried the
+   gutter search inside the model's box. On both spreads the pixels cut were the
+   detector's box, which is what `search_only` is designed to do. The model's
+   box on spread 2, (273, 551, 2640, 2411), agrees with the book in the preview
+   by eye; on spread 4 it was not asked.
+6. **OPEN_PROBLEMS P1 experiment 4 is dead as written.** Its cue — "top or
+   bottom edge at the frame edge while the side edges are well inside" — does
+   not fire on either target spread, because their left edge is also at the
+   frame edge. A "box touches three frame edges" variant is a new, unmeasured
+   idea; it would need the same census of the 19 correct rows first, and
+   `paleset_01` (the book runs off the frame edge) is the obvious trap.
+
+### What could not be checked
+
+* Nothing downstream of Stage 02 was run; this is a statement about crops only.
+* The other 21 spreads of the owner's job were not probed; the claim is about
+  spreads 1–4, where the owner's defects are.
+* The model-box question for spread 4 (would it have been right?) is unasked;
+  the operator path (`tools/book_box_editor`) remains the fix available today
+  for spreads 2 and 4.

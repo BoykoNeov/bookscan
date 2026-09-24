@@ -33,8 +33,8 @@ the route tables). It is the crop.
 | mode | what the detector does | example | status |
 |---|---|---|---|
 | (a) abstains | the paper mask merges book and background, area gate refuses | `paleset_01/02`, owner's spreads 1 and 3 | `vlm_box` aims the spine search (shipped, 21/21 with `--vlm`), nothing is cut |
-| (b) unstable | GrabCut's random init decides between abstain and a 12 % clip | raw `de_02` (RESULTS 2026-09-02) | **caught 2026-09-02**: seeded draws must agree within the emit pad, else abstain |
-| (c) confidently wrong, stable | every draw agrees on a box that clips content | raw `de_02`'s top edge (header band, 4.6 %); owner's spreads 2 and 4 (full-frame height) | **open** — no cue found; see below |
+| (b) unstable | GrabCut's random init decides between abstain and a 12 % clip | raw `de_02` (RESULTS 2026-09-02); the real anchor confirmed 2026-09-24, draws disagree by 12.9 % | **caught 2026-09-02**: seeded draws must agree within the emit pad, else abstain |
+| (c) confidently wrong, stable | every draw agrees on a wrong box | raw `de_02`'s top edge (header band, 4.6 %, clips content); owner's spreads 2 and 4: identical box on 8 of 8 seeds (RESULTS 2026-09-24), starting at the frame's left edge at full height, so sofa is kept on **three** sides — the one inward edge stops at loose white sheets on the sofa, not at the book. Spread 3 has the same GrabCut box and escaped only because the area gate fired on its union with the search box | **open** — confirmed 2026-09-24 that seeding does not reach it; no cue found; see below |
 
 **What is REFUSED (do not re-attempt):**
 - Retuning the HSV paper thresholds (plan §5; the pale surface *is* paper-coloured).
@@ -60,22 +60,26 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
 `plans/pale-background-fixture-shoot.md` is the shot list (16–24 spreads).
 
 **Next experiments, cheapest first:**
-1. **Owner, five minutes:** re-run `tools/split_eval` after the 2026-09-02
-   seeding change and read `gc_jitter` on `de_02`'s real anchor. Expected 19/21,
-   0.0 %. Then re-run Stage 02 on the sofa job and read `gc_jitter` on spreads
-   2 and 4: if they jitter, mode (c) was mode (b) all along and is now handled.
+1. **DONE 2026-09-24** (RESULTS 2026-09-24): `split_eval` 19/21, 0.0 %; the
+   real `de_02` anchor is unstable (12.9 %) and abstains; sofa spreads 2 and 4
+   do **not** jitter (0.0 over 8 seeds). Mode (c) is real. **The fix available
+   today for those two spreads is a hand-drawn box** (`tools/book_box_editor`).
 2. **Owner, five minutes:** copy `jobs/orient_fix_de*/page_001/01_fuse/anchor.png`
    into `testset/` as PNG and point `gutter.json`'s `anchor` at them, as the
    zoomset rows already do — the guard then runs from a clean clone.
 3. **Build, opt-in, off by default:** the inward-only guard for the model box
    (option 1 of the postponed decision) behind `vlm_box.cut: false`, measured on
    `split_eval --vlm` for clipping. It needs no owner decision to *exist*; it
-   needs one to be turned on.
-4. **A cue for mode (c) that is not a threshold:** a box whose top or bottom edge
-   is the frame edge while its side edges are well inside is geometrically
-   suspect on a spread (books are wider than tall). Not measured. Before
-   building it, count how many of the 19 correct rows have that shape — if any
-   do, it is dead.
+   needs one to be turned on. **It does not reach mode (c) by itself:** the
+   model is asked only when the detector abstains or finds no spine, so spread 4
+   was never asked and spread 2's answer only aimed the search.
+4. **A cue for mode (c) that is not a threshold.** The cue first written here
+   ("top or bottom edge at the frame edge, side edges well inside") is **dead as
+   written**: it fires on neither spread 2 nor 4, whose left edge is also at the
+   frame edge (RESULTS 2026-09-24). A "box touches three frame edges" variant is
+   a new, unmeasured idea. Before building it, count how many of the 19 correct
+   rows have that shape — if any do, it is dead — and check `paleset_01`, whose
+   book runs off the frame edge, which is exactly that shape for a right reason.
 5. Shoot the fixtures. Nothing above replaces this.
 
 ---

@@ -602,3 +602,29 @@ rules for it:
   the next experiment and the precondition for each; new `docs/plans/README.md`
   indexes the plans with their state. README status updated from "Gate 1 in
   progress".
+
+---
+
+## 2026-09-24 — The sofa spreads are stably wrong, not unstable
+
+- **Ran the two checks the 2026-09-02 entry left for the owner's machine**
+  (RESULTS 2026-09-24, `docs/data/gc_jitter_sofa_20260924.json`). `split_eval`
+  reads 19/21, worst clip 0.0 %, as predicted. The real `de_02` anchor is
+  unstable (three seeded draws disagree by 12.9 %) and abstains for that reason.
+  **The owner's sofa spreads 2 and 4 give the identical box on eight of eight
+  seeds** — mode (c) is real, and the seeding change does nothing for the
+  owner's defects. Measured in memory; the job's Stage 02 folders were not
+  rewritten.
+- **Correction to the 2026-08-29 entry** ("keeping the full frame height",
+  "confidently wrong in one axis"): looked at, the box keeps sofa on three
+  sides — it starts at the frame's left edge at full height, and its one inward
+  edge stops at loose white sheets lying on the sofa, not at the book. Spread 3
+  has the same GrabCut box and was saved only by the area gate firing on its
+  union with the search box.
+- **Correction to the 2026-08-29 entry** ("so the model was never asked"): true
+  of spread 4, false of spread 2, where a second trigger (no spine found in the
+  detected book) asked the model and used its box to aim the gutter search. The
+  pixels cut were the detector's on both.
+- **OPEN_PROBLEMS P1 experiment 4's cue is dead as written** (it fires on
+  neither spread); a three-edge variant is unmeasured. Experiment 1 is closed.
+  The fix available today for spreads 2 and 4 is a hand-drawn book box.

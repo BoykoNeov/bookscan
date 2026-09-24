@@ -78,9 +78,13 @@ def test_scanned_pdf_becomes_one_page_folder_per_page(tmp_path: Path):
     assert _job_dirs(jobs) == [job]
     assert json.loads((job / "job.json").read_text()) == {"mode": "patch", "lang": "deu"}
     assert [p.page for p in res.pages] == ["page_001", "page_002"]
-    for p, img in zip(res.pages, imgs):
+    # page 2 carries a hidden OCR layer, so it also gets pdf_text_layer.json
+    # (Slice 3, 2026-09-24 — this listing was ["page_layout.json", "raw"] for both)
+    expect = [["page_layout.json", "raw"],
+              ["page_layout.json", "pdf_text_layer.json", "raw"]]
+    for p, img, names in zip(res.pages, imgs, expect):
         page_dir = job / p.page
-        assert sorted(x.name for x in page_dir.iterdir()) == ["page_layout.json", "raw"]
+        assert sorted(x.name for x in page_dir.iterdir()) == names
         out = cv2.imread(str(page_dir / "raw" / "frame_00.png"), cv2.IMREAD_COLOR)
         assert out.shape == img.shape                 # rendered at the image's own size
         assert np.abs(out.astype(int) - img.astype(int)).mean() < 2.0
@@ -88,6 +92,10 @@ def test_scanned_pdf_becomes_one_page_folder_per_page(tmp_path: Path):
            for p in ("page_001", "page_002")]
     assert [(x["layout"], x["source"]) for x in lay] == [
         ("spread", "pdf_import_aspect"), ("single", "pdf_import_aspect")]
+    assert [x["origin"] for x in lay] == ["pdf_import", "pdf_import"]
+    layer = json.loads((job / "page_002" / "pdf_text_layer.json").read_text(encoding="utf-8"))
+    assert layer["words"][:2] == ["Hidden", "OCR"]      # the line runs off this narrow page
+    assert (layer["pdf"], layer["pdf_page"], layer["source"]) == ("book.pdf", 2, "pdf_import")
     rec = json.loads((job / "import.json").read_text())
     assert rec["dpi"] == DPI and rec["page_count"] == 2 and len(rec["pdf_sha256"]) == 64
     # a page carrying an invisible OCR text layer is still a scan
@@ -249,6 +257,9 @@ def test_a_per_page_override_wins_for_that_page_only(tmp_path: Path):
     lay = json.loads((tmp_path / "jobs" / "imp6" / "page_002" / "page_layout.json")
                      .read_text())
     assert (lay["layout"], lay["source"]) == ("spread", "operator")
+    # the operator decided the LAYOUT; the pixels still came from a PDF, and that
+    # is what Stage 03's white border keys on
+    assert lay["origin"] == "pdf_import"
     assert seen == [(1, 2), (2, 2)]
 
 

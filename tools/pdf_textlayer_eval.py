@@ -21,15 +21,15 @@ the labels to the key and applies the pre-registered gate.
 
 from __future__ import annotations
 
-import difflib
 import glob
 import hashlib
 import json
 import random
 import subprocess
 import sys
-import unicodedata
 from pathlib import Path
+
+from pipeline.pdf_text_layer import align, page_words, prep_tokens
 
 REPO = Path(__file__).resolve().parent.parent
 SEED = 20260924
@@ -37,7 +37,6 @@ CAP_PRIMARY = 60
 CAP_AGREE = 20
 MIN_LAYER_WORDS = 150
 FRACTIONS = (0.3, 0.5, 0.7)
-LINE_END_MARKS = ("\u00ad", "\u00ac")      # soft hyphen, ¬
 
 _SRC = r"W:\Claude_projects\space-station\sources"
 DOCS = [
@@ -135,58 +134,18 @@ def prepare(work: Path) -> None:
 
 
 # ---------------------------------------------------------------- tokens
-def prep_tokens(items: list[tuple[str, object]]) -> list[dict]:
-    """(raw text, ref) -> comparison tokens, identically for both engines.
-
-    NFKC; a trailing soft hyphen or ``¬`` is a line-end ``-`` and one elsewhere is
-    dropped; ``x-`` + lowercase next token joins; then ``normalize_token``; empty
-    tokens are dropped. A joined token keeps the refs of every word in it."""
-    from pipeline.second_opinion import normalize_token
-
-    clean = []
-    for raw, ref in items:
-        t = unicodedata.normalize("NFKC", raw or "")
-        for m in LINE_END_MARKS:
-            if t.endswith(m):
-                t = t[:-1] + "-"
-            t = t.replace(m, "")
-        clean.append((t, [ref]))
-    joined: list[tuple[str, list]] = []
-    i = 0
-    while i < len(clean):
-        t, refs = clean[i]
-        while (t.endswith("-") and len(t) > 1 and i + 1 < len(clean)
-               and clean[i + 1][0][:1].islower()):
-            i += 1
-            t, refs = t[:-1] + clean[i][0], refs + clean[i][1]
-        joined.append((t, refs))
-        i += 1
-    out = []
-    for t, refs in joined:
-        n = normalize_token(t)
-        if n:
-            out.append({"norm": n, "raw": t, "refs": refs})
-    return out
+# The rule itself lives in pipeline/pdf_text_layer.py (its only copy, so the
+# shipped marker is the measured one); this tool only adds the bookkeeping.
 
 
 def tesseract_words(page_dir: Path) -> list[dict]:
     res = json.loads((page_dir / "06_uncertain" / "resolved.json").read_text(encoding="utf-8"))
     words = []
     for sp in res["pages"]:
-        blocks = sorted(sp["blocks"], key=lambda b: (b.get("reading_order") is None,
-                                                     b.get("reading_order") or 0))
-        for b in blocks:
-            for wi, w in enumerate(b.get("words") or []):
-                words.append({"sub": sp["name"], "block": b["id"], "i": wi,
-                              "text": w["text"], "bbox": w["bbox"],
-                              "decision": w.get("decision") or "keep"})
+        for w in page_words([sp]):
+            words.append({"sub": sp["name"], "text": w["text"], "bbox": w["bbox"],
+                          "decision": w.get("decision") or "keep"})
     return words
-
-
-def align(t_toks: list[dict], l_toks: list[dict]):
-    sm = difflib.SequenceMatcher(a=[t["norm"] for t in t_toks],
-                                 b=[x["norm"] for x in l_toks], autojunk=False)
-    return sm.get_opcodes()
 
 
 # ---------------------------------------------------------------- sites

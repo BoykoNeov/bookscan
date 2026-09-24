@@ -28,8 +28,11 @@ least ``SCAN_COVERAGE`` of the visible page. A born-digital page (a LaTeX paper,
 an ebook export) fails that and the import is REFUSED, naming the pages:
 re-typesetting one is a different problem, and this pipeline's dewarp, spine
 search and figure cropping are dead weight there. A text layer does NOT count
-against a page — many scans carry an invisible OCR layer, and that layer is what
-Slice 3 will read as a second opinion (never as the text).
+against a page — many scans carry an invisible OCR layer. Its words are saved per
+page as ``page_NNN/pdf_text_layer.json`` (Slice 3): Stage 05 compares them with
+Tesseract and may only ADD a marker, never text (``pipeline/pdf_text_layer.py``).
+Every page's ``page_layout.json`` also says ``"origin": "pdf_import"``, which is
+how Stage 03 knows to put a white border round a flat scan before flattening it.
 
 **All or nothing.** The console's startup scan enqueues any page folder with
 files in ``raw/`` and no ``run_all.json``, so a half-written import would be
@@ -72,6 +75,8 @@ from typing import Callable
 
 import numpy as np
 from pydantic import BaseModel, Field
+
+from pipeline import pdf_text_layer as TL
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VERSION = "0.1.0"
@@ -286,6 +291,7 @@ def import_pdf(pdf_path: Path, jobs_root: Path, *, dpi: int = 300,
     try:
         doc = fitz.open(pdf_path)
         try:
+            producer = (doc.metadata or {}).get("producer", "") or ""
             for p, page in zip(pages, doc):
                 pix = page.get_pixmap(dpi=dpi, alpha=False, colorspace=fitz.csRGB)
                 if (pix.width, pix.height) != (p.width, p.height):
@@ -298,7 +304,15 @@ def import_pdf(pdf_path: Path, jobs_root: Path, *, dpi: int = 300,
                     "layout": p.layout, "source": p.layout_source,
                     "aspect": p.aspect,
                     "note": f"{pdf_path.name} page {p.pdf_page} at {dpi} dpi",
+                    "origin": "pdf_import",
                 }, indent=1), encoding="utf-8")
+                # The hidden text layer, saved now because the console deletes the
+                # uploaded PDF once the import is done (Slice 3: a second opinion
+                # that can only ADD a marker; see pipeline/pdf_text_layer.py).
+                words = TL.layer_words(page)
+                if words:
+                    TL.write_layer(page_dir, words, pdf_name=pdf_path.name,
+                                   pdf_page=p.pdf_page, producer=producer)
                 if on_page is not None:
                     on_page(p.pdf_page, len(pages))
         finally:

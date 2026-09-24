@@ -25,7 +25,10 @@ metadata, and Stage 04 already set the reach-back precedent):
   * **Reads** ``04_layout/layout.json`` (blocks: type, bbox, reading_order) for
     the block structure, and the dewarped subpage images it names from
     ``03_dewarp/`` for the pixels. Image filenames come from the manifest — never
-    hardcoded. Runs PER half-page.
+    hardcoded. Runs PER half-page. On an imported PDF page it also reads
+    ``<page_dir>/pdf_text_layer.json`` — INPUT written by the importer, like
+    ``page_layout.json`` — and may set ``Word.layer_disagree`` from it (see
+    ``pipeline/pdf_text_layer.py``); a phone page has no such file.
   * **Writes** ``05_ocr/ocr.json`` (per subpage: the Stage 04 blocks with
     ``page_model.Word``s attached, plus synthetic RESCUED blocks holding any words
     that fell outside every detected block), ``05_ocr/meta.json``, and
@@ -95,6 +98,7 @@ from pipeline import rescued_type as RT
 from pipeline import caption_eject as CE
 from pipeline import figure_text as FT
 from pipeline import text_panel as TP
+from pipeline import pdf_text_layer as TL
 from pipeline.second_opinion import (
     EasyOCRSecondOpinion, find_disagreements, load_lexicon)
 
@@ -110,7 +114,7 @@ from tools.gate1_harness import (
 )
 
 STAGE = "stage05_ocr"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -638,6 +642,13 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
         panels.append(_ocr_panel(img, page))
     if second is not None:
         second.close()
+
+    # An imported PDF's own hidden text as a second opinion (pdf_text_layer.py):
+    # aligned over the WHOLE page (a spread's layer covers both halves), after
+    # every pass above, so the words compared are exactly the words Stage 06 sees
+    # — the population the rule was measured on. It only ever ADDS a marker.
+    layer_meta, layer_notes = TL.apply(page_dir, pages, cfg, lang_code_used)
+    warnings.extend(layer_notes)
     ocr_ms = (time.perf_counter() - t_ocr) * 1000.0
 
     result = OCRResult(engine="tesseract", pages=pages)
@@ -681,13 +692,15 @@ def run(page_dir: Path, cfg: dict, lang: str | None = None, debug: bool = False,
                 "labelled": lang_meta,
             },
             "xy_gap_frac": p["xy_gap_frac"],
-            "reads": ["04_layout/layout.json", "03_dewarp/<subpage images>"],
+            "reads": ["04_layout/layout.json", "03_dewarp/<subpage images>"]
+                     + ([TL.LAYER_FILE] if layer_meta is not None else []),
             "second_opinion": (
                 {"engine": "easyocr", "langs": easy_cfg.get("langs", ["en"]),
                  "min_region_conf": min_region_conf,
                  "gate": "dictionary (norm(T) not in lexicon AND norm(E) in lexicon)",
                  "lexicon_words": len(lexicon), "words_flagged": n_disagree}
                 if run_second else None),
+            "pdf_text_layer": layer_meta,
         },
         timings_ms={"ocr": round(ocr_ms, 1), "total": round(total_ms, 1)},
         warnings=warnings + (

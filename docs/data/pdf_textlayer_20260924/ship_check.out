@@ -1,0 +1,25 @@
+D1 p45: marked 6 (expected 6), left unflagged 0, words identical True, abstained '' -> OK
+D1 p75: marked 0 (expected 0), left unflagged 0, words identical True, abstained '' -> OK
+D1 p104: marked 0 (expected 0), left unflagged 0, words identical True, abstained '' -> OK
+D2 p87: marked 8 (expected 8), left unflagged 0, words identical True, abstained '' -> OK
+D2 p143: marked 2 (expected 2), left unflagged 0, words identical True, abstained '' -> OK
+D2 p201: marked 8 (expected 8), left unflagged 0, words identical True, abstained '' -> OK
+D3 p4: marked 6 (expected 6), left unflagged 0, words identical True, abstained '' -> OK
+D3 p5: marked 12 (expected 12), left unflagged 0, words identical True, abstained '' -> OK
+D3 p7: marked 3 (expected 3), left unflagged 0, words identical True, abstained '' -> OK
+D4 p251: marked 2 (expected 2), left unflagged 0, words identical True, abstained '' -> OK
+D4 p419: marked 2 (expected 2), left unflagged 0, words identical True, abstained '' -> OK
+D4 p585: marked 8 (expected 8), left unflagged 0, words identical True, abstained '' -> OK
+D5 p12: marked 0 (expected 0), left unflagged 0, words identical True, abstained '' -> OK
+D5 p19: marked 0 (expected 0), left unflagged 0, words identical True, abstained '' -> OK
+D5 p26: marked 2 (expected 2), left unflagged 0, words identical True, abstained '' -> OK
+D6 p3: marked 24 (expected 24), left unflagged 0, words identical True, abstained '' -> OK
+D6 p4: marked 12 (expected 12), left unflagged 0, words identical True, abstained '' -> OK
+D6 p5: marked 9 (expected 9), left unflagged 0, words identical True, abstained '' -> OK
+D7 p1: marked 1 (expected 1), left unflagged 0, words identical True, abstained '' -> OK
+D7 p2: marked 0 (expected 0), left unflagged 0, words identical True, abstained '' -> OK
+C p1: marked 0 (expected 0), left unflagged 0, words identical True, abstained '' -> OK
+C p2: marked 0 (expected 0), left unflagged 0, words identical True, abstained 'text layer has 148 words (< 150, the measured floo' -> OK
+C p3: marked 0 (expected 0), left unflagged 0, words identical True, abstained '' -> OK
+C p4: marked 0 (expected 0), left unflagged 0, words identical True, abstained 'text layer has 74 words (< 150, the measured floor' -> OK
+ALL OK

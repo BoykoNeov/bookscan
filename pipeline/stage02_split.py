@@ -84,7 +84,7 @@ from pipeline import page_source as PS
 from pipeline.page_model import BBox, StageMeta
 
 STAGE = "stage02_split"
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -219,6 +219,12 @@ class PageLayout(BaseModel):
     source: str = "operator"      # "operator" | "pdf_import_aspect" | ...
     aspect: float | None = None   # width / height the verdict was made from
     note: str = ""
+    # Where the PIXELS came from, apart from who decided the layout: the importer
+    # writes "pdf_import" on every page it makes, including pages whose layout the
+    # operator overrode (``source`` is then "operator", which is also what a
+    # hand-written file on a phone page says). Stage 03 keys its white border on
+    # this, never on ``source``. Empty on every phone page and older import.
+    origin: str = ""
 
 
 class SplitResult(BaseModel):
@@ -271,6 +277,7 @@ class SplitResult(BaseModel):
     # every phone capture, and every page before this field existed.
     layout: str = "detect"
     layout_source: str = ""
+    layout_origin: str = ""         # PageLayout.origin passed through ("pdf_import")
     # Never infer this from book_crop_applied: an operator box that failed its
     # provenance check leaves applied False with the DETECTOR's own reason, and a
     # reader has to be able to tell that from a page nobody ever drew on.
@@ -1025,6 +1032,7 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
         book_crop_applied=book.applied, book_crop_source=crop_source,
         layout=layout.layout if layout is not None else "detect",
         layout_source=layout.source if layout is not None else "",
+        layout_origin=layout.origin if layout is not None else "",
         book_crop_reason=book.reason, book_crop_evidence=book.evidence,
         book_crop=anchor_box, vlm_box=vlm_diag,
         book_search=BBox(x=sx0, y=sy0, w=sx1 - sx0, h=sy1 - sy0),
@@ -1128,7 +1136,7 @@ def _run_single(page_dir: Path, image: np.ndarray, layout: PageLayout,
         pages=[SubPage(name="single.png", box=box, gutter_x=None, book_crop=box)],
         book_crop_applied=crop_source == "operator", book_crop_source=crop_source,
         book_crop_reason=reason, book_crop=box, book_search=box,
-        layout="single", layout_source=layout.source,
+        layout="single", layout_source=layout.source, layout_origin=layout.origin,
     )
     (out_dir / "split.json").write_text(result.model_dump_json(indent=2),
                                         encoding="utf-8")

@@ -123,6 +123,21 @@ per_page_source:
   max_candidates: 4         # cost guard: full-spread frames scored per spread
   lang: null                # null -> languages.default
 
+# --- An imported PDF's own hidden text as a second opinion (pipeline/pdf_text_layer.py) ---
+# Where the layer reads a word differently from Tesseract (one word for one word,
+# aligned by sequence), Stage 05 sets Word.layer_disagree and Stage 06 ORs it into
+# `uncertain`. It never supplies text and never clears a marker. Measured
+# 2026-09-24 (RESULTS; prereg docs/data/pdf_textlayer_prereg_20260924.md): 48 real
+# mistakes to 16 correct words questioned, mostly notation. The three limits below
+# are the EDGES OF WHAT WAS MEASURED, not tuned values: English only, pages with a
+# layer of at least 150 words, alignment coverage at least 0.42 (the lowest
+# measured page was 0.4286). Widening any of them is an unmeasured claim.
+pdf_text_layer:
+  enabled: true
+  languages: [eng]
+  min_layer_words: 150
+  min_coverage: 0.42
+
 # --- Second-opinion engines (never the sole text/confidence source) ---
 engines:
   easyocr:

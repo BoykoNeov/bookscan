@@ -548,9 +548,10 @@ def _page_with(spread: np.ndarray, td: str) -> Path:
 
 
 def _write_layout(page_dir: Path, layout: str, source: str = "pdf_import_aspect",
-                  aspect: float | None = 0.7) -> None:
+                  aspect: float | None = 0.7, origin: str | None = None) -> None:
     (page_dir / "page_layout.json").write_text(json.dumps(
-        {"layout": layout, "source": source, "aspect": aspect}), encoding="utf-8")
+        {"layout": layout, "source": source, "aspect": aspect,
+         **({"origin": origin} if origin is not None else {})}), encoding="utf-8")
 
 
 def _outputs(page_dir: Path) -> dict:
@@ -559,7 +560,7 @@ def _outputs(page_dir: Path) -> dict:
         f = page_dir / "02_split" / name
         out[name] = cv2.imread(str(f), cv2.IMREAD_COLOR) if f.exists() else None
     split = json.loads((page_dir / "02_split" / "split.json").read_text(encoding="utf-8"))
-    for k in ("layout", "layout_source"):
+    for k in ("layout", "layout_source", "layout_origin"):
         split.pop(k)
     return {"images": out, "split": split}
 
@@ -625,6 +626,25 @@ def test_declared_single_page_still_takes_the_operators_box():
         written = cv2.imread(str(page_dir / "02_split" / "single.png"), cv2.IMREAD_COLOR)
         assert np.array_equal(written, spread[box.y:box.y + box.h, box.x:box.x + box.w])
         assert box.x <= 400 and box.x + box.w >= 1600      # padded outward, never inward
+
+
+def test_the_pdf_origin_reaches_split_json_on_both_paths():
+    """Stage 03's white border keys on ``layout_origin``, which says where the
+    pixels came from — not ``layout_source``, which says who chose the layout and
+    reads "operator" for an override on an import AND for a hand-written file on
+    a phone page. Nothing else about the split may change because of it."""
+    spread = _cluttered_spread()
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = _page_with(spread, td)
+        assert run(page_dir, {}).layout_origin == ""
+        _write_layout(page_dir, "spread", source="operator", origin="pdf_import")
+        r = run(page_dir, {})
+        assert (r.layout_source, r.layout_origin) == ("operator", "pdf_import")
+        assert r.gutter_x is not None
+        _write_layout(page_dir, "single", origin="pdf_import")
+        assert run(page_dir, {}).layout_origin == "pdf_import"
+        _write_layout(page_dir, "single", source="operator")      # no origin written
+        assert run(page_dir, {}).layout_origin == ""
 
 
 def test_a_corrupt_layout_file_never_stops_a_page():

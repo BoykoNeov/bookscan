@@ -23,8 +23,10 @@ proof the threshold adapted. Rails (``conf_floor``/``conf_ceiling``) live in
 here.
 
 **Cross-engine disagreement** is a second, independent uncertainty trigger
-(CLAUDE.md). Stage 05's EasyOCR second opinion sets ``Word.engine_disagree`` (a
-Tesseract non-word that EasyOCR replaced with a valid dictionary word — see
+(CLAUDE.md); an imported PDF's hidden text layer is a third
+(``Word.layer_disagree``, measured separately — ``pipeline/pdf_text_layer.py``).
+Stage 05's EasyOCR second opinion sets ``Word.engine_disagree`` (a Tesseract
+non-word that EasyOCR replaced with a valid dictionary word — see
 ``pipeline/second_opinion.py`` + RESULTS.md 2026-07-18); this stage ORs that flag
 into ``uncertain``, independent of confidence. The trigger is inert on a page only
 when Stage 05 ran no second opinion (language not enabled, or its per-language
@@ -85,7 +87,7 @@ from pipeline import stage04_layout as S4
 from pipeline import stage05_ocr as S5
 
 STAGE = "stage06_uncertainty"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -183,8 +185,11 @@ def is_uncertain(w: Word, threshold: float) -> bool:
     surfaces confidently-wrong words the confidence threshold alone would keep.
     Before EasyOCR ran for the page's language ``engine_disagree`` is simply False,
     so the term is inert on Tesseract-only pages rather than a dead seam.
+    ``layer_disagree`` is the same kind of trigger from an imported PDF's own
+    hidden text (Stage 05, ``pipeline/pdf_text_layer.py``); False on every phone
+    page. Neither can ever make a word LESS uncertain.
     """
-    return w.conf < threshold or w.engine_disagree
+    return w.conf < threshold or w.engine_disagree or w.layer_disagree
 
 
 def decide(w: Word, threshold: float, mode: str) -> WordDecision:
@@ -381,6 +386,14 @@ def run(page_dir: Path, cfg: dict, mode: str | None = None,
                 "opinion — language not enabled, or its per-language lexicon is "
                 "absent; see Stage 05 meta). The path is a wired, unit-tested seam, "
                 "inert on this page rather than a dead one.")
+
+    n_layer = sum(w.layer_disagree
+                  for pg in ocr.pages for blk in pg.blocks for w in blk.words)
+    if n_layer:
+        warnings.append(
+            f"PDF text-layer trigger LIVE: {n_layer} word(s) carry layer_disagree "
+            f"(the imported PDF's hidden text reads them differently; Stage 05 "
+            f"meta) — each is uncertain regardless of its Tesseract confidence.")
 
     # Patch mode needs pixels + a clean patches/ dir; other modes touch neither.
     out_dir = page_dir / "06_uncertain"

@@ -1,0 +1,34 @@
+  D1 p45: layer 479 words, coverage 0.973, 6 sites, shipped rule marks (6 words)
+  D1 p75: layer 490 words, coverage 0.996, 0 sites, shipped rule marks (0 words)
+  D1 p104: layer 175 words, coverage 0.500, 0 sites, shipped rule marks (0 words)
+D1: sites 6/6 kept 6/6 flagged 0/0 other 5/5 coverage [0.973, 0.996, 0.5] vs [0.973, 0.996, 0.5] -> SAME
+  D2 p87: layer 277 words, coverage 0.848, 8 sites, shipped rule marks (8 words)
+  D2 p143: layer 209 words, coverage 0.976, 2 sites, shipped rule marks (2 words)
+  D2 p201: layer 337 words, coverage 0.429, 8 sites, shipped rule marks (8 words)
+D2: sites 18/18 kept 12/12 flagged 6/6 other 20/20 coverage [0.848, 0.976, 0.429] vs [0.848, 0.976, 0.429] -> SAME
+  D3 p4: layer 856 words, coverage 0.667, 6 sites, shipped rule marks (6 words)
+  D3 p5: layer 688 words, coverage 0.881, 12 sites, shipped rule marks (12 words)
+  D3 p7: layer 854 words, coverage 0.670, 3 sites, shipped rule marks (3 words)
+D3: sites 21/21 kept 14/14 flagged 7/7 other 31/31 coverage [0.667, 0.881, 0.67] vs [0.667, 0.881, 0.67] -> SAME
+  D4 p251: layer 245 words, coverage 0.922, 2 sites, shipped rule marks (2 words)
+  D4 p419: layer 150 words, coverage 0.774, 2 sites, shipped rule marks (2 words)
+  D4 p585: layer 307 words, coverage 0.862, 8 sites, shipped rule marks (8 words)
+D4: sites 12/12 kept 9/9 flagged 3/3 other 18/18 coverage [0.922, 0.774, 0.862] vs [0.922, 0.774, 0.862] -> SAME
+  D5 p12: layer 155 words, coverage 1.000, 0 sites, shipped rule marks (0 words)
+  D5 p19: layer 188 words, coverage 0.832, 0 sites, shipped rule marks (0 words)
+  D5 p26: layer 235 words, coverage 0.949, 2 sites, shipped rule marks (2 words)
+D5: sites 2/2 kept 0/0 flagged 2/2 other 11/11 coverage [1.0, 0.832, 0.949] vs [1.0, 0.832, 0.949] -> SAME
+  D6 p3: layer 1055 words, coverage 0.634, 24 sites, shipped rule marks (24 words)
+  D6 p4: layer 925 words, coverage 0.548, 12 sites, shipped rule marks (12 words)
+  D6 p5: layer 684 words, coverage 0.766, 9 sites, shipped rule marks (9 words)
+D6: sites 45/45 kept 26/26 flagged 19/19 other 43/43 coverage [0.634, 0.548, 0.766] vs [0.634, 0.548, 0.766] -> SAME
+  D7 p1: layer 444 words, coverage 0.995, 1 sites, shipped rule marks (1 words)
+  D7 p2: layer 419 words, coverage 1.000, 0 sites, shipped rule marks (0 words)
+D7: sites 1/1 kept 0/0 flagged 1/1 other 0/0 coverage [0.995, 1.0] vs [0.995, 1.0] -> SAME
+  C p1: layer 242 words, coverage 1.000, 0 sites, shipped rule marks (0 words)
+  C p2: layer 148 words, coverage 0.973, 4 sites, shipped rule ABSTAINS: text layer has 148 words (< 150, the measured floor)
+  C p3: layer 268 words, coverage 0.985, 0 sites, shipped rule marks (0 words)
+  C p4: layer 74 words, coverage 1.000, 0 sites, shipped rule ABSTAINS: text layer has 74 words (< 150, the measured floor)
+C: sites 4/4 kept 0/0 flagged 4/4 other 1/1 coverage [1.0, 0.973, 0.985, 1.0] vs [1.0, 0.973, 0.985, 1.0] -> SAME
+labelled sites: key 71, replay 71, only in key 0, only in replay 0
+REPRODUCED EXACTLY

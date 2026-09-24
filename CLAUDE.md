@@ -201,7 +201,20 @@ spine search and no book detection (an operator's `book_box.json` still wins);
 `spread`/`detect`, a corrupt file, or no file run the normal path unchanged. The
 detector is skipped on a single page because it was only ever measured on
 spreads — the cost is that a single page *photographed* on a surface keeps the
-surface unless a box is drawn.
+surface unless a box is drawn. The file also carries `"origin": "pdf_import"` on
+every imported page (whoever chose the layout), passed through to split.json as
+`layout_origin`.
+
+**PDF-text-layer exception (Stage 05).** `<page_dir>/pdf_text_layer.json` is
+**input** of the same kind: the importer saves the PDF page's hidden OCR words
+there (the console deletes the uploaded PDF afterwards), no stage writes it, and
+Stage 05 reads it (`pipeline/pdf_text_layer.py`). Where the layer and Tesseract
+disagree one word for one word, the word gets `Word.layer_disagree`, which Stage
+06 ORs into `uncertain` like `engine_disagree`. It only ever ADDS a marker: the
+layer never supplies text or confidence, its reading is not stored, and
+agreement clears nothing (23 % of agreed flagged words were still wrong). English
+only, a layer of ≥ 150 words, alignment coverage ≥ 0.42 — the edges of what was
+measured (RESULTS 2026-09-24), not tuned values.
 
 ### Job folder layout
 

@@ -1118,3 +1118,6 @@ rules for it:
   close-ups (zero words from Tesseract on a crisp crop), so the untested next
   steps are flattening close-ups first or a model reader. Reference text typed
   by Claude; owner offered a spot check. RESULTS 2026-10-21.
+- Correction: the text test read 17 distinct close-ups (19 close-up × page
+  pairings), not 19 close-ups; all worse. Reference text cross-checked against
+  the whole-spread reading's 37 disagreements: no slip found. RESULTS 2026-10-21.

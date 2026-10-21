@@ -9872,3 +9872,18 @@ reader, is untested. Also: the flattened whole-spread photo already reads body
 text at 2.5–3 % CER here, so the headroom on plain body text is small.
 
 n = 1 spread, one book, one session.
+
+**Correction and additions to the row above (same day).** (1) "every one of
+the 19" counts close-up × page pairings (9 on p. 157 + 10 on p. 156); frames 05
+and 15 appear on both pages, so **17 distinct close-ups** were read, in 19
+pairings, all worse (frames 03 and 07 gave no segment). (2) The per-close-up
+figures are written *anchor first, close-up second*: frame_01 anchor 0.50 % vs
+close-up 2.81 %, frame_11 2.34 % vs 4.06 %, frame_19 2.19 % vs 14.86 %.
+(3) Robustness: frame_02's empty read contributes 1247 of 1247 characters;
+without it p. 157's close-ups are still 41.7 % against the anchor's 2.46 %.
+(4) Reference check: all 37 word-level places where the whole-spread reading
+and the reference disagree were listed; the two where the reader's version was
+plausible ("162-163" vs "162-165", "countersamps" vs "counterstamps") were
+checked against frame_18 at full size and the reference is right. The rest are
+plain misreads ("whonty", "JuabdlF", "arculation"). No reference slip found;
+the owner is still offered the list.

@@ -264,7 +264,8 @@ the placement Phase 0 already has (within about a word). Pixel-exact stitching
 is then needed only for pictures larger than one close-up. Test on the sweep
 below, against the single-photo read, with a text diff.
 **Tested 2026-10-21 (owner approved the plan; RESULTS same day): REFUSED as
-built.** On pp. 156–157, every one of 19 full-size close-ups read its text
+built.** On pp. 156–157, every one of 17 full-size close-ups (19 close-up × page
+pairings) read its text
 worse than the flattened whole-spread photo (anchor 2.5–3 % CER, close-ups
 ~45–50 % on the same part-lines). The reader is the reason, not the pixels:
 Tesseract finds no text at all on a crisp, unflattened close-up crop with its

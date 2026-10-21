@@ -316,6 +316,17 @@ local model reads a close-up of a panel at 0.8 % word error vs 5.7 % from the
 page crop of the same 11 panels (shrunk close-ups, cut to the block). Where the text is
 lost, a close-up aimed at the block plus a model reader is the lever; blocked
 on the flag (P2a), not on reading.
+**Also open — placing the reading on its block.** That 0.8 % was measured on
+cuts that hold exactly the block, and 8 of the 11 panel cuts were drawn by hand
+because automatic cutting failed its likeness check (panels at the page edge,
+plain orange backgrounds; SIFT finds too little there, and the flattened page
+bends away from the raw photo near the edges). What works automatically is
+coarse: whole close-up against whole page found the right close-up for 28/28
+blocks. What fails is the tight cut, and an uncut close-up carries neighbours'
+text (the first uncut try on page_017 took in the next panel). Any pipeline use
+needs either a cut that passes its check, or the model's reading trimmed to the
+block's text by alignment with the page-crop reading — untested, and itself a
+place where text could be lost or doubled.
 
 **BLOCKED ON DATA:** a data famine, not a refusal. The sweep capture mode on
 the phone (M7, 2026-08-31, unverified on a device) exists to feed it. **Next

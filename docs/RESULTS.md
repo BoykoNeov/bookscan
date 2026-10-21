@@ -9979,3 +9979,48 @@ afterwards. The page arm's 21 word errors on those panels read as genuine model
 errors ("Costa" for Casto, "agility" for aglets, "Salzsteg" for Salasteig), so
 the close-up verdict likely stands, but it rests partly on Claude's reading of
 the close-up.
+
+## 2026-10-21 — Why a sofa trim turns `it_geo_07`'s scale bars into figures: a knife-edge detector score, then the figure split (DIAGNOSIS, nothing changed)
+
+Answers the "not touched" clause of the thinness-floor row above. Not
+pre-registered: a diagnosis, n = 1 page of one book, no fix built or proposed
+for shipping. Probe and full output: `docs/data/scalebar_diag_20261021/`
+(`scalebar_probe.py` runs `it_geo_07` uncut, L41 and mirror — the rectangles
+of the reframing control — through the eval's own split and dewarp, then lists
+every DocLayout-YOLO box at conf ≥ 0.02 in the scale-bar band of the left
+subpage and runs `layout_page` with the shipped knobs and with `fig_rescue`,
+`fig_split`, `fig_vsplit` off one at a time).
+
+| framing | detector's "figure" box over both scale bars (257 × ~127 px) | figures emitted there, shipped | `fig_rescue` off | `fig_split` off | `fig_vsplit` off |
+|---|---|---|---|---|---|
+| uncut | conf **0.230** | none | none | none | none |
+| L41 | conf **0.285** | 257 × 12, 257 × 18 | same | one 257 × 127 | same as shipped |
+| mirror | conf **0.287** | 257 × 17, 257 × 17 | same | one 257 × 125 | same as shipped |
+
+**Mechanism, in two steps.**
+1. *Which door.* The detector scores the box holding both scale bars just under
+   the 0.25 floor uncut (0.230) and just over it after a 41 px trim of sofa
+   (0.285, 0.287). It is the **main pass**, not the sub-threshold rescue:
+   turning the rescue off changes nothing on the trimmed frames. Uncut, the
+   0.230 box is a rescue candidate and is turned away by the rescue's text
+   gate — the detector also boxes the same rectangle as plain text at 0.0897,
+   covering it entirely (gate: > 0.50) — which is the 2026-08-26 fix doing its
+   job. Above 0.25 that gate does not apply, so nothing questions the box.
+   The same knife edge as D1 (0.247 against 0.25), on the same page.
+2. *Why a sliver.* `fig_split` cuts the 127 px box at its background rows,
+   leaving the two printed bars (12 and 18 px tall; 9–14 % of the box's
+   area each, above `fig_min_subbox_frac` 0.06). In the committed L41 run the
+   label words go to the upper sliver (4 words) and one OCR fragment ("PA")
+   becomes an orphan block. With `fig_split` off the box stays one 257 × 127
+   figure. `fig_vsplit` plays no part.
+
+**Reading.** A framing change of a few tens of pixels moves a detector score
+across a hard floor, and every pass after it treats the box as certain. That
+is the general shape behind the reframing control's findings on this page.
+Note for any future fix: the unsplit box is **not** safe either —
+min(257/2038, 127/3000) = 0.042 sits just above the 0.04 thinness floor, so
+turning `fig_split` off here would hand the geometric pairing a figure it may
+pair. Candidate directions, none measured: apply the rescue's text gate to
+main-pass figures near the floor; or a band around `conf_thresh` instead of a
+hard cut. Either is a new pre-registration, graded against the framing floor
+that is running now (pre-registration `framing_floor_prereg_20261021.md`).

@@ -132,7 +132,12 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
    scale bars as 12–18 px figure slivers and the geometric arm paired C31 to
    one; the thinness floor now applies to that arm (`geom_min_fig_frac` 0.04),
    0 wrong over 20 graded runs, nothing else changed, owner's book identical.
-   Still open: why a trim turns a scale bar into a figure at all. **Next:**
+   **Why a trim makes the scale bars a figure — diagnosed 2026-10-21**
+   (RESULTS same day, n = 1 page): the detector scores the box over both bars
+   0.230 uncut and 0.285–0.287 trimmed, across the 0.25 floor, so the main
+   pass admits it without the rescue's text gate; `fig_split` then cuts it to
+   two 12–18 px bars. No fix built; the unsplit box (0.042) is barely above
+   the thinness floor, so turning the split off is not one. **Next:**
    before any layout gate can judge a crop, measure the spread a handful of
    model-free reframings produce on every block-GT row (the noise floor).
    n = 2 pages, one book.

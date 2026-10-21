@@ -1046,3 +1046,30 @@ rules for it:
   (close-up to close-up, where both carry the fine detail) rather than only
   against the anchor — the phone-panorama way — and use the anchor only to fix
   the whole set onto the page.
+
+### 2026-10-21 — Pictures from today's close-ups: the composer already stacks them; two refusals explained
+
+- Owner proposal (same day): whole-spread shot, then many tapped close-ups
+  (some at angles, for curvature), stack them with software or a local model,
+  then text and pictures through software + model. Answered: feasible if TEXT
+  is stacked as readings (read each close-up, merge the readings by rough
+  placement) rather than pixels — handheld photos of a curved page disagree by
+  up to a word inside one frame (P4), and no language model aligns pixels.
+  Pictures: from the best single close-up, or stitched from a few, which
+  already exists. Owner's answer to the plan pending.
+- Stage 07 assemble run on both of today's jobs. `figure_hires` (which already
+  COMPOSES a picture from several close-ups, mesh-refined) upgraded **7 of 15**
+  pictures on the sweep job, from 1–5 sources each, at 1.18–2.53×. By eye, on
+  the one coin upgrade checked (`page_003` block 2, two sources) the upgrade is
+  clearly sharper than the page crop enlarged; the other pair checked shows
+  only blank paper. The other five are not looked at; P7's focus question is
+  still open for them.
+- **0 of 6** on the first test job, including the 1x close-up with 14.5× the
+  detail. Per-candidate probe (not committed): the close-up held 75 % of the
+  coin (gate: the union must hold 90 %), and its likeness check scored 0.59
+  against the 0.60 gate. Suspected mechanism, unverified: the check warps the
+  close-up down to the crop's size without smoothing first, so a source that
+  resolves the halftone screen aliases into moiré and looks LESS like the soft
+  crop — the sharper the source, the likelier the refusal. Not changed.
+- Capture consequence: frame each picture whole in one close-up, or cover it
+  with a few overlapping ones.

@@ -220,6 +220,12 @@ DEFAULTS: dict[str, float] = {
     # numbered caption — is untouched, and no size floor can touch it: a merged
     # box is large. See docs/FIGURE_SEPARATION_SCOPE.md.
     "sole_min_fig_frac": 0.04,
+    # GEOMETRIC arm (arm 2): the same thinness test, at the same value, applied
+    # to the figures a caption may be paired to BY PROXIMITY. 0 = off. See
+    # docs/data/geom_thin_prereg_20261021.md: a 41 px sofa-only trim of it_geo_07
+    # makes Stage 04 emit a map's scale bars as 257x12 px FIGURE blocks between
+    # caption C31 and its diagram, and arm 2 paired C31 to the sliver.
+    "geom_min_fig_frac": 0.0,
 }
 
 # Detector types eligible for promotion to CAPTION by the textual parser.
@@ -634,9 +640,13 @@ def group_figures(views: Sequence[BlockView], page_h: int, lang: str = "ita",
             continue
         rest_caps.append(c)
     rest_figs = [f for f in figs if f.key not in set(g.pairs.values())]
+    # A sliver cannot be handed a caption by proximity (geom_min_fig_frac). It
+    # stays a figure, and stays in rest_figs for arm 3, which has its own floor.
+    geo_figs = [f for f in rest_figs
+                if not _too_thin(f, page_w, page_h, p["geom_min_fig_frac"])]
 
     geo_pairs, geo_why = _geometric_pairs(
-        rest_caps, rest_figs, page_h, p, page_w,
+        rest_caps, geo_figs, page_h, p, page_w,
         numbered=frozenset(g.caption_numbers))
     for cid, fid in geo_pairs.items():
         g.pairs[cid] = fid

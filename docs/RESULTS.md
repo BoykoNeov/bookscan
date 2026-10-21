@@ -10085,3 +10085,24 @@ one-pair or one-tau-step change on `it_geo_05`–`07` is inside the noise. Past
 RESULTS rows' layout deltas have not been re-read against it (P9, follow-on).
 
 n = three books, three surfaces; one photograph per row.
+
+**Corrections to the framing-floor row above (same day, after review; no
+measured number changes).** (1) *"The uncut framing is the best value of its
+row's range" is mostly a ceiling, not a finding.* Uncut segmentation is
+complete on all 8 rows (12/12, 22/22, 8/8, 10/10, 9/9, 7/7, 14/14, 30/30), and
+`it_geo_05`'s pairs are 2 of 2, so no trim could beat them. The only cell that
+tests the claim is `it_geo_06`'s pairs (5 of 6 uncut, 3–5 trimmed): one cell,
+which supports nothing about past uncut numbers being optimistic. Withdrawn.
+(2) *"A one-block, one-pair or one-tau-step change on `it_geo_05`–`07` is
+inside the noise" overstates the table.* The rule is per (row, statistic): on
+`it_geo_06` segmentation and text tau never moved, so a one-block loss there
+is **outside** the floor; on `it_geo_05` text tau moved on the right subpage
+only. Read each cell off `summary.json`. (3) The margin strips the
+pre-registration placed in `W:\temp\claude\framing_floor` are now committed in
+`docs/data/framing_floor_20261021/margins/` (`margins.jpg` = the full-resolution strips with 4/41/60/100 px rulers).
+
+**Verification clause to the scale-bar row (same day).** Its "turned away by
+the rescue's text gate" was inferred; now computed
+(`scalebar_diag_20261021/gate_check.py`, uncut left subpage): the 0.230 box has
+claimed cover 0.000 (gate > 0.20, passes) and text cover 1.000 (gate > 0.50,
+refuses). The text gate is what refuses it, as written.

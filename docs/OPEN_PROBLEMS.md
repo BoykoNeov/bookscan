@@ -478,11 +478,10 @@ It needs a Bulgarian page carrying an English/other-language block.
   2026-10-21, reframing control). So past single-framing changes of one block,
   one pair or a tau step on these pages may be framing noise. **Measured on
   all 8 rows 2026-10-21** (RESULTS, framing floor): per-row ranges are in
-  `data/framing_floor_20261021/summary.json`; on segmentation and correct
-  pairs the uncut framing is never beaten by a trim, so past uncut numbers may
-  be optimistic (observed, not tested). Not yet done: re-reading earlier rows'
-  layout deltas against those ranges. Until then, a one-block, one-pair or
-  one-tau-step change on `it_geo_05`–`07` is inside the noise.
+  `data/framing_floor_20261021/summary.json`. Read them per row and per
+  statistic: e.g. on `it_geo_06` pairs and tau+figures move but segmentation
+  and text tau never do, so a lost block there is outside the floor. Not yet
+  done: re-reading earlier rows' layout deltas against those ranges.
 
 ---
 

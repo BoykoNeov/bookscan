@@ -1162,3 +1162,8 @@ rules for it:
   below it. Flagged "check" in the editor; cause in the plate reader not
   examined.
 - RESULTS 2026-10-21 (two rows); OPEN_PROBLEMS P1 item 8 and P9 updated.
+- Correction (same day, after review): "the uncut framing is never beaten" is
+  a ceiling — uncut segmentation is complete on all 8 rows — and is withdrawn;
+  the floor is read per row and per statistic, not as "one block on
+  `it_geo_05`–`07` is noise" (on `it_geo_06` a lost block is outside it). The
+  scale-bar row's text-gate claim is now computed, not inferred (holds).

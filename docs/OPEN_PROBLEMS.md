@@ -152,10 +152,46 @@ paragraph; `table_grid` now fixes the rows).
 different garbage, not better. The panels are unreadable because of the
 **pixels**, and on the owner's book the pixels are bad because of **P1**.
 
-**Next experiment:** none independent of P1. After the crop is right on spreads
-1–4, re-run Stage 05 and count how many of the 14 clear the `unreadable_panel`
-floor. If they still do not, the question becomes capture (a close-up framed on
-the panel), which is P5.
+**Measured 2026-10-21 (RESULTS, pre-registered): the pixels were never the
+whole problem — the reader was.** The local model (qwen3.6:27b) reads the 14
+panels at 5.2 % word error from the shipped page crops, Tesseract at 79 %; from
+the (shrunk) close-ups that exist for 11 of them, 0.8 %. It invents nothing on
+sofa or photographs. **It cannot ship yet:** it reads a printed ¾ as ¼ (even on
+a crisp close-up), and no second opinion tested flags that — Tesseract flags
+78 % of the correct words, a second model or a second photo shares the error.
+See "Model text: the mistake flag" below.
+
+**Next experiment:** the flag, not the reading (below). The P1 re-run is no
+longer the gate for these blocks.
+
+---
+
+## P2a. Model text: the mistake flag — the owner's condition, unmet
+
+**Why it matters.** The model reads the blocks the book loses (P2, P6) an order
+of magnitude better than Tesseract, but model text may reach a PDF only once
+something flags its mistakes (owner, 2026-10-21). Its worst mistake is fluent
+and numeric: a printed **¾ read as ¼** (8 of 10 in the tables; also on a crisp
+close-up), the kind of error a reader of a route table cannot see.
+
+**Measured 2026-10-21 (RESULTS, pre-registered bar: catch ≥ 0.90, every wrong
+number caught, false alarm ≤ 0.25) — no second opinion passes:**
+- **Tesseract disagreement** (the first candidate): catches everything and
+  marks 71–78 % of the *correct* words. On these blocks it is noise.
+- **A second model on the same pixels** (gemma4:31b): false alarm 2–3 %, but
+  catches 3 of 8 wrong table numbers — it makes the same ¾→¼ misreading.
+- **The same model on a second photograph** (close-up vs page): false alarm
+  1 %, catch 95 % of wrong words, but 1 of 2 wrong numbers — the glyph bias
+  survives a sharper photo.
+
+**Not yet tested (each needs a new pre-registration, on blocks this test did
+not read, because the ¾ pattern was seen here):** a number-specific check —
+re-asking the model about each fraction or number token on a tight crop; a
+rule that every fraction is flagged (cheap, would catch all 9 seen, cost
+unknown); Tesseract's own per-digit confidence on number tokens only, where it
+may still be informative. The first two need the second book or a fresh set of
+tables from the owner's book; this test's 28 blocks are now spent for choosing
+a flag.
 
 ---
 
@@ -274,6 +310,11 @@ nine-tenths of one printed line, so any merge pieces lines together.
 **Next, if pursued:** flatten each close-up before reading it, or let a local
 model read it (owner allowed, flag condition). Either is a new
 pre-registration; the plain-body-text headroom is small (≈ 3 % CER).
+**The model-reader half is answered for panels (2026-10-21, RESULTS):** the
+local model reads a close-up of a panel at 0.8 % word error vs 5.2 % from the
+page crop (11 panels, shrunk close-ups, cut to the block). Where the text is
+lost, a close-up aimed at the block plus a model reader is the lever; blocked
+on the flag (P2a), not on reading.
 
 **BLOCKED ON DATA:** a data famine, not a refusal. The sweep capture mode on
 the phone (M7, 2026-08-31, unverified on a device) exists to feed it. **Next
@@ -326,6 +367,13 @@ twice. Stage 01 no longer blends close-ups at all (v0.4.0, RESULTS 2026-10-21).
 text from the page pass). **Honest limit, pre-registered:** `2,2 → 22`,
 `4½ → 4Y`, `170 → I70` survive a perfect grid, so whether the two route tables
 beat their photographs is still the owner's call by eye.
+
+**A model reads the owner's tables (2026-10-21, RESULTS):** qwen3.6:27b on the
+shipped page crops, one row per line: 1.6 % word error on 6 tables (1071 words)
+against Tesseract's 71.5 %, all rows in the right order. All 8 of its wrong
+numbers are a printed ¾ read as ¼. None of the 6 tables has a close-up, so
+"aim a close-up at the table" is untested — it needs a shoot
+(`plans/closeup-shotlist-tables-panels.md`). Same flag blocker as P2.
 
 **Known miss:** `it_geo_07` #5, a real 3-column chart read well, refused because
 the page pass splits a word across the printed rule. Two column fixes swept

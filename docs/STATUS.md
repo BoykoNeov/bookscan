@@ -1121,3 +1121,22 @@ rules for it:
 - Correction: the text test read 17 distinct close-ups (19 close-up × page
   pairings), not 19 close-ups; all worse. Reference text cross-checked against
   the whole-spread reading's 37 disagreements: no slip found. RESULTS 2026-10-21.
+
+### 2026-10-21 — The local model reads the tables and panels; the mistake flag is the open half
+
+- Owner's go-ahead: aim close-ups at the tables and panels and read them with
+  the local model plus a disagreement flag. Pre-registered (ad95023) with the
+  reference text, crops and scorer before any reading.
+- Close-up census on the owner's book: none of the 6 tables has a close-up;
+  11 of 14 panels do (shrunk on the phone). A per-block picture search could not
+  find even the whole-spread photo for 11 of 28 blocks, so the census matches
+  whole frames to the whole page instead (control 28/28).
+- Reading: qwen3.6:27b reads the tables at 1.6 % word error and the panels at
+  5.2 % from the shipped page crops (Tesseract 71.5 % / 79 %); 0.8 % from the
+  close-ups; nothing invented on sofa or photographs.
+- The defect that blocks shipping: a printed ¾ read as ¼ (8 of 10 in the
+  tables, and on a crisp close-up). No second opinion passes the bar:
+  Tesseract flags 71–78 % of the correct words; a second model and a second
+  photo stay quiet but share the error. New register entry P2a.
+- Shot list for the owner: `plans/closeup-shotlist-tables-panels.md`.
+  RESULTS 2026-10-21.

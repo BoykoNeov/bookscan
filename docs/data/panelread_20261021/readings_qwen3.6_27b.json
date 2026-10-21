@@ -1,0 +1,327 @@
+{
+ "page_003__right__b011": {
+  "page": {
+   "text": "F Sellagruppe/Langkofelgruppe\nF1 Pisciadù Klettersteig | 1,6 | 4½ Std. | C | 650 Hm | 530 Hm | 214\nF2 Boëseekofel Klettersteig | 1,9 | 3½ Std. | C/D | 400 Hm | 200 Hm | 218\nF2 Boëseekofel Normalweg | 1,2 | 2½ Std. | A/B | 715 Hm | 300 Hm | 218\nF3 Vallon Klettersteig | 1,6 | 4¼ Std. | C | 650 Hm | 100 Hm | 222\nF3 Lichtenfelserweg | 1,5 | 4¼ Std. | A | 650 Hm | 300 Hm | 222\nF4 Via attrezzata Cesare Piazzetta | 2,2 | 5½ Std. | D, I- | 950 Hm | 320 Hm | 226\nF5 Pöbnecker Klettersteig | 2,6 | 6½ Std. | C/D, 2 | 1040 Hm | 660 Hm | 230\nF6 Rodella Klettersteig | 1,5 | 1¼ Std. | C/D | 340 Hm | 115 Hm | 234\nF7 Furcela de Saslonch Klettersteig | 1,5 | 2½ Std. | C | 535 Hm | 150 Hm | 236\nF8 Oskar Schuster Steig | 2,3 | 6½ Std. | B/C, I+ | 1200 Hm | 380 Hm | 238\nSentiero attrezzato Pian de Siela | 1,5 | 5¾ Std. | B | 930 Hm | 100 Hm | App",
+   "seconds": 20.6,
+   "prompt_eval_count": 778,
+   "eval_count": 488,
+   "done_reason": "stop"
+  }
+ },
+ "page_003__right__b023": {
+  "page": {
+   "text": "II Latemartürme-Klettersteig | 1,3 | 6 Std. | C | 960 Hm | 160 Hm | 276\nI2 Sentiero attrezzato Attilio Sieff | 1,2 | 3¼ Std. | B | 550 Hm | 80 Hm | 280",
+   "seconds": 1.0,
+   "prompt_eval_count": 249,
+   "eval_count": 85,
+   "done_reason": "stop"
+  }
+ },
+ "page_004__right__b014": {
+  "page": {
+   "text": "P Brentagruppe\nP1 Sentiero Gustavo Vidi | 1,4 | 3 Std. | A/B | 400 Hm | 100 Hm | 410\nP2 Sentiero delle Palete | 2,0 | 8 Std. | A/B | 400 Hm | 100 Hm | 412\nP3 Sentiero Claudio Costanzi | 2,8 | 10½ Std. | B/C, I | 1500 Hm | 1000 Hm | 414\nP4 Sentiero di Val Gelada | 1,7 | 6½ Std. | B/C | 420 Hm | 100 Hm | 417\nP5 Sentiero SOSAT | 1,6 | 3 Std. | B/C | 300 Hm | 160 Hm | 418\nP6 Sentiero Osvaldo Orsi | 1,5 | 5½ Std. | A/B, I- | 1140 Hm | 120 Hm | 421\nP7 Sentiero attrezzato Felice Spellini | 1,8 | 4-5 Std. | C | 450 Hm | 280 Hm | 422\nP8 Sentiero Alfredo Benini | 1,7 | 4 Std. | B | 650 Hm | 360 Hm | 424\nP9 Sentiero Bocchette Alte (O. Detassis) | 2,6 | 6 Std. | C | 860 Hm | 490 Hm | 428\nP10 Via delle Bocchette Centrale | 2,3 | 4-5 Std. | B | 820 Hm | 150 Hm | 432\nP11 Sent. Brentari/Sent. del Cege | 2,6 | 5-7 Std. | C | 750 Hm | 200 Hm | 436\nP12 Via ferrata Ettore Castiglioni | 1,6 | 2½ Std. | C | 450 Hm | 160 Hm | 440\nP13 Ferrata Artpinistico delle Niere | 1,3 | 2 Std. | B/C | 230 Hm | 200 Hm | 442\nP14 Via ferrata delle Aquile | 2,0 | 2¼ Std. | C/D, Var. E | 200 Hm | 150 Hm | 446\nSentiero dei Fiori - Adamello | 2,2 | 5¼ Std. | A/B, I- (B/C) | 760 Hm | 250 Hm | App\nFerrata Corna dell Capre - Iseo See | 2,0 | 2 Std. | C/D | 210 Hm | 200 Hm | App\nFerrata Corna del Bene - Iseo See | 2,0 | 4¼ Std. | C/D | 1010 Hm | 160 Hm | App",
+   "seconds": 5.5,
+   "prompt_eval_count": 1092,
+   "eval_count": 740,
+   "done_reason": "stop"
+  }
+ },
+ "page_004__right__b016": {
+  "page": {
+   "text": "Gardaseeberge\nQ1 Via ferrata Rino Pisetta | 2,5 | 5 Std. | E | 715 Hm | 430 Hm | 452\nQ2 Via ferrata Ernesto Che Guevara | 2,6 | 7½ Std. | C, I- | 1400 Hm | 1200 Hm | 456\nQ3 Via ferrata Giulio Segata | 1,5 | 3½ Std. | E | 600 Hm | 80 Hm | 460\nQ4 Via ferrata Rio Sallagoni | 1,5 | 2 Std. | C | 200 Hm | 180 Hm | 462\nQ5 Sentiero attrezzato Colodri | 1,2 | 2¼ Std. | B/C | 310 Hm | 190 Hm | 466\nQ6 Sentiero Scaloni /Sent. dell' Anglone | 1,1 | 3½ Std. | A/B | 390 Hm | 250 Hm | 469\nQ7 Via dell' Amicizia | 2,0 | 6 Std. | B/C, I- | 1220 Hm | 640 Hm | 470",
+   "seconds": 2.5,
+   "prompt_eval_count": 532,
+   "eval_count": 314,
+   "done_reason": "stop"
+  }
+ },
+ "page_005__left__b001": {
+  "page": {
+   "text": "Tourenübersicht Klettersteige\nDiff.\nHm\nSeite/\nPage\nQ Gardaseeberge\nQ8 Via ferrata Susati | 1,2 | 5¼ Std. | B | 400 Hm | 150 Hm | 474\nQ8 Via ferrata Foletti | 1,0 | 5¼ Std. | B | 100 Hm | 60 Hm | 474\nQ8 Sent. dei Camminamenti | 1,0 | 5¼ Std. | A/B | 850 Hm | 200 Hm | 474\nQ8 Sent. delle Lasté | 1,0 | 5 Std. | A/B | 400 Hm | 130 Hm | 474\nQ9 Sentiero Contrabbandieri | 2,5 | 3 Std. | C/D | 450 Hm | 100 Hm | 478\nQ10 Ferrata Signora delle Acque | 1,4 | 2½ Std. | C | 390 Hm | 140 Hm | 482\nQ11 Ferrata Ottorino Marangoni | 1,8 | 3½ Std. | C/D, 2+ | 510 Hm | 210 Hm | 486\nQ12 Via ferrata Gerardo Sega | 2,0 | 3¼ Std. | B/C, I | 700 Hm | 360 Hm | 490\nQ13 Ferrata delle Taccole | 2,2 | 3¾ Std. | C/D | 860 Hm | 135 Hm | 494\nQ14 Ferrata Sasse | 1,5 | 2½ Std. | B/C | 250 Hm | 150 Hm | 496\nQ15 Ferrata Fregio und Ginestre | 1,7 | 1¼ Std. | D | 270 Hm | 140 Hm | 499\nQ16 Ferrata Crench | 1,4 | 2 Std. | C/D | 300 Hm | 180 Hm | 502\nQ17 Ferrata Casto - Klettersteigpark | 1,3 | 3¼ Std. | B bis F | 200 Hm | 70 Hm | 504\nQ18 Ferrata Caspai | 2,2 | 4¼ Std. | D/E | 720 Hm | 360 Hm | 506\nQ19 Ferrata Nasego | 2,0 | 3½ Std. | D | 580 Hm | 430 Hm | 509\nFerrata della Spigolo Bandiera | 1,4 | 4 Std. | C/D | 710 Hm | 60 Hm | App",
+   "seconds": 5.2,
+   "prompt_eval_count": 1168,
+   "eval_count": 699,
+   "done_reason": "stop"
+  }
+ },
+ "page_016__right__b014": {
+  "page": {
+   "text": "Deutsch | English | Italiano\nKuppe | notch | calotta\nLager | camp | campo\nLampe | lamp | lampada\nLandkarte | map | carta topografica\nLawine | avalanche | valanga\nleicht | easy | facile\nlinks | on the left | sulla sinistra\nmarkiert | marked | segnato\nMarkierung | mark | marcatura\nmäßig schwierig | moderate | poco difficile\nMulde | basin | conca\nMure | mudflow | frana di dispredezione\nNacht | night | notte\nNadel | needle | ago, guglia\nnass | wet | bagnato\nNebel | fog, mist | nebbia\nNische | niche | nicchia\nNorden | north | nord\nNotausstieg | escape | via di fuga\nNotsignal | signal of distress | segnale di soccorso\nOrientierung | orientation | orientamento\nOsten | east | est\nparallel | parallel | parallelo\nPass | pass | passo, colle\nPfad | path | sentiero\nPfeiler | rock pillar | pilastro\nPickel | ice axe | piccozza\nPlatte | slab | placca\nQuergang, Querung | traverse | traversata\nRampe | ramp | rampa\nRand | edge | bordo\nRandkluft | rimaye, schrund | crepaccio terminale\nrechts | to the right | sulla destra\nRegen | rain | pioggia\nRichtung | direction | direzione\nRinne | channel, groove, gutter | canale, canalone, gola\nRiss | crack | fessura\nRoute | route | via\nSattel | saddle, col | sella\nScharte | gap | forcella\nSchi | ski | sci\nSchlift | ski lift | sciovia\nSchlucht | gorge, ravine | gola\nSchlüsselstelle | key to climb | punto chiave\nSchnee | snow | neve\nSchneefeld | snow field | superficie innevata\nSchrofen | broken rocks | gradoni\nSchulter | shoulder | spalla\nSchutt | scree | detrito\nSchuttrinne | gully filled with scree | canalone detritico\nSchutzhütte | shelter, mountain hut | rifugio, capanna\nschwierig | difficult | difficile\nSchwierigkeit | difficulty, hardness | difficoltà\nSchwierigkeitsgrade | Grade of difficulty | scala delle difficoltà\nSee | lake | lago\nsehr schwierig | very difficult | molto difficile\nSeil | rope | corda\nSeilbahn | cable-car | funivia\nSelbstsicherung | self-securing | autosicurezza\nsenkrecht | vertical | verticale\nSessellift | chairlift | seggiovia\nSicherung | securing | assicurazione\nSommer | summer | estate\nSpalt, Riss | split, fissure | fessura\nSpalte | crevasse | crepaccio\nStahlseil | iron rope | cavo (metallico)\nSteig | path | sentiero\nSteigeisen | crampons | ramponi\nSteigung | gradient | salita\nsteil | steep | ripido\nStein | stone | sasso, pietra\nSteinmann | cairn | ometto di pietre\nSteinschlag | rockfall | caduta sassi\nStirnlampe | head lamp | lampada frontale\nSüden | south | sud\nTal | valley | valle\nTour | trip, tour | via, giro\nTunnel | tunnel | galleria\nÜberhang | overhang | strapiombo\nÜberschreitung | crossing | traversata",
+   "seconds": 7.2,
+   "prompt_eval_count": 1082,
+   "eval_count": 774,
+   "done_reason": "stop"
+  }
+ },
+ "page_016__right__b013": {
+  "page": {
+   "text": "cima\nerba\ncresta\ncinghia\nchiodo\ncasco\ndislivello\ncaverna, grotta\nelicottero\nrifugio\npasso\ncamino\ncresta\nspigolo\ncirco\ncarta geografica\nforra\nfittone/fittoni\nblocco incastrato\nimbragatura\narrampicare\nvia ferrata\nmoschettone per via ferrata",
+   "seconds": 2.7,
+   "prompt_eval_count": 223,
+   "eval_count": 97,
+   "done_reason": "stop"
+  }
+ },
+ "page_017__left__b002": {
+  "page": {
+   "text": "The total difficulty of\na route consists of the\nfixed-rope-route dif-\nficulty, the rock climbing\ndifficulty (if there are un-\nsecured sections) and the\ndemand of the route. An\nalpine route at 3000 me-\nters with a long approach\nand descent and an ele-\nvation gain of 1000m is\nmuch more difficult than\nan E grades sport climb\n(i.e. Costa Ferrata Park)\nin the valley.",
+   "seconds": 1.2,
+   "prompt_eval_count": 244,
+   "eval_count": 107,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "The total difficulty of\na route consists of the\nfixed-rope-route dif-\nficulty, the rock climbing\ndifficulty (if there are un-\nsecured sections) and the\ndemand of the route. An\nalpine route at 3000 me-\nters with a long approach\nand descent and an ele-\nvation gain of 1000m is\nmuch more difficult than\nan E grades sport climb\n(i.e. Casto Ferrata Park)\nin the valley.",
+   "seconds": 1.1,
+   "prompt_eval_count": 353,
+   "eval_count": 108,
+   "done_reason": "stop"
+  }
+ },
+ "page_017__left__b007": {
+  "page": {
+   "text": "English Version\nGrade of difficulty\nup securing at exposed\nsections and some very\nshort ladders. Only inex-\nperienced mountaineers\nneed fixed rope equipment\nfor self-securing.\nB (moderate): Stee-\nper rock sections with\nropes, agility and tricky\nbridges. Also experienced\nclimbers start to belay\nthemselves. An additional\nrope for kids and absolute\nbeginners is needed.\nC (difficult): Verti-\ncal rock sections, even\nsome small overhangs.\nLess agility and cramps.\nBridges require more arm",
+   "seconds": 1.4,
+   "prompt_eval_count": 270,
+   "eval_count": 133,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "English Version\nGrade of difficulty\nope securing at exposed\nsections and some very\nshort ladders. Only inex-\nperienced mountaineers\nneed fixed rope equipment\nfor self-securing.\nB (moderate): Stee-\nper rock sections with\nropes, aglets und tricky\nbridges. Also experienced\nclimbers start to belay\nthemselves. An additional\nrope for kids and absolute\nbeginners is needed.\nC (difficult): Verti-\ncal rock sections, even\nsome small overhangs.\nLess aglets and crampons.\nBridges require more arm",
+   "seconds": 1.5,
+   "prompt_eval_count": 482,
+   "eval_count": 135,
+   "done_reason": "stop"
+  }
+ },
+ "page_018__left__b004": {
+  "page": {
+   "text": "1: Hands needed to go up.\nFor beginners rope belay\nrequired.\n2: Rock climbing starts.\nEverybody is belaying.\n3: Vertical exposed rock.\nHooks for additional pro-\ntection needed.",
+   "seconds": 0.7,
+   "prompt_eval_count": 186,
+   "eval_count": 48,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "1: Hands needed to go up.\nFor beginners rope belay\nrequired.\n2: Rock climbing starts.\nEverybody is belaying.\n3: Vertical exposed rock.\nHooks for additional pro-\ntection needed.",
+   "seconds": 0.7,
+   "prompt_eval_count": 275,
+   "eval_count": 48,
+   "done_reason": "stop"
+  }
+ },
+ "page_018__left__b009": {
+  "page": {
+   "text": "Beside the technical dif-\nficulties (A-G and clim-\nbing grades) this grade\n(1-3) shows the total\nseriousness of the climb,\nconsisting of the route\nlength, alpine surround-\ning (snow, ice, exposure\nand altitude), orientation\nand missing emergency\nexits.",
+   "seconds": 0.9,
+   "prompt_eval_count": 204,
+   "eval_count": 73,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Beside the technical dif-\nficulties (A-G and clim-\nbing grades) this grade\n(1-3) shows the total\nseriousness of the climb,\nconsisting of the route\nlength, alpine surround-\ning (snow, ice, exposure\nand altitude), orientation\nand missing emergency\nexits.",
+   "seconds": 0.9,
+   "prompt_eval_count": 288,
+   "eval_count": 73,
+   "done_reason": "stop"
+  }
+ },
+ "page_019__left__b005": {
+  "page": {
+   "text": "Cortina\nd'Ampezzo\nWeb: www.dolomiti.org\nFremdenverkehrsamt\nCortina\nCorso Italia\nTel. +39 0436 869086\nEmail: infopoint@\ncortinamarketing.it",
+   "seconds": 0.8,
+   "prompt_eval_count": 192,
+   "eval_count": 66,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Cortina\nd'Ampezzo\nWeb: www.dolomiti.org\nFremdenverkehrsamt\nCortina\nCorso Italia\nTel. +39 0436 869086\nEmail: infopoint@\ncortinamarketing.it",
+   "seconds": 0.8,
+   "prompt_eval_count": 242,
+   "eval_count": 66,
+   "done_reason": "stop"
+  }
+ },
+ "page_020__left__b001": {
+  "page": {
+   "text": "Gehzeiten/Time\nKreuzberg, - Einstieg: 1 Std.\nEinstieg - Ausstieg: 2 Std.\nAbstieg Arzalpasscharte\n(Stollen): 2 Std. Abstieg\nSalzsteg: 1½ Std.",
+   "seconds": 0.8,
+   "prompt_eval_count": 157,
+   "eval_count": 61,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Kreuzbergp. - Einstieg: 1 Std.\nEinstieg - Ausstieg: 2 Std.\nAbstieg Arzalpenscharte\n(Stollen): 2 Std. Abstieg\nSalasteig: 1½ Std.",
+   "seconds": 0.7,
+   "prompt_eval_count": 210,
+   "eval_count": 54,
+   "done_reason": "stop"
+  }
+ },
+ "page_020__left__b002": {
+  "page": {
+   "text": "schwierig 2,0\nSchön\nGut\nDiff. C, Var. C/\n4½ Std.\n840 Hm\n350 Hm\n2 Std.\n1 Std.\n1½ Std.\n0, SO\nab 14 J.\nJuni -\nOkt.\n2370 m\nP N 46.657736\nE 12.416479\nP N 46.6418868\nE 12.4114919\nGehzeiten/Time\nKreuzbergs - Einstieg 1 Std.\nEinstieg - Ausstieg: 2 Std.\nAbstieg Arzalphenscharte\n(Stollen): 2 Std. Abstieg\nSalzsteig: 1½ Std.",
+   "seconds": 1.7,
+   "prompt_eval_count": 347,
+   "eval_count": 190,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "schwierig 2,0\nSchön\nGut\nDiff. C, Var. C/D\n4½ Std.\n840 Hm\n350 Hm\n2 Std.\n1 Std.\n1½ Std.\nO, SO\nab 14 J.\nJuni -\nOkt.\n2370 m\nP N 46.657736\nE 12.416479\nE N 46.6418868\nE 12.4114919\nGehzeiten/Time\nKreuzbergp. - Einstieg: 1 Std.\nEinstieg - Ausstieg: 2 Std.\nAbstieg Arzalpenscharte\n(Stollen): 2 Std. Abstieg\nSalasteig: 1½ Std.",
+   "seconds": 2.0,
+   "prompt_eval_count": 832,
+   "eval_count": 190,
+   "done_reason": "stop"
+  }
+ },
+ "page_022__left__b005": {
+  "page": {
+   "text": "schwierig 1,7\nSehr\nschön\nGut\nDiff. C\n7½ Std.\n1450 Hm\n300 Hm\n1½ Std.\n3 Std.\n3 Std.\nS0\nab 14 J.\nJuli -\nSept.\n2936 m\nP N 46.63352\nE 12.41834\nE N 46.64206\nE 12.38253\nGehzeiten/Time\nKst. Lamelli - Kst. Berro: 1 Std.\nKst. Berro - Einsteig: 2 Std.\nEinsteig - Gipfel: 1½ Std.\nGipfel - Malagia Berro: 2¼ Std.\nKst. Berro - Kst. Lamelli: ¼ Std.\n42",
+   "seconds": 1.8,
+   "prompt_eval_count": 362,
+   "eval_count": 207,
+   "done_reason": "stop"
+  }
+ },
+ "page_023__left__b002": {
+  "page": {
+   "text": "Rifugio Lunel-\nRi, 1568 m, privat, Mitte\nJuni - Ende Sept. bew. Tel:\n+39 0435 67171. Infos:\nwww.cai.it",
+   "seconds": 0.7,
+   "prompt_eval_count": 168,
+   "eval_count": 55,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Rifugio Lunel-\nli, 1568 m, privat; Mitte\nJuni - Ende Sept. bew. Tel:\n+39 0435 67171. Infos:\nwww.cai.it",
+   "seconds": 0.8,
+   "prompt_eval_count": 420,
+   "eval_count": 54,
+   "done_reason": "stop"
+  }
+ },
+ "page_023__left__b004": {
+  "page": {
+   "text": "Rifugio Antonio Berti al Popera\n1950 m. CAI; Ende Juni - Mitte Sept. bew. Tel:\n+39 0435 67155. Infos:\nwww.rifugioberti.it",
+   "seconds": 0.8,
+   "prompt_eval_count": 181,
+   "eval_count": 56,
+   "done_reason": "stop"
+  }
+ },
+ "page_024__left__b003": {
+  "page": {
+   "text": "Gehzeiten/Time\nRif. Lumelli - Einstg. Ferrata\nRoghet: 1¼ Std.;\nFerrata Roghet - Einstg.\nFerrata Gabriella: 2½ Std.,\nFerrata Gabriella - Rif.\nCarducci: 3½ Std.",
+   "seconds": 0.8,
+   "prompt_eval_count": 174,
+   "eval_count": 65,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Gehzeiten/Time\nRif. Lunelli - Einstg. Ferrata\nRoghel: 1¼ Std.;\nFerrata Roghel - Einstg.\nFerrata Gabriella: 2½ Std.,\nFerrata Gabriella - Rif.\nCarducci: 3½ Std.",
+   "seconds": 0.9,
+   "prompt_eval_count": 252,
+   "eval_count": 65,
+   "done_reason": "stop"
+  }
+ },
+ "page_025__left__b004": {
+  "page": {
+   "text": "Rifugio Lunel-\nli, 1568 m, privat; Mitte\nJuni - Ende Sept. bew. Tel:\n+39 0435 67171.",
+   "seconds": 0.7,
+   "prompt_eval_count": 167,
+   "eval_count": 47,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Rifugio Lunel-\nli, 1568 m, privat; Mitte\nJuni - Ende Sept. bew. Tel:\n+39 0435 67171.",
+   "seconds": 0.7,
+   "prompt_eval_count": 220,
+   "eval_count": 47,
+   "done_reason": "stop"
+  }
+ },
+ "page_025__left__b009": {
+  "page": {
+   "text": "Rifugio Antonio\nBerti al Pope-\nra, 1950 m, CAI; Ende\nJuni - Mitte Sept. bew. Tel:\n+39 0435 67155. Infos:\nwww.rifugioberti.it",
+   "seconds": 0.8,
+   "prompt_eval_count": 181,
+   "eval_count": 62,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Rifugio Anto-\nnio Berti al Pope-\nra, 1950 m, CAI; Ende\nJuni - Mitte Sept. bew. Tel:\n+39 0435 67155. Infos:\nwww.rifugioberti.it",
+   "seconds": 0.8,
+   "prompt_eval_count": 276,
+   "eval_count": 64,
+   "done_reason": "stop"
+  }
+ },
+ "page_023__right__b003": {
+  "page": {
+   "text": "Stollen\nStellung\nA\nSchlucht\nSteinschlag!\nA\nB\nScharte\nA/B",
+   "seconds": 0.5,
+   "prompt_eval_count": 168,
+   "eval_count": 28,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Scharte A/B\nStellung\nSchluucht\nSteinschlag!\nStollen\nA\nA\nB\nA",
+   "seconds": 0.6,
+   "prompt_eval_count": 328,
+   "eval_count": 30,
+   "done_reason": "stop"
+  }
+ },
+ "page_025__right__b008": {
+  "page": {
+   "text": "A\nB/C\nA/B\nTrittstifte\nPlatten\nB\nB\nA\nB\nstelle\nRinne\nWeg 109\nBlock mit\nrotem Punkt\nRif. A. Berti",
+   "seconds": 0.8,
+   "prompt_eval_count": 372,
+   "eval_count": 51,
+   "done_reason": "stop"
+  },
+  "close": {
+   "text": "Trittstifte\nPlatten\nB\nB\nA\nsteile\nRinne\nWeg 109\nBlock mit\nrotem Punkt\nRif. A. Berti",
+   "seconds": 0.8,
+   "prompt_eval_count": 721,
+   "eval_count": 42,
+   "done_reason": "stop"
+  }
+ },
+ "page_004__left__b001": {
+  "page": {
+   "text": "NO TEXT",
+   "seconds": 0.3,
+   "prompt_eval_count": 174,
+   "eval_count": 3,
+   "done_reason": "stop"
+  }
+ },
+ "page_004__left__b017": {
+  "page": {
+   "text": "NO TEXT",
+   "seconds": 0.3,
+   "prompt_eval_count": 152,
+   "eval_count": 3,
+   "done_reason": "stop"
+  }
+ },
+ "page_004__left__b018": {
+  "page": {
+   "text": "NO TEXT",
+   "seconds": 0.3,
+   "prompt_eval_count": 152,
+   "eval_count": 3,
+   "done_reason": "stop"
+  }
+ },
+ "page_016__right__b002": {
+  "page": {
+   "text": "NO TEXT",
+   "seconds": 0.3,
+   "prompt_eval_count": 198,
+   "eval_count": 3,
+   "done_reason": "stop"
+  }
+ }
+}

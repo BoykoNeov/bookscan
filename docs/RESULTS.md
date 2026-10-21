@@ -9887,3 +9887,77 @@ plausible ("162-163" vs "162-165", "countersamps" vs "counterstamps") were
 checked against frame_18 at full size and the reference is right. The rest are
 plain misreads ("whonty", "JuabdlF", "arculation"). No reference slip found;
 the owner is still offered the list.
+
+## 2026-10-21 — A local model reads the tables and unreadable panels well; none of three second opinions flags its mistakes (pre-registered)
+
+Owner's go-ahead the same day: read the blocks where the book loses its text
+with the local model, plus a disagreement flag. Pre-registration
+`docs/data/panelread_prereg_20261021.md` (ad95023), committed with the
+reference text, the crops and the scorer before any model read anything. Data,
+readings, scores, every disagreement: `docs/data/panelread_20261021/`.
+
+**Population:** every TABLE block and every text block `unreadable_panel`
+turned into a picture in the owner's document (`20260829-084115-de3c20d3`):
+28 blocks. Scored: 6 tables (1071 reference words, 345 numbers), 14 panels
+(459 words, 71 numbers), 2 maps (labels as a bag), 4 no-text blocks (three are
+sofa, one a photograph); 2 excluded (stated before reading). Reference text
+typed by Claude by eye; owner offered a spot check, numbers first.
+
+**Close-up census, first:** 0 of 6 tables and 11 of 14 panels have a close-up
+holding ≥ 90 % of the block at ≥ 1.15× (shrunk on the phone, as every frame of
+this job). A per-block SIFT search could not find even the whole-spread photo
+for 11 of 28 blocks (control failed, method dropped); matching whole frames to
+the whole page passed its control 28/28. Five close-up cuts were placed
+automatically, nine by hand on a frame grid (`hand_boxes.json`) after the
+automatic placement failed its likeness check, all inspected before reading.
+
+| arm | tables WER | tables wrong numbers | panels WER | panels wrong numbers | invented text on 4 no-text blocks |
+|---|---|---|---|---|---|
+| Tesseract (shipped) | 71.5 % | 64 | 79.1 % | 16 | 87 tokens |
+| qwen3.6:27b, page crop | **1.6 %** | 8 | **5.2 %** | 3 | 0 |
+| gemma4:31b, page crop | 3.9 % | 16 | 5.2 % | 4 | 0 |
+| qwen, close-up (11 panels) | — | — | **0.8 %** | 1 | — |
+
+Maps (bag of labels): qwen page 9/9 and 19/20, gemma 9/9 and 20/20, Tesseract
+5/9 and 11/20 among 45 tokens it produced.
+
+**Close-ups help the model, by the registered rule:** on the 11 panels with
+both, qwen makes 3 errors in 368 words from the close-up against 21 from the
+page crop (−86 %), better on 6 blocks, worse on none, 5 ties.
+
+**The number defect: both models read a printed ¾ as ¼.** The tables print
+"¾" ten times; qwen read it as "¼" eight times, and those are all 8 of its
+wrong table numbers. It read every "¼" right. gemma does the same (5 of the
+Q table's ¾) and also shifts a table's page-number column down one row
+(7 wrong). The panel "Roghel: 1¾ Std." is read "1¼" by both models on the page
+crop **and by qwen on a crisp close-up**, so this is a glyph bias, not missing
+detail. Every disputed number was checked at full zoom (pre-registered
+adjudication); the reference was right each time, no corrections.
+
+**The flag: no second opinion meets the bar** (catch ≥ 0.90, every wrong number
+caught, false alarm ≤ 0.25):
+
+| qwen page reading vs | stratum | catch | wrong numbers caught | false alarm |
+|---|---|---|---|---|
+| S1 Tesseract | tables | 1.00 | 8/8 | **0.71** |
+| S1 Tesseract | panels | 0.96 | 3/3 | **0.78** |
+| S2 gemma, same pixels | tables | 0.50 | **3/8** | 0.02 |
+| S2 gemma, same pixels | panels | 0.83 | **1/3** | 0.03 |
+| S3 qwen on the close-up | panels | 0.95 | **1/2** | 0.01 |
+
+The owner's named candidate (Tesseract) marks 71–78 % of the correct words,
+as feared: on these blocks it carries no information. The two cheap second
+opinions are quiet and accurate but blind to the one error that matters most,
+because both readers share it. n = 1 book, one prompt, two models; close-ups
+shrunk on the phone.
+
+**What this licenses:** nothing ships. It says the model is the right reader
+for these blocks (an order of magnitude better than Tesseract), close-ups make
+it better still, and the mistake flag is the unsolved half.
+
+**Correction to the pre-registration's counts (same day, no effect on any
+verdict):** it says "14 text blocks with a usable close-up" and that S3 covers
+"14 blocks". The 14 were 11 panels, 2 maps and 1 excluded map; the panel
+comparison and S3 therefore run on 11 blocks, as reported above. The maps'
+close-up readings are in `scores.json` (qwen 8/9 and 16/20 against 9/9 and
+19/20 from the page; the close-up of the second map misses its top labels).

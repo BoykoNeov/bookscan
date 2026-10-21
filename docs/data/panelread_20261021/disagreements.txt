@@ -1,0 +1,127 @@
+    page_003__right__b011  Q-page   replace ref[Boèseekofel] model[Boëseekofel]  after: ...Hm 214 F2
+    page_003__right__b011  Q-page   replace ref[Boèseekofel] model[Boëseekofel]  after: ...Hm 218 F2
+    page_003__right__b011  Q-page   replace ref[Pößnecker] model[Pöbnecker]  after: ...Hm 226 F5
+NUM page_003__right__b011  Q-page   replace ref[3/4] model[1/4]  after: ...Klettersteig 1,5 1
+NUM page_003__right__b011  G-page   delete  ref[] model[214]  after: ...F Sellagruppe/Langkofelgruppe
+NUM page_003__right__b011  G-page   replace ref[214] model[218]  after: ...Hm 530 Hm
+    page_003__right__b011  G-page   replace ref[Boèseekofel] model[Boëseekofel]  after: ...Hm 214 F2
+    page_003__right__b011  G-page   replace ref[Boèseekofel] model[Boëseekofel]  after: ...Hm 218 F2
+NUM page_003__right__b011  G-page   replace ref[218] model[222]  after: ...Hm 300 Hm
+NUM page_003__right__b011  G-page   replace ref[222] model[226]  after: ...Hm 300 Hm
+NUM page_003__right__b011  G-page   replace ref[226] model[230]  after: ...Hm 320 Hm
+NUM page_003__right__b011  G-page   replace ref[230] model[234]  after: ...Hm 660 Hm
+NUM page_003__right__b011  G-page   replace ref[234] model[236]  after: ...Hm 115 Hm
+NUM page_003__right__b011  G-page   replace ref[236] model[238]  after: ...Hm 150 Hm
+NUM page_003__right__b011  G-page   replace ref[3/4] model[1/4]  after: ...Siela 1,5 5
+NUM page_003__right__b023  Q-page   replace ref[I1] model[II]  after: ...
+NUM page_003__right__b023  G-page   replace ref[I1 Latemartürme-Klettersteig] model[11 Latemar türme-Klettersteig]  after: ...
+NUM page_003__right__b023  G-page   replace ref[I2] model[12]  after: ...160 Hm 276
+NUM page_003__right__b023  G-page   replace ref[1/4] model[3/4]  after: ...Sieff 1,2 3
+    page_004__right__b014  Q-page   delete  ref[] model[P Brentagruppe]  after: ...
+NUM page_004__right__b014  Q-page   replace ref[3/4] model[1/4]  after: ...Aquile 2,0 2
+    page_004__right__b014  G-page   delete  ref[] model[P Brentagruppe]  after: ...
+    page_004__right__b014  G-page   replace ref[Artpinistico delle] model[Artpistico della]  after: ...440 P13 Ferrata
+    page_004__right__b014  G-page   replace ref[dell] model[del]  after: ...App Ferrata Corna
+    page_004__right__b016  Q-page   delete  ref[] model[Gardaseeberge]  after: ...
+NUM page_004__right__b016  Q-page   replace ref[3/4] model[1/4]  after: ...Colodri 1,2 2
+    page_004__right__b016  G-page   delete  ref[] model[Gardaseeberge]  after: ...
+NUM page_005__left__b001   Q-page   insert  ref[3 2 1 Gesamtanspruch Total demand] model[]  after: ...Tourenübersicht Klettersteige
+NUM page_005__left__b001   Q-page   replace ref[3/4] model[1/4]  after: ...Susati 1,2 5
+NUM page_005__left__b001   Q-page   replace ref[3/4] model[1/4]  after: ...Foletti 1,0 5
+NUM page_005__left__b001   Q-page   replace ref[3/4] model[1/4]  after: ...Camminamenti 1,0 5
+    page_005__left__b001   Q-page   replace ref[Laste] model[Lasté]  after: ...Q8 Sent. delle
+NUM page_005__left__b001   Q-page   replace ref[3/4] model[1/4]  after: ...Sega 2,0 3
+NUM page_005__left__b001   Q-page   replace ref[3/4] model[1/4]  after: ...Ginestre 1,7 1
+NUM page_005__left__b001   G-page   insert  ref[3 2 1 Gesamtanspruch Total demand Diff. Hm Seite/ Page] model[]  after: ...Tourenübersicht Klettersteige
+    page_005__left__b001   G-page   delete  ref[] model[Diff. Seite/ Page]  after: ...Page Q Gardaseeberge
+NUM page_005__left__b001   G-page   replace ref[3/4] model[1/4]  after: ...Susati 1,2 5
+NUM page_005__left__b001   G-page   replace ref[3/4] model[1/4]  after: ...Foletti 1,0 5
+NUM page_005__left__b001   G-page   replace ref[3/4] model[1/4]  after: ...Camminamenti 1,0 5
+NUM page_005__left__b001   G-page   replace ref[3/4] model[1/4]  after: ...Sega 2,0 3
+NUM page_005__left__b001   G-page   replace ref[3/4] model[1/4]  after: ...Ginestre 1,7 1
+    page_016__right__b014  Q-page   replace ref[disgregazione] model[dispredezione]  after: ...mudflow frana di
+    page_016__right__b014  Q-page   replace ref[Schilift] model[Schlift]  after: ...Schi ski sci
+    page_016__right__b014  Q-page   replace ref[autoassicurazione] model[autosicurezza]  after: ...funivia Selbstsicherung self-securing
+    page_016__right__b014  Q-page   replace ref[rampone] model[ramponi]  after: ...sentiero Steigeisen crampons
+    page_016__right__b014  G-page   delete  ref[] model[Nordseite north side lato nord]  after: ...Norden north nord
+    page_016__right__b014  G-page   replace ref[escape] model[signal of distress]  after: ...north nord Notausstieg
+    page_016__right__b014  G-page   replace ref[Schilift] model[Schlift]  after: ...Schi ski sci
+    page_016__right__b014  G-page   replace ref[sciovia] model[sciovvia]  after: ...Schilift ski lift
+    page_016__right__b014  G-page   replace ref[Schlüsselstelle] model[Schlüsselselle]  after: ...gorge, ravine gola
+    page_016__right__b014  G-page   replace ref[Schrofen] model[Schrund]  after: ...field superficie innevata
+    page_016__right__b014  G-page   replace ref[Schwierigkeitsgrade Grade] model[Schwierigkeitsgrad grade]  after: ...difficulty, hardness difficoltà
+    page_016__right__b014  G-page   replace ref[Stahlseil] model[Stahlsiel]  after: ...Spalte crevasse crepaccio
+    page_016__right__b014  G-page   replace ref[strapiombo] model[strapio/bombo]  after: ...galleria Überhang overhang
+    page_016__right__b013  Q-page   delete  ref[] model[cima erba]  after: ...
+    page_016__right__b013  G-page   delete  ref[] model[etá erba]  after: ...
+    page_017__left__b002   Q-page   replace ref[Casto] model[Costa]  after: ...sport climb (i.e.
+    page_017__left__b002   G-page   replace ref[fixed-rope-route] model[fixed-rope route]  after: ...consists of the
+    page_017__left__b002   G-page   delete  ref[] model[a]  after: ...long approach and
+    page_017__left__b002   G-page   replace ref[Casto] model[Catto]  after: ...sport climb (i.e.
+    page_017__left__b007   Q-page   replace ref[ope] model[up]  after: ...Grade of difficulty
+    page_017__left__b007   Q-page   replace ref[aglets und] model[agility and]  after: ...sections with ropes,
+    page_017__left__b007   Q-page   replace ref[aglets] model[agility]  after: ...small overhangs. Less
+    page_017__left__b007   Q-close  replace ref[cramps.] model[crampons.]  after: ...Less aglets and
+    page_017__left__b007   G-page   replace ref[ope] model[rope]  after: ...Grade of difficulty
+    page_017__left__b007   G-page   replace ref[sections] model[section,]  after: ...securing at exposed
+    page_017__left__b007   G-page   replace ref[ladders.] model[ladder.]  after: ...some very short
+    page_017__left__b007   G-page   replace ref[mountaineers] model[mountaineer]  after: ...ladders. Only inexperienced
+    page_017__left__b007   G-page   replace ref[und] model[and]  after: ...with ropes, aglets
+    page_020__left__b001   Q-page   replace ref[Kreuzbergp.] model[Kreuzberg,]  after: ...Gehzeiten/Time
+    page_020__left__b001   Q-page   replace ref[Arzalpenscharte] model[Arzalpasscharte]  after: ...2 Std. Abstieg
+    page_020__left__b001   Q-page   replace ref[Salasteig:] model[Salzsteg:]  after: ...2 Std. Abstieg
+    page_020__left__b001   Q-close  insert  ref[Gehzeiten/Time] model[]  after: ...
+    page_020__left__b001   G-page   replace ref[Salasteig:] model[Salasstieg:]  after: ...2 Std. Abstieg
+NUM page_020__left__b002   Q-page   insert  ref[3 2 1] model[]  after: ...schwierig 2,0
+    page_020__left__b002   Q-page   replace ref[C/D] model[C/]  after: ...Diff. C, Var.
+NUM page_020__left__b002   Q-page   replace ref[O,] model[0,]  after: ...1 1/2 Std.
+    page_020__left__b002   Q-page   replace ref[E] model[P]  after: ...46.657736 E 12.416479
+    page_020__left__b002   Q-page   replace ref[Kreuzbergp.] model[Kreuzbergs]  after: ...E 12.4114919 Gehzeiten/Time
+    page_020__left__b002   Q-page   replace ref[Einstieg:] model[Einstieg]  after: ...Gehzeiten/Time Kreuzbergp. -
+    page_020__left__b002   Q-page   replace ref[Arzalpenscharte] model[Arzalphenscharte]  after: ...2 Std. Abstieg
+    page_020__left__b002   Q-page   replace ref[Salasteig:] model[Salzsteig:]  after: ...2 Std. Abstieg
+NUM page_020__left__b002   Q-close  insert  ref[3 2 1] model[]  after: ...schwierig 2,0
+NUM page_020__left__b002   G-page   insert  ref[3 2 1] model[]  after: ...schwierig 2,0
+NUM page_020__left__b002   G-page   replace ref[O,] model[0,]  after: ...1 1/2 Std.
+    page_020__left__b002   G-page   insert  ref[P] model[]  after: ...Okt. 2370 m
+    page_020__left__b002   G-page   insert  ref[E] model[]  after: ...46.657736 E 12.416479
+    page_020__left__b002   G-page   replace ref[Kreuzbergp.] model[Kreuzbergs.]  after: ...E 12.4114919 Gehzeiten/Time
+    page_020__left__b002   G-page   replace ref[Arzalpenscharte (Stollen):] model[Arzelspanscharte (Stullen):]  after: ...2 Std. Abstieg
+    page_020__left__b002   G-page   replace ref[Salasteig:] model[Stulleng:]  after: ...2 Std. Abstieg
+NUM page_022__left__b005   Q-page   insert  ref[3 2] model[]  after: ...schwierig 1,7
+NUM page_022__left__b005   Q-page   replace ref[SO] model[S0]  after: ...Std. 3 Std.
+    page_022__left__b005   Q-page   replace ref[Rif. Lunelli] model[Kst. Lamelli]  after: ...E 12.38253 Gehzeiten/Time
+    page_022__left__b005   Q-page   replace ref[Rif. Berti:] model[Kst. Berro:]  after: ...Rif. Lunelli -
+    page_022__left__b005   Q-page   replace ref[Rif. Berti] model[Kst. Berro]  after: ...Berti: 1 Std.
+    page_022__left__b005   Q-page   replace ref[Einstieg:] model[Einsteig:]  after: ...Rif. Berti -
+    page_022__left__b005   Q-page   replace ref[Einstieg] model[Einsteig]  after: ...Einstieg: 2 Std.
+    page_022__left__b005   Q-page   replace ref[Rifugio Berti:] model[Malagia Berro:]  after: ...Std. Gipfel -
+    page_022__left__b005   Q-page   replace ref[Rif. Berti] model[Kst. Berro]  after: ...2 1/4 Std.
+NUM page_022__left__b005   Q-page   replace ref[Rif. Lunelli: 3/4] model[Kst. Lamelli: 1/4]  after: ...Rif. Berti -
+NUM page_022__left__b005   Q-page   delete  ref[] model[42]  after: ...Lunelli: 3/4 Std.
+NUM page_022__left__b005   G-page   insert  ref[3 2] model[]  after: ...schwierig 1,7
+    page_022__left__b005   G-page   insert  ref[P] model[]  after: ...Sept. 2936 m
+NUM page_022__left__b005   G-page   replace ref[12.41834 E] model[42.18134]  after: ...N 46.63352 E
+    page_022__left__b005   G-page   replace ref[Rif. Lunelli] model[L. Mumelli]  after: ...E 12.38253 Gehzeiten/Time
+    page_022__left__b005   G-page   replace ref[Rif.] model[B.]  after: ...Rif. Lunelli -
+    page_022__left__b005   G-page   replace ref[Rif.] model[E.]  after: ...Berti: 1 Std.
+NUM page_022__left__b005   G-page   insert  ref[Einstieg: 2 Std. Einstieg -] model[]  after: ...Rif. Berti -
+NUM page_022__left__b005   G-page   replace ref[1 1/2] model[2]  after: ...Einstieg - Gipfel:
+    page_022__left__b005   G-page   replace ref[Rifugio Berti:] model[Kitzstein:]  after: ...Std. Gipfel -
+    page_022__left__b005   G-page   replace ref[Rif.] model[N.]  after: ...2 1/4 Std.
+NUM page_022__left__b005   G-page   replace ref[Rif. Lunelli: 3/4] model[L. Mumelli: 3 1/4]  after: ...Rif. Berti -
+NUM page_022__left__b005   G-page   delete  ref[] model[42]  after: ...Lunelli: 3/4 Std.
+    page_023__left__b002   Q-page   replace ref[Lunelli,] model[Lunel- Ri,]  after: ...Rifugio
+    page_023__left__b002   Q-page   replace ref[privat;] model[privat,]  after: ...Lunelli, 1568 m,
+    page_023__left__b002   G-page   replace ref[Rifugio Lunelli,] model["Rifugio Lunel- II,]  after: ...
+NUM page_023__left__b002   G-page   replace ref[+39] model[+ 39]  after: ...Sept. bew. Tel:
+    page_023__left__b004   Q-page   replace ref[Popera,] model[Popera]  after: ...Antonio Berti al
+    page_023__left__b004   Q-page   replace ref[m,] model[m.]  after: ...al Popera, 1950
+    page_023__left__b004   G-page   replace ref[CAI;] model[CAL]  after: ...Popera, 1950 m,
+NUM page_023__left__b004   G-page   replace ref[+39] model[+ 39]  after: ...Sept. bew. Tel:
+    page_024__left__b003   Q-page   replace ref[Lunelli] model[Lumelli]  after: ...Gehzeiten/Time Rif.
+    page_024__left__b003   Q-page   replace ref[Roghel:] model[Roghet:]  after: ...- Einstg. Ferrata
+NUM page_024__left__b003   Q-page   replace ref[3/4] model[1/4]  after: ...Ferrata Roghel: 1
+    page_024__left__b003   Q-page   replace ref[Roghel] model[Roghet]  after: ...3/4 Std.; Ferrata
+NUM page_024__left__b003   Q-close  replace ref[3/4] model[1/4]  after: ...Ferrata Roghel: 1
+NUM page_024__left__b003   G-page   replace ref[3/4] model[1/4]  after: ...Ferrata Roghel: 1

@@ -1,0 +1,347 @@
+{
+  "image_id": "en_coins_03",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "right.png",
+      "n_gt": 10,
+      "matched": {
+        "F104": 4,
+        "F105": 6,
+        "C104": 5,
+        "C105": 7,
+        "D1": 8,
+        "H1": 1,
+        "H2": 2,
+        "L1": 3,
+        "P1": 9,
+        "P2": 10
+      },
+      "match_bbox": {
+        "F104": [
+          59,
+          584,
+          1198,
+          643
+        ],
+        "F105": [
+          59,
+          1276,
+          1198,
+          628
+        ],
+        "C104": [
+          1266,
+          1154,
+          579,
+          85
+        ],
+        "C105": [
+          1273,
+          1840,
+          579,
+          84
+        ],
+        "D1": [
+          70,
+          1923,
+          245,
+          50
+        ],
+        "H1": [
+          28,
+          230,
+          236,
+          57
+        ],
+        "H2": [
+          26,
+          310,
+          242,
+          54
+        ],
+        "L1": [
+          99,
+          395,
+          1284,
+          146
+        ],
+        "P1": [
+          0,
+          2006,
+          1890,
+          437
+        ],
+        "P2": [
+          10,
+          2473,
+          1870,
+          136
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          2016,
+          2975
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              31,
+              125,
+              687,
+              51
+            ],
+            "n_words": 6,
+            "median_word_h": 43
+          },
+          {
+            "type": "heading",
+            "bbox": [
+              28,
+              230,
+              236,
+              57
+            ],
+            "n_words": 1,
+            "median_word_h": 45
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              26,
+              310,
+              242,
+              54
+            ],
+            "n_words": 3,
+            "median_word_h": 35
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              99,
+              395,
+              1284,
+              146
+            ],
+            "n_words": 19,
+            "median_word_h": 30
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              59,
+              584,
+              1198,
+              643
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1266,
+              1154,
+              579,
+              85
+            ],
+            "n_words": 10,
+            "median_word_h": 26
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              59,
+              1276,
+              1198,
+              628
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              1273,
+              1840,
+              579,
+              84
+            ],
+            "n_words": 16,
+            "median_word_h": 28
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              70,
+              1923,
+              245,
+              50
+            ],
+            "n_words": 1,
+            "median_word_h": 42
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              0,
+              2006,
+              1890,
+              437
+            ],
+            "n_words": 176,
+            "median_word_h": 29
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              10,
+              2473,
+              1870,
+              136
+            ],
+            "n_words": 48,
+            "median_word_h": 29
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              969,
+              2787,
+              63,
+              39
+            ],
+            "n_words": 1,
+            "median_word_h": 30
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 2,
+        "eject_notes": [],
+        "rescue_notes": [
+          "header #0: 0w@0.0 -> 6w@91.3",
+          "paragraph #2: 2w@61.8 -> 3w@94.1"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "F104": true,
+        "F105": true,
+        "C104": false,
+        "C105": true,
+        "D1": false,
+        "H1": true,
+        "H2": false,
+        "L1": true,
+        "P1": true,
+        "P2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.7,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 8,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 2,
+        "n_blocks": 10,
+        "seq_gt": [
+          "H1",
+          "H2",
+          "L1",
+          "F104",
+          "C104",
+          "F105",
+          "C105",
+          "D1",
+          "P1",
+          "P2"
+        ],
+        "seq_det": [
+          "H1",
+          "H2",
+          "L1",
+          "F104",
+          "C104",
+          "F105",
+          "C105",
+          "D1",
+          "P1",
+          "P2"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 12,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F104": true,
+        "F105": true,
+        "C104": true,
+        "C105": true,
+        "D1": false,
+        "H1": true,
+        "H2": false,
+        "L1": true,
+        "P1": true,
+        "P2": true
+      },
+      "caption_typed_parser": {
+        "C104": true,
+        "C105": true
+      },
+      "n_promoted": 1,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "C104",
+          "figure": "F104",
+          "caption_text": "Fig. 104. 1890 Honduras Peso (KM# 52). Hun- tsinger Collecti",
+          "source": "geometry",
+          "verdict": "ok"
+        },
+        {
+          "caption": "C105",
+          "figure": "F105",
+          "caption_text": "Fig. 105. 1892/0 [Honduras Peso (KM# 52; Du- plicate of Type",
+          "source": "geometry",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C104",
+          "figure": "F104",
+          "caption_typed_ok": false,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+        },
+        {
+          "caption": "C105",
+          "figure": "F105",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner"
+        }
+      ]
+    }
+  ]
+}

@@ -137,10 +137,20 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
    0.230 uncut and 0.285–0.287 trimmed, across the 0.25 floor, so the main
    pass admits it without the rescue's text gate; `fig_split` then cuts it to
    two 12–18 px bars. No fix built; the unsplit box (0.042) is barely above
-   the thinness floor, so turning the split off is not one. **Next:**
-   before any layout gate can judge a crop, measure the spread a handful of
-   model-free reframings produce on every block-GT row (the noise floor).
-   n = 2 pages, one book.
+   the thinness floor, so turning the split off is not one.
+8. **DONE 2026-10-21 — the noise floor** (RESULTS same day, pre-registered,
+   75 runs, all controls pass). On all 8 block-GT rows, 34 of 58 model-free
+   reframings (4–41 px of background) move at least one graded number; 7 of 8
+   rows move; 4 px is enough on 6. The Italian sofa pages move most (pairs
+   2 → 0–2 on `it_geo_05`, 5 → 3–5 on `it_geo_06`). The per-row ranges are
+   the floor any crop gate must clear (`framing_floor_20261021/summary.json`).
+   **New zero-wrong breach found:** a 4 px bottom trim of `it_geo_06` stops the
+   plate reader finding F29's printed number, the subpage looks unnumbered and
+   the geometric arm pairs C29 ("Sopra", *above*) to the picture below. Not
+   the sliver mechanism; the editor marks such a pair "check". **Next:** a
+   crop gate for `vlm_box.cut` can now be pre-registered against these ranges;
+   separately, the plate-reader drop and the near-floor detector score are
+   both fragilities a fix would be graded against this floor.
 
 ---
 
@@ -466,10 +476,13 @@ It needs a Bulgarian page carrying an English/other-language block.
   grades one framing of each photograph, and a sofa-only trim of 4–41 px moves
   caption typing, segmentation, order and even makes a wrong pair (RESULTS
   2026-10-21, reframing control). So past single-framing changes of one block,
-  one pair or a tau step on these pages may be framing noise. Not yet
-  re-checked: which earlier rows' deltas survive a few model-free reframings.
-  Until then, read a small layout delta as unconfirmed unless it holds across
-  a few slightly different trims.
+  one pair or a tau step on these pages may be framing noise. **Measured on
+  all 8 rows 2026-10-21** (RESULTS, framing floor): per-row ranges are in
+  `data/framing_floor_20261021/summary.json`; on segmentation and correct
+  pairs the uncut framing is never beaten by a trim, so past uncut numbers may
+  be optimistic (observed, not tested). Not yet done: re-reading earlier rows'
+  layout deltas against those ranges. Until then, a one-block, one-pair or
+  one-tau-step change on `it_geo_05`–`07` is inside the noise.
 
 ---
 

@@ -1,0 +1,430 @@
+{
+  "image_id": "it_geo_05",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 2,
+      "matched": {
+        "F2": 7,
+        "C2": 8
+      },
+      "match_bbox": {
+        "F2": [
+          233,
+          278,
+          1793,
+          2703
+        ],
+        "C2": [
+          260,
+          2035,
+          368,
+          756
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 24,
+        "n_orphan_blocks": 5,
+        "orphan_notes": [
+          {
+            "bbox": [
+              0,
+              1413,
+              15,
+              321
+            ],
+            "type": "other",
+            "n_words": 5,
+            "median_word_h": 62,
+            "text": "vasi ia ia ta i"
+          },
+          {
+            "bbox": [
+              0,
+              1971,
+              22,
+              691
+            ],
+            "type": "other",
+            "n_words": 11,
+            "median_word_h": 34,
+            "text": "n i WEAR aC O ardea RE n eni AS ia:"
+          },
+          {
+            "bbox": [
+              5,
+              2684,
+              6,
+              16
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 16,
+            "text": "i"
+          },
+          {
+            "bbox": [
+              7,
+              2708,
+              5,
+              22
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 22,
+            "text": "i"
+          },
+          {
+            "bbox": [
+              80,
+              2284,
+              4,
+              63
+            ],
+            "type": "other",
+            "n_words": 3,
+            "median_word_h": 5,
+            "text": "| } |"
+          }
+        ],
+        "page_wh": [
+          2052,
+          2996
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              226,
+              103,
+              57,
+              32
+            ],
+            "n_words": 1,
+            "median_word_h": 39
+          },
+          {
+            "type": "header",
+            "bbox": [
+              631,
+              92,
+              1396,
+              57
+            ],
+            "n_words": 21,
+            "median_word_h": 25
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              233,
+              278,
+              1793,
+              2703
+            ],
+            "n_words": 6,
+            "median_word_h": 37
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              260,
+              2035,
+              368,
+              756
+            ],
+            "n_words": 64,
+            "median_word_h": 27
+          }
+        ],
+        "n_absorbed": 2,
+        "absorbed_words": 3,
+        "absorb_notes": [
+          "into figure #2: clipped off the figure at y=331 (v-gap +2px, 1.00 inside its span, nearest text +129px)",
+          "into figure #2: clipped off the figure at y=331 (v-gap -16px, 1.00 inside its span, nearest text +161px)"
+        ],
+        "n_ejected": 1,
+        "n_rescued": 0,
+        "eject_notes": [
+          "ejected caption (Figura 2) printed inside figure 233,278 1793x2703: 64 words at 260,2116 368x675"
+        ],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F2": true,
+        "C2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": null,
+      "tau_native": null,
+      "n_native": 1,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 2,
+        "seq_gt": [
+          "F2",
+          "C2"
+        ],
+        "seq_det": [
+          "F2",
+          "C2"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 9,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F2": true,
+        "C2": true
+      },
+      "caption_typed_parser": {
+        "C2": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 1,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "C2",
+          "figure": "F2",
+          "caption_text": "In Ina: Figura 2 La geografia nei dintorni della penisola it",
+          "source": "sole_figure",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C2",
+          "figure": "F2",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    },
+    {
+      "name": "right.png",
+      "n_gt": 5,
+      "matched": {
+        "F3": 2,
+        "C3": 3,
+        "P3": 6,
+        "P1": 4,
+        "P2": 5
+      },
+      "match_bbox": {
+        "F3": [
+          604,
+          287,
+          1151,
+          1065
+        ],
+        "C3": [
+          83,
+          2519,
+          468,
+          289
+        ],
+        "P3": [
+          607,
+          2406,
+          1140,
+          393
+        ],
+        "P1": [
+          598,
+          1390,
+          1146,
+          531
+        ],
+        "P2": [
+          602,
+          1923,
+          1141,
+          480
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          2028,
+          2996
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              78,
+              87,
+              1317,
+              61
+            ],
+            "n_words": 19,
+            "median_word_h": 23
+          },
+          {
+            "type": "header",
+            "bbox": [
+              1742,
+              96,
+              59,
+              34
+            ],
+            "n_words": 1,
+            "median_word_h": 29
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              604,
+              287,
+              1151,
+              1065
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              83,
+              2519,
+              468,
+              289
+            ],
+            "n_words": 23,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              598,
+              1390,
+              1146,
+              531
+            ],
+            "n_words": 107,
+            "median_word_h": 34
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              602,
+              1923,
+              1141,
+              480
+            ],
+            "n_words": 88,
+            "median_word_h": 34
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              607,
+              2406,
+              1140,
+              393
+            ],
+            "n_words": 87,
+            "median_word_h": 34
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F3": true,
+        "C3": true,
+        "P3": true,
+        "P1": true,
+        "P2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 5,
+        "seq_gt": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "seq_det": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 7,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F3": true,
+        "C3": true,
+        "P3": true,
+        "P1": true,
+        "P2": true
+      },
+      "caption_typed_parser": {
+        "C3": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 1,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "C3",
+          "figure": "F3",
+          "caption_text": "Sopra: Figura 3 ; RI Fossile di Ellipsactinia, un idrozoo ch",
+          "source": "sole_figure",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C3",
+          "figure": "F3",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    }
+  ]
+}

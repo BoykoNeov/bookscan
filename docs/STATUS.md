@@ -1146,3 +1146,19 @@ rules for it:
   on these blocks. `cut_hand.py` moved into `docs/data/panelread_20261021/`
   (re-running extraction drops the hand cuts; run order in its docstring).
   RESULTS 2026-10-21, added clauses.
+
+### 2026-10-21 — Why a trim makes a scale bar a figure; the framing noise floor on all 8 block-GT rows
+
+- Scale-bar diagnosis (no fix): the detector scores the box over
+  `it_geo_07`'s two scale bars 0.230 uncut and 0.285–0.287 after a 41 px sofa
+  trim, across the 0.25 floor; the main pass admits it unquestioned and
+  `fig_split` cuts it into two 12–18 px slivers. The rescue is not involved.
+  `docs/data/scalebar_diag_20261021/`.
+- Noise floor, pre-registered (7545209), 75 runs, every control passes:
+  34 of 58 model-free reframings move a graded number; 7 of 8 rows move; 4 px
+  is enough on 6. The uncut framing is never beaten on segmentation or pairs.
+- New zero-wrong breach: a 4 px bottom trim of `it_geo_06` makes the plate
+  reader miss F29's number, and the geometric arm pairs C29 to the picture
+  below it. Flagged "check" in the editor; cause in the plate reader not
+  examined.
+- RESULTS 2026-10-21 (two rows); OPEN_PROBLEMS P1 item 8 and P9 updated.

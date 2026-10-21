@@ -1,0 +1,387 @@
+{
+  "image_id": "it_geo_05",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 2,
+      "matched": {
+        "F2": 4,
+        "C2": 5
+      },
+      "match_bbox": {
+        "F2": [
+          225,
+          285,
+          1770,
+          2614
+        ],
+        "C2": [
+          250,
+          2060,
+          360,
+          661
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 6,
+        "n_orphan_blocks": 2,
+        "orphan_notes": [
+          {
+            "bbox": [
+              0,
+              1374,
+              11,
+              305
+            ],
+            "type": "other",
+            "n_words": 3,
+            "median_word_h": 78,
+            "text": "il EA mae"
+          },
+          {
+            "bbox": [
+              1067,
+              262,
+              230,
+              41
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 41,
+            "text": "C'INEAMENTO"
+          }
+        ],
+        "page_wh": [
+          2009,
+          2918
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              225,
+              101,
+              55,
+              31
+            ],
+            "n_words": 1,
+            "median_word_h": 43
+          },
+          {
+            "type": "header",
+            "bbox": [
+              620,
+              88,
+              1366,
+              46
+            ],
+            "n_words": 21,
+            "median_word_h": 24
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              225,
+              285,
+              1770,
+              2614
+            ],
+            "n_words": 3,
+            "median_word_h": 25
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              250,
+              2060,
+              360,
+              661
+            ],
+            "n_words": 59,
+            "median_word_h": 26
+          }
+        ],
+        "n_absorbed": 1,
+        "absorbed_words": 2,
+        "absorb_notes": [
+          "into figure #2: clipped off the figure at y=322 (v-gap -5px, 1.00 inside its span, nearest text +151px)"
+        ],
+        "n_ejected": 1,
+        "n_rescued": 0,
+        "eject_notes": [
+          "ejected caption (Figura 2) printed inside figure 225,285 1770x2614: 59 words at 250,2138 360x583"
+        ],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F2": true,
+        "C2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": null,
+      "tau_native": null,
+      "n_native": 1,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 2,
+        "seq_gt": [
+          "F2",
+          "C2"
+        ],
+        "seq_det": [
+          "F2",
+          "C2"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 6,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F2": true,
+        "C2": true
+      },
+      "caption_typed_parser": {
+        "C2": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "C2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+        {
+          "caption": "C2",
+          "figure": "F2",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    },
+    {
+      "name": "right.png",
+      "n_gt": 5,
+      "matched": {
+        "F3": 2,
+        "P3": 6,
+        "P1": 4,
+        "C3": 3,
+        "P2": 5
+      },
+      "match_bbox": {
+        "F3": [
+          597,
+          278,
+          1119,
+          1041
+        ],
+        "P3": [
+          603,
+          2347,
+          1115,
+          381
+        ],
+        "P1": [
+          599,
+          1358,
+          1107,
+          516
+        ],
+        "C3": [
+          94,
+          2452,
+          455,
+          280
+        ],
+        "P2": [
+          599,
+          1877,
+          1112,
+          467
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          1987,
+          2918
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              83,
+              87,
+              1284,
+              52
+            ],
+            "n_words": 20,
+            "median_word_h": 22
+          },
+          {
+            "type": "header",
+            "bbox": [
+              1697,
+              94,
+              58,
+              32
+            ],
+            "n_words": 1,
+            "median_word_h": 28
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              597,
+              278,
+              1119,
+              1041
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              94,
+              2452,
+              455,
+              280
+            ],
+            "n_words": 23,
+            "median_word_h": 29
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              599,
+              1358,
+              1107,
+              516
+            ],
+            "n_words": 107,
+            "median_word_h": 33
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              599,
+              1877,
+              1112,
+              467
+            ],
+            "n_words": 88,
+            "median_word_h": 33
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              603,
+              2347,
+              1115,
+              381
+            ],
+            "n_words": 87,
+            "median_word_h": 33
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F3": true,
+        "P3": true,
+        "P1": true,
+        "C3": true,
+        "P2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 5,
+        "seq_gt": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "seq_det": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 7,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F3": true,
+        "P3": true,
+        "P1": true,
+        "C3": true,
+        "P2": true
+      },
+      "caption_typed_parser": {
+        "C3": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 1,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "C3",
+          "figure": "F3",
+          "caption_text": "Sopra: Figura 3__ i pe Fossile di Ellipsactinia, un idrozoo ",
+          "source": "sole_figure",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C3",
+          "figure": "F3",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    }
+  ]
+}

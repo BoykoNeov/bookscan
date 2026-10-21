@@ -1,0 +1,490 @@
+{
+  "image_id": "de_01",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 4,
+      "matched": {
+        "T1": 0,
+        "F1": 6,
+        "P2": 5,
+        "P1": 3
+      },
+      "match_bbox": {
+        "T1": [
+          0,
+          9,
+          1982,
+          1134
+        ],
+        "F1": [
+          591,
+          2063,
+          1386,
+          793
+        ],
+        "P2": [
+          610,
+          1889,
+          1371,
+          122
+        ],
+        "P1": [
+          580,
+          1161,
+          1402,
+          632
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 6,
+        "n_orphan_blocks": 1,
+        "orphan_notes": [
+          {
+            "bbox": [
+              620,
+              1821,
+              447,
+              95
+            ],
+            "type": "other",
+            "n_words": 6,
+            "median_word_h": 31,
+            "text": "ie en, 1561 m Talort en"
+          }
+        ],
+        "page_wh": [
+          1982,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "figure",
+            "bbox": [
+              0,
+              9,
+              1982,
+              1134
+            ],
+            "n_words": 16,
+            "median_word_h": 25
+          },
+          {
+            "type": "other",
+            "bbox": [
+              323,
+              1147,
+              220,
+              1608
+            ],
+            "n_words": 7,
+            "median_word_h": 28
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              331,
+              2605,
+              234,
+              227
+            ],
+            "n_words": 30,
+            "median_word_h": 23
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              580,
+              1161,
+              1402,
+              632
+            ],
+            "n_words": 194,
+            "median_word_h": 29
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              610,
+              1889,
+              1371,
+              122
+            ],
+            "n_words": 23,
+            "median_word_h": 31
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              591,
+              2063,
+              1386,
+              793
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              328,
+              2834,
+              422,
+              108
+            ],
+            "n_words": 7,
+            "median_word_h": 25
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              475,
+              2895,
+              274,
+              44
+            ],
+            "n_words": 1,
+            "median_word_h": 38
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 3,
+        "eject_notes": [],
+        "rescue_notes": [
+          "caption #2: 29w@51.0 -> 30w@58.5",
+          "other #4: 6w@50.6 -> 8w@55.0",
+          "page_number #7: 0w@0.0 -> 7w@41.6"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "T1": true,
+        "F1": true,
+        "P2": true,
+        "P1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 2,
+      "order_all": {
+        "tau": null,
+        "n_fig_graded": 0,
+        "n_blocks": 2,
+        "seq_gt": [
+          "P1",
+          "P2"
+        ],
+        "seq_det": [
+          "P1",
+          "P2"
+        ],
+        "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 9,
+      "n_header_det": 2,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+        "T1": true,
+        "F1": true,
+        "P2": true,
+        "P1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "det2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": []
+    },
+    {
+      "name": "right.png",
+      "n_gt": 8,
+      "matched": {
+        "F2": 1,
+        "F3": 8,
+        "H1": 6,
+        "E2": 9,
+        "E1": 7,
+        "R3": 5,
+        "R2": 4,
+        "R1": 3
+      },
+      "match_bbox": {
+        "F2": [
+          81,
+          434,
+          1739,
+          752
+        ],
+        "F3": [
+          89,
+          2039,
+          1445,
+          823
+        ],
+        "H1": [
+          1562,
+          1207,
+          255,
+          46
+        ],
+        "E2": [
+          1575,
+          2221,
+          247,
+          471
+        ],
+        "E1": [
+          1570,
+          1250,
+          262,
+          957
+        ],
+        "R3": [
+          113,
+          1714,
+          1426,
+          320
+        ],
+        "R2": [
+          115,
+          1513,
+          1420,
+          201
+        ],
+        "R1": [
+          118,
+          1222,
+          1413,
+          289
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 1,
+        "n_orphan_blocks": 1,
+        "orphan_notes": [
+          {
+            "bbox": [
+              318,
+              316,
+              376,
+              60
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 60,
+            "text": "Latemargruppe"
+          }
+        ],
+        "page_wh": [
+          2055,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "figure",
+            "bbox": [
+              81,
+              434,
+              1739,
+              752
+            ],
+            "n_words": 2,
+            "median_word_h": 18
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              126,
+              1171,
+              332,
+              32
+            ],
+            "n_words": 2,
+            "median_word_h": 24
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              118,
+              1222,
+              1413,
+              289
+            ],
+            "n_words": 71,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              115,
+              1513,
+              1420,
+              201
+            ],
+            "n_words": 54,
+            "median_word_h": 28
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              113,
+              1714,
+              1426,
+              320
+            ],
+            "n_words": 88,
+            "median_word_h": 29
+          },
+          {
+            "type": "heading",
+            "bbox": [
+              1562,
+              1207,
+              255,
+              46
+            ],
+            "n_words": 3,
+            "median_word_h": 50
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1570,
+              1250,
+              262,
+              957
+            ],
+            "n_words": 94,
+            "median_word_h": 26
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              89,
+              2039,
+              1445,
+              823
+            ],
+            "n_words": 3,
+            "median_word_h": 33
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1575,
+              2221,
+              247,
+              471
+            ],
+            "n_words": 40,
+            "median_word_h": 28
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              1360,
+              2829,
+              414,
+              112
+            ],
+            "n_words": 1,
+            "median_word_h": 36
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F2": true,
+        "F3": true,
+        "H1": true,
+        "E2": true,
+        "E1": true,
+        "R3": true,
+        "R2": true,
+        "R1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 6,
+      "order_all": {
+        "tau": null,
+        "n_fig_graded": 0,
+        "n_blocks": 6,
+        "seq_gt": [
+          "R1",
+          "R2",
+          "R3",
+          "H1",
+          "E1",
+          "E2"
+        ],
+        "seq_det": [
+          "R1",
+          "R2",
+          "R3",
+          "H1",
+          "E1",
+          "E2"
+        ],
+        "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 11,
+      "n_header_det": 1,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+        "F2": true,
+        "F3": true,
+        "H1": true,
+        "E2": true,
+        "E1": true,
+        "R3": true,
+        "R2": true,
+        "R1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 1,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "det2",
+          "figure": "F2",
+          "caption_text": "Schöner Gesteinswechsel",
+          "source": "geometry",
+          "verdict": "ungraded"
+        }
+      ],
+      "groups": []
+    }
+  ]
+}

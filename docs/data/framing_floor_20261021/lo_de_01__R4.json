@@ -1,0 +1,472 @@
+{
+  "image_id": "de_01",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 4,
+      "matched": {
+        "T1": 0,
+        "F1": 6,
+        "P2": 5,
+        "P1": 3
+      },
+      "match_bbox": {
+        "T1": [
+          0,
+          26,
+          2022,
+          1106
+        ],
+        "F1": [
+          620,
+          2061,
+          1400,
+          794
+        ],
+        "P2": [
+          641,
+          1815,
+          1380,
+          193
+        ],
+        "P1": [
+          610,
+          1162,
+          1412,
+          626
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 1,
+        "n_orphan_blocks": 1,
+        "orphan_notes": [
+          {
+            "bbox": [
+              622,
+              1827,
+              5,
+              1
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 1,
+            "text": "—"
+          }
+        ],
+        "page_wh": [
+          2022,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "figure",
+            "bbox": [
+              0,
+              26,
+              2022,
+              1106
+            ],
+            "n_words": 4,
+            "median_word_h": 48
+          },
+          {
+            "type": "other",
+            "bbox": [
+              348,
+              1142,
+              231,
+              1661
+            ],
+            "n_words": 69,
+            "median_word_h": 23
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              353,
+              2605,
+              237,
+              226
+            ],
+            "n_words": 30,
+            "median_word_h": 23
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              610,
+              1162,
+              1412,
+              626
+            ],
+            "n_words": 156,
+            "median_word_h": 30
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              641,
+              1815,
+              1380,
+              193
+            ],
+            "n_words": 26,
+            "median_word_h": 34
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              620,
+              2061,
+              1400,
+              794
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              348,
+              2838,
+              431,
+              105
+            ],
+            "n_words": 1,
+            "median_word_h": 38
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 2,
+        "eject_notes": [],
+        "rescue_notes": [
+          "other #1: 8w@47.5 -> 69w@61.2",
+          "paragraph #5: 4w@81.3 -> 26w@82.8"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "T1": true,
+        "F1": true,
+        "P2": true,
+        "P1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 2,
+      "order_all": {
+        "tau": null,
+        "n_fig_graded": 0,
+        "n_blocks": 2,
+        "seq_gt": [
+          "P1",
+          "P2"
+        ],
+        "seq_det": [
+          "P1",
+          "P2"
+        ],
+        "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 8,
+      "n_header_det": 1,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+        "T1": true,
+        "F1": true,
+        "P2": true,
+        "P1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "det2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": []
+    },
+    {
+      "name": "right.png",
+      "n_gt": 8,
+      "matched": {
+        "F2": 1,
+        "F3": 8,
+        "H1": 6,
+        "E2": 9,
+        "E1": 7,
+        "R3": 5,
+        "R2": 4,
+        "R1": 3
+      },
+      "match_bbox": {
+        "F2": [
+          76,
+          418,
+          1769,
+          759
+        ],
+        "F3": [
+          74,
+          2030,
+          1480,
+          831
+        ],
+        "H1": [
+          1576,
+          1200,
+          255,
+          44
+        ],
+        "E2": [
+          1591,
+          2214,
+          250,
+          472
+        ],
+        "E1": [
+          1587,
+          1246,
+          262,
+          953
+        ],
+        "R3": [
+          104,
+          1707,
+          1451,
+          319
+        ],
+        "R2": [
+          112,
+          1503,
+          1441,
+          204
+        ],
+        "R1": [
+          121,
+          1214,
+          1428,
+          285
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          2052,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "heading",
+            "bbox": [
+              315,
+              277,
+              1158,
+              101
+            ],
+            "n_words": 1,
+            "median_word_h": 67
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              76,
+              418,
+              1769,
+              759
+            ],
+            "n_words": 1,
+            "median_word_h": 17
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              128,
+              1157,
+              335,
+              33
+            ],
+            "n_words": 2,
+            "median_word_h": 24
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              121,
+              1214,
+              1428,
+              285
+            ],
+            "n_words": 71,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              112,
+              1503,
+              1441,
+              204
+            ],
+            "n_words": 54,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              104,
+              1707,
+              1451,
+              319
+            ],
+            "n_words": 85,
+            "median_word_h": 28
+          },
+          {
+            "type": "heading",
+            "bbox": [
+              1576,
+              1200,
+              255,
+              44
+            ],
+            "n_words": 3,
+            "median_word_h": 49
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1587,
+              1246,
+              262,
+              953
+            ],
+            "n_words": 94,
+            "median_word_h": 26
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              74,
+              2030,
+              1480,
+              831
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1591,
+              2214,
+              250,
+              472
+            ],
+            "n_words": 40,
+            "median_word_h": 28
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              1379,
+              2874,
+              239,
+              44
+            ],
+            "n_words": 1,
+            "median_word_h": 35
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 1,
+        "eject_notes": [],
+        "rescue_notes": [
+          "page_number #10: 0w@0.0 -> 1w@91.4"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "F2": true,
+        "F3": true,
+        "H1": true,
+        "E2": true,
+        "E1": true,
+        "R3": true,
+        "R2": true,
+        "R1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 6,
+      "order_all": {
+        "tau": null,
+        "n_fig_graded": 0,
+        "n_blocks": 6,
+        "seq_gt": [
+          "R1",
+          "R2",
+          "R3",
+          "H1",
+          "E1",
+          "E2"
+        ],
+        "seq_det": [
+          "R1",
+          "R2",
+          "R3",
+          "H1",
+          "E1",
+          "E2"
+        ],
+        "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 11,
+      "n_header_det": 1,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+        "F2": true,
+        "F3": true,
+        "H1": true,
+        "E2": true,
+        "E1": true,
+        "R3": true,
+        "R2": true,
+        "R1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "det2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": []
+    }
+  ]
+}

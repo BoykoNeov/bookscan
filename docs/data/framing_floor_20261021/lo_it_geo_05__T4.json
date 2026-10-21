@@ -1,0 +1,405 @@
+{
+  "image_id": "it_geo_05",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 2,
+      "matched": {
+        "F2": 6,
+        "C2": 7
+      },
+      "match_bbox": {
+        "F2": [
+          232,
+          303,
+          1800,
+          2680
+        ],
+        "C2": [
+          259,
+          2035,
+          364,
+          761
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 25,
+        "n_orphan_blocks": 4,
+        "orphan_notes": [
+          {
+            "bbox": [
+              0,
+              1412,
+              10,
+              493
+            ],
+            "type": "other",
+            "n_words": 7,
+            "median_word_h": 43,
+            "text": "WA AE A PER PRE Oi irta"
+          },
+          {
+            "bbox": [
+              0,
+              1904,
+              21,
+              272
+            ],
+            "type": "other",
+            "n_words": 8,
+            "median_word_h": 27,
+            "text": "nia rina ita na n N NETTE E"
+          },
+          {
+            "bbox": [
+              0,
+              2195,
+              15,
+              428
+            ],
+            "type": "other",
+            "n_words": 6,
+            "median_word_h": 67,
+            "text": "“GENE aaa SOA ar Nitra ER"
+          },
+          {
+            "bbox": [
+              1080,
+              274,
+              234,
+              42
+            ],
+            "type": "other",
+            "n_words": 3,
+            "median_word_h": 23,
+            "text": "LC INEAMEN To"
+          }
+        ],
+        "page_wh": [
+          2052,
+          2996
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              224,
+              99,
+              57,
+              32
+            ],
+            "n_words": 1,
+            "median_word_h": 47
+          },
+          {
+            "type": "header",
+            "bbox": [
+              631,
+              96,
+              1397,
+              43
+            ],
+            "n_words": 20,
+            "median_word_h": 24
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              232,
+              303,
+              1800,
+              2680
+            ],
+            "n_words": 6,
+            "median_word_h": 27
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              259,
+              2035,
+              364,
+              761
+            ],
+            "n_words": 66,
+            "median_word_h": 27
+          }
+        ],
+        "n_absorbed": 1,
+        "absorbed_words": 1,
+        "absorb_notes": [
+          "into figure #2: clipped off the figure at y=331 (v-gap -9px, 1.00 inside its span, nearest text +164px)"
+        ],
+        "n_ejected": 1,
+        "n_rescued": 0,
+        "eject_notes": [
+          "ejected caption (Figura 2) printed inside figure 232,303 1800x2680: 66 words at 259,2116 364x680"
+        ],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F2": true,
+        "C2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": null,
+      "tau_native": null,
+      "n_native": 1,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 2,
+        "seq_gt": [
+          "F2",
+          "C2"
+        ],
+        "seq_det": [
+          "F2",
+          "C2"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 8,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F2": true,
+        "C2": true
+      },
+      "caption_typed_parser": {
+        "C2": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "C2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+        {
+          "caption": "C2",
+          "figure": "F2",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    },
+    {
+      "name": "right.png",
+      "n_gt": 5,
+      "matched": {
+        "F3": 2,
+        "P3": 6,
+        "P1": 4,
+        "P2": 5,
+        "C3": 3
+      },
+      "match_bbox": {
+        "F3": [
+          601,
+          290,
+          1152,
+          1064
+        ],
+        "P3": [
+          604,
+          2407,
+          1140,
+          393
+        ],
+        "P1": [
+          594,
+          1392,
+          1147,
+          531
+        ],
+        "P2": [
+          598,
+          1925,
+          1143,
+          478
+        ],
+        "C3": [
+          83,
+          2519,
+          465,
+          289
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          2028,
+          2996
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              74,
+              94,
+              1321,
+              55
+            ],
+            "n_words": 18,
+            "median_word_h": 23
+          },
+          {
+            "type": "header",
+            "bbox": [
+              1741,
+              96,
+              59,
+              33
+            ],
+            "n_words": 1,
+            "median_word_h": 28
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              601,
+              290,
+              1152,
+              1064
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              83,
+              2519,
+              465,
+              289
+            ],
+            "n_words": 20,
+            "median_word_h": 30
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              594,
+              1392,
+              1147,
+              531
+            ],
+            "n_words": 107,
+            "median_word_h": 34
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              598,
+              1925,
+              1143,
+              478
+            ],
+            "n_words": 88,
+            "median_word_h": 34
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              604,
+              2407,
+              1140,
+              393
+            ],
+            "n_words": 87,
+            "median_word_h": 34
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F3": true,
+        "P3": true,
+        "P1": true,
+        "P2": true,
+        "C3": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 5,
+        "seq_gt": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "seq_det": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 7,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F3": true,
+        "P3": true,
+        "P1": true,
+        "P2": true,
+        "C3": true
+      },
+      "caption_typed_parser": {
+        "C3": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "C3": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+        {
+          "caption": "C3",
+          "figure": "F3",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    }
+  ]
+}

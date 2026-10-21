@@ -1,0 +1,378 @@
+{
+  "image_id": "it_geo_05",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 2,
+      "matched": {
+        "F2": 5
+      },
+      "match_bbox": {
+        "F2": [
+          237,
+          284,
+          1793,
+          2707
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 15,
+        "n_orphan_blocks": 3,
+        "orphan_notes": [
+          {
+            "bbox": [
+              0,
+              1417,
+              8,
+              333
+            ],
+            "type": "other",
+            "n_words": 4,
+            "median_word_h": 79,
+            "text": "PI Ie, EA SA"
+          },
+          {
+            "bbox": [
+              0,
+              1916,
+              15,
+              270
+            ],
+            "type": "other",
+            "n_words": 3,
+            "median_word_h": 55,
+            "text": "PRE i i"
+          },
+          {
+            "bbox": [
+              0,
+              2204,
+              23,
+              441
+            ],
+            "type": "other",
+            "n_words": 5,
+            "median_word_h": 72,
+            "text": "Lita EEEEE—_— EEE RE RI"
+          }
+        ],
+        "page_wh": [
+          2050,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              231,
+              106,
+              58,
+              33
+            ],
+            "n_words": 1,
+            "median_word_h": 26
+          },
+          {
+            "type": "header",
+            "bbox": [
+              637,
+              93,
+              1393,
+              57
+            ],
+            "n_words": 20,
+            "median_word_h": 25
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              237,
+              284,
+              1793,
+              2707
+            ],
+            "n_words": 60,
+            "median_word_h": 26
+          }
+        ],
+        "n_absorbed": 2,
+        "absorbed_words": 3,
+        "absorb_notes": [
+          "into figure #2: clipped off the figure at y=331 (v-gap +7px, 1.00 inside its span, nearest text +134px)",
+          "into figure #2: clipped off the figure at y=331 (v-gap -16px, 1.00 inside its span, nearest text +160px)"
+        ],
+        "n_ejected": 0,
+        "n_rescued": 1,
+        "eject_notes": [],
+        "rescue_notes": [
+          "other #3: 3w@23.0 -> 8w@56.0"
+        ]
+      },
+      "misses": [
+        "C2"
+      ],
+      "type_ok": {
+        "F2": true
+      },
+      "seg_recall": 0.5,
+      "type_acc": 1.0,
+      "tau_layout": null,
+      "tau_native": null,
+      "n_native": 0,
+      "order_all": {
+        "tau": null,
+        "n_fig_graded": 1,
+        "n_blocks": 1,
+        "seq_gt": [
+          "F2"
+        ],
+        "seq_det": [
+          "F2"
+        ],
+        "note": "<2 matched blocks to order"
+      },
+      "n_det_blocks": 6,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F2": true
+      },
+      "caption_typed_parser": {
+        "C2": false
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [],
+      "groups": [
+        {
+          "caption": "C2",
+          "figure": "F2",
+          "caption_typed_ok": false,
+          "nearest_ok": false,
+          "n_figures": 1,
+          "reason": "caption or figure block not matched on this subpage"
+        }
+      ]
+    },
+    {
+      "name": "right.png",
+      "n_gt": 5,
+      "matched": {
+        "F3": 2,
+        "C3": 3,
+        "P3": 6,
+        "P2": 5,
+        "P1": 4
+      },
+      "match_bbox": {
+        "F3": [
+          610,
+          295,
+          1149,
+          1067
+        ],
+        "C3": [
+          92,
+          2523,
+          473,
+          288
+        ],
+        "P3": [
+          621,
+          2413,
+          1126,
+          391
+        ],
+        "P2": [
+          613,
+          1932,
+          1129,
+          478
+        ],
+        "P1": [
+          611,
+          1402,
+          1131,
+          529
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          2024,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              79,
+              88,
+              1317,
+              64
+            ],
+            "n_words": 18,
+            "median_word_h": 23
+          },
+          {
+            "type": "header",
+            "bbox": [
+              1748,
+              103,
+              58,
+              34
+            ],
+            "n_words": 1,
+            "median_word_h": 27
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              610,
+              295,
+              1149,
+              1067
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              92,
+              2523,
+              473,
+              288
+            ],
+            "n_words": 23,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              611,
+              1402,
+              1131,
+              529
+            ],
+            "n_words": 106,
+            "median_word_h": 34
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              613,
+              1932,
+              1129,
+              478
+            ],
+            "n_words": 88,
+            "median_word_h": 34
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              621,
+              2413,
+              1126,
+              391
+            ],
+            "n_words": 87,
+            "median_word_h": 34
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F3": true,
+        "C3": true,
+        "P3": true,
+        "P2": true,
+        "P1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 5,
+        "seq_gt": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "seq_det": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 7,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F3": true,
+        "C3": true,
+        "P3": true,
+        "P2": true,
+        "P1": true
+      },
+      "caption_typed_parser": {
+        "C3": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 1,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "C3",
+          "figure": "F3",
+          "caption_text": "Sopra: Figura 3 2 RE Fossile di Ellipsactinia, un idrozoo ch",
+          "source": "sole_figure",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C3",
+          "figure": "F3",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    }
+  ]
+}

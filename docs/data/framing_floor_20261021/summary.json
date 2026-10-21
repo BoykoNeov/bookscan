@@ -1,0 +1,2507 @@
+{
+ "de_01": {
+  "arms": [
+   "B4",
+   "B41",
+   "L4",
+   "L41",
+   "R4",
+   "R41",
+   "T4",
+   "T41",
+   "all25",
+   "all41",
+   "base",
+   "repeat"
+  ],
+  "precondition": {
+   "repeat_equals_base": true,
+   "base_reproduces_geom_thin_base": true
+  },
+  "n_reframing_arms": 10,
+  "thin_floor": false,
+  "stats": {
+   "left.seg": {
+    "base": 4,
+    "min": 3,
+    "max": 4,
+    "n_moved": 1,
+    "moved_by": [
+     "B41"
+    ],
+    "values": {
+     "all25": 4,
+     "all41": 4,
+     "B4": 4,
+     "B41": 3,
+     "L4": 4,
+     "L41": 4,
+     "R4": 4,
+     "R41": 4,
+     "T4": 4,
+     "T41": 4
+    }
+   },
+   "left.type_acc": {
+    "base": 1.0,
+    "min": 0.75,
+    "max": 1.0,
+    "n_moved": 1,
+    "moved_by": [
+     "L4"
+    ],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 0.75,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "left.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 1,
+    "moved_by": [
+     "B41"
+    ],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": null,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "left.tau_all": {
+    "base": null,
+    "min": null,
+    "max": null,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": null,
+     "all41": null,
+     "B4": null,
+     "B41": null,
+     "L4": null,
+     "L41": null,
+     "R4": null,
+     "R41": null,
+     "T4": null,
+     "T41": null
+    }
+   },
+   "left.pairs_ok": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "left.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "left.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.seg": {
+    "base": 8,
+    "min": 8,
+    "max": 8,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 8,
+     "all41": 8,
+     "B4": 8,
+     "B41": 8,
+     "L4": 8,
+     "L41": 8,
+     "R4": 8,
+     "R41": 8,
+     "T4": 8,
+     "T41": 8
+    }
+   },
+   "right.type_acc": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.tau_all": {
+    "base": null,
+    "min": null,
+    "max": null,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": null,
+     "all41": null,
+     "B4": null,
+     "B41": null,
+     "L4": null,
+     "L41": null,
+     "R4": null,
+     "R41": null,
+     "T4": null,
+     "T41": null
+    }
+   },
+   "right.pairs_ok": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "row.seg": {
+    "base": 12,
+    "min": 11,
+    "max": 12,
+    "n_moved": 1,
+    "moved_by": [
+     "B41"
+    ],
+    "values": {
+     "all25": 12,
+     "all41": 12,
+     "B4": 12,
+     "B41": 11,
+     "L4": 12,
+     "L41": 12,
+     "R4": 12,
+     "R41": 12,
+     "T4": 12,
+     "T41": 12
+    }
+   },
+   "row.n_gt": {
+    "base": 12,
+    "min": 12,
+    "max": 12,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 12,
+     "all41": 12,
+     "B4": 12,
+     "B41": 12,
+     "L4": 12,
+     "L41": 12,
+     "R4": 12,
+     "R41": 12,
+     "T4": 12,
+     "T41": 12
+    }
+   },
+   "row.pairs_ok": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "row.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   }
+  },
+  "any_moved_arms": [
+   "B41",
+   "L4"
+  ]
+ },
+ "en_coins_01": {
+  "arms": [
+   "B4",
+   "B41",
+   "T4",
+   "T41",
+   "all25",
+   "all41",
+   "base",
+   "repeat"
+  ],
+  "precondition": {
+   "repeat_equals_base": true,
+   "base_reproduces_geom_thin_base": true
+  },
+  "n_reframing_arms": 6,
+  "thin_floor": false,
+  "stats": {
+   "left.seg": {
+    "base": 12,
+    "min": 11,
+    "max": 12,
+    "n_moved": 1,
+    "moved_by": [
+     "all25"
+    ],
+    "values": {
+     "all25": 11,
+     "all41": 12,
+     "B4": 12,
+     "B41": 12,
+     "T4": 12,
+     "T41": 12
+    }
+   },
+   "left.type_acc": {
+    "base": 0.75,
+    "min": 0.6667,
+    "max": 0.7273,
+    "n_moved": 6,
+    "moved_by": [
+     "B4",
+     "B41",
+     "T4",
+     "T41",
+     "all25",
+     "all41"
+    ],
+    "values": {
+     "all25": 0.7273,
+     "all41": 0.6667,
+     "B4": 0.6667,
+     "B41": 0.6667,
+     "T4": 0.6667,
+     "T41": 0.6667
+    }
+   },
+   "left.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "left.tau_all": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "left.pairs_ok": {
+    "base": 2,
+    "min": 2,
+    "max": 2,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 2,
+     "all41": 2,
+     "B4": 2,
+     "B41": 2,
+     "T4": 2,
+     "T41": 2
+    }
+   },
+   "left.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "left.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.seg": {
+    "base": 10,
+    "min": 10,
+    "max": 10,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 10,
+     "all41": 10,
+     "B4": 10,
+     "B41": 10,
+     "T4": 10,
+     "T41": 10
+    }
+   },
+   "right.type_acc": {
+    "base": 0.7,
+    "min": 0.7,
+    "max": 0.7,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0.7,
+     "all41": 0.7,
+     "B4": 0.7,
+     "B41": 0.7,
+     "T4": 0.7,
+     "T41": 0.7
+    }
+   },
+   "right.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.tau_all": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.pairs_ok": {
+    "base": 2,
+    "min": 2,
+    "max": 2,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 2,
+     "all41": 2,
+     "B4": 2,
+     "B41": 2,
+     "T4": 2,
+     "T41": 2
+    }
+   },
+   "right.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "row.seg": {
+    "base": 22,
+    "min": 21,
+    "max": 22,
+    "n_moved": 1,
+    "moved_by": [
+     "all25"
+    ],
+    "values": {
+     "all25": 21,
+     "all41": 22,
+     "B4": 22,
+     "B41": 22,
+     "T4": 22,
+     "T41": 22
+    }
+   },
+   "row.n_gt": {
+    "base": 22,
+    "min": 22,
+    "max": 22,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 22,
+     "all41": 22,
+     "B4": 22,
+     "B41": 22,
+     "T4": 22,
+     "T41": 22
+    }
+   },
+   "row.pairs_ok": {
+    "base": 4,
+    "min": 4,
+    "max": 4,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 4,
+     "all41": 4,
+     "B4": 4,
+     "B41": 4,
+     "T4": 4,
+     "T41": 4
+    }
+   },
+   "row.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   }
+  },
+  "any_moved_arms": [
+   "B4",
+   "B41",
+   "T4",
+   "T41",
+   "all25",
+   "all41"
+  ]
+ },
+ "en_coins_02": {
+  "arms": [
+   "B4",
+   "B41",
+   "T4",
+   "T41",
+   "all25",
+   "all41",
+   "base",
+   "repeat"
+  ],
+  "precondition": {
+   "repeat_equals_base": true,
+   "base_reproduces_geom_thin_base": true
+  },
+  "n_reframing_arms": 6,
+  "thin_floor": false,
+  "stats": {
+   "right.seg": {
+    "base": 8,
+    "min": 7,
+    "max": 8,
+    "n_moved": 1,
+    "moved_by": [
+     "all25"
+    ],
+    "values": {
+     "all25": 7,
+     "all41": 8,
+     "B4": 8,
+     "B41": 8,
+     "T4": 8,
+     "T41": 8
+    }
+   },
+   "right.type_acc": {
+    "base": 0.75,
+    "min": 0.75,
+    "max": 0.8571,
+    "n_moved": 1,
+    "moved_by": [
+     "all25"
+    ],
+    "values": {
+     "all25": 0.8571,
+     "all41": 0.75,
+     "B4": 0.75,
+     "B41": 0.75,
+     "T4": 0.75,
+     "T41": 0.75
+    }
+   },
+   "right.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.tau_all": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.pairs_ok": {
+    "base": 2,
+    "min": 2,
+    "max": 2,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 2,
+     "all41": 2,
+     "B4": 2,
+     "B41": 2,
+     "T4": 2,
+     "T41": 2
+    }
+   },
+   "right.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "row.seg": {
+    "base": 8,
+    "min": 7,
+    "max": 8,
+    "n_moved": 1,
+    "moved_by": [
+     "all25"
+    ],
+    "values": {
+     "all25": 7,
+     "all41": 8,
+     "B4": 8,
+     "B41": 8,
+     "T4": 8,
+     "T41": 8
+    }
+   },
+   "row.n_gt": {
+    "base": 8,
+    "min": 8,
+    "max": 8,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 8,
+     "all41": 8,
+     "B4": 8,
+     "B41": 8,
+     "T4": 8,
+     "T41": 8
+    }
+   },
+   "row.pairs_ok": {
+    "base": 2,
+    "min": 2,
+    "max": 2,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 2,
+     "all41": 2,
+     "B4": 2,
+     "B41": 2,
+     "T4": 2,
+     "T41": 2
+    }
+   },
+   "row.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   }
+  },
+  "any_moved_arms": [
+   "all25"
+  ]
+ },
+ "en_coins_03": {
+  "arms": [
+   "B4",
+   "B41",
+   "all25",
+   "base",
+   "repeat"
+  ],
+  "precondition": {
+   "repeat_equals_base": true,
+   "base_reproduces_geom_thin_base": true
+  },
+  "n_reframing_arms": 3,
+  "thin_floor": true,
+  "stats": {
+   "right.seg": {
+    "base": 10,
+    "min": 10,
+    "max": 10,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 10,
+     "B4": 10,
+     "B41": 10
+    }
+   },
+   "right.type_acc": {
+    "base": 0.7,
+    "min": 0.7,
+    "max": 0.8,
+    "n_moved": 1,
+    "moved_by": [
+     "B4"
+    ],
+    "values": {
+     "all25": 0.7,
+     "B4": 0.8,
+     "B41": 0.7
+    }
+   },
+   "right.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "B4": 1.0,
+     "B41": 1.0
+    }
+   },
+   "right.tau_all": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "B4": 1.0,
+     "B41": 1.0
+    }
+   },
+   "right.pairs_ok": {
+    "base": 2,
+    "min": 2,
+    "max": 2,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 2,
+     "B4": 2,
+     "B41": 2
+    }
+   },
+   "right.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   },
+   "right.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   },
+   "row.seg": {
+    "base": 10,
+    "min": 10,
+    "max": 10,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 10,
+     "B4": 10,
+     "B41": 10
+    }
+   },
+   "row.n_gt": {
+    "base": 10,
+    "min": 10,
+    "max": 10,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 10,
+     "B4": 10,
+     "B41": 10
+    }
+   },
+   "row.pairs_ok": {
+    "base": 2,
+    "min": 2,
+    "max": 2,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 2,
+     "B4": 2,
+     "B41": 2
+    }
+   },
+   "row.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   }
+  },
+  "any_moved_arms": [
+   "B4"
+  ]
+ },
+ "it_geo_04": {
+  "arms": [
+   "B4",
+   "B41",
+   "all25",
+   "base",
+   "repeat"
+  ],
+  "precondition": {
+   "repeat_equals_base": true,
+   "base_reproduces_geom_thin_base": true
+  },
+  "n_reframing_arms": 3,
+  "thin_floor": true,
+  "stats": {
+   "left.seg": {
+    "base": 5,
+    "min": 5,
+    "max": 5,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 5,
+     "B4": 5,
+     "B41": 5
+    }
+   },
+   "left.type_acc": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "B4": 1.0,
+     "B41": 1.0
+    }
+   },
+   "left.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "B4": 1.0,
+     "B41": 1.0
+    }
+   },
+   "left.tau_all": {
+    "base": null,
+    "min": null,
+    "max": null,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": null,
+     "B4": null,
+     "B41": null
+    }
+   },
+   "left.pairs_ok": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   },
+   "left.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   },
+   "left.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   },
+   "right.seg": {
+    "base": 4,
+    "min": 4,
+    "max": 4,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 4,
+     "B4": 4,
+     "B41": 4
+    }
+   },
+   "right.type_acc": {
+    "base": 0.75,
+    "min": 0.75,
+    "max": 0.75,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0.75,
+     "B4": 0.75,
+     "B41": 0.75
+    }
+   },
+   "right.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "B4": 1.0,
+     "B41": 1.0
+    }
+   },
+   "right.tau_all": {
+    "base": null,
+    "min": null,
+    "max": null,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": null,
+     "B4": null,
+     "B41": null
+    }
+   },
+   "right.pairs_ok": {
+    "base": 1,
+    "min": 1,
+    "max": 1,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1,
+     "B4": 1,
+     "B41": 1
+    }
+   },
+   "right.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   },
+   "right.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   },
+   "row.seg": {
+    "base": 9,
+    "min": 9,
+    "max": 9,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 9,
+     "B4": 9,
+     "B41": 9
+    }
+   },
+   "row.n_gt": {
+    "base": 9,
+    "min": 9,
+    "max": 9,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 9,
+     "B4": 9,
+     "B41": 9
+    }
+   },
+   "row.pairs_ok": {
+    "base": 1,
+    "min": 1,
+    "max": 1,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1,
+     "B4": 1,
+     "B41": 1
+    }
+   },
+   "row.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "B4": 0,
+     "B41": 0
+    }
+   }
+  },
+  "any_moved_arms": []
+ },
+ "it_geo_05": {
+  "arms": [
+   "B4",
+   "B41",
+   "L4",
+   "L41",
+   "R4",
+   "R41",
+   "T4",
+   "T41",
+   "all25",
+   "all41",
+   "base",
+   "repeat"
+  ],
+  "precondition": {
+   "repeat_equals_base": true,
+   "base_reproduces_geom_thin_base": true
+  },
+  "n_reframing_arms": 10,
+  "thin_floor": false,
+  "stats": {
+   "left.seg": {
+    "base": 2,
+    "min": 1,
+    "max": 2,
+    "n_moved": 2,
+    "moved_by": [
+     "R4",
+     "R41"
+    ],
+    "values": {
+     "all25": 2,
+     "all41": 2,
+     "B4": 2,
+     "B41": 2,
+     "L4": 2,
+     "L41": 2,
+     "R4": 1,
+     "R41": 1,
+     "T4": 2,
+     "T41": 2
+    }
+   },
+   "left.type_acc": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "left.tau_layout": {
+    "base": null,
+    "min": null,
+    "max": null,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": null,
+     "all41": null,
+     "B4": null,
+     "B41": null,
+     "L4": null,
+     "L41": null,
+     "R4": null,
+     "R41": null,
+     "T4": null,
+     "T41": null
+    }
+   },
+   "left.tau_all": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 2,
+    "moved_by": [
+     "R4",
+     "R41"
+    ],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": null,
+     "R41": null,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "left.pairs_ok": {
+    "base": 1,
+    "min": 0,
+    "max": 1,
+    "n_moved": 7,
+    "moved_by": [
+     "L4",
+     "L41",
+     "R4",
+     "R41",
+     "T4",
+     "all25",
+     "all41"
+    ],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 1,
+     "B41": 1,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 1
+    }
+   },
+   "left.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "left.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.seg": {
+    "base": 5,
+    "min": 5,
+    "max": 5,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 5,
+     "all41": 5,
+     "B4": 5,
+     "B41": 5,
+     "L4": 5,
+     "L41": 5,
+     "R4": 5,
+     "R41": 5,
+     "T4": 5,
+     "T41": 5
+    }
+   },
+   "right.type_acc": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.tau_layout": {
+    "base": 1.0,
+    "min": 0.3333,
+    "max": 1.0,
+    "n_moved": 1,
+    "moved_by": [
+     "B41"
+    ],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 0.3333,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.tau_all": {
+    "base": 1.0,
+    "min": 0.6,
+    "max": 1.0,
+    "n_moved": 1,
+    "moved_by": [
+     "B41"
+    ],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 0.6,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.pairs_ok": {
+    "base": 1,
+    "min": 0,
+    "max": 1,
+    "n_moved": 2,
+    "moved_by": [
+     "T4",
+     "T41"
+    ],
+    "values": {
+     "all25": 1,
+     "all41": 1,
+     "B4": 1,
+     "B41": 1,
+     "L4": 1,
+     "L41": 1,
+     "R4": 1,
+     "R41": 1,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "row.seg": {
+    "base": 7,
+    "min": 6,
+    "max": 7,
+    "n_moved": 2,
+    "moved_by": [
+     "R4",
+     "R41"
+    ],
+    "values": {
+     "all25": 7,
+     "all41": 7,
+     "B4": 7,
+     "B41": 7,
+     "L4": 7,
+     "L41": 7,
+     "R4": 6,
+     "R41": 6,
+     "T4": 7,
+     "T41": 7
+    }
+   },
+   "row.n_gt": {
+    "base": 7,
+    "min": 7,
+    "max": 7,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 7,
+     "all41": 7,
+     "B4": 7,
+     "B41": 7,
+     "L4": 7,
+     "L41": 7,
+     "R4": 7,
+     "R41": 7,
+     "T4": 7,
+     "T41": 7
+    }
+   },
+   "row.pairs_ok": {
+    "base": 2,
+    "min": 0,
+    "max": 2,
+    "n_moved": 8,
+    "moved_by": [
+     "L4",
+     "L41",
+     "R4",
+     "R41",
+     "T4",
+     "T41",
+     "all25",
+     "all41"
+    ],
+    "values": {
+     "all25": 1,
+     "all41": 1,
+     "B4": 2,
+     "B41": 2,
+     "L4": 1,
+     "L41": 1,
+     "R4": 1,
+     "R41": 1,
+     "T4": 0,
+     "T41": 1
+    }
+   },
+   "row.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   }
+  },
+  "any_moved_arms": [
+   "B41",
+   "L4",
+   "L41",
+   "R4",
+   "R41",
+   "T4",
+   "T41",
+   "all25",
+   "all41"
+  ]
+ },
+ "it_geo_06": {
+  "arms": [
+   "B4",
+   "B41",
+   "L4",
+   "L41",
+   "R4",
+   "R41",
+   "T4",
+   "T41",
+   "all25",
+   "all41",
+   "base",
+   "repeat"
+  ],
+  "precondition": {
+   "repeat_equals_base": true,
+   "base_reproduces_geom_thin_base": true,
+   "L4_reproduces_geom_thin_tiny": true,
+   "L41_reproduces_geom_thin_ident": true,
+   "R41_reproduces_geom_thin_R41": true,
+   "T41_reproduces_geom_thin_T41": true,
+   "B41_reproduces_geom_thin_B41": true
+  },
+  "n_reframing_arms": 10,
+  "thin_floor": false,
+  "stats": {
+   "left.seg": {
+    "base": 8,
+    "min": 8,
+    "max": 8,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 8,
+     "all41": 8,
+     "B4": 8,
+     "B41": 8,
+     "L4": 8,
+     "L41": 8,
+     "R4": 8,
+     "R41": 8,
+     "T4": 8,
+     "T41": 8
+    }
+   },
+   "left.type_acc": {
+    "base": 0.5,
+    "min": 0.5,
+    "max": 0.5,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0.5,
+     "all41": 0.5,
+     "B4": 0.5,
+     "B41": 0.5,
+     "L4": 0.5,
+     "L41": 0.5,
+     "R4": 0.5,
+     "R41": 0.5,
+     "T4": 0.5,
+     "T41": 0.5
+    }
+   },
+   "left.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "left.tau_all": {
+    "base": 1.0,
+    "min": 0.8571,
+    "max": 1.0,
+    "n_moved": 4,
+    "moved_by": [
+     "L4",
+     "R4",
+     "R41",
+     "T4"
+    ],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 0.8571,
+     "L41": 1.0,
+     "R4": 0.8571,
+     "R41": 0.8571,
+     "T4": 0.8571,
+     "T41": 1.0
+    }
+   },
+   "left.pairs_ok": {
+    "base": 4,
+    "min": 2,
+    "max": 4,
+    "n_moved": 4,
+    "moved_by": [
+     "B4",
+     "B41",
+     "L41",
+     "T41"
+    ],
+    "values": {
+     "all25": 4,
+     "all41": 4,
+     "B4": 3,
+     "B41": 3,
+     "L4": 4,
+     "L41": 2,
+     "R4": 4,
+     "R41": 4,
+     "T4": 4,
+     "T41": 3
+    }
+   },
+   "left.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "left.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.seg": {
+    "base": 6,
+    "min": 6,
+    "max": 6,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 6,
+     "all41": 6,
+     "B4": 6,
+     "B41": 6,
+     "L4": 6,
+     "L41": 6,
+     "R4": 6,
+     "R41": 6,
+     "T4": 6,
+     "T41": 6
+    }
+   },
+   "right.type_acc": {
+    "base": 0.6667,
+    "min": 0.6667,
+    "max": 0.6667,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0.6667,
+     "all41": 0.6667,
+     "B4": 0.6667,
+     "B41": 0.6667,
+     "L4": 0.6667,
+     "L41": 0.6667,
+     "R4": 0.6667,
+     "R41": 0.6667,
+     "T4": 0.6667,
+     "T41": 0.6667
+    }
+   },
+   "right.tau_layout": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.tau_all": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.pairs_ok": {
+    "base": 1,
+    "min": 0,
+    "max": 1,
+    "n_moved": 1,
+    "moved_by": [
+     "B4"
+    ],
+    "values": {
+     "all25": 1,
+     "all41": 1,
+     "B4": 0,
+     "B41": 1,
+     "L4": 1,
+     "L41": 1,
+     "R4": 1,
+     "R41": 1,
+     "T4": 1,
+     "T41": 1
+    }
+   },
+   "right.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 1,
+    "n_moved": 1,
+    "moved_by": [
+     "B4"
+    ],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 1,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "row.seg": {
+    "base": 14,
+    "min": 14,
+    "max": 14,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 14,
+     "all41": 14,
+     "B4": 14,
+     "B41": 14,
+     "L4": 14,
+     "L41": 14,
+     "R4": 14,
+     "R41": 14,
+     "T4": 14,
+     "T41": 14
+    }
+   },
+   "row.n_gt": {
+    "base": 14,
+    "min": 14,
+    "max": 14,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 14,
+     "all41": 14,
+     "B4": 14,
+     "B41": 14,
+     "L4": 14,
+     "L41": 14,
+     "R4": 14,
+     "R41": 14,
+     "T4": 14,
+     "T41": 14
+    }
+   },
+   "row.pairs_ok": {
+    "base": 5,
+    "min": 3,
+    "max": 5,
+    "n_moved": 4,
+    "moved_by": [
+     "B4",
+     "B41",
+     "L41",
+     "T41"
+    ],
+    "values": {
+     "all25": 5,
+     "all41": 5,
+     "B4": 3,
+     "B41": 4,
+     "L4": 5,
+     "L41": 3,
+     "R4": 5,
+     "R41": 5,
+     "T4": 5,
+     "T41": 4
+    }
+   },
+   "row.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 1,
+    "n_moved": 1,
+    "moved_by": [
+     "B4"
+    ],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 1,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   }
+  },
+  "any_moved_arms": [
+   "B4",
+   "B41",
+   "L4",
+   "L41",
+   "R4",
+   "R41",
+   "T4",
+   "T41"
+  ]
+ },
+ "it_geo_07": {
+  "arms": [
+   "B4",
+   "B41",
+   "L4",
+   "L41",
+   "R4",
+   "R41",
+   "T4",
+   "T41",
+   "all25",
+   "all41",
+   "base",
+   "rect0",
+   "repeat"
+  ],
+  "precondition": {
+   "repeat_equals_base": true,
+   "rect0_equals_base": true,
+   "base_reproduces_geom_thin_base": true,
+   "L4_reproduces_geom_thin_tiny": true,
+   "L41_reproduces_geom_thin_L41": true,
+   "R41_reproduces_geom_thin_R41": true,
+   "T41_reproduces_geom_thin_T41": true,
+   "B41_reproduces_geom_thin_B41": true
+  },
+  "n_reframing_arms": 10,
+  "thin_floor": false,
+  "stats": {
+   "left.seg": {
+    "base": 17,
+    "min": 16,
+    "max": 17,
+    "n_moved": 3,
+    "moved_by": [
+     "B4",
+     "L4",
+     "all41"
+    ],
+    "values": {
+     "all25": 17,
+     "all41": 16,
+     "B4": 16,
+     "B41": 17,
+     "L4": 16,
+     "L41": 17,
+     "R4": 17,
+     "R41": 17,
+     "T4": 17,
+     "T41": 17
+    }
+   },
+   "left.type_acc": {
+    "base": 0.9412,
+    "min": 0.9375,
+    "max": 1.0,
+    "n_moved": 5,
+    "moved_by": [
+     "B4",
+     "L4",
+     "R4",
+     "R41",
+     "all41"
+    ],
+    "values": {
+     "all25": 0.9412,
+     "all41": 0.9375,
+     "B4": 0.9375,
+     "B41": 0.9412,
+     "L4": 0.9375,
+     "L41": 0.9412,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 0.9412,
+     "T41": 0.9412
+    }
+   },
+   "left.tau_layout": {
+    "base": 0.9697,
+    "min": 0.9636,
+    "max": 1.0,
+    "n_moved": 5,
+    "moved_by": [
+     "B4",
+     "L4",
+     "R4",
+     "R41",
+     "all41"
+    ],
+    "values": {
+     "all25": 0.9697,
+     "all41": 0.9636,
+     "B4": 0.9636,
+     "B41": 0.9697,
+     "L4": 0.9636,
+     "L41": 0.9697,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 0.9697,
+     "T41": 0.9697
+    }
+   },
+   "left.tau_all": {
+    "base": 0.9559,
+    "min": 0.95,
+    "max": 1.0,
+    "n_moved": 5,
+    "moved_by": [
+     "B4",
+     "L4",
+     "R4",
+     "R41",
+     "all41"
+    ],
+    "values": {
+     "all25": 0.9559,
+     "all41": 0.95,
+     "B4": 0.95,
+     "B41": 0.9559,
+     "L4": 0.95,
+     "L41": 0.9559,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 0.9559,
+     "T41": 0.9559
+    }
+   },
+   "left.pairs_ok": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "left.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "left.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 2,
+    "n_moved": 3,
+    "moved_by": [
+     "L41",
+     "all25",
+     "all41"
+    ],
+    "values": {
+     "all25": 2,
+     "all41": 2,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 2,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.seg": {
+    "base": 13,
+    "min": 13,
+    "max": 13,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 13,
+     "all41": 13,
+     "B4": 13,
+     "B41": 13,
+     "L4": 13,
+     "L41": 13,
+     "R4": 13,
+     "R41": 13,
+     "T4": 13,
+     "T41": 13
+    }
+   },
+   "right.type_acc": {
+    "base": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 1.0,
+     "all41": 1.0,
+     "B4": 1.0,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 1.0,
+     "R41": 1.0,
+     "T4": 1.0,
+     "T41": 1.0
+    }
+   },
+   "right.tau_layout": {
+    "base": 1.0,
+    "min": 0.8333,
+    "max": 1.0,
+    "n_moved": 5,
+    "moved_by": [
+     "B4",
+     "R4",
+     "T4",
+     "all25",
+     "all41"
+    ],
+    "values": {
+     "all25": 0.9444,
+     "all41": 0.9444,
+     "B4": 0.9444,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 0.8333,
+     "R41": 1.0,
+     "T4": 0.9444,
+     "T41": 1.0
+    }
+   },
+   "right.tau_all": {
+    "base": 1.0,
+    "min": 0.7692,
+    "max": 1.0,
+    "n_moved": 5,
+    "moved_by": [
+     "B4",
+     "R4",
+     "T4",
+     "all25",
+     "all41"
+    ],
+    "values": {
+     "all25": 0.9231,
+     "all41": 0.9231,
+     "B4": 0.9231,
+     "B41": 1.0,
+     "L4": 1.0,
+     "L41": 1.0,
+     "R4": 0.7692,
+     "R41": 1.0,
+     "T4": 0.9231,
+     "T41": 1.0
+    }
+   },
+   "right.pairs_ok": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "right.slivers": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "row.seg": {
+    "base": 30,
+    "min": 29,
+    "max": 30,
+    "n_moved": 3,
+    "moved_by": [
+     "B4",
+     "L4",
+     "all41"
+    ],
+    "values": {
+     "all25": 30,
+     "all41": 29,
+     "B4": 29,
+     "B41": 30,
+     "L4": 29,
+     "L41": 30,
+     "R4": 30,
+     "R41": 30,
+     "T4": 30,
+     "T41": 30
+    }
+   },
+   "row.n_gt": {
+    "base": 30,
+    "min": 30,
+    "max": 30,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 30,
+     "all41": 30,
+     "B4": 30,
+     "B41": 30,
+     "L4": 30,
+     "L41": 30,
+     "R4": 30,
+     "R41": 30,
+     "T4": 30,
+     "T41": 30
+    }
+   },
+   "row.pairs_ok": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   },
+   "row.pairs_wrong": {
+    "base": 0,
+    "min": 0,
+    "max": 0,
+    "n_moved": 0,
+    "moved_by": [],
+    "values": {
+     "all25": 0,
+     "all41": 0,
+     "B4": 0,
+     "B41": 0,
+     "L4": 0,
+     "L41": 0,
+     "R4": 0,
+     "R41": 0,
+     "T4": 0,
+     "T41": 0
+    }
+   }
+  },
+  "any_moved_arms": [
+   "B4",
+   "L4",
+   "R4",
+   "R41",
+   "T4",
+   "all25",
+   "all41"
+  ]
+ }
+}

@@ -1,0 +1,474 @@
+{
+  "image_id": "de_01",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 4,
+      "matched": {
+        "T1": 0,
+        "F1": 6,
+        "P2": 4,
+        "P1": 3
+      },
+      "match_bbox": {
+        "T1": [
+          0,
+          5,
+          2018,
+          1143
+        ],
+        "F1": [
+          623,
+          2067,
+          1394,
+          788
+        ],
+        "P2": [
+          621,
+          1820,
+          1182,
+          212
+        ],
+        "P1": [
+          608,
+          1170,
+          1410,
+          628
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 9,
+        "n_orphan_blocks": 1,
+        "orphan_notes": [
+          {
+            "bbox": [
+              621,
+              1820,
+              1182,
+              212
+            ],
+            "type": "other",
+            "n_words": 9,
+            "median_word_h": 23,
+            "text": "Sr Cborensen, 1561 m nn en, Talort: OTSEE ;"
+          }
+        ],
+        "page_wh": [
+          2018,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "figure",
+            "bbox": [
+              0,
+              5,
+              2018,
+              1143
+            ],
+            "n_words": 17,
+            "median_word_h": 19
+          },
+          {
+            "type": "other",
+            "bbox": [
+              349,
+              1162,
+              232,
+              1494
+            ],
+            "n_words": 47,
+            "median_word_h": 24
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              357,
+              2608,
+              238,
+              224
+            ],
+            "n_words": 29,
+            "median_word_h": 23
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              608,
+              1170,
+              1410,
+              628
+            ],
+            "n_words": 181,
+            "median_word_h": 29
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              641,
+              1892,
+              1375,
+              124
+            ],
+            "n_words": 21,
+            "median_word_h": 31
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              623,
+              2067,
+              1394,
+              788
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              354,
+              2839,
+              431,
+              104
+            ],
+            "n_words": 1,
+            "median_word_h": 37
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 2,
+        "eject_notes": [],
+        "rescue_notes": [
+          "other #1: 15w@62.5 -> 47w@64.3",
+          "other #4: 9w@31.1 -> 19w@85.3"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "T1": true,
+        "F1": true,
+        "P2": false,
+        "P1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.75,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 2,
+      "order_all": {
+        "tau": null,
+        "n_fig_graded": 0,
+        "n_blocks": 2,
+        "seq_gt": [
+          "P1",
+          "P2"
+        ],
+        "seq_det": [
+          "P1",
+          "P2"
+        ],
+        "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 8,
+      "n_header_det": 1,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+        "T1": true,
+        "F1": true,
+        "P2": false,
+        "P1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "det2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": []
+    },
+    {
+      "name": "right.png",
+      "n_gt": 8,
+      "matched": {
+        "F2": 1,
+        "F3": 8,
+        "H1": 6,
+        "E2": 9,
+        "E1": 7,
+        "R3": 5,
+        "R2": 4,
+        "R1": 3
+      },
+      "match_bbox": {
+        "F2": [
+          79,
+          419,
+          1751,
+          762
+        ],
+        "F3": [
+          77,
+          2037,
+          1462,
+          828
+        ],
+        "H1": [
+          1565,
+          1206,
+          253,
+          45
+        ],
+        "E2": [
+          1579,
+          2221,
+          246,
+          472
+        ],
+        "E1": [
+          1573,
+          1251,
+          261,
+          956
+        ],
+        "R3": [
+          105,
+          1712,
+          1437,
+          319
+        ],
+        "R2": [
+          110,
+          1509,
+          1429,
+          203
+        ],
+        "R1": [
+          119,
+          1220,
+          1415,
+          285
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 1,
+        "n_orphan_blocks": 1,
+        "orphan_notes": [
+          {
+            "bbox": [
+              1368,
+              2886,
+              191,
+              36
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 36,
+            "text": "Www.alpinverlag"
+          }
+        ],
+        "page_wh": [
+          2056,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "heading",
+            "bbox": [
+              311,
+              280,
+              1166,
+              103
+            ],
+            "n_words": 2,
+            "median_word_h": 94
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              79,
+              419,
+              1751,
+              762
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              129,
+              1163,
+              330,
+              32
+            ],
+            "n_words": 2,
+            "median_word_h": 23
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              119,
+              1220,
+              1415,
+              285
+            ],
+            "n_words": 71,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              110,
+              1509,
+              1429,
+              203
+            ],
+            "n_words": 54,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              105,
+              1712,
+              1437,
+              319
+            ],
+            "n_words": 88,
+            "median_word_h": 28
+          },
+          {
+            "type": "heading",
+            "bbox": [
+              1565,
+              1206,
+              253,
+              45
+            ],
+            "n_words": 4,
+            "median_word_h": 38
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1573,
+              1251,
+              261,
+              956
+            ],
+            "n_words": 94,
+            "median_word_h": 26
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              77,
+              2037,
+              1462,
+              828
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1579,
+              2221,
+              246,
+              472
+            ],
+            "n_words": 40,
+            "median_word_h": 28
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 1,
+        "eject_notes": [],
+        "rescue_notes": [
+          "heading #0: 1w@91.7 -> 2w@91.9"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "F2": true,
+        "F3": true,
+        "H1": true,
+        "E2": true,
+        "E1": true,
+        "R3": true,
+        "R2": true,
+        "R1": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 6,
+      "order_all": {
+        "tau": null,
+        "n_fig_graded": 0,
+        "n_blocks": 6,
+        "seq_gt": [
+          "R1",
+          "R2",
+          "R3",
+          "H1",
+          "E1",
+          "E2"
+        ],
+        "seq_det": [
+          "R1",
+          "R2",
+          "R3",
+          "H1",
+          "E1",
+          "E2"
+        ],
+        "note": "no gradeable figure — GT carries no figure bbox, so figures are rank-matched (circular)"
+      },
+      "n_det_blocks": 11,
+      "n_header_det": 0,
+      "n_stripped_gt": 1,
+      "type_ok_parser": {
+        "F2": true,
+        "F3": true,
+        "H1": true,
+        "E2": true,
+        "E1": true,
+        "R3": true,
+        "R2": true,
+        "R1": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "det2": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": []
+    }
+  ]
+}

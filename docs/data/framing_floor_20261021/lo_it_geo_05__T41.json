@@ -1,0 +1,591 @@
+{
+  "image_id": "it_geo_05",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 2,
+      "matched": {
+        "F2": 21,
+        "C2": 22
+      },
+      "match_bbox": {
+        "F2": [
+          234,
+          327,
+          1802,
+          2597
+        ],
+        "C2": [
+          261,
+          2009,
+          363,
+          748
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 21,
+        "n_orphan_blocks": 19,
+        "orphan_notes": [
+          {
+            "bbox": [
+              1,
+              1386,
+              7,
+              31
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 31,
+            "text": "i"
+          },
+          {
+            "bbox": [
+              1,
+              1419,
+              7,
+              29
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 29,
+            "text": "|"
+          },
+          {
+            "bbox": [
+              0,
+              1463,
+              7,
+              73
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 73,
+            "text": "|"
+          },
+          {
+            "bbox": [
+              0,
+              1542,
+              6,
+              28
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 28,
+            "text": ";"
+          },
+          {
+            "bbox": [
+              0,
+              1630,
+              3,
+              24
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 24,
+            "text": "|"
+          },
+          {
+            "bbox": [
+              4,
+              1862,
+              5,
+              33
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 33,
+            "text": "|"
+          },
+          {
+            "bbox": [
+              7,
+              1985,
+              7,
+              16
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 16,
+            "text": "i"
+          },
+          {
+            "bbox": [
+              9,
+              2004,
+              5,
+              21
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 21,
+            "text": "|"
+          },
+          {
+            "bbox": [
+              9,
+              2029,
+              74,
+              46
+            ],
+            "type": "other",
+            "n_words": 2,
+            "median_word_h": 44,
+            "text": "| |"
+          },
+          {
+            "bbox": [
+              10,
+              2077,
+              6,
+              35
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 35,
+            "text": "i"
+          },
+          {
+            "bbox": [
+              10,
+              2114,
+              7,
+              31
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 31,
+            "text": "|"
+          },
+          {
+            "bbox": [
+              11,
+              2202,
+              5,
+              19
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 19,
+            "text": "Ì"
+          },
+          {
+            "bbox": [
+              10,
+              2224,
+              7,
+              31
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 31,
+            "text": "!"
+          },
+          {
+            "bbox": [
+              10,
+              2261,
+              6,
+              45
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 45,
+            "text": "i"
+          },
+          {
+            "bbox": [
+              0,
+              2309,
+              17,
+              100
+            ],
+            "type": "other",
+            "n_words": 2,
+            "median_word_h": 56,
+            "text": "| $"
+          },
+          {
+            "bbox": [
+              8,
+              2414,
+              5,
+              28
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 28,
+            "text": "|"
+          },
+          {
+            "bbox": [
+              7,
+              2447,
+              5,
+              26
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 26,
+            "text": "i"
+          },
+          {
+            "bbox": [
+              5,
+              2477,
+              8,
+              29
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 29,
+            "text": "|"
+          },
+          {
+            "bbox": [
+              1065,
+              265,
+              232,
+              36
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 36,
+            "text": "L'NEAMENTO"
+          }
+        ],
+        "page_wh": [
+          2052,
+          2959
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              222,
+              97,
+              56,
+              31
+            ],
+            "n_words": 1,
+            "median_word_h": 46
+          },
+          {
+            "type": "header",
+            "bbox": [
+              633,
+              88,
+              1386,
+              44
+            ],
+            "n_words": 21,
+            "median_word_h": 24
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              234,
+              327,
+              1802,
+              2597
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              261,
+              2009,
+              363,
+              748
+            ],
+            "n_words": 65,
+            "median_word_h": 26
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 1,
+        "n_rescued": 1,
+        "eject_notes": [
+          "ejected caption (Figura 2) printed inside figure 234,327 1802x2597: 63 words at 261,2087 363x670"
+        ],
+        "rescue_notes": [
+          "caption #22: 63w@91.7 -> 65w@93.0"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "F2": true,
+        "C2": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": null,
+      "tau_native": null,
+      "n_native": 1,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 2,
+        "seq_gt": [
+          "F2",
+          "C2"
+        ],
+        "seq_det": [
+          "F2",
+          "C2"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 23,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F2": true,
+        "C2": true
+      },
+      "caption_typed_parser": {
+        "C2": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 1,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "C2",
+          "figure": "F2",
+          "caption_text": "In questa pagina: Figura 2 La geografia nei dintorni della p",
+          "source": "sole_figure",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C2",
+          "figure": "F2",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    },
+    {
+      "name": "right.png",
+      "n_gt": 5,
+      "matched": {
+        "F3": 2,
+        "P3": 6,
+        "P1": 4,
+        "P2": 5,
+        "C3": 3
+      },
+      "match_bbox": {
+        "F3": [
+          606,
+          280,
+          1144,
+          1054
+        ],
+        "P3": [
+          609,
+          2375,
+          1140,
+          388
+        ],
+        "P1": [
+          599,
+          1372,
+          1143,
+          525
+        ],
+        "P2": [
+          603,
+          1900,
+          1142,
+          472
+        ],
+        "C3": [
+          84,
+          2485,
+          469,
+          287
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          2028,
+          2959
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              80,
+              88,
+              1308,
+              52
+            ],
+            "n_words": 18,
+            "median_word_h": 22
+          },
+          {
+            "type": "header",
+            "bbox": [
+              1732,
+              95,
+              61,
+              34
+            ],
+            "n_words": 1,
+            "median_word_h": 28
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              606,
+              280,
+              1144,
+              1054
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              84,
+              2485,
+              469,
+              287
+            ],
+            "n_words": 22,
+            "median_word_h": 26
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              599,
+              1372,
+              1143,
+              525
+            ],
+            "n_words": 107,
+            "median_word_h": 33
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              603,
+              1900,
+              1142,
+              472
+            ],
+            "n_words": 88,
+            "median_word_h": 34
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              609,
+              2375,
+              1140,
+              388
+            ],
+            "n_words": 87,
+            "median_word_h": 33
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F3": true,
+        "P3": true,
+        "P1": true,
+        "P2": true,
+        "C3": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 1,
+        "n_blocks": 5,
+        "seq_gt": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "seq_det": [
+          "F3",
+          "C3",
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 7,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F3": true,
+        "P3": true,
+        "P1": true,
+        "P2": true,
+        "C3": true
+      },
+      "caption_typed_parser": {
+        "C3": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "C3": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+        {
+          "caption": "C3",
+          "figure": "F3",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 1,
+          "reason": "nearest figure is the partner (single figure — association possible, NOT discriminated)"
+        }
+      ]
+    }
+  ]
+}

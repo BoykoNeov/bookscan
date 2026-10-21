@@ -1,0 +1,300 @@
+{
+  "image_id": "en_coins_02",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "right.png",
+      "n_gt": 8,
+      "matched": {
+        "F101": 3,
+        "F102": 5,
+        "D1": 7,
+        "L1": 2,
+        "P1": 8,
+        "C102": 6,
+        "C101": 4,
+        "H1": 1
+      },
+      "match_bbox": {
+        "F101": [
+          10,
+          473,
+          1260,
+          596
+        ],
+        "F102": [
+          10,
+          1118,
+          1260,
+          635
+        ],
+        "D1": [
+          57,
+          1793,
+          234,
+          49
+        ],
+        "L1": [
+          52,
+          298,
+          623,
+          143
+        ],
+        "P1": [
+          0,
+          1867,
+          1967,
+          362
+        ],
+        "C102": [
+          1302,
+          1668,
+          603,
+          84
+        ],
+        "C101": [
+          1287,
+          870,
+          593,
+          194
+        ],
+        "H1": [
+          0,
+          226,
+          243,
+          48
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          2046,
+          2918
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              0,
+              127,
+              735,
+              47
+            ],
+            "n_words": 6,
+            "median_word_h": 34
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              0,
+              226,
+              243,
+              48
+            ],
+            "n_words": 2,
+            "median_word_h": 37
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              52,
+              298,
+              623,
+              143
+            ],
+            "n_words": 10,
+            "median_word_h": 38
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              10,
+              473,
+              1260,
+              596
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              1287,
+              870,
+              593,
+              194
+            ],
+            "n_words": 32,
+            "median_word_h": 31
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              10,
+              1118,
+              1260,
+              635
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              1302,
+              1668,
+              603,
+              84
+            ],
+            "n_words": 16,
+            "median_word_h": 30
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              57,
+              1793,
+              234,
+              49
+            ],
+            "n_words": 1,
+            "median_word_h": 39
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              0,
+              1867,
+              1967,
+              362
+            ],
+            "n_words": 149,
+            "median_word_h": 29
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              1020,
+              2734,
+              64,
+              37
+            ],
+            "n_words": 1,
+            "median_word_h": 29
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F101": true,
+        "F102": true,
+        "D1": false,
+        "L1": true,
+        "P1": true,
+        "C102": true,
+        "C101": true,
+        "H1": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.75,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 6,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 2,
+        "n_blocks": 8,
+        "seq_gt": [
+          "H1",
+          "L1",
+          "F101",
+          "C101",
+          "F102",
+          "C102",
+          "D1",
+          "P1"
+        ],
+        "seq_det": [
+          "H1",
+          "L1",
+          "F101",
+          "C101",
+          "F102",
+          "C102",
+          "D1",
+          "P1"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 10,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F101": true,
+        "F102": true,
+        "D1": false,
+        "L1": true,
+        "P1": true,
+        "C102": true,
+        "C101": true,
+        "H1": false
+      },
+      "caption_typed_parser": {
+        "C101": true,
+        "C102": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "C101",
+          "figure": "F101",
+          "caption_text": "Fig. 101. 1894 Guatemala Peso (KM# 210). Huntsinger Collecti",
+          "source": "geometry",
+          "verdict": "ok"
+        },
+        {
+          "caption": "C102",
+          "figure": "F102",
+          "caption_text": "Fig. 102. 1895 Guatemala Peso (KM# 210; Du: plicate of Type ",
+          "source": "geometry",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C101",
+          "figure": "F101",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner"
+        },
+        {
+          "caption": "C102",
+          "figure": "F102",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner"
+        }
+      ]
+    }
+  ]
+}

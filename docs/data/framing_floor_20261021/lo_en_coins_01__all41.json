@@ -1,0 +1,746 @@
+{
+  "image_id": "en_coins_01",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 12,
+      "matched": {
+        "F96": 2,
+        "F97": 9,
+        "D1": 4,
+        "D2": 11,
+        "P2": 6,
+        "P3": 12,
+        "P1": 5,
+        "L1": 8,
+        "C97": 10,
+        "H1": 7,
+        "C96": 3,
+        "FN1": 13
+      },
+      "match_bbox": {
+        "F96": [
+          231,
+          270,
+          1116,
+          629
+        ],
+        "F97": [
+          158,
+          1695,
+          1154,
+          638
+        ],
+        "D1": [
+          243,
+          901,
+          187,
+          47
+        ],
+        "D2": [
+          172,
+          2350,
+          199,
+          46
+        ],
+        "P2": [
+          168,
+          1310,
+          1815,
+          136
+        ],
+        "P3": [
+          97,
+          2422,
+          1848,
+          179
+        ],
+        "P1": [
+          173,
+          982,
+          1813,
+          308
+        ],
+        "L1": [
+          213,
+          1535,
+          1595,
+          139
+        ],
+        "C97": [
+          1325,
+          2011,
+          603,
+          316
+        ],
+        "H1": [
+          164,
+          1462,
+          681,
+          46
+        ],
+        "C96": [
+          1361,
+          773,
+          574,
+          125
+        ],
+        "FN1": [
+          178,
+          2622,
+          648,
+          41
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 1,
+        "n_orphan_blocks": 1,
+        "orphan_notes": [
+          {
+            "bbox": [
+              1732,
+              194,
+              268,
+              13
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 13,
+            "text": "——"
+          }
+        ],
+        "page_wh": [
+          2000,
+          2918
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              203,
+              159,
+              659,
+              49
+            ],
+            "n_words": 6,
+            "median_word_h": 44
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              231,
+              270,
+              1116,
+              629
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              1361,
+              773,
+              574,
+              125
+            ],
+            "n_words": 15,
+            "median_word_h": 28
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              243,
+              901,
+              187,
+              47
+            ],
+            "n_words": 1,
+            "median_word_h": 49
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              173,
+              982,
+              1813,
+              308
+            ],
+            "n_words": 134,
+            "median_word_h": 28
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              168,
+              1310,
+              1815,
+              136
+            ],
+            "n_words": 61,
+            "median_word_h": 28
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              164,
+              1462,
+              681,
+              46
+            ],
+            "n_words": 7,
+            "median_word_h": 28
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              213,
+              1535,
+              1595,
+              139
+            ],
+            "n_words": 35,
+            "median_word_h": 29
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              158,
+              1695,
+              1154,
+              638
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              1325,
+              2011,
+              603,
+              316
+            ],
+            "n_words": 52,
+            "median_word_h": 24
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              172,
+              2350,
+              199,
+              46
+            ],
+            "n_words": 1,
+            "median_word_h": 38
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              97,
+              2422,
+              1848,
+              179
+            ],
+            "n_words": 80,
+            "median_word_h": 28
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              178,
+              2622,
+              648,
+              41
+            ],
+            "n_words": 7,
+            "median_word_h": 23
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              1001,
+              2734,
+              59,
+              35
+            ],
+            "n_words": 1,
+            "median_word_h": 30
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 2,
+        "eject_notes": [],
+        "rescue_notes": [
+          "other #1: 1w@0.0 -> 2w@0.0",
+          "caption #10: 51w@88.7 -> 52w@89.8"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "F96": true,
+        "F97": true,
+        "D1": false,
+        "D2": false,
+        "P2": true,
+        "P3": true,
+        "P1": true,
+        "L1": true,
+        "C97": true,
+        "H1": false,
+        "C96": true,
+        "FN1": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.6666666666666666,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 10,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 2,
+        "n_blocks": 12,
+        "seq_gt": [
+          "F96",
+          "C96",
+          "D1",
+          "P1",
+          "P2",
+          "H1",
+          "L1",
+          "F97",
+          "C97",
+          "D2",
+          "P3",
+          "FN1"
+        ],
+        "seq_det": [
+          "F96",
+          "C96",
+          "D1",
+          "P1",
+          "P2",
+          "H1",
+          "L1",
+          "F97",
+          "C97",
+          "D2",
+          "P3",
+          "FN1"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 15,
+      "n_header_det": 3,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F96": true,
+        "F97": true,
+        "D1": false,
+        "D2": false,
+        "P2": true,
+        "P3": true,
+        "P1": true,
+        "L1": true,
+        "C97": true,
+        "H1": false,
+        "C96": true,
+        "FN1": false
+      },
+      "caption_typed_parser": {
+        "C96": true,
+        "C97": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "D2": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+      },
+      "pairs_detail": [
+        {
+          "caption": "C96",
+          "figure": "F96",
+          "caption_text": "Fig. 96. 1786-NG Guatemala Portrait Light Reales, Charles 11",
+          "source": "geometry",
+          "verdict": "ok"
+        },
+        {
+          "caption": "C97",
+          "figure": "F97",
+          "caption_text": "Fig. 97. 1805-NG Guatemala Portrait IZight Reales, Charles I",
+          "source": "geometry",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C96",
+          "figure": "F96",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner"
+        },
+        {
+          "caption": "C97",
+          "figure": "F97",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner"
+        }
+      ]
+    },
+    {
+      "name": "right.png",
+      "n_gt": 10,
+      "matched": {
+        "F98": 3,
+        "F99": 9,
+        "D3": 5,
+        "L2": 2,
+        "L3": 8,
+        "P4": 6,
+        "C98": 4,
+        "C99": 10,
+        "H2": 1,
+        "H3": 7
+      },
+      "match_bbox": {
+        "F98": [
+          148,
+          465,
+          1207,
+          634
+        ],
+        "F99": [
+          130,
+          1988,
+          1251,
+          658
+        ],
+        "D3": [
+          177,
+          1109,
+          204,
+          49
+        ],
+        "L2": [
+          175,
+          311,
+          1670,
+          132
+        ],
+        "L3": [
+          152,
+          1769,
+          1832,
+          197
+        ],
+        "P4": [
+          96,
+          1187,
+          1929,
+          493
+        ],
+        "C98": [
+          1381,
+          968,
+          604,
+          121
+        ],
+        "C99": [
+          1413,
+          2519,
+          581,
+          126
+        ],
+        "H2": [
+          104,
+          236,
+          787,
+          53
+        ],
+        "H3": [
+          91,
+          1694,
+          649,
+          51
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          2080,
+          2918
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              102,
+              128,
+              709,
+              49
+            ],
+            "n_words": 6,
+            "median_word_h": 29
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              104,
+              236,
+              787,
+              53
+            ],
+            "n_words": 8,
+            "median_word_h": 28
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              175,
+              311,
+              1670,
+              132
+            ],
+            "n_words": 33,
+            "median_word_h": 30
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              148,
+              465,
+              1207,
+              634
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              1381,
+              968,
+              604,
+              121
+            ],
+            "n_words": 17,
+            "median_word_h": 26
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              177,
+              1109,
+              204,
+              49
+            ],
+            "n_words": 1,
+            "median_word_h": 48
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              96,
+              1187,
+              1929,
+              493
+            ],
+            "n_words": 205,
+            "median_word_h": 29
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              91,
+              1694,
+              649,
+              51
+            ],
+            "n_words": 4,
+            "median_word_h": 38
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              152,
+              1769,
+              1832,
+              197
+            ],
+            "n_words": 52,
+            "median_word_h": 37
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              130,
+              1988,
+              1251,
+              658
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              1413,
+              2519,
+              581,
+              126
+            ],
+            "n_words": 17,
+            "median_word_h": 30
+          },
+          {
+            "type": "page_number",
+            "bbox": [
+              1070,
+              2727,
+              61,
+              38
+            ],
+            "n_words": 1,
+            "median_word_h": 31
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F98": true,
+        "F99": true,
+        "D3": false,
+        "L2": true,
+        "L3": true,
+        "P4": true,
+        "C98": true,
+        "C99": true,
+        "H2": false,
+        "H3": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.7,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 8,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 2,
+        "n_blocks": 10,
+        "seq_gt": [
+          "H2",
+          "L2",
+          "F98",
+          "C98",
+          "D3",
+          "P4",
+          "H3",
+          "L3",
+          "F99",
+          "C99"
+        ],
+        "seq_det": [
+          "H2",
+          "L2",
+          "F98",
+          "C98",
+          "D3",
+          "P4",
+          "H3",
+          "L3",
+          "F99",
+          "C99"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 12,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F98": true,
+        "F99": true,
+        "D3": false,
+        "L2": true,
+        "L3": true,
+        "P4": true,
+        "C98": true,
+        "C99": true,
+        "H2": false,
+        "H3": false
+      },
+      "caption_typed_parser": {
+        "C98": true,
+        "C99": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 2,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 2,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "D3": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+      },
+      "pairs_detail": [
+        {
+          "caption": "C98",
+          "figure": "F98",
+          "caption_text": "Fig. 98. 1819-NG Guatemala Portrait Fight Reales, Ferdinand ",
+          "source": "geometry",
+          "verdict": "ok"
+        },
+        {
+          "caption": "C99",
+          "figure": "F99",
+          "caption_text": "Fig. 99. (1841) Guatemala Type IV Republic Counterstamp, Per",
+          "source": "geometry",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C98",
+          "figure": "F98",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner"
+        },
+        {
+          "caption": "C99",
+          "figure": "F99",
+          "caption_typed_ok": true,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner"
+        }
+      ]
+    }
+  ]
+}

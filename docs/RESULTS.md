@@ -10024,3 +10024,64 @@ pair. Candidate directions, none measured: apply the rescue's text gate to
 main-pass figures near the floor; or a band around `conf_thresh` instead of a
 hard cut. Either is a new pre-registration, graded against the framing floor
 that is running now (pre-registration `framing_floor_prereg_20261021.md`).
+
+## 2026-10-21 — The framing noise floor of `layout_order_eval`: 34 of 58 model-free reframings move a graded number; a 4 px trim makes a wrong caption pair
+
+Pre-registration `docs/data/framing_floor_prereg_20261021.md` (7545209,
+committed before any run). Probe, runner, summarizer, all 75 outputs and
+`summary.json`: `docs/data/framing_floor_20261021/`. Default arm (Stage 05 on),
+shipped config, sequential at BelowNormal, 18:18–19:23. Trims remove only
+background: every trimmed side has ≥ 115 px of it, measured before the run.
+
+**Preconditions: all pass.** `repeat` equals `base` on every statistic on all
+8 rows (no run-to-run noise); `rect0` equals `base` on `it_geo_07` (the
+rectangle path is neutral); `base` reproduces `geom_thin_20261021` on all 8
+rows, and all 10 coinciding trims of `it_geo_06`/`07` reproduce it exactly.
+
+| row | reframing arms | arms that move any graded number | what moves (base → range over the arms) |
+|---|---|---|---|
+| `de_01` | 10 | 2 | seg 12 → 11–12 (B41); left type acc 1.00 → 0.75 (L4); left tau undefined under B41 |
+| `en_coins_01` | 6 (T, B only) | **6** | left type acc 0.75 → 0.67–0.73 (all six); seg 22 → 21 (all25) |
+| `en_coins_02` | 6 (T, B only) | 1 | seg 8 → 7, right type acc 0.75 → 0.86 (all25) |
+| `en_coins_03` | 3 (B only) — thin | 1 | right type acc 0.70 → 0.80 (B4) |
+| `it_geo_04` | 3 (B only) — thin | 0 | nothing |
+| `it_geo_05` | 10 | **9** | pairs 2 → **0–2** (8 arms); seg 7 → 6 (R4, R41); right tau +1.00 → +0.33 (B41) |
+| `it_geo_06` | 10 | **8** | pairs 5 → **3–5** (4 arms); **wrong pairs 0 → 1 (B4)**; left tau+figures 1.00 → 0.86 (4 arms) |
+| `it_geo_07` | 10 | 7 | seg 30 → 29 (3 arms); right tau +1.00 → +0.83 (5 arms); type acc, left tau both ways; scale-bar slivers 0 → 2 (3 arms) |
+
+**Headline.** 34 of 58 reframings move at least one graded number; 7 of 8 rows
+move under at least one (the exception, `it_geo_04`, had only three bottom
+trims). Per statistic: segmentation moves on 5 rows, type accuracy on 5, text
+tau on 3 (one of them by becoming undefined), tau+figures on 3, correct pairs
+on 2, wrong pairs on 1. A 4 px trim is enough on 6 rows. The Italian sofa
+pages (`it_geo_05`–`07`) are the most sensitive; the German page and two of the
+coin pages barely move.
+
+**Observed, not tested:** on segmentation and on correct pairs, the uncut
+framing is the **best** value of its row's range on every row where those
+move (never exceeded by a trim). Type accuracy and tau move both ways. One
+reading is selection: the passes that make these numbers were developed and
+measured on exactly these framings, so the uncut values may be optimistic. Not
+established here.
+
+**A new zero-wrong breach, from 4 px of sofa.** On `it_geo_06`-right, trimming
+4 px off the bottom pairs caption C29 ("Sopra: Figura 29…", *above*) to F30,
+the picture below it, by geometry. Uncut — and under the other 9 trims — the
+in-photo plate reader finds F29's printed number, so the subpage counts as
+numbered, C29 pairs by number (correct) and the geometric arm stays silent.
+Under B4 the plate reader finds no number (0 against 1–2 on every other arm),
+the subpage looks unnumbered, and the geometric arm pairs C29 to its nearest
+picture. A different mechanism from the scale-bar sliver (row above): the
+thinness floor does not touch it. The editor already marks geometry pairs
+"check" (2026-09-24), so on the owner's book such a pair is flagged for a
+person, not silent. Its cause inside the plate reader is not examined here.
+
+**What it licenses (as pre-registered, proposed only).** For the next
+pre-registration that judges a crop or a layout change on these rows: count a
+delta on (row, statistic) as an effect only if the new value falls outside the
+row's reframing range above; on `en_coins_03` and `it_geo_04` the floor is
+thin (3 arms) and is reported as such. Read against this table, a one-block,
+one-pair or one-tau-step change on `it_geo_05`–`07` is inside the noise. Past
+RESULTS rows' layout deltas have not been re-read against it (P9, follow-on).
+
+n = three books, three surfaces; one photograph per row.

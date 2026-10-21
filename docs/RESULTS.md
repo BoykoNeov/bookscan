@@ -9738,3 +9738,48 @@ chooses the ECC alignment.
 shifted by 10 %, still pass `min_ncc` 0.60. The per-source gate alone does not
 stop a displaced source. The finished-picture check (`min_result_ncc`) and the
 greedy source choice are what stop it, as the 2026-08-29 row says.
+
+## 2026-10-21 — A scale bar no longer wins a caption: the thinness floor now applies to the geometric pairing too (SHIPPED)
+
+The reframing control (row above) found two sofa-only trims of `it_geo_07`
+(L41, mirror) that make the production grouping pair caption C31 to a
+**wrong** figure. Read off the committed outputs: under those trims Stage 04
+emits the map's two scale bars ("0.5 cm = 200 m", "0.5 cm = 5 Km") as FIGURE
+blocks 257 × 12–18 px, between C31 and its diagram D1 (which sits past the gap
+limit), and the geometric arm paired C31 to the nearest sliver. Uncut, the
+same text is orphan words and C31 abstains.
+
+Change: `figure_grouping.geom_min_fig_frac` — the sole-figure arm's thinness
+test (`min(w/page_w, h/page_h)` < 0.04, measured 2026-08-26) applied at the
+same value to the figures arm 2 may pair to. Not tuned. A sliver stays a
+figure and still renders; it just cannot be handed a caption by proximity.
+Pre-registration `docs/data/geom_thin_prereg_20261021.md` (e8856b8, with the
+knob committed OFF). Probe, runner, outputs, summary:
+`docs/data/geom_thin_20261021/` (`thin_probe.py` runs `group_figures` at 0 and
+0.04 on the **same** blocks inside one `layout_order_eval` run, default arm,
+shipped config; `owner_probe.py` runs it both ways as Stage 07 does).
+
+| gate | result |
+|---|---|
+| G1 zero wrong at 0.04, 20 graded runs (8 uncut block-GT rows + 12 trims) | **pass**, 0 wrong |
+| G2 no correct pair lost | **pass**; pairs differ on 2 subpages only, both the C31 sliver pairs |
+| G3 owner's book, every subpage | **pass**; 9 pairs at both values, no pair and no provenance differs |
+| G4 effect | **pass**; C31 abstains under L41 and mirror, as it does uncut |
+
+The uncut rows reproduce the corpus total (16 correct, 0 wrong over the 8
+fixtures), and every `it_geo_06` trim reproduces its committed count (5, 3, 5,
+5, 4, 4). **Shipped ON** by the registered rule.
+
+**Found while writing the unit test (no measured row hits it):** taking
+slivers out of arm 2's list also lowers the figure count its SOLO gap
+relaxation reads. A page left with one caption and one real figure gets the
+wider gap. On a synthetic copy of `it_geo_07`-left with D2–D5 removed, C31
+pairs to D1 (its true partner). On the existing `it_geo_04` test, a thin
+second strip now leaves the caption paired by geometry instead of by the sole
+figure arm (same pair, different provenance; the editor marks both "check").
+Both are pinned in `test_figure_grouping.py`. Full suite before the test
+update: 849 passed, 1 failed (that provenance assertion); after: 850 passed.
+
+**Not touched:** why Stage 04 emits a scale bar as a figure under a trim at
+all. Under a 41 px trim it does, uncut it does not, and the earlier rescue trap
+(RESULTS 2026-08-26) was the same kind of object. n = 1 book for the defect.

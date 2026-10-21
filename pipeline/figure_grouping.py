@@ -221,11 +221,17 @@ DEFAULTS: dict[str, float] = {
     # box is large. See docs/FIGURE_SEPARATION_SCOPE.md.
     "sole_min_fig_frac": 0.04,
     # GEOMETRIC arm (arm 2): the same thinness test, at the same value, applied
-    # to the figures a caption may be paired to BY PROXIMITY. 0 = off. See
-    # docs/data/geom_thin_prereg_20261021.md: a 41 px sofa-only trim of it_geo_07
-    # makes Stage 04 emit a map's scale bars as 257x12 px FIGURE blocks between
-    # caption C31 and its diagram, and arm 2 paired C31 to the sliver.
-    "geom_min_fig_frac": 0.0,
+    # to the figures a caption may be paired to BY PROXIMITY. 0 = off. A 41 px
+    # sofa-only trim of it_geo_07 makes Stage 04 emit a map's scale bars as
+    # 257x12 px FIGURE blocks between caption C31 and its diagram, and arm 2
+    # paired C31 to the sliver. Pre-registered (geom_thin_prereg_20261021.md) and
+    # measured over the 8 block-GT rows, 12 trimmed arms and the owner's book
+    # (RESULTS 2026-10-21): exactly the two sliver pairs change, both to an
+    # abstention; 0 wrong, no correct pair lost, the owner's 9 pairs identical.
+    # Not tuned: the value is arm 3's. Removing slivers also lowers the figure
+    # count _geometric_pairs uses for its SOLO gap limit — a page left with one
+    # caption and one real figure gets the relaxed gap (pinned in the tests).
+    "geom_min_fig_frac": 0.04,
 }
 
 # Detector types eligible for promotion to CAPTION by the textual parser.

@@ -1,0 +1,98 @@
+[
+ {
+  "page_h": 3000,
+  "page_w": 2080,
+  "figures": {
+   "6": [
+    213,
+    1001,
+    828,
+    144
+   ],
+   "9": [
+    211,
+    1204,
+    829,
+    222
+   ],
+   "10": [
+    211,
+    1482,
+    832,
+    380
+   ],
+   "15": [
+    210,
+    1926,
+    831,
+    348
+   ],
+   "19": [
+    211,
+    2377,
+    822,
+    368
+   ]
+  },
+  "off": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "16": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+    "1": "no figure shares this caption's column within the gap limit"
+   }
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "16": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+    "1": "no figure shares this caption's column within the gap limit"
+   }
+  }
+ },
+ {
+  "page_h": 3000,
+  "page_w": 2000,
+  "figures": {
+   "2": [
+    108,
+    258,
+    865,
+    467
+   ],
+   "6": [
+    91,
+    825,
+    876,
+    641
+   ],
+   "9": [
+    114,
+    1537,
+    852,
+    742
+   ],
+   "12": [
+    125,
+    2401,
+    441,
+    401
+   ]
+  },
+  "off": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "3": "ambiguous: two figures are comparably close (4px vs 36px)"
+   }
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "3": "ambiguous: two figures are comparably close (4px vs 36px)"
+   }
+  }
+ }
+]

@@ -1,0 +1,46 @@
+[
+ {
+  "page_h": 3000,
+  "page_w": 2046,
+  "figures": {
+   "3": [
+    12,
+    488,
+    1262,
+    617
+   ],
+   "5": [
+    12,
+    1155,
+    1262,
+    651
+   ]
+  },
+  "off": {
+   "pairs": {
+    "4": "3",
+    "6": "5"
+   },
+   "source": {
+    "4": "geometry",
+    "6": "geometry"
+   },
+   "abstained": {
+    "7": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+   }
+  },
+  "on": {
+   "pairs": {
+    "4": "3",
+    "6": "5"
+   },
+   "source": {
+    "4": "geometry",
+    "6": "geometry"
+   },
+   "abstained": {
+    "7": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+   }
+  }
+ }
+]

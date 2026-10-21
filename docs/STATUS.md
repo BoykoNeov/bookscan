@@ -1073,3 +1073,25 @@ rules for it:
   crop — the sharper the source, the likelier the refusal. Not changed.
 - Capture consequence: frame each picture whole in one close-up, or cover it
   with a few overlapping ones.
+
+### 2026-10-21 — Two cheap open items while the phone is unavailable: one refusal, one fix shipped
+
+- **Sharp close-ups and the likeness check (P7): REFUSED.** The suspicion from
+  the morning (the check shrinks a close-up without smoothing, so a source
+  that resolves the halftone looks less like the soft crop) was measured,
+  pre-registered, over 178 figures / 417 candidates on the owner's book and
+  both phone jobs. Aliasing is real and grows with scale, but tiny (max +0.05);
+  no delivered picture changes and the shift control gets worse. The coin
+  stays refused (0.596; its coverage 0.75 refuses it anyway). RESULTS
+  2026-10-21.
+- **Scale bar handed a caption (P1 item 7): FIXED.** The wrong C31 pair under
+  a 41 px sofa trim came from Stage 04 emitting a map's scale bars as figure
+  slivers. `figure_grouping.geom_min_fig_frac` (0.04, the sole-figure arm's
+  measured value) keeps slivers out of the proximity pairing. Pre-registered;
+  20 graded runs plus the owner's book: only the two wrong pairs change. A side
+  effect is recorded and pinned: a page whose only extra figure is a sliver now
+  counts as a one-figure page for the geometric arm's relaxed gap. RESULTS
+  2026-10-21.
+- Not started: reading close-ups separately and merging the text (waits on the
+  owner's answer to the capture plan), placing close-ups against each other,
+  and the reframing noise floor.

@@ -1,0 +1,96 @@
+[
+ {
+  "page_h": 2948,
+  "page_w": 2039,
+  "figures": {
+   "9": [
+    211,
+    1183,
+    814,
+    217
+   ],
+   "12": [
+    209,
+    1461,
+    817,
+    369
+   ],
+   "15": [
+    208,
+    1892,
+    816,
+    340
+   ],
+   "19": [
+    209,
+    2331,
+    804,
+    360
+   ]
+  },
+  "off": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "16": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+    "1": "no figure shares this caption's column within the gap limit"
+   }
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "16": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+    "1": "no figure shares this caption's column within the gap limit"
+   }
+  }
+ },
+ {
+  "page_h": 2948,
+  "page_w": 1964,
+  "figures": {
+   "2": [
+    109,
+    262,
+    843,
+    461
+   ],
+   "4": [
+    94,
+    816,
+    852,
+    639
+   ],
+   "6": [
+    116,
+    1536,
+    830,
+    708
+   ],
+   "14": [
+    124,
+    2362,
+    428,
+    391
+   ]
+  },
+  "off": {
+   "pairs": {
+    "5": "6"
+   },
+   "source": {
+    "5": "geometry"
+   },
+   "abstained": {}
+  },
+  "on": {
+   "pairs": {
+    "5": "6"
+   },
+   "source": {
+    "5": "geometry"
+   },
+   "abstained": {}
+  }
+ }
+]

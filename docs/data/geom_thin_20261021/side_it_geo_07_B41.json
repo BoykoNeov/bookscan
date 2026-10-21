@@ -1,0 +1,94 @@
+[
+ {
+  "page_h": 2959,
+  "page_w": 2080,
+  "figures": {
+   "6": [
+    217,
+    972,
+    829,
+    150
+   ],
+   "9": [
+    215,
+    1178,
+    832,
+    225
+   ],
+   "10": [
+    212,
+    1455,
+    836,
+    371
+   ],
+   "15": [
+    212,
+    1891,
+    832,
+    344
+   ],
+   "19": [
+    215,
+    2337,
+    821,
+    365
+   ]
+  },
+  "off": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "16": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+    "1": "no figure shares this caption's column within the gap limit"
+   }
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "16": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+    "1": "no figure shares this caption's column within the gap limit"
+   }
+  }
+ },
+ {
+  "page_h": 2959,
+  "page_w": 2000,
+  "figures": {
+   "2": [
+    102,
+    256,
+    866,
+    461
+   ],
+   "6": [
+    92,
+    815,
+    869,
+    638
+   ],
+   "10": [
+    114,
+    1524,
+    849,
+    728
+   ],
+   "14": [
+    128,
+    2371,
+    440,
+    396
+   ]
+  },
+  "off": {
+   "pairs": {},
+   "source": {},
+   "abstained": {}
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {}
+  }
+ }
+]

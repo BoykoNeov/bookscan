@@ -1,0 +1,62 @@
+[
+ {
+  "page_h": 3000,
+  "page_w": 2052,
+  "figures": {
+   "3": [
+    231,
+    280,
+    1806,
+    2709
+   ]
+  },
+  "off": {
+   "pairs": {
+    "4": "3"
+   },
+   "source": {
+    "4": "sole_figure"
+   },
+   "abstained": {}
+  },
+  "on": {
+   "pairs": {
+    "4": "3"
+   },
+   "source": {
+    "4": "sole_figure"
+   },
+   "abstained": {}
+  }
+ },
+ {
+  "page_h": 3000,
+  "page_w": 2028,
+  "figures": {
+   "2": [
+    609,
+    285,
+    1140,
+    1065
+   ]
+  },
+  "off": {
+   "pairs": {
+    "6": "2"
+   },
+   "source": {
+    "6": "sole_figure"
+   },
+   "abstained": {}
+  },
+  "on": {
+   "pairs": {
+    "6": "2"
+   },
+   "source": {
+    "6": "sole_figure"
+   },
+   "abstained": {}
+  }
+ }
+]

@@ -1,0 +1,90 @@
+[
+ {
+  "page_h": 3000,
+  "page_w": 2000,
+  "figures": {
+   "1": [
+    234,
+    277,
+    1114,
+    647
+   ],
+   "8": [
+    157,
+    1742,
+    1150,
+    658
+   ]
+  },
+  "off": {
+   "pairs": {
+    "2": "1",
+    "9": "8"
+   },
+   "source": {
+    "2": "geometry",
+    "9": "geometry"
+   },
+   "abstained": {
+    "10": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+   }
+  },
+  "on": {
+   "pairs": {
+    "2": "1",
+    "9": "8"
+   },
+   "source": {
+    "2": "geometry",
+    "9": "geometry"
+   },
+   "abstained": {
+    "10": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+   }
+  }
+ },
+ {
+  "page_h": 3000,
+  "page_w": 2080,
+  "figures": {
+   "3": [
+    144,
+    485,
+    1210,
+    649
+   ],
+   "9": [
+    131,
+    2046,
+    1249,
+    675
+   ]
+  },
+  "off": {
+   "pairs": {
+    "4": "3",
+    "10": "9"
+   },
+   "source": {
+    "4": "geometry",
+    "10": "geometry"
+   },
+   "abstained": {
+    "5": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+   }
+  },
+  "on": {
+   "pairs": {
+    "4": "3",
+    "10": "9"
+   },
+   "source": {
+    "4": "geometry",
+    "10": "geometry"
+   },
+   "abstained": {
+    "5": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+   }
+  }
+ }
+]

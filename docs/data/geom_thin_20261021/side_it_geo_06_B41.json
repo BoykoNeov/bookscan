@@ -1,0 +1,98 @@
+[
+ {
+  "page_h": 2959,
+  "page_w": 2129,
+  "figures": {
+   "2": [
+    202,
+    272,
+    1368,
+    765
+   ],
+   "3": [
+    202,
+    1078,
+    1368,
+    824
+   ],
+   "4": [
+    202,
+    1949,
+    1368,
+    823
+   ],
+   "5": [
+    1620,
+    253,
+    481,
+    609
+   ]
+  },
+  "off": {
+   "pairs": {
+    "6": "2",
+    "7": "5",
+    "8": "3"
+   },
+   "source": {
+    "6": "number",
+    "7": "number",
+    "8": "number"
+   },
+   "abstained": {}
+  },
+  "on": {
+   "pairs": {
+    "6": "2",
+    "7": "5",
+    "8": "3"
+   },
+   "source": {
+    "6": "number",
+    "7": "number",
+    "8": "number"
+   },
+   "abstained": {}
+  }
+ },
+ {
+  "page_h": 2959,
+  "page_w": 1951,
+  "figures": {
+   "2": [
+    147,
+    283,
+    1556,
+    1019
+   ],
+   "4": [
+    630,
+    1336,
+    1072,
+    820
+   ]
+  },
+  "off": {
+   "pairs": {
+    "3": "2"
+   },
+   "source": {
+    "3": "number"
+   },
+   "abstained": {
+    "5": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering"
+   }
+  },
+  "on": {
+   "pairs": {
+    "3": "2"
+   },
+   "source": {
+    "3": "number"
+   },
+   "abstained": {
+    "5": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering"
+   }
+  }
+ }
+]

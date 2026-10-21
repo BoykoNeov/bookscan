@@ -1,0 +1,121 @@
+[
+ {
+  "page_h": 2948,
+  "page_w": 2046,
+  "figures": {
+   "3": [
+    207,
+    810,
+    257,
+    17
+   ],
+   "4": [
+    207,
+    897,
+    257,
+    17
+   ],
+   "8": [
+    210,
+    968,
+    814,
+    151
+   ],
+   "11": [
+    208,
+    1177,
+    819,
+    220
+   ],
+   "14": [
+    206,
+    1451,
+    823,
+    370
+   ],
+   "17": [
+    206,
+    1885,
+    823,
+    340
+   ],
+   "21": [
+    209,
+    2327,
+    810,
+    362
+   ]
+  },
+  "off": {
+   "pairs": {
+    "1": "3"
+   },
+   "source": {
+    "1": "geometry"
+   },
+   "abstained": {
+    "18": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption"
+   }
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "18": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+    "1": "no figure shares this caption's column within the gap limit"
+   }
+  }
+ },
+ {
+  "page_h": 2948,
+  "page_w": 1957,
+  "figures": {
+   "2": [
+    107,
+    267,
+    840,
+    513
+   ],
+   "4": [
+    86,
+    849,
+    854,
+    602
+   ],
+   "6": [
+    102,
+    1530,
+    839,
+    713
+   ],
+   "13": [
+    127,
+    2361,
+    422,
+    392
+   ]
+  },
+  "off": {
+   "pairs": {
+    "5": "6"
+   },
+   "source": {
+    "5": "geometry"
+   },
+   "abstained": {
+    "3": "ambiguous: two figures are comparably close (2px vs 34px)"
+   }
+  },
+  "on": {
+   "pairs": {
+    "5": "6"
+   },
+   "source": {
+    "5": "geometry"
+   },
+   "abstained": {
+    "3": "ambiguous: two figures are comparably close (2px vs 34px)"
+   }
+  }
+ }
+]

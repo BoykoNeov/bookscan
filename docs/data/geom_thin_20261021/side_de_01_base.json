@@ -1,0 +1,62 @@
+[
+ {
+  "page_h": 3000,
+  "page_w": 2023,
+  "figures": {
+   "0": [
+    0,
+    17,
+    2023,
+    1109
+   ],
+   "7": [
+    617,
+    2057,
+    1402,
+    796
+   ]
+  },
+  "off": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "2": "no figure shares this caption's column within the gap limit"
+   }
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "2": "no figure shares this caption's column within the gap limit"
+   }
+  }
+ },
+ {
+  "page_h": 3000,
+  "page_w": 2057,
+  "figures": {
+   "0": [
+    28,
+    148,
+    1801,
+    1029
+   ],
+   "6": [
+    47,
+    2030,
+    1492,
+    834
+   ]
+  },
+  "off": {
+   "pairs": {},
+   "source": {},
+   "abstained": {}
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {}
+  }
+ }
+]

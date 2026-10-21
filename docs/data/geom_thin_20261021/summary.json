@@ -1,0 +1,806 @@
+{
+ "de_01_base": {
+  "on_pairs": [],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 0,
+  "differs": []
+ },
+ "en_coins_01_base": {
+  "on_pairs": [
+   {
+    "caption": "C96",
+    "figure": "F96",
+    "caption_text": "Fig. 96. 1786-NG Guatemala Portrait Light Reales, Charles 11",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C97",
+    "figure": "F97",
+    "caption_text": "Fig. 97. 1805-NG Guatemala Portrait ISight Reales, Charles I",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C98",
+    "figure": "F98",
+    "caption_text": "Fig. 98. 1819-NG Guatemala Portrait Fight Reales, Ferdinand ",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "right.png"
+   },
+   {
+    "caption": "C99",
+    "figure": "F99",
+    "caption_text": "Fig. 99. (1841) Guatemala Type LV Republic Counterstamp, Per",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 4,
+  "on_ungraded": 0,
+  "differs": []
+ },
+ "en_coins_02_base": {
+  "on_pairs": [
+   {
+    "caption": "C101",
+    "figure": "F101",
+    "caption_text": "Fig. 101. 1894 Guatemala Peso (KM# 210). Huntsinger Collecti",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "right.png"
+   },
+   {
+    "caption": "C102",
+    "figure": "F102",
+    "caption_text": "Fig. 102. 1895 Guatemala Peso (KM# 210; Du: plicate of Type ",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 2,
+  "on_ungraded": 0,
+  "differs": []
+ },
+ "en_coins_03_base": {
+  "on_pairs": [
+   {
+    "caption": "C104",
+    "figure": "F104",
+    "caption_text": "Fig. 104. 1890 Honduras Peso (KM# 52). Hun- tsinger Collecti",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "right.png"
+   },
+   {
+    "caption": "C105",
+    "figure": "F105",
+    "caption_text": "Fig. 105. 1892/0 Honduras Peso (KM# 52; Du- plicate of Type ",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 2,
+  "on_ungraded": 0,
+  "differs": []
+ },
+ "it_geo_04_base": {
+  "on_pairs": [
+   {
+    "caption": "B7",
+    "figure": "B6R",
+    "caption_text": "Sopra: Figura 21 Ampia veduta dei monti a nord del Passo Fal",
+    "source": "geometry",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 1,
+  "on_ungraded": 0,
+  "differs": []
+ },
+ "it_geo_05_base": {
+  "on_pairs": [
+   {
+    "caption": "C2",
+    "figure": "F2",
+    "caption_text": "In questa pagina: Figura 2 La geografia nei dintorni della p",
+    "source": "sole_figure",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C3",
+    "figure": "F3",
+    "caption_text": "Sopra: Figura 3 ; A possile di Ellipsactinia, un idrozoo che",
+    "source": "sole_figure",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 2,
+  "on_ungraded": 0,
+  "differs": []
+ },
+ "it_geo_06_B41": {
+  "on_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo ",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 CS Fossili della Maiolica rinvenuti sul Monte Grap",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio Meda sulla Miaiolica, c",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 4,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo ",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 CS Fossili della Maiolica rinvenuti sul Monte Grap",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio Meda sulla Miaiolica, c",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 0
+ },
+ "it_geo_06_base": {
+  "on_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo ",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 CSR Fossili della Maiolica rinvenuti sul Monte Gra",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C28",
+    "figure": "F28",
+    "caption_text": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella loc",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 5,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 | La Maiolica, affiorante lungo ",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 CSR Fossili della Maiolica rinvenuti sul Monte Gra",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C28",
+    "figure": "F28",
+    "caption_text": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella loc",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 0
+ },
+ "it_geo_06_ident": {
+  "on_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 LR olica, affiorante lungo il La",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 3,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 LR olica, affiorante lungo il La",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 0
+ },
+ "it_geo_06_R41": {
+  "on_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 ; La Maiolica, affiorante lungo ",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 I Fossili della Maiolica rinvenuti sul Monte Grapp",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C28",
+    "figure": "F28",
+    "caption_text": "Figura 28 1] Calcare del Fadalto (FAD), affiorante nella loc",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 5,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 ; La Maiolica, affiorante lungo ",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 I Fossili della Maiolica rinvenuti sul Monte Grapp",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C28",
+    "figure": "F28",
+    "caption_text": "Figura 28 1] Calcare del Fadalto (FAD), affiorante nella loc",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 0
+ },
+ "it_geo_06_T41": {
+  "on_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 La Maiolica, affiorante lungo il",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 Fossili della Maiolica rinvenuti sul Monte Grappa.",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 4,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 La Maiolica, affiorante lungo il",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 Fossili della Maiolica rinvenuti sul Monte Grappa.",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 0
+ },
+ "it_geo_06_tiny": {
+  "on_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 La Maiolica, affiorante lungo il",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 ‘ Fossili della Maiolica rinvenuti sul Monte Grapp",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C28",
+    "figure": "F28",
+    "caption_text": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella loc",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 5,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [
+   {
+    "caption": "C25",
+    "figure": "F25",
+    "caption_text": "In questa pagina: Figura 25 La Maiolica, affiorante lungo il",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C26",
+    "figure": "F26",
+    "caption_text": "Figura 26 ‘ Fossili della Maiolica rinvenuti sul Monte Grapp",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C27",
+    "figure": "F27",
+    "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C28",
+    "figure": "F28",
+    "caption_text": "Figura 28 Il Calcare del Fadalto (FAD), affiorante nella loc",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "C29",
+    "figure": "F29",
+    "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+    "source": "number",
+    "verdict": "ok",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 0
+ },
+ "it_geo_07_B41": {
+  "on_pairs": [],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [],
+  "committed_off_wrong": 0
+ },
+ "it_geo_07_base": {
+  "on_pairs": [],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [],
+  "committed_off_wrong": 0
+ },
+ "it_geo_07_ident": {
+  "on_pairs": [
+   {
+    "caption": "det5",
+    "figure": "D8",
+    "caption_text": "Livello del mare",
+    "source": "geometry",
+    "verdict": "ungraded",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 1,
+  "differs": [],
+  "committed_off_pairs": [
+   {
+    "caption": "det5",
+    "figure": "D8",
+    "caption_text": "Livello del mare",
+    "source": "geometry",
+    "verdict": "ungraded",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 0
+ },
+ "it_geo_07_L41": {
+  "on_pairs": [],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 0,
+  "differs": [
+   {
+    "sub": 0,
+    "off": {
+     "1": "2"
+    },
+    "on": {},
+    "thin": {
+     "2": [
+      214,
+      836,
+      257,
+      12
+     ],
+     "3": [
+      214,
+      920,
+      257,
+      18
+     ]
+    }
+   }
+  ],
+  "committed_off_pairs": [
+   {
+    "caption": "C31",
+    "figure": "det2",
+    "caption_text": "In queste pagine: Figura 31 Schema evolutivo del Bacino di B",
+    "source": "geometry",
+    "verdict": "wrong",
+    "subpage": "left.png"
+   }
+  ],
+  "committed_off_wrong": 1
+ },
+ "it_geo_07_mirror": {
+  "on_pairs": [
+   {
+    "caption": "det5",
+    "figure": "D8",
+    "caption_text": "Livello del mare",
+    "source": "geometry",
+    "verdict": "ungraded",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 1,
+  "differs": [
+   {
+    "sub": 0,
+    "off": {
+     "1": "3"
+    },
+    "on": {},
+    "thin": {
+     "3": [
+      207,
+      810,
+      257,
+      17
+     ],
+     "4": [
+      207,
+      897,
+      257,
+      17
+     ]
+    }
+   }
+  ],
+  "committed_off_pairs": [
+   {
+    "caption": "C31",
+    "figure": "det3",
+    "caption_text": "In queste pagine: Figura 31 Schema evolutivo del Bacino di B",
+    "source": "geometry",
+    "verdict": "wrong",
+    "subpage": "left.png"
+   },
+   {
+    "caption": "det5",
+    "figure": "D8",
+    "caption_text": "Livello del mare",
+    "source": "geometry",
+    "verdict": "ungraded",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 1
+ },
+ "it_geo_07_R41": {
+  "on_pairs": [
+   {
+    "caption": "det9",
+    "figure": "D7",
+    "caption_text": "Livello de I mare",
+    "source": "geometry",
+    "verdict": "ungraded",
+    "subpage": "right.png"
+   }
+  ],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 1,
+  "differs": [],
+  "committed_off_pairs": [
+   {
+    "caption": "det9",
+    "figure": "D7",
+    "caption_text": "Livello de I mare",
+    "source": "geometry",
+    "verdict": "ungraded",
+    "subpage": "right.png"
+   }
+  ],
+  "committed_off_wrong": 0
+ },
+ "it_geo_07_T41": {
+  "on_pairs": [],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [],
+  "committed_off_wrong": 0
+ },
+ "it_geo_07_tiny": {
+  "on_pairs": [],
+  "on_wrong": 0,
+  "on_ok": 0,
+  "on_ungraded": 0,
+  "differs": [],
+  "committed_off_pairs": [],
+  "committed_off_wrong": 0
+ }
+}

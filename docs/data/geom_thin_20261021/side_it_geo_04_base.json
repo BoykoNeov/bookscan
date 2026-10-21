@@ -1,0 +1,64 @@
+[
+ {
+  "page_h": 3000,
+  "page_w": 1981,
+  "figures": {
+   "3": [
+    236,
+    265,
+    1219,
+    1036
+   ],
+   "4": [
+    1501,
+    205,
+    480,
+    1081
+   ]
+  },
+  "off": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "13": "no figure shares this caption's column within the gap limit"
+   }
+  },
+  "on": {
+   "pairs": {},
+   "source": {},
+   "abstained": {
+    "13": "no figure shares this caption's column within the gap limit"
+   }
+  }
+ },
+ {
+  "page_h": 3000,
+  "page_w": 2099,
+  "figures": {
+   "2": [
+    0,
+    268,
+    2071,
+    1025
+   ]
+  },
+  "off": {
+   "pairs": {
+    "3": "2"
+   },
+   "source": {
+    "3": "geometry"
+   },
+   "abstained": {}
+  },
+  "on": {
+   "pairs": {
+    "3": "2"
+   },
+   "source": {
+    "3": "geometry"
+   },
+   "abstained": {}
+  }
+ }
+]

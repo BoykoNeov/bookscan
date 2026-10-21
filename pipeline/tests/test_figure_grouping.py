@@ -196,13 +196,18 @@ def test_solo_figure_and_caption_tolerate_a_larger_gap():
     assert FG.group_figures(views2, page_h=PAGE_H).pairs == {}
 
     # The second figure has to be a FIGURE, though: at 2071x100 it is thinner
-    # than sole_min_fig_frac, so it stops counting toward "how many figures are
-    # on this page" and arm 3 pairs the caption anyway. That is the floor doing
-    # its job (an over-segmented strip is not a second figure), not arm 2's
-    # relaxation leaking — the provenance says which.
+    # than the floor, so it stops counting toward "how many figures are on this
+    # page" — for arm 2 too since geom_min_fig_frac (2026-10-21), so the page is
+    # a solo page again and arm 2 takes it with the relaxed gap before arm 3
+    # runs. Same pair as before; provenance moved from sole_figure to geometry
+    # (on no measured row, RESULTS 2026-10-21). With arm 2's floor off it is
+    # arm 3's pair, as it was.
     thin = FG.group_figures(views + [_v("f2", "figure", 0, 20, 2071, 100)],
                             page_h=PAGE_H)
-    assert thin.pairs == {"c": "f"} and thin.pair_source["c"] == "sole_figure"
+    assert thin.pairs == {"c": "f"} and thin.pair_source["c"] == "geometry"
+    old = FG.group_figures(views + [_v("f2", "figure", 0, 20, 2071, 100)],
+                           page_h=PAGE_H, params={"geom_min_fig_frac": 0.0})
+    assert old.pairs == {"c": "f"} and old.pair_source["c"] == "sole_figure"
 
 
 def test_empty_caption_block_is_not_paired():
@@ -655,3 +660,45 @@ def test_a_small_but_whole_figure_still_counts_as_a_figure():
     assert g.pairs == {}
     assert (231 * 175) / (2023 * PAGE_H) < (1202 * 81) / (1941 * PAGE_H)   # area inverts
     assert min(231 / 2023, 175 / PAGE_H) > FG.DEFAULTS["sole_min_fig_frac"]
+
+
+# --------------------------------------------------------------------------
+# The same floor on what the GEOMETRIC arm may pair to (geom_min_fig_frac)
+# --------------------------------------------------------------------------
+
+
+def _it_geo_07_left_trimmed():
+    """it_geo_07-left under a 41 px sofa-only trim (RESULTS 2026-10-21, reframing
+    control): Stage 04 emits the map's two scale bars as figure slivers between
+    caption C31 and its diagram D1, which sits past the gap limit."""
+    return [_v("c31", "caption", 204, 291, 347, 429,
+               "In queste pagine: Figura 31 Schema evolutivo del Bacino di B"),
+            _v("bar1", "figure", 214, 836, 257, 12),
+            _v("bar2", "figure", 214, 920, 257, 18),
+            _v("d1", "figure", 218, 995, 810, 149),
+            # D2 (of D2-D5): without it the page reads as one caption + one
+            # figure and the relaxed SOLO gap limit applies instead.
+            _v("d2", "figure", 215, 1202, 814, 219)]
+
+
+def test_a_scale_bar_sliver_is_not_handed_a_caption_by_proximity():
+    g = FG.group_figures(_it_geo_07_left_trimmed(), page_h=3000, page_w=2038)
+    assert g.pairs == {}
+    assert "c31" in g.abstained
+
+
+def test_dropping_slivers_can_leave_a_solo_page_with_the_relaxed_gap():
+    """The interaction found while writing the test above: with the slivers gone a
+    page holding one caption and one real figure is a SOLO page, so the wider
+    gap limit applies and the caption reaches its figure. Here that is the right
+    partner (C31 -> D1); the measured rows never hit this case."""
+    views = [v for v in _it_geo_07_left_trimmed() if v.key != "d2"]
+    g = FG.group_figures(views, page_h=3000, page_w=2038)
+    assert g.pairs == {"c31": "d1"}
+
+
+def test_without_the_floor_the_sliver_wins_the_caption():
+    """The defect itself, pinned so a reader can see what the knob is for."""
+    g = FG.group_figures(_it_geo_07_left_trimmed(), page_h=3000, page_w=2038,
+                         params={"geom_min_fig_frac": 0.0})
+    assert g.pairs == {"c31": "bar1"} and g.pair_source["c31"] == "geometry"

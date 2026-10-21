@@ -127,11 +127,15 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
    a 4 px trim (knife edge) and 1 of 5 controls repeats the order drop. Two
    model-free trims of `it_geo_07` also make the grouping pass pair caption
    C31 to a **wrong** figure by geometry where the uncut page abstains — a
-   zero-wrong breach from background pixels alone. **Next:** before any
-   layout gate can judge a crop, measure the spread a handful of model-free
-   reframings produce on every block-GT row (the noise floor), and look at why
-   the geometry arm flips abstain → wrong under a 41 px trim. n = 2 pages, one
-   book.
+   zero-wrong breach from background pixels alone. **The wrong pair is fixed
+   (2026-10-21, RESULTS same day):** the trim makes Stage 04 emit the map's
+   scale bars as 12–18 px figure slivers and the geometric arm paired C31 to
+   one; the thinness floor now applies to that arm (`geom_min_fig_frac` 0.04),
+   0 wrong over 20 graded runs, nothing else changed, owner's book identical.
+   Still open: why a trim turns a scale bar into a figure at all. **Next:**
+   before any layout gate can judge a crop, measure the spread a handful of
+   model-free reframings produce on every block-GT row (the noise floor).
+   n = 2 pages, one book.
 
 ---
 
@@ -338,8 +342,15 @@ gradient ratio) on a population that was not read here — another book, or the
 owner's own by-eye verdicts collected before any number — then decide whether
 the upgrade must beat the crop to ship. Until then an upgrade can be a
 downgrade, and the owner is the check.
+**Sharp close-ups refused by the likeness check — not moiré (2026-10-21).**
+Smoothing the close-up before the per-source check (σ from theory) gains at
+most +0.05 NCC, changes 0 of 178 pictures, and lets more deliberately shifted
+copies through (216 → 222): REFUSED. The remaining suspect, untested, is the
+flattened-crop vs raw-photo bend at full resolution. Also seen: 146 of 924
+copies shifted by 5 % still pass `min_ncc`, so the per-source gate alone does
+not stop a displaced source; `min_result_ncc` and greedy selection do.
 **REFUSED (unchanged):** lowering `min_coverage` below 0.90; `min_ncc` below
-0.60. Checkerboards check alignment only — they do not say which side is
+0.60; smoothing before the per-source check (RESULTS 2026-10-21). Checkerboards check alignment only — they do not say which side is
 sharper (misread once, 2026-09-24).
 
 ---

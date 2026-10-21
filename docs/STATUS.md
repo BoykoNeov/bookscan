@@ -986,3 +986,33 @@ rules for it:
   handoff plan now says: restart the console before installing the new app,
   check close-ups arrive full size first, and pre-register 2b as differing from
   Phase 2 in two ways.
+
+### 2026-10-21 — First phone check of full-size close-ups (Galaxy S23); 1x close beats 3x zoom; sweep defaults to 1x
+
+- Re-paired the phone over Wi-Fi (SM-S911B), installed the new app, console
+  restarted after e5fe8bf. Job `20261021-103158-a7a95119`, one coin-book spread
+  per page, one close-up each.
+- **The plumbing works:** each close-up arrived at the anchor's full size
+  (4080×3060), named `frame_01_closeup.jpg`, EXIF intact; Stage 01 kept the
+  whole-spread shot as the anchor on both pages.
+- **The 3x zoom step is digital.** Both close-ups were shot on the main lens
+  (EXIF 5.4 mm, f/1.8, 23 mm equiv.); CameraX never switched to the S23's 3x
+  telephoto. `tools/closeup_detail_check.py` (new; SIFT, seeded, three draws):
+  3x from a distance — 3.27× the anchor's pixels per length, **1.52×** the
+  sharpness of the anchor enlarged; 1x with the phone moved close — 3.61×,
+  **14.53×**, and the printed halftone dots resolve. Controls at the anchor's
+  scale 1.03 / 1.04. n = 1 scene each, not pre-registered; the sharpness
+  statistic also rewards sharpening halos and halftone, so read the crops too.
+  A first scratch run read the 1x scale as 6.53 (homography at the image
+  corner, wrong); the footprint gives 3.61.
+- **Owner's call (same session):** zoom does not matter, moving the phone close
+  is fine. The sweep screen now defaults to 1x with a 1x step (was 2/3/4/6,
+  default 3); installed on the phone.
+- **Found: Stage 01's ORB does not register the 1x close shot** (9 inliers,
+  NCC 0.09, refused) where SIFT finds 145. Same mechanism as the 2026-08-29
+  measurement (ORB 6/317, SIFT 227/317). Anything that must place close-ups
+  on the page (panorama, higher-resolution pictures) needs SIFT; Stage 01's
+  own stitch is unaffected in practice (it blends nothing anyway).
+- Coverage at this distance: one close-up covers ~1/13 of the frame, so a
+  spread needs very roughly 15–20 with overlap; the 24-frame cap should hold,
+  unverified.

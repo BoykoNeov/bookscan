@@ -134,14 +134,20 @@ private const val SWEEP_MAX_FRAMES = 24
 private const val MAX_IN_FLIGHT = 2
 
 /**
- * Zoom steps, starting at 2x rather than 1x: a sweep exists to gather pixels
- * the whole-spread shot does not have, and at 1x it would gather none. The
- * measured framing of the close-ups shot so far is a median 1.30x linear,
- * which is the reason reading them separately gains almost nothing
- * (docs/RESULTS.md 2026-08-29) — so 3x is the default here.
+ * Zoom steps, defaulting to 1x: the sweep gathers detail by moving the phone
+ * CLOSE to the page, not by zooming. Measured on the owner's Galaxy S23
+ * (2026-10-21): CameraX's 3x stays on the main lens (EXIF 5.4 mm, f/1.8) and
+ * crops it — 3.27x the anchor's pixels per unit length but only 1.52x the
+ * sharpness of the anchor simply enlarged, part of that the phone's own
+ * sharpening halos. A 1x frame shot close, at 3.61x, measured 14.53x
+ * (`tools/closeup_detail_check.py`). Before close-ups were uploaded full size (2026-10-21) a 1x
+ * close-up would have been shrunk and gained nothing, which is why this used to
+ * start at 2x; now a 1x frame shot close keeps the main lens's real detail and
+ * the `_sweep` marker, not its size, tells Stage 01 what it is. The zoom steps
+ * stay for a page the phone cannot get near.
  */
-private val SWEEP_ZOOM_STEPS = listOf(2f, 3f, 4f, 6f)
-private const val DEFAULT_SWEEP_ZOOM = 3f
+private val SWEEP_ZOOM_STEPS = listOf(1f, 2f, 3f, 4f)
+private const val DEFAULT_SWEEP_ZOOM = 1f
 
 private val ANALYSIS_RESOLUTION = Size(320, 240)
 

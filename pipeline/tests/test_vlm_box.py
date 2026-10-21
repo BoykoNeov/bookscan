@@ -145,3 +145,91 @@ def test_search_only_records_the_box_for_a_later_reader():
     p = BB.resolve_params({})
     out = BB.search_only(img, (400, 300, 3600, 2700), BB.find_book(img, p), p)
     assert out.diag["vlm_box"] == [400, 300, 3600, 2700]
+
+
+# --------------------------------------------------------------------------
+# The cut (owner's decision 2026-10-21) and the second question that gates it
+# --------------------------------------------------------------------------
+
+
+def test_the_cut_is_off_unless_config_turns_it_on():
+    assert VLM.resolve_params({})["cut"] is False
+    assert VLM.resolve_params({"vlm_box": {"cut": True}})["cut"] is True
+
+
+def test_check_reads_four_booleans_out_of_a_fenced_answer():
+    text = ('```json\n{"left": false, "right": true, "top": false, '
+            '"bottom": false}\n```')
+    assert VLM.parse_check(text) == {"left": False, "right": True,
+                                     "top": False, "bottom": False}
+
+
+@pytest.mark.parametrize("text", [
+    '{"left": false, "right": false, "top": false}',            # an edge missing
+    '{"left": "false", "right": false, "top": false, "bottom": false}',  # a string
+    "No edge is cut off.",                                      # prose
+])
+def test_check_answers_that_are_not_four_booleans_are_refused(text):
+    assert VLM.parse_check(text) is None
+
+
+def test_only_edges_inside_the_frame_count_as_moved():
+    assert VLM.moved_edges((0, 100, W, H - 5), W, H) == ["top", "bottom"]
+    assert VLM.moved_edges((0, 0, W, H), W, H) == []
+
+
+def _answers(check_text: str):
+    def fake(p, prompt, b64):
+        assert prompt == VLM.CHECK_PROMPT, "only the check may be asked here"
+        return check_text
+    return fake
+
+
+def test_a_true_on_a_moved_edge_refuses_the_cut(monkeypatch):
+    monkeypatch.setattr(VLM, "_ask", _answers(
+        '{"left": true, "right": false, "top": false, "bottom": false}'))
+    ok, diag = VLM.check_cut(_frame(), (300, 0, W, H))
+    assert ok is False
+    assert "left" in diag["refused"]
+
+
+def test_a_true_on_an_edge_the_cut_did_not_move_is_ignored(monkeypatch):
+    """The photographer cut the book there, not us; a tight shot must not refuse."""
+    monkeypatch.setattr(VLM, "_ask", _answers(
+        '{"left": false, "right": true, "top": true, "bottom": true}'))
+    ok, diag = VLM.check_cut(_frame(), (300, 0, W, H))
+    assert ok is True, diag
+    assert diag["moved_edges"] == ["left"]
+
+
+def test_an_unreadable_check_answer_refuses_the_cut(monkeypatch):
+    monkeypatch.setattr(VLM, "_ask", _answers("I think it looks fine."))
+    ok, diag = VLM.check_cut(_frame(), (300, 200, 3700, 2800))
+    assert ok is False and diag["refused"]
+
+
+def test_an_unreachable_server_refuses_the_cut():
+    p = dict(VLM.DEFAULTS)
+    p.update(url="http://127.0.0.1:9", timeout_s=2)
+    ok, diag = VLM.check_cut(_frame(), (300, 200, 3700, 2800), p)
+    assert ok is False and diag["refused"]
+
+
+def test_model_cut_pads_exactly_as_a_hand_drawn_box_is_padded():
+    """No new pad and no new value: the operator path's arithmetic."""
+    img = _frame()
+    p = BB.resolve_params({})
+    box = (1000, 800, 3000, 2200)
+    cut = BB.model_cut(img, box, BB.find_book(img, p), p)
+    drawn = BB.user_box(img, box, p)
+    assert cut.applied is True
+    assert (cut.emit, cut.search) == (drawn.emit, drawn.search)
+    assert cut.diag["emit_source"] == "vlm"
+
+
+def test_model_cut_that_reaches_every_frame_edge_cuts_nothing():
+    img = _frame()
+    p = BB.resolve_params({})
+    base = BB.find_book(img, p)
+    cut = BB.model_cut(img, (50, 40, W - 50, H - 40), base, p)
+    assert cut.applied == base.applied and cut.emit == base.emit

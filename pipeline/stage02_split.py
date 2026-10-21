@@ -283,10 +283,12 @@ class SplitResult(BaseModel):
     # Never infer this from book_crop_applied: an operator box that failed its
     # provenance check leaves applied False with the DETECTOR's own reason, and a
     # reader has to be able to tell that from a page nobody ever drew on.
-    # "detector" | "operator" | "operator-refused" | "detector+vlm-search".
-    # The last one means the emitted pixels are still the detector's (in
-    # practice: the whole frame, because it abstained) and ONLY the gutter
-    # search window came from a vision model — see pipeline/vlm_box.py.
+    # "detector" | "operator" | "operator-refused" | "detector+vlm-search" |
+    # "vlm". "detector+vlm-search" means the emitted pixels are still the
+    # detector's (in practice: the whole frame, because it abstained) and ONLY
+    # the gutter search window came from a vision model; "vlm" means the frame
+    # was CUT to the model's padded box after a second question agreed (off
+    # unless vlm_box.cut) — see pipeline/vlm_box.py.
     book_crop_source: str = "detector"
     book_crop_reason: str = ""
     # How far ``book_crop_reason`` licenses a conclusion. Load-bearing when the
@@ -812,7 +814,29 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> SplitResult:
 
     if vlm_params["enabled"] and not book.applied and crop_source == "detector":
         vbox = _ask_vlm()
-        if vbox is not None:
+        cut = None
+        if vbox is not None and vlm_params["cut"]:
+            # Since 2026-10-21 the box may also CUT (owner's decision), but only
+            # when a second, different question about the cut agrees that no
+            # edge of it runs through the book. See vlm_box.check_cut and
+            # docs/data/vlm_cut_prereg_20261021.md.
+            cand = BB.model_cut(image, vbox, book, bb_params)
+            if cand.applied:
+                ok, check = VLM.check_cut(image, cand.emit, vlm_params)
+                vlm_diag["cut_check"] = check
+                if ok:
+                    cut = cand
+                else:
+                    warnings.append(f"vision-model cut NOT made: {check.get('refused')}")
+        if cut is not None:
+            book = cut
+            crop_source = "vlm"
+            warnings.append(
+                f"the book detector found nothing, so the frame was cut to a "
+                f"vision model's box {tuple(vbox)} ({vlm_diag.get('model')}), "
+                f"padded outward; a second question found no edge of the cut "
+                f"running through the book.")
+        elif vbox is not None:
             book = BB.search_only(image, vbox, book, bb_params)
             crop_source = "detector+vlm-search"
             warnings.append(

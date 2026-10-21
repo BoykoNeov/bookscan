@@ -94,7 +94,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vlm", action="store_true",
                     help="when the detector abstains, aim the gutter search "
                          "with pipeline/vlm_box (needs Ollama running)")
+    # The cut (vlm_box.cut, owner's decision 2026-10-21): where the model's box
+    # is used, CUT to it when the second question agrees, exactly as Stage 02
+    # does with the option on. Graded on the same rows, labels and bar.
+    ap.add_argument("--vlm-cut", action="store_true",
+                    help="with --vlm: also cut to the model's box when "
+                         "vlm_box.check_cut agrees (needs Ollama running)")
     args = ap.parse_args(argv)
+    if args.vlm_cut and not args.vlm:
+        ap.error("--vlm-cut needs --vlm")
 
     gt = json.loads(GT_PATH.read_text(encoding="utf-8"))["spreads"]
     box_gt = (json.loads(BOX_GT_PATH.read_text(encoding="utf-8"))["spreads"]
@@ -123,7 +131,15 @@ def main(argv: list[str] | None = None) -> int:
         book = BB.find_book(img, bb_params)
         if args.vlm and not book.applied:
             vbox, _vdiag = VLM.find_box(img, VLM.resolve_params({}))
-            if vbox is not None:
+            cut = None
+            if vbox is not None and args.vlm_cut:
+                cand = BB.model_cut(img, vbox, book, bb_params)
+                if cand.applied and VLM.check_cut(
+                        img, cand.emit, VLM.resolve_params({}))[0]:
+                    cut = cand
+            if cut is not None:
+                book = cut
+            elif vbox is not None:
                 book = BB.search_only(img, vbox, book, bb_params)
         sx0, sy0, sx1, sy1 = book.search
         gray = cv2.cvtColor(img[sy0:sy1, sx0:sx1], cv2.COLOR_BGR2GRAY)

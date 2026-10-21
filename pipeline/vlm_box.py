@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import base64
 import io
+import json
 import re
 import time
 
@@ -69,6 +70,10 @@ DEFAULTS: dict = {
     # behaviour.
     "min_area_frac": 0.05,
     "max_area_frac": 0.995,
+    # Let the box CUT the frame, not only aim the spine search. OFF here; the
+    # owner allowed it on 2026-10-21, and it acts only when [CHECK_PROMPT], a
+    # different question about the cut itself, agrees (see [check_cut]).
+    "cut": False,
 }
 
 # The model's own documented convention (qwen answers ``bbox_2d`` as x1,y1,x2,y2
@@ -84,6 +89,27 @@ PROMPT = (
     'Answer with JSON only, exactly: {"bbox_2d": [x1, y1, x2, y2], "label": "book"} '
     "with coordinates normalised to 0-1000. No other text."
 )
+
+
+# The second question, asked only before a CUT. Frozen 2026-10-21 by
+# docs/data/vlm_cut_prereg_20261021.md: an edited prompt is an unmeasured one.
+#
+# Why a second question at all: cutting discards pixels, and CLAUDE.md requires
+# two questions that agree before anything discards content. Asking the box
+# question again is not a second question - the model is deterministic at
+# temperature 0. This one is aimed at the box's one measured failure, cutting
+# INTO the book (de_02, left edge -8.90 % of the book, RESULTS 2026-08-29), and
+# a person answers it in a second by looking at the crop.
+CHECK_PROMPT = (
+    "This image was cropped from a photograph of an open book. Look at each of "
+    "the four edges of this image. For each edge, say whether the book is cut "
+    "off by that edge: true if any part of the book - its paper, printed text, "
+    "pictures, page edges or tabs - continues beyond that edge of the image, "
+    "false if the whole book stops before that edge. Answer with JSON only, "
+    'exactly: {"left": true or false, "right": true or false, "top": true or '
+    'false, "bottom": true or false}. No other text.'
+)
+EDGES = ("left", "right", "top", "bottom")
 
 
 def resolve_params(cfg: dict | None) -> dict:
@@ -143,6 +169,17 @@ def plausible(box: Box, w: int, h: int, p: dict) -> str | None:
     return None
 
 
+def _ask(p: dict, prompt: str, b64: str) -> str:
+    r = requests.post(
+        f"{p['url']}/api/generate",
+        json={"model": p["model"], "prompt": prompt, "images": [b64],
+              "stream": False, "think": False,
+              "options": {"temperature": 0, "num_ctx": int(p["num_ctx"])}},
+        timeout=int(p["timeout_s"]))
+    r.raise_for_status()
+    return r.json()["response"]
+
+
 def find_box(image: np.ndarray, p: dict | None = None) -> tuple[Box | None, dict]:
     """Ask the model for the book's box in ORIGINAL image pixels.
 
@@ -155,15 +192,7 @@ def find_box(image: np.ndarray, p: dict | None = None) -> tuple[Box | None, dict
     diag: dict = {"model": p["model"], "max_side": p["max_side"]}
     t0 = time.perf_counter()
     try:
-        b64 = encode(image, int(p["max_side"]))
-        r = requests.post(
-            f"{p['url']}/api/generate",
-            json={"model": p["model"], "prompt": PROMPT, "images": [b64],
-                  "stream": False, "think": False,
-                  "options": {"temperature": 0, "num_ctx": int(p["num_ctx"])}},
-            timeout=int(p["timeout_s"]))
-        r.raise_for_status()
-        text = r.json()["response"]
+        text = _ask(p, PROMPT, encode(image, int(p["max_side"])))
     except Exception as exc:      # noqa: BLE001 — every failure has one answer
         diag.update(refused=f"{type(exc).__name__}: {exc}",
                     ms=(time.perf_counter() - t0) * 1000.0)
@@ -182,3 +211,75 @@ def find_box(image: np.ndarray, p: dict | None = None) -> tuple[Box | None, dict
         return None, diag
     diag["box"] = list(box)
     return box, diag
+
+
+# --------------------------------------------------------------------------
+# The cut, and the question that must agree with it
+# --------------------------------------------------------------------------
+
+
+def parse_check(text: str) -> dict[str, bool] | None:
+    """First JSON object carrying all four edges as booleans, else None.
+
+    Nothing is rescued: a missing edge, a string "false" or prose is a refusal,
+    and a refusal means "do not cut".
+    """
+    for blob in re.findall(r"\{[^{}]*\}", text):
+        try:
+            obj = json.loads(blob)
+        except ValueError:
+            continue
+        if isinstance(obj, dict) and all(isinstance(obj.get(e), bool)
+                                         for e in EDGES):
+            return {e: obj[e] for e in EDGES}
+    return None
+
+
+def moved_edges(cut: Box, w: int, h: int) -> list[str]:
+    """Edges of ``cut`` that lie inside the frame, i.e. that remove pixels.
+
+    An edge on the frame's own edge cuts nothing: if the book runs off the
+    photograph there, the photographer cut it, and asking about it would make
+    every tightly framed shot refuse.
+    """
+    x0, y0, x1, y1 = cut
+    return [e for e, moved in zip(EDGES, (x0 > 0, x1 < w, y0 > 0, y1 < h))
+            if moved]
+
+
+def check_cut(image: np.ndarray, cut: Box, p: dict | None = None
+              ) -> tuple[bool, dict]:
+    """Ask [CHECK_PROMPT] about the crop; True only if no moved edge cuts the book.
+
+    Same failure contract as [find_box]: an unreachable server, an unreadable
+    answer or any "true" on a moved edge returns False, and the caller keeps
+    the uncut frame.
+    """
+    p = p or dict(DEFAULTS)
+    h, w = image.shape[:2]
+    x0, y0, x1, y1 = cut
+    moved = moved_edges(cut, w, h)
+    diag: dict = {"cut": list(cut), "moved_edges": moved}
+    if not moved:
+        diag["refused"] = "the cut reaches the frame on every side; nothing to cut"
+        return False, diag
+    t0 = time.perf_counter()
+    try:
+        text = _ask(p, CHECK_PROMPT, encode(image[y0:y1, x0:x1], int(p["max_side"])))
+    except Exception as exc:      # noqa: BLE001 — every failure has one answer
+        diag.update(refused=f"{type(exc).__name__}: {exc}",
+                    ms=round((time.perf_counter() - t0) * 1000.0, 1))
+        return False, diag
+    diag["ms"] = round((time.perf_counter() - t0) * 1000.0, 1)
+    diag["answer"] = text.strip()[:400]
+    edges = parse_check(text)
+    if edges is None:
+        diag["refused"] = "could not read four true/false edges from the answer"
+        return False, diag
+    diag["edges"] = edges
+    cut_off = [e for e in moved if edges[e]]
+    if cut_off:
+        diag["refused"] = (f"the model says the book continues past the "
+                           f"{', '.join(cut_off)} edge of the cut")
+        return False, diag
+    return True, diag

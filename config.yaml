@@ -269,6 +269,10 @@ vlm_box:
   max_side: 1120       # the size the 21/21 result was measured at
   num_ctx: 8192        # Ollama truncates the image SILENTLY at its 4096 default
   timeout_s: 180
+  # Let the box CUT the frame (owner allowed it, 2026-10-21), only when a second
+  # question about the cut agrees no edge runs through the book. Off until
+  # docs/data/vlm_cut_prereg_20261021.md's gates are read.
+  cut: false
 
 # --- Blocks that are not the book (Stage 07; pipeline/figure_surface.py) ---
 # When the book detector cannot find the book on a pale surface, Stage 02 emits

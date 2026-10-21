@@ -671,3 +671,64 @@ def _run() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(_run())
+
+
+# --------------------------------------------------------------------------
+# The vision model's box may CUT (vlm_box.cut, owner 2026-10-21) — only when
+# the second question agrees. The model is faked; what it says is graded by
+# tools/vlm_cut_eval against real labels.
+# --------------------------------------------------------------------------
+
+
+def _fake_model(monkeypatch, check_text: str):
+    from pipeline import vlm_box as VLM
+
+    def fake(p, prompt, b64):
+        if prompt == VLM.PROMPT:
+            return '{"bbox_2d": [150, 133, 850, 867], "label": "book"}'
+        assert prompt == VLM.CHECK_PROMPT
+        return check_text
+    monkeypatch.setattr(VLM, "_ask", fake)
+
+
+_CUT_ON = {"vlm_box": {"enabled": True, "cut": True}}
+
+
+def test_an_agreed_model_cut_is_emitted_in_original_coordinates(monkeypatch):
+    _fake_model(monkeypatch,
+                '{"left": false, "right": false, "top": false, "bottom": false}')
+    with tempfile.TemporaryDirectory() as td:
+        page_dir = _page_with(_two_page_spread(), td)
+        r = run(page_dir, _CUT_ON)
+        assert r.book_crop_source == "vlm"
+        assert r.book_crop_applied is True
+        assert r.book_crop.x > 0 and r.book_crop.w < 4000
+        assert r.vlm_box["cut_check"]["edges"]["left"] is False
+        manifest = json.loads(
+            (page_dir / "02_split" / "split.json").read_text(encoding="utf-8"))
+        src = cv2.imread(str(page_dir / "01_fuse" / "anchor.png"), cv2.IMREAD_COLOR)
+        for page in manifest["pages"]:
+            b = page["box"]
+            written = cv2.imread(str(page_dir / "02_split" / page["name"]),
+                                 cv2.IMREAD_COLOR)
+            assert np.array_equal(written,
+                                  src[b["y"]:b["y"] + b["h"], b["x"]:b["x"] + b["w"]])
+
+
+def test_a_refused_model_cut_leaves_the_pixels_uncut(monkeypatch):
+    _fake_model(monkeypatch,
+                '{"left": true, "right": false, "top": false, "bottom": false}')
+    with tempfile.TemporaryDirectory() as td:
+        r = run(_page_with(_two_page_spread(), td), _CUT_ON)
+        assert r.book_crop_source == "detector+vlm-search"
+        assert (r.book_crop.w, r.book_crop.h) == (4000, 3000)
+        assert "left" in r.vlm_box["cut_check"]["refused"]
+
+
+def test_with_the_cut_off_the_box_only_aims_the_search(monkeypatch):
+    _fake_model(monkeypatch, "never asked")
+    with tempfile.TemporaryDirectory() as td:
+        r = run(_page_with(_two_page_spread(), td),
+                {"vlm_box": {"enabled": True}})
+        assert r.book_crop_source == "detector+vlm-search"
+        assert "cut_check" not in r.vlm_box

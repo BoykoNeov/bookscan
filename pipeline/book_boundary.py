@@ -386,6 +386,16 @@ def grabcut_box(image: np.ndarray, p: dict, rng_seed: int | None = None
 # --------------------------------------------------------------------------
 
 
+def padded_boxes(box: Box, p: dict, w: int, h: int) -> tuple[Box, Box]:
+    """(emit, search) for a box someone or something SAID the book is in.
+
+    Both are padded outward, and emit is never tighter than search; see
+    [user_box] for the measurement behind padding rather than cutting exactly.
+    """
+    sbox = _pad_box(box, float(p["search_pad"]), w, h)
+    return _union(_pad_box(box, float(p["emit_pad"]), w, h), sbox), sbox
+
+
 def user_box(image: np.ndarray, drawn: Box, p: dict | None = None
              ) -> BookBoundary:
     """Use a box an operator drew, instead of detecting one.
@@ -446,8 +456,7 @@ def user_box(image: np.ndarray, drawn: Box, p: dict | None = None
                    f"ignoring it and detecting instead",
             diag={"user_box": list(drawn), "user_box_rejected": True})
 
-    sbox = _pad_box((x0, y0, x1, y1), float(p["search_pad"]), w, h)
-    ebox = _union(_pad_box((x0, y0, x1, y1), float(p["emit_pad"]), w, h), sbox)
+    ebox, sbox = padded_boxes((x0, y0, x1, y1), p, w, h)
     ex0, ey0, ex1, ey1 = ebox
     if (ex0, ey0, ex1, ey1) == full and sbox == full:
         # Reporting discipline, same as the area gate's: a box that reaches the
@@ -506,6 +515,44 @@ def search_only(image: np.ndarray, box: Box, base: BookBoundary,
         reason=base.reason,
         diag=diag,
         evidence=base.evidence)
+
+
+def model_cut(image: np.ndarray, box: Box, base: BookBoundary,
+              p: dict | None = None) -> BookBoundary:
+    """CUT to a vision model's box, padded exactly as a hand-drawn box is.
+
+    The candidate only: ``pipeline/vlm_box.check_cut`` must agree before a
+    caller uses it (Stage 02 does both). Allowed by the owner on 2026-10-21;
+    until then [search_only] was the only use of a model box, because an inward
+    error past the pad loses page (``de_02``, 1.89 %, RESULTS 2026-08-29) and
+    the pad has a measured ceiling between ~3.6 % and ~8.4 % inward. No new pad
+    and no new value: the arithmetic is [padded_boxes], the operator path's.
+
+    A padded box that reaches the frame on every side cuts nothing; ``base`` is
+    then returned with only the search narrowed, i.e. [search_only].
+    """
+    p = p or dict(DEFAULTS)
+    h, w = image.shape[:2]
+    ebox, sbox = padded_boxes(tuple(int(v) for v in box), p, w, h)
+    if ebox == (0, 0, w, h):
+        return search_only(image, box, base, p)
+    frame_area = float(w * h)
+    diag = dict(base.diag)
+    diag.update({"vlm_box": list(box), "search_source": "vlm",
+                 "emit_source": "vlm",
+                 "emit_area_frac": round(
+                     ((ebox[2]-ebox[0])*(ebox[3]-ebox[1])) / frame_area, 3),
+                 "search_area_frac": round(
+                     ((sbox[2]-sbox[0])*(sbox[3]-sbox[1])) / frame_area, 3)})
+    return BookBoundary(
+        applied=True, emit=ebox, search=sbox,
+        reason=f"cut to a vision model's book box {tuple(box)}, padded "
+               f"{float(p['search_pad']):.0%} outward (the detector had "
+               f"abstained: {base.reason})",
+        diag=diag,
+        evidence="the model's box was checked by a second question about the "
+                 "cut itself; neither question carries a measured accuracy "
+                 "beyond the fixtures in RESULTS 2026-10-21")
 
 
 def find_book(image: np.ndarray, p: dict | None = None) -> BookBoundary:

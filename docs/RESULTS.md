@@ -9639,3 +9639,54 @@ charged to the model's box" is flatter than the registered verdicts: on
 the tau drop), and the D1 loss was reproduced by **no** control, only by the
 model's own rectangle. Read: the damage is the kind small reframings do; on
 `it_geo_07` part of it (D1) is not yet explained by framing alone.
+
+## 2026-10-21 — Full-size close-ups on the phone: 1x moved close carries ~10x the detail of 3x zoom; sweep frames place 12/19 and 13/17 on the anchor
+
+**Not pre-registered. n = 1 scene per row** (one coin book, one guidebook, one
+dark table, one Galaxy S23, one operator, one afternoon). Exploratory, recorded
+so the numbers exist; no threshold anywhere was set from them. Inputs and
+outputs: `docs/data/phone_closeups_20261021/`; photos archived in
+`bookscan_captures` (jobs `20261021-103158-a7a95119`, `20261021-104424-6d43b587`).
+
+**Detail** (`tools/closeup_detail_check.py`: SIFT close-up → anchor, seeded,
+three identical draws; scale = sqrt of close-up area over its footprint;
+variance-of-Laplacian over the shared area against the anchor enlarged bicubically
+into the close-up's frame; control = the same at the anchor's scale):
+
+| close-up | lens (EXIF) | scale | detail ratio | control |
+|---|---|---|---|---|
+| CameraX 3x, from a distance | main, 5.4 mm f/1.8 | 3.27 | 1.52 | 1.03 |
+| 1x, phone moved close | main, 5.4 mm f/1.8 | 3.61 | 14.53 | 1.04 |
+
+Nearly the same pixels per letter, ten times the statistic: the 3x frame is an
+interpolated crop of the main lens; the S23's telephoto is never used by the
+app. The statistic also rewards sharpening halos and the printed halftone
+screen (which the 1x frame resolves); the crops are committed beside the
+numbers. A first scratch run read the 1x scale as 6.53 from the homography's
+local scale at the image corner; the footprint gives 3.61, and every figure
+here uses the footprint.
+
+**Placement of sweep frames on the anchor** (`tools/closeup_coverage_map.py`:
+SIFT, one draw, placed = ≥ 30 inliers, scale 1–8, convex footprint — criteria
+chosen while looking at these frames, so a map, not a gate):
+
+| spread | frames | scale range | placed | union of anchor frame |
+|---|---|---|---|---|
+| coin book, text + coins (page 3) | 19 | 2.35–2.78 | 12 | 51 % |
+| guidebook, pictures + maps (page 4) | 17 | 1.64–2.70 | 13 | 62 % |
+
+The misses sit mostly on dense text; the text spread's left page is barely
+covered while its right page is covered many times. An earlier wide-framed
+try (pages 1–2, 3 and 5 frames, 1.4–1.8x) is the operator filling the frame
+with the book, not a gate failure: consecutive overlap 55–75 %. One sweep frame
+(page 3 frame 3) is visibly motion-smeared.
+
+**Reading.** Full-size close-ups are worth keeping only when the phone moves
+close; zoom buys almost nothing on this phone through CameraX. Matching each
+close-up only against the softer whole-spread shot loses about a third of
+them on text. Neither row says anything yet about whether a combined page or
+picture is *better* than a single photo; that question is unmeasured here.
+Correction to the 2b pre-registration note in `plans/sweep-to-panorama-handoff.md`:
+the new population differs from Phase 2's in three ways (full size, closer,
+and — by the owner's call the same day — tapped rather than swept), so nothing
+from it compares with Phase 2's 5 of 40.

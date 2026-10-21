@@ -49,9 +49,15 @@ famine and has never run on a phone.
 >    digital, full size means interpolated pixels, and that bounds what any
 >    stitching can gain.
 > 3. **For the 2b pre-registration:** the new population differs from Phase 2's
->    in two ways — sweeping, and full-size frames. A 2b result cannot be
->    credited to sweeping alone, and is not directly comparable to Phase 2's
->    5 of 40. Say so in the pre-registration.
+>    in three ways — full-size frames, shot closer, and (owner's call, later the
+>    same day) **tapped** rather than swept. Nothing from it is comparable to
+>    Phase 2's 5 of 40. Say so in the pre-registration.
+>
+> **Superseded in part, 2026-10-21 afternoon** (RESULTS 2026-10-21, full-size
+> close-ups): the owner prefers tapping each overlapping close-up
+> (`Add close-up`) to the sweep — one sweep frame was motion-smeared — and
+> proposed reading each close-up separately and merging the readings, rather
+> than pasting pixels, for text. Read that row before running anything here.
 >
 > Uploads are now in the low hundreds of MB per swept spread. The server side
 > takes a 250 MB spread in 1.6 s (in process, 2026-10-21), and the phone

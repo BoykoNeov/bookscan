@@ -1,0 +1,6 @@
+registered: True
+draws: [{'inliers': 524, 'scale': 3.267}, {'inliers': 524, 'scale': 3.267}, {'inliers': 524, 'scale': 3.267}]
+sharpness_closeup: 33.4
+sharpness_anchor_enlarged: 22.0
+detail_ratio: 1.52
+control_ratio_at_anchor_scale: 1.03

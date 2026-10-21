@@ -31,6 +31,8 @@ JOB_NOTES = {
     "20260828-092505-15c41a76": ("pale-background", "THE BOOK-DETECTOR DEFECT: book on a pale sofa, neither spread split"),
     "20260828-094929-677fd774": ("pale-background", "patch-mode run, same session and background"),
     "20260828-095443-6f59677f": ("restart-test", "re-upload of testset bg_01/02/03 to test server-kill recovery"),
+    "20261021-103158-a7a95119": ("fullsize-closeup", "FIRST full-size close-ups (S23): coin book, 3x digital zoom vs 1x moved close"),
+    "20261021-104424-6d43b587": ("sweep", "FIRST real sweeps (S23, 1x): guidebook + coin book, framed wide then close; dark table"),
 }
 
 

@@ -1,0 +1,30 @@
+frame_01_sweep.jpg: inliers 180  scale 2.46  centre [2957. 1294.]  OK
+frame_02_sweep.jpg: inliers 272  scale 2.43  centre [2346. 1318.]  OK
+frame_03_sweep.jpg: inliers 190  scale 2.41  centre [2072. 1317.]  OK
+frame_04_sweep.jpg: inliers 319  scale 2.39  centre [1984. 1334.]  OK
+frame_05_sweep.jpg: inliers 162  scale 2.38  centre [1842. 1317.]  OK
+frame_06_sweep.jpg: inliers 97  scale 2.35  centre [1591. 1269.]  OK
+frame_07_sweep.jpg: inliers 18  scale 2.66  centre [1519. 1271.]  NOT PLACED
+frame_08_sweep.jpg: inliers 43  scale 2.55  centre [1116. 1247.]  OK
+frame_09_sweep.jpg: inliers 9  scale 2529.10  centre [1413. 1743.]  NOT PLACED
+frame_10_sweep.jpg: inliers 17  scale inf  centre [2127. 1789.]  NOT PLACED
+frame_11_sweep.jpg: inliers 119  scale 2.62  centre [2966. 1764.]  OK
+frame_12_sweep.jpg: inliers 115  scale 2.78  centre [2698. 1807.]  OK
+frame_13_sweep.jpg: inliers 117  scale 2.70  centre [2418. 1889.]  OK
+frame_14_sweep.jpg: inliers 132  scale 2.64  centre [2161. 1889.]  OK
+frame_15_sweep.jpg: inliers 66  scale 2.74  centre [1921. 1911.]  OK
+frame_16_sweep.jpg: inliers 19  scale 2.82  centre [1549. 1912.]  NOT PLACED
+frame_17_sweep.jpg: inliers 12  scale 2.74  centre [1508. 1942.]  NOT PLACED
+frame_18_sweep.jpg: inliers 13  scale inf  centre [2127. 1789.]  NOT PLACED
+frame_19_sweep.jpg: inliers 10  scale 401.87  centre [1250. 2251.]  NOT PLACED
+overlap frame 1->2: 51%
+overlap frame 2->3: 79%
+overlap frame 3->4: 93%
+overlap frame 4->5: 88%
+overlap frame 5->6: 79%
+overlap frame 11->12: 78%
+overlap frame 12->13: 74%
+overlap frame 13->14: 78%
+overlap frame 14->15: 81%
+placed 12 of 19
+union of close-ups covers 51% of the anchor frame

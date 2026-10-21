@@ -43,13 +43,14 @@ object BookscanClientFactory {
  * `ingest.json`'s `source` field, so a later measurement can ask which frames a
  * result came from.
  *
- * Only "sweep" is marked, and only because it is the one origin whose effect is
- * an open question: a sweep frame and a tapped close-up are otherwise the same
- * kind of file, and without the marker "a sweep helped" cannot be told apart
- * from "more close-ups helped". Anchors and tapped close-ups stay untagged, so
- * every filename an existing job produces is byte-for-byte what it was.
+ * "sweep" separates "a sweep helped" from "more close-ups helped" — a sweep
+ * frame and a tapped close-up are otherwise the same kind of file. "closeup"
+ * (2026-10-21) is load-bearing, not only a label: close-ups now upload at full
+ * sensor size, and `pipeline/stage01_fuse.py::partition_frames` reads both
+ * markers to keep a full-size close-up from competing to be the anchor.
+ * Anchors stay untagged.
  */
-private val ORIGIN_TAGS = setOf("sweep")
+private val ORIGIN_TAGS = setOf("sweep", "closeup")
 
 /**
  * One capture frame ready to upload; [index] 0 is always the anchor

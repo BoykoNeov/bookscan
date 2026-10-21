@@ -947,3 +947,34 @@ rules for it:
   `it_geo_07` no control lost D1, only the model's rectangle did; and most
   model-free trims pass, so the rule is "one uncut run cannot separate a bad
   crop from framing noise", not "every framing fails" (RESULTS correction clause).
+
+### 2026-10-21 — Owner direction: source quality first; a model may write the text. Phone stops shrinking close-ups
+
+- **Owner decisions (2026-10-21).** (1) The aim is the best possible *source
+  material*: picture quality first, text quality second, so that later text
+  processing is easier. (2) Processing the book will not work without a
+  language model, and **a model may now write the text itself** — this retires
+  the "Tesseract is the only text source" non-negotiable (CLAUDE.md annotated,
+  not deleted). (3) The owner's preferred route to quality is still combining
+  several photographs, phone-panorama style (OPEN_PROBLEMS P4, parked on data).
+- **Condition recorded with decision (2), not yet met:** Stage 06's per-word
+  "unsure" markers take their signal from Tesseract's confidence. A model that
+  misreads writes a fluent, plausible word with no confidence at all, so model
+  text must not reach a PDF until something flags its mistakes (first candidate:
+  mark every word where the model and Tesseract disagree). Nothing built yet;
+  text is ranked second.
+- **Built: close-ups and sweep frames upload at full size.** The app used to
+  decode every close-up, shrink it to half its area and re-encode it at JPEG 92,
+  only so Stage 01's size rule would not take it for an anchor. Now the camera's
+  file is uploaded untouched (EXIF kept), tapped close-ups carry a `_closeup`
+  upload marker beside the existing `_sweep`, the server whitelists it, and
+  `stage01_fuse.partition_frames` (v0.3.0) treats a marked frame as a close-up
+  whatever its size and leaves it out of the size bar. Unmarked frames
+  (testset, PDF import, old jobs) partition exactly as before. JPEG quality is
+  now set explicitly (100) on all three capture screens.
+- **What this could not check:** whether the kept pixels carry real detail. If
+  the phone's zoom was digital, the shrink mostly discarded interpolated
+  pixels; the old files cannot say (the re-encode dropped their EXIF). The
+  1.30× close-up framing figure in P5 was measured on shrunk frames. Read the
+  lens and zoom off the phone at the next shoot. Upload size per spread rises
+  roughly 3–5×; not yet exercised on a phone. Not installed on the phone yet.

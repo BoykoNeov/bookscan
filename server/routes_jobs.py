@@ -31,7 +31,11 @@ _UPLOAD_EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".webp"}
 # a filename arrives from a client and everything else in it is discarded, so an
 # unrecognised or malformed marker is simply dropped and the frame gets the same
 # plain ``frame_NN`` name it always did.
-_ORIGIN_TAGS = {"sweep"}
+#
+# Both markers are load-bearing for Stage 01 since 2026-10-21, not only labels:
+# the phone stopped shrinking close-ups, so ``stage01_fuse.partition_frames``
+# keys on the marker to keep a full-size close-up from competing to be the anchor.
+_ORIGIN_TAGS = {"sweep", "closeup"}
 _ORIGIN_RE = re.compile(r"^frame_\d+_([a-z]{1,12})$")
 
 

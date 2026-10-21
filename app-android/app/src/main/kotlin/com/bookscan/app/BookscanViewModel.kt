@@ -109,8 +109,9 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
     /**
      * [anchor] and [closeups] are one spread's capture frames, uploaded
      * together in a single multipart request — [anchor] is always index 0
-     * ("frame_00" server-side); Stage 01 Fuse classifies anchor-vs-closeup by
-     * area itself (see docs/plans/android-guided-capture.md M4).
+     * ("frame_00" server-side); Stage 01 Fuse tells anchor from close-up by the
+     * `_closeup`/`_sweep` upload marker, falling back to area for unmarked
+     * frames (see [com.bookscan.app.CAPTURE_JPEG_QUALITY]).
      */
     fun uploadSpread(anchors: List<File>, closeups: List<File>) {
         val api = api ?: return

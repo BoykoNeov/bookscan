@@ -26,8 +26,15 @@ class MultipartPartTest {
     @Test
     fun `an ordinary capture keeps the plain frame name`() {
         assertEquals("frame_00.jpg", nameOf(0, temp("capture_1787119754755.jpg")))
-        assertEquals("frame_03.jpg", nameOf(3, temp("closeup_1787119754755.jpg")))
         assertEquals("frame_07.jpg", nameOf(7, temp("auto_1787119754755_2.jpg")))
+    }
+
+    @Test
+    fun `a tapped close-up carries its origin marker`() {
+        // Load-bearing since 2026-10-21: close-ups upload at full size, so this
+        // marker — not a smaller pixel area — is what keeps Stage 01 from
+        // taking one for the anchor.
+        assertEquals("frame_03_closeup.jpg", nameOf(3, temp("closeup_1787119754755.jpg")))
     }
 
     @Test

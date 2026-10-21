@@ -28,9 +28,8 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat.getMainExecutor
-import com.bookscan.app.downscaleCloseupInPlace
+import com.bookscan.app.CAPTURE_JPEG_QUALITY
 import java.io.File
-import java.util.concurrent.Executors
 
 /**
  * Fixed zoom-ratio steps rather than a pinch gesture or a CameraX
@@ -45,9 +44,10 @@ private val ZOOM_STEPS = listOf(1f, 2f, 3f, 4f)
 
 /**
  * M4's user-triggered close-up capture: pick a zoom step, tap to capture —
- * one close-up per tap, repeatable. Each still is downscaled in place (see
- * [downscaleCloseupInPlace]) before being handed to [onCaptured] so its saved
- * pixel area reads as a close-up (not a second anchor) to Stage 01 Fuse.
+ * one close-up per tap, repeatable. Each still is handed to [onCaptured]
+ * exactly as the camera wrote it: its `closeup_` filename becomes the
+ * `frame_NN_closeup` upload marker, which is what tells Stage 01 Fuse it is a
+ * close-up and not a second anchor (see [CAPTURE_JPEG_QUALITY]).
  * Deliberately separate from [CaptureScreen]'s M2/M3 hover-to-capture flow —
  * that state machine stays untouched.
  *
@@ -70,15 +70,6 @@ fun CloseupScreen(
     var capturing by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    // takePicture's callback runs on whatever executor is passed to it, and
-    // downscaleCloseupInPlace does a full decode + rotate + scale + JPEG
-    // re-encode of a full-resolution still — hundreds of ms of work that
-    // must NOT land on the main thread (unlike CaptureScreen's ImageAnalysis
-    // analyzer, which is deliberately main-thread because its per-frame work
-    // is a cheap 320x240 luma variance, not a full-res image transform).
-    val captureExecutor = remember { Executors.newSingleThreadExecutor() }
-    DisposableEffect(Unit) { onDispose { captureExecutor.shutdown() } }
-
     DisposableEffect(lifecycleOwner) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener(
@@ -89,6 +80,7 @@ fun CloseupScreen(
                 }
                 val capture = ImageCapture.Builder()
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                    .setJpegQuality(CAPTURE_JPEG_QUALITY)
                     .build()
                 cameraProvider.unbindAll()
                 camera = cameraProvider.bindToLifecycle(
@@ -134,31 +126,16 @@ fun CloseupScreen(
                         val mainExecutor = getMainExecutor(context)
                         capture.takePicture(
                             ImageCapture.OutputFileOptions.Builder(file).build(),
-                            captureExecutor,
+                            mainExecutor,
                             object : ImageCapture.OnImageSavedCallback {
-                                // Runs on captureExecutor (background) — downscaleCloseupInPlace's
-                                // decode/rotate/scale/encode happens off the main thread; only the
-                                // resulting state mutations are marshaled back to it.
                                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                                    try {
-                                        downscaleCloseupInPlace(file)
-                                        mainExecutor.execute {
-                                            capturing = false
-                                            onCaptured(file)
-                                        }
-                                    } catch (e: Exception) {
-                                        mainExecutor.execute {
-                                            capturing = false
-                                            error = "close-up processing failed: ${e.message}"
-                                        }
-                                    }
+                                    capturing = false
+                                    onCaptured(file)
                                 }
 
                                 override fun onError(exc: ImageCaptureException) {
-                                    mainExecutor.execute {
-                                        capturing = false
-                                        error = "close-up capture failed: ${exc.message}"
-                                    }
+                                    capturing = false
+                                    error = "close-up capture failed: ${exc.message}"
                                 }
                             },
                         )

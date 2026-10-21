@@ -16,6 +16,14 @@ Conventions used below:
 - **n =** counts *scenes* (books × surfaces × lighting), not frames. Thirty-one
   photographs of one sofa are n = 1.
 
+**Owner direction, 2026-10-21 (reorders what "costs the most" means):** the aim
+is the best possible *source material* — picture quality first, text quality
+second, so text processing gets easier. A language model **may now write the
+text** (condition: no model text in a PDF until its mistakes get flagged — it
+misreads fluently and carries no confidence). The owner's preferred route is
+combining several photographs (P4). First step built the same day: the phone
+no longer shrinks close-ups (P5).
+
 ---
 
 ## P1. The book crop on a pale or cluttered surface (Stage 02) — costs the most
@@ -245,6 +253,13 @@ words rejoined).
 the tail *inside* a source, not which sources), word-aligned seams, admission
 by the worst of three seeded RANSAC draws. Not "paint every registered source".
 
+**What the 2026-10-21 decision changes here (an idea, untested):** if a model
+may write the text, the *text* half need not paste pixels at all — each sharp
+close-up can be read on its own and the readings ordered and de-duplicated by
+the placement Phase 0 already has (within about a word). Pixel-exact stitching
+is then needed only for pictures larger than one close-up. Test on the sweep
+below, against the single-photo read, with a text diff.
+
 **BLOCKED ON DATA:** a data famine, not a refusal. The sweep capture mode on
 the phone (M7, 2026-08-31, unverified on a device) exists to feed it. **Next
 experiment:** one spread of dense text, swept at 2–3×, through Phase 2 —
@@ -274,6 +289,16 @@ never to a sweep; the motion signal is a rate control, not an overlap guarantee.
 **Next experiment:** record one real sweep log off `SweepScreen` (it writes the
 CSV) and replay it through `tools/calibrate_sweep`. Until then no threshold in
 `SweepGate` is a measurement.
+
+**Pixels thrown away on the phone — CLOSED 2026-10-21 (STATUS 2026-10-21).**
+Every close-up and sweep frame used to be shrunk to half its area and
+re-encoded before upload, only so Stage 01 could tell it from an anchor by
+size. Now it uploads as the camera wrote it, named `_closeup`/`_sweep`, and
+Stage 01 (v0.3.0) reads the name. **Unmeasured:** how much real detail that
+keeps — the median 1.30× above was measured on shrunk frames, and if the zoom
+is digital the shrink discarded mostly interpolated pixels. Read lens and zoom
+off the phone at the next shoot (the sweep session in P4). Upload size per
+spread rises roughly 3–5×, not yet exercised on a phone.
 
 ---
 

@@ -65,6 +65,50 @@ def test_partition_separates_closeups():
     assert base == 0 and full == [0] and close == [1]
 
 
+def test_partition_marked_closeup_never_anchors_even_when_full_size():
+    """The phone uploads close-ups at full sensor size since 2026-10-21; the
+    upload name, not the size, says what they are. This one is the SAME size
+    as the anchor and far sharper — by size alone it would win the anchor."""
+    frames = [
+        {"width": 4000, "height": 3000, "sharpness": 100.0, "source": "frame_00.jpg"},
+        {"width": 4000, "height": 3000, "sharpness": 900.0, "source": "frame_01_closeup.jpg"},
+        {"width": 4000, "height": 3000, "sharpness": 800.0, "source": "frame_02_sweep.jpg"},
+    ]
+    base, full, close = S.partition_frames(frames, 0.70)
+    assert base == 0 and full == [0] and close == [1, 2]
+
+
+def test_partition_marked_closeup_does_not_set_the_size_bar():
+    """A large marked close-up must not raise ``max_area`` so far that a real
+    whole-spread shot (smaller than it) is demoted to a close-up."""
+    frames = [
+        {"width": 4000, "height": 3000, "sharpness": 100.0, "source": "frame_00.jpg"},
+        {"width": 8000, "height": 6000, "sharpness": 900.0, "source": "frame_01_closeup.jpg"},
+    ]
+    base, full, close = S.partition_frames(frames, 0.70)
+    assert base == 0 and full == [0] and close == [1]
+
+
+def test_partition_unmarked_names_partition_by_size_as_before():
+    """Names that only look similar carry no marker: size decides, as it always did."""
+    frames = [
+        {"width": 4000, "height": 3000, "sharpness": 100.0, "source": "f00.jpg"},
+        {"width": 4000, "height": 3000, "sharpness": 300.0, "source": "closeup_17.jpg"},
+        {"width": 4000, "height": 3000, "sharpness": 200.0, "source": "frame_02_other.jpg"},
+    ]
+    base, full, close = S.partition_frames(frames, 0.70)
+    assert base == 1 and full == [0, 1, 2] and close == []
+
+
+def test_partition_all_marked_falls_back_to_size():
+    frames = [
+        {"width": 4000, "height": 3000, "sharpness": 100.0, "source": "frame_00_closeup.jpg"},
+        {"width": 1200, "height": 900, "sharpness": 500.0, "source": "frame_01_sweep.jpg"},
+    ]
+    base, full, close = S.partition_frames(frames, 0.70)
+    assert base == 0 and full == [0] and close == [1]
+
+
 # --------------------------------------------------------------------------
 # Stitch
 # --------------------------------------------------------------------------
@@ -263,6 +307,27 @@ def test_run_two_fullspread_picks_sharpest_anchor():
         result = S.run(page, cfg={})
         assert result.anchor_source == "frame_01.png", "should pick sharper frame"
         assert result.method in ("sharpest", "sharpest+stitch")
+
+
+def test_upload_name_survives_stage00_and_keeps_a_full_size_closeup_off_the_anchor():
+    """The chain the phone relies on: the server saves ``frame_01_closeup.jpg``,
+    Stage 00 records that name as ``source``, Stage 01 reads it. The close-up is
+    the same size as the anchor and much sharper, so without the marker it would
+    become the anchor (``test_run_two_fullspread_picks_sharpest_anchor``)."""
+    from pipeline import stage00_ingest
+    with tempfile.TemporaryDirectory() as td:
+        page = Path(td) / "page_001"
+        raw = page / "raw"
+        raw.mkdir(parents=True)
+        sharp = _textured(seed=5)
+        cv2.imwrite(str(raw / "frame_00.jpg"), cv2.GaussianBlur(sharp, (21, 21), 0))
+        cv2.imwrite(str(raw / "frame_01_closeup.jpg"), sharp)
+        stage00_ingest.run(page, cfg={})
+        manifest = json.loads((page / "00_ingest" / "ingest.json").read_text(encoding="utf-8"))
+        by_source = {f["source"]: f["name"] for f in manifest["frames"]}
+        result = S.run(page, cfg={})
+        assert result.anchor_source == by_source["frame_00.jpg"]
+        assert result.fullspread_frames == [by_source["frame_00.jpg"]]
 
 
 def _run() -> int:

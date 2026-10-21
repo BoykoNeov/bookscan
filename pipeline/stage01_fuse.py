@@ -162,6 +162,14 @@ wired behind ``feature_engine`` because it registers one of the six (6/11 vs
 5/11) at ~1.6x the time; ORB stays the default because CLAUDE.md documents it as
 this stage's tool and swapping it is the owner's call, not a silent change.
 
+**Close-ups are named, not only small (v0.3.0, 2026-10-21).** Until then the
+phone shrank every close-up to half its area before upload, purely so that this
+stage's size rule (``fullspread_area_frac``) would not take it for a whole-spread
+shot. That threw away pixels the owner now ranks first. The phone sends close-ups
+untouched and names them ``frame_NN_closeup`` / ``frame_NN_sweep``;
+``partition_frames`` treats a named close-up as a close-up whatever its size and
+leaves it out of the size bar. Unnamed frames partition exactly as before.
+
 Usage:
     python -m pipeline.stage01_fuse jobs/<job>/<page>/ [--debug]
 """
@@ -170,6 +178,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import time
 from pathlib import Path
 
@@ -181,7 +190,7 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import StageMeta
 
 STAGE = "stage01_fuse"
-VERSION = "0.2.0"
+VERSION = "0.3.0"  # 0.3.0: close-ups recognised by upload name, not only size
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -305,17 +314,38 @@ def resolve_params(cfg: dict) -> dict:
 # --------------------------------------------------------------------------
 
 
+# Upload names the server keeps verbatim (``server/routes_jobs.py::_origin_tag``)
+# and Stage 00 copies into ``source``. A frame named this way was TAKEN as a
+# close-up, whatever its size: since 2026-10-21 the phone uploads close-ups at
+# full sensor size instead of shrinking them to half their area to fall under
+# ``fullspread_area_frac``, so size alone would let one compete to be the anchor.
+_CLOSEUP_SOURCE_RE = re.compile(r"^frame_\d+_(closeup|sweep)$")
+
+
+def is_marked_closeup(frame: dict) -> bool:
+    """True when the frame's upload name says the operator shot it as a close-up."""
+    return bool(_CLOSEUP_SOURCE_RE.match(Path(str(frame.get("source", ""))).stem))
+
+
 def partition_frames(frames: list[dict], area_frac: float
                      ) -> tuple[int, list[int], list[int]]:
     """Split frames into (base_idx, fullspread_idxs, closeup_idxs).
 
-    Base = the SHARPEST among the full-spread-sized frames (area >= area_frac of
-    the max). Everything smaller is a close-up to stitch. With one frame this
-    trivially returns (0, [0], []).
+    A frame whose upload name marks it as a close-up (``is_marked_closeup``) is a
+    close-up, never an anchor candidate. Among the rest, base = the SHARPEST of
+    the full-spread-sized frames (area >= area_frac of the largest UNMARKED one);
+    everything smaller is a close-up too. Unmarked input (testset, PDF import,
+    jobs uploaded before the marker) partitions exactly as before. If every
+    frame is marked there is no anchor to keep, so the size rule runs over all
+    of them. With one frame this trivially returns (0, [0], []).
     """
+    marked = {i for i, f in enumerate(frames) if is_marked_closeup(f)}
+    if len(marked) == len(frames):
+        marked = set()
     areas = [f["width"] * f["height"] for f in frames]
-    max_area = max(areas)
-    fullspread = [i for i, a in enumerate(areas) if a >= area_frac * max_area]
+    max_area = max(a for i, a in enumerate(areas) if i not in marked)
+    fullspread = [i for i, a in enumerate(areas)
+                  if i not in marked and a >= area_frac * max_area]
     closeups = [i for i in range(len(frames)) if i not in fullspread]
     # sharpest full-spread frame is the base
     base_idx = max(fullspread, key=lambda i: frames[i].get("sharpness", 0.0))

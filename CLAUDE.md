@@ -73,6 +73,11 @@ pointer is the date in `docs/STATUS.md` / `docs/RESULTS.md`.
   unseeded global RNG; the book detector gave four answers on one frame, from
   no crop to 11.9 % of the book gone. Seed, draw several times, act on the
   worst or the union. (2026-08-31, 2026-09-02)
+- **OWNER DECISION 2026-10-21 supersedes the text half of the next rule: a model
+  MAY write the text.** Condition, not yet met: model text reaches no PDF until
+  something flags its mistakes (it misreads fluently and has no confidence;
+  first candidate: mark model-vs-Tesseract disagreements). The pixel-deleting
+  half ("two questions that agree") is unchanged. See STATUS 2026-10-21.
 - **Tesseract is the text and confidence backbone.** A vision-language model
   answers only questions a person answers in one second by looking (where is
   the book, is this the sofa, is this text), never as a source of text, and
@@ -269,6 +274,9 @@ jobs/<job_id>/                       <- JOB-LEVEL, editable (Stages 07–08)
 
 ### Non-negotiable design decisions (do not "optimize" these away)
 
+- **Superseded in part by the owner, 2026-10-21:** a model may now be the text
+  source (see the guardrail list above for the condition). The bullet below is
+  kept as the record of what held until then.
 - **Tesseract 5 is the confidence/bounding-box backbone.** VLMs and Surya may
   be added as second opinions for hard passages, but they must NEVER be the
   sole text source or the confidence source (no reliable word boxes, no

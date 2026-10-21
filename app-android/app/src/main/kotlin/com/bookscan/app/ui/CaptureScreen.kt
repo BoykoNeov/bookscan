@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat.getMainExecutor
+import com.bookscan.app.CAPTURE_JPEG_QUALITY
 import com.bookscan.capture.FrameLog
 import com.bookscan.capture.FrameLogRow
 import com.bookscan.capture.FrameScore
@@ -282,6 +283,7 @@ fun CaptureScreen(
                 }
                 val capture = ImageCapture.Builder()
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                    .setJpegQuality(CAPTURE_JPEG_QUALITY)
                     .build()
                 val resolutionSelector = ResolutionSelector.Builder()
                     .setResolutionStrategy(

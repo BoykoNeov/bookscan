@@ -36,7 +36,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat.getMainExecutor
-import com.bookscan.app.downscaleCloseupInPlace
+import com.bookscan.app.CAPTURE_JPEG_QUALITY
 import com.bookscan.capture.FrameLog
 import com.bookscan.capture.FrameLogRow
 import com.bookscan.capture.FrameScore
@@ -109,10 +109,12 @@ private const val SWEEP_TIMED_INTERVAL_MS = 800L
  * `BookscanViewModel.sendSpread` puts every file of a spread into a single
  * multipart POST because `server/routes_jobs.py::upload_page` names pages
  * `page_NNN` by arrival order, so a spread cannot be split across requests
- * without renumbering every page after it. At the ~1-2 MB a downscaled close-up
- * weighs, 24 of them plus the anchor is a request in the tens of megabytes,
- * inside the client's 60 s write timeout over local Wi-Fi. A whole book's worth
- * also sits in `filesDir` until it is uploaded.
+ * without renumbering every page after it. Since 2026-10-21 a close-up is the
+ * camera's full-size file at [CAPTURE_JPEG_QUALITY] — several MB, not the
+ * ~1-2 MB of the old half-area copy — so 24 of them plus the anchor is a
+ * request in the low hundreds of megabytes. OkHttp's 60 s write timeout is per
+ * write, not per request, so a slow but moving upload does not trip it. A
+ * whole book's worth also sits in `filesDir` until it is uploaded.
  *
  * **Per-spread is load-bearing.** A spread normally gets several passes (left
  * half, right half, one at a tighter zoom) and [SweepGate.start] resets its own
@@ -152,10 +154,10 @@ private const val BYTES_PER_MB = 1024.0 * 1024.0
  *
  * **This is the capture half only, and it deliberately stitches nothing.** The
  * frames it produces are ordinary close-ups: they go into the same
- * `PendingSpread`, the same single multipart upload, and the same Stage 01
- * area classifier as a tapped one, and they are downscaled by the same
- * [downscaleCloseupInPlace] for the same reason (an un-downscaled frame is
- * over `fullspread_area_frac` and would compete to be the *anchor*). There is
+ * `PendingSpread` and the same single multipart upload as a tapped one, kept
+ * at full size, and their `sweep_` filename becomes the `frame_NN_sweep` marker
+ * that tells Stage 01 they are close-ups — without it a full-size frame would
+ * compete to be the *anchor* (see [CAPTURE_JPEG_QUALITY]). There is
  * no panorama consumer in the pipeline to build against: Phase 2 of
  * `docs/plans/panorama-and-next-steps.md` returned **no verdict** on 2026-08-31
  * — of 40 close-ups only 5 cleared the admission bar and 4 of those landed on
@@ -225,9 +227,8 @@ fun SweepScreen(
     val shots = remember { mutableListOf<File>() }
     var inFlight by remember { mutableStateOf(0) }
 
-    // downscaleCloseupInPlace is a full decode + rotate + scale + re-encode of
-    // a full-resolution still — hundreds of ms that must not land on main,
-    // where the analyzer runs. Same split as CloseupScreen.
+    // Frame-log CSV writes and discarded-shot deletes; kept off main, where
+    // the analyzer runs.
     val ioExecutor = remember { Executors.newSingleThreadExecutor() }
 
     // Two gates are never alive at once, but the parameters differ per mode,
@@ -307,7 +308,7 @@ fun SweepScreen(
     }
 
     /**
-     * The callback is delivered on the MAIN executor and only the pixel work is
+     * The callback is delivered on the MAIN executor and only file I/O is
      * pushed to [ioExecutor] — not the other way round. Deciding whether to
      * keep the shot means reading `sweeping`/`logging`, and Compose state has
      * no cross-thread guarantee; doing that read on a background thread would
@@ -343,24 +344,11 @@ fun SweepScreen(
                         ioExecutor.execute { file.delete() }
                         return
                     }
-                    ioExecutor.execute {
-                        val outcome = runCatching { downscaleCloseupInPlace(file) }
-                        mainExecutor.execute {
-                            inFlight--
-                            outcome.fold(
-                                onSuccess = {
-                                    shots.add(file)
-                                    banked = shots.size
-                                    bankedBytes += file.length()
-                                    status = "swept $banked/$SWEEP_MAX_FRAMES — keep moving across the page"
-                                },
-                                onFailure = {
-                                    file.delete()
-                                    error = "sweep frame processing failed: ${it.message}"
-                                },
-                            )
-                        }
-                    }
+                    inFlight--
+                    shots.add(file)
+                    banked = shots.size
+                    bankedBytes += file.length()
+                    status = "swept $banked/$SWEEP_MAX_FRAMES — keep moving across the page"
                 }
 
                 override fun onError(exc: ImageCaptureException) {
@@ -399,6 +387,7 @@ fun SweepScreen(
                 // and it needs its own comparison, not just a faster sweep.
                 val capture = ImageCapture.Builder()
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                    .setJpegQuality(CAPTURE_JPEG_QUALITY)
                     .build()
                 val resolutionSelector = ResolutionSelector.Builder()
                     .setResolutionStrategy(

@@ -124,3 +124,39 @@ the **printed line**, fixed as follows before any close-up is read:
   each line's *median* close-up CER; `b` = same with each line's *best*
   close-up. The decision rules above apply unchanged to `a`, `m`, `b`.
 - Coverage reported as lines held by ≥ 1 close-up / all lines.
+
+## Amendment 2 (same day, before any close-up was read) — the last one
+
+The line-level arm is empty too: **no close-up holds a whole printed line**.
+The largest share of one line any correctly placed close-up holds is 0.52–0.99
+on R157 and 0.36–0.92 on R156 (per-frame table: RESULTS 2026-10-21). At this
+framing any merge has to piece each line together from several photographs, so
+the check grades **part-lines**. If this arm also comes up empty, or covers
+less than the floor below, the result is "ceiling not measurable at this
+framing" and there is no third amendment.
+
+Placements checked by eye on a contact sheet of every region outline drawn on
+every close-up, before any reading. **Excluded:** R157 frame_03 (outline
+clearly misplaced); R156 frame_01 (degenerate, 0.05×, 8 inliers). Frames 16/17
+on R157 are correct (outline starts at "Though they became"; their 4.7× is the
+homography's scale at the region centre, which lies outside the frame).
+
+- **Segment** = one close-up × one line × the longest x-interval of that line's
+  band whose top and bottom both land inside the frame with the 1 % margin.
+  Kept only if at least 30 % of the region width.
+- **Scored interval** = the segment shrunk at each end by the mean width of the
+  anchor's words on that line. Edge rule identical for all three texts.
+- **Anchor / close-up text** = their words (centres in page coordinates, as
+  before) on that line inside the scored interval, in x order.
+- **Reference text** = reference words positioned by aligning the anchor's
+  line reading to the reference line (difflib on tokens): a reference word
+  matched exactly takes that anchor word's centre x; the rest are interpolated
+  by token index between positioned neighbours (from the region edges at the
+  ends). The cut therefore uses the anchor's geometry — stated, not hidden.
+- **Statistics.** Over all segments (paired, the same reference span for both
+  arms): `a` = anchor CER, `m` = close-up CER, character-weighted. Per
+  close-up, its own paired CER against the anchor's on its segments. Decision:
+  build if `m ≤ a − 1.0` and `m ≤ 0.75 a`; refuse if every close-up's paired
+  CER ≥ the anchor's on its segments; else "sometimes better", owner sees diffs.
+- **Coverage floor:** if the reference characters inside at least one scored
+  interval are under **20 %** of the region's, the check is not measurable.

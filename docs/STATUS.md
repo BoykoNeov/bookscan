@@ -927,3 +927,19 @@ rules for it:
   corrected spread 2 right page two overlapping blocks both take route names
   A5–A12 (duplicated text).
 - Suite: 841 passed (Ollama running during the run).
+
+### 2026-10-21 — Reframing control: sofa-only trims with no model reproduce the layout regression
+
+- Pre-registered (159d6f2) and run: `it_geo_06`/`it_geo_07` through
+  `layout_order_eval` with the frame trimmed by hand (no model, no pad), 14
+  runs. The uncut run and the model's rectangle rebuilt by hand both reproduce
+  this morning's numbers exactly, so the regression is real.
+- Equal-size sofa trims: `it_geo_06` pairs 5 → 4 on 2 of 3 (C28 loses its
+  caption type); `it_geo_07` loses T5right to a **4 px** trim, and the mirrored
+  rectangle repeats the right-page tau drop. Verdicts: framing itself (06),
+  knife edge + partly framing (07). The model's box is not the cause.
+- Found: two model-free trims of `it_geo_07` make the grouping pass pair C31 to
+  a wrong figure by geometry (uncut abstains). Zero-wrong breach from
+  background pixels; open.
+- Consequence recorded: a layout gate for any crop needs a noise floor from
+  model-free reframings. Nothing shipped changes; `vlm_box.cut` stays off.

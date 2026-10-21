@@ -9566,3 +9566,65 @@ the trigger to step around `it_geo_06`/`07`: that is tuning after seeing, and
 "is there a background" is a dead cue family.
 
 Suite: 841 passed (pipeline, server, tools; Ollama was running during the run).
+
+## 2026-10-21 — Reframing control for the model-box cut's layout regression: trimming sofa with no model does the same kind of damage
+
+Answers the "no reframing control" clause of the row above (that row stands as
+written). Pre-registration `docs/data/trim_control_prereg_20261021.md`
+(159d6f2, committed before any run). Probe, outputs and summary:
+`docs/data/trim_control_20261021/` (`trim_probe.py` replaces `find_book` with a
+hand-built rectangle — no model, no pad; `summarize.py`; `summary.json`;
+`lo_<row>_<arm>.json`). `tools.layout_order_eval`, default arm (Stage 05 on),
+shipped config, runs sequential at BelowNormal. Every trim removes sofa only:
+both photographs carry > 150 px of sofa on every side (looked at).
+
+**Precondition: PASS.** The uncut run and the model's rectangle rebuilt by hand
+both reproduce the committed runs exactly on every flagged statistic
+(`it_geo_06` pairs 5 → 3; `it_geo_07` 30/30 → 28/30, D1 and T5right, right tau
++1.00 → +0.83). The regression is repeatable, not run-to-run noise.
+
+| arm (px removed, sofa only) | `it_geo_06` pairs ok / wrong | `it_geo_07` seg | `it_geo_07` right tau | `it_geo_07` pairs wrong |
+|---|---|---|---|---|
+| none | 5 / 0 | 30/30 | +1.00 | 0 |
+| the model's rectangle (06: L41; 07: L41 T27 R34 B25) | **3** / 0 (C26, C28 untyped) | **28/30** (D1, T5right) | **+0.83** | 0 |
+| tiny: L4 | 5 / 0 | **29/30** (T5right) | +1.00 | 0 |
+| L41 | (= model's) | 30/30 | +1.00 | **1** |
+| R41 | 5 / 0 | 30/30 | +1.00 | 0 |
+| T41 | **4** / 0 (C28 untyped) | 30/30 | +1.00 | 0 |
+| B41 | **4** / 0 (C28 untyped) | 30/30 | +1.00 | 0 |
+| mirror (07: L34 T25 R41 B27) | — | 30/30 | **+0.83** | **1** |
+
+**Verdicts by the registered rule:**
+- `it_geo_06` — **(a) the framing itself.** 2 of 3 equal-size model-free
+  trims move the pairs (5 → 4, both by C28 losing its caption type); a 4 px trim
+  does not. The model's strip costs more (−2) than any control (−1), so its
+  particular strip is the worst of four, not the only bad one.
+- `it_geo_07` — **(c) knife edge**, and **(m) partly framing.** A 4 px trim
+  alone loses T5right. 1 of 5 equal-size controls (the mirrored rectangle)
+  reproduces the right-page tau drop exactly (+0.83); none loses D1, which only
+  the model's own rectangle lost.
+
+**Outside the flagged statistics, reported because the bar is zero wrong:**
+two model-free sofa trims of `it_geo_07` (L41, mirror) make the production
+grouping pair caption C31 ("Figura 31 Schema evolutivo…") to a **wrong** figure
+by geometry, where the uncut page abstains. The model's rectangle did not. So
+a framing change of a few tens of pixels of background can move the grouping
+pass from abstain to a wrong pair.
+
+**Reading.** The 2026-10-21 regression cannot be charged to the model's box:
+cutting a strip of sofa of the same size with no model in the loop changes
+the same quantities (caption typing, segmentation, order, and now a wrong
+pair), and on `it_geo_07` four pixels are enough. The downstream stages are
+sensitive to framing at this scale. Two consequences: (1) a future
+`layout_order_eval` gate for the cut must compare against a spread of
+model-free reframings, not a single uncut run, or it is a gate every framing
+fails; (2) the grouping pass's geometry arm producing a wrong pair under a
+sofa-only trim is a robustness defect of its own, unrelated to the model.
+n = 2 pages, one book, one surface. This changes nothing that ships:
+`vlm_box.cut` stays off.
+
+Correction to the pre-registration's wording, not its rule: it called the
+`it_geo_06` statistic "pairs on the left subpage (base 5)"; 5 is the row
+total over both subpages (4 left + 1 right), which is the number the row above
+quoted. Graded on the row total; every loss above is on the left subpage, so
+either reading gives the same verdicts.

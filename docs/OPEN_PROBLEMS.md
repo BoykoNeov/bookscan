@@ -55,9 +55,14 @@ both pale rows cut), but it changes nothing on the owner's book (spreads 1 and
 3 refused — the check answers "cut off on all four sides" where nothing is) and
 an unregistered layout check found 2 of 2 graded block-GT pages worse after
 trimming only strips of sofa (`it_geo_06` pairs 5/6 → 3/6, `it_geo_07`
-segmentation 30/30 → 28/30). Turning it on needs a new pre-registration with
-`layout_order_eval` as a gate, that harness routed through Stage 02's model
-path, and a reframing control.
+segmentation 30/30 → 28/30). The reframing control has since run (RESULTS
+2026-10-21, second row): trimming the same pages by equal strips of sofa with
+**no model** does the same kind of damage, and 4 px is enough on `it_geo_07`,
+so the regression is the downstream stages' framing sensitivity, not the
+model's box. Turning it on needs a new pre-registration with
+`layout_order_eval` as a gate **measured against a spread of model-free
+reframings** (a single uncut run is a bar every framing fails), and that
+harness routed through Stage 02's model path.
 
 **BLOCKED ON DATA:** every automatic route for (a) and (c) needs a precondition
 calibrated against *negatives* — tightly framed handheld spreads on which the
@@ -105,9 +110,18 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
    altogether). The owner's call; a hand-drawn box still fixes either spread.
    **Found on the way:** the reading-order harness never runs Stage 02's model
    path, and the downstream stages are framing-sensitive — a 41 px strip of
-   sofa trimmed off `it_geo_06` loses two caption pairs. A reframing control
-   (same rows cut by an equal strip, no model) is the next measurement, and is
-   cheap: no model call needed.
+   sofa trimmed off `it_geo_06` loses two caption pairs.
+7. **DONE 2026-10-21 — the reframing control** (RESULTS 2026-10-21, second row,
+   pre-registered). Equal sofa-only trims with no model: `it_geo_06` loses a
+   pair on 2 of 3 (verdict: the framing itself); `it_geo_07` loses a block to
+   a 4 px trim (knife edge) and 1 of 5 controls repeats the order drop. Two
+   model-free trims of `it_geo_07` also make the grouping pass pair caption
+   C31 to a **wrong** figure by geometry where the uncut page abstains — a
+   zero-wrong breach from background pixels alone. **Next:** before any
+   layout gate can judge a crop, measure the spread a handful of model-free
+   reframings produce on every block-GT row (the noise floor), and look at why
+   the geometry arm flips abstain → wrong under a 41 px trim. n = 2 pages, one
+   book.
 
 ---
 

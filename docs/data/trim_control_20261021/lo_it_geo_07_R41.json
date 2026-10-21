@@ -1,0 +1,1011 @@
+{
+  "image_id": "it_geo_07",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 17,
+      "matched": {
+        "D5": 25,
+        "D4": 21,
+        "D3": 18,
+        "D2": 12,
+        "D1": 9,
+        "T1mid": 10,
+        "T1right": 11,
+        "T2mid": 16,
+        "T3mid": 19,
+        "T4mid": 23,
+        "T5mid": 27,
+        "T2right": 17,
+        "T4right": 24,
+        "T3right": 20,
+        "C31": 2,
+        "TB": 8,
+        "T5right": 28
+      },
+      "match_bbox": {
+        "D5": [
+          211,
+          2376,
+          821,
+          368
+        ],
+        "D4": [
+          209,
+          1923,
+          832,
+          349
+        ],
+        "D3": [
+          203,
+          1586,
+          843,
+          275
+        ],
+        "D2": [
+          212,
+          1202,
+          828,
+          222
+        ],
+        "D1": [
+          212,
+          995,
+          827,
+          150
+        ],
+        "T1mid": [
+          1075,
+          1014,
+          384,
+          115
+        ],
+        "T1right": [
+          1542,
+          1017,
+          414,
+          113
+        ],
+        "T2mid": [
+          1076,
+          1224,
+          390,
+          222
+        ],
+        "T3mid": [
+          1078,
+          1589,
+          375,
+          222
+        ],
+        "T4mid": [
+          1078,
+          1983,
+          380,
+          327
+        ],
+        "T5mid": [
+          1068,
+          2436,
+          396,
+          355
+        ],
+        "T2right": [
+          1539,
+          1226,
+          483,
+          225
+        ],
+        "T4right": [
+          1535,
+          1998,
+          483,
+          330
+        ],
+        "T3right": [
+          1544,
+          1599,
+          493,
+          158
+        ],
+        "C31": [
+          215,
+          252,
+          339,
+          283
+        ],
+        "TB": [
+          1071,
+          261,
+          941,
+          677
+        ],
+        "T5right": [
+          1523,
+          2457,
+          500,
+          224
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 18,
+        "n_orphan_blocks": 6,
+        "orphan_notes": [
+          {
+            "bbox": [
+              216,
+              295,
+              230,
+              60
+            ],
+            "type": "other",
+            "n_words": 3,
+            "median_word_h": 31,
+            "text": "In queste pasine:"
+          },
+          {
+            "bbox": [
+              219,
+              829,
+              162,
+              20
+            ],
+            "type": "other",
+            "n_words": 4,
+            "median_word_h": 18,
+            "text": "0.5 cm = 200m"
+          },
+          {
+            "bbox": [
+              215,
+              855,
+              247,
+              91
+            ],
+            "type": "other",
+            "n_words": 5,
+            "median_word_h": 19,
+            "text": "Li 0.5 cm =5 Km"
+          },
+          {
+            "bbox": [
+              546,
+              1494,
+              76,
+              19
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 19,
+            "text": "Schiara"
+          },
+          {
+            "bbox": [
+              670,
+              1486,
+              336,
+              24
+            ],
+            "type": "other",
+            "n_words": 4,
+            "median_word_h": 19,
+            "text": "Valle del Piave Alpago"
+          },
+          {
+            "bbox": [
+              934,
+              1510,
+              98,
+              28
+            ],
+            "type": "other",
+            "n_words": 1,
+            "median_word_h": 28,
+            "text": "Cansiglio"
+          }
+        ],
+        "page_wh": [
+          2079,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              0,
+              79,
+              2069,
+              180
+            ],
+            "n_words": 20,
+            "median_word_h": 25
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              210,
+              541,
+              341,
+              177
+            ],
+            "n_words": 20,
+            "median_word_h": 26
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              215,
+              252,
+              339,
+              283
+            ],
+            "n_words": 16,
+            "median_word_h": 26
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              216,
+              333,
+              322,
+              375
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              642,
+              284,
+              373,
+              429
+            ],
+            "n_words": 37,
+            "median_word_h": 27
+          },
+          {
+            "type": "table",
+            "bbox": [
+              1071,
+              261,
+              941,
+              677
+            ],
+            "n_words": 27,
+            "median_word_h": 22
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              212,
+              995,
+              827,
+              150
+            ],
+            "n_words": 5,
+            "median_word_h": 9
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1075,
+              1014,
+              384,
+              115
+            ],
+            "n_words": 10,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1542,
+              1017,
+              414,
+              113
+            ],
+            "n_words": 10,
+            "median_word_h": 28
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              212,
+              1202,
+              828,
+              222
+            ],
+            "n_words": 5,
+            "median_word_h": 20
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1076,
+              1224,
+              390,
+              222
+            ],
+            "n_words": 19,
+            "median_word_h": 26
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1539,
+              1226,
+              483,
+              225
+            ],
+            "n_words": 19,
+            "median_word_h": 28
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              203,
+              1586,
+              843,
+              275
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1078,
+              1589,
+              375,
+              222
+            ],
+            "n_words": 19,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1544,
+              1599,
+              493,
+              158
+            ],
+            "n_words": 15,
+            "median_word_h": 30
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              209,
+              1923,
+              832,
+              349
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              213,
+              2285,
+              461,
+              34
+            ],
+            "n_words": 5,
+            "median_word_h": 22
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1078,
+              1983,
+              380,
+              327
+            ],
+            "n_words": 25,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1535,
+              1998,
+              483,
+              330
+            ],
+            "n_words": 30,
+            "median_word_h": 30
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              211,
+              2376,
+              821,
+              368
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "footnote",
+            "bbox": [
+              215,
+              2772,
+              483,
+              35
+            ],
+            "n_words": 6,
+            "median_word_h": 21
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1068,
+              2436,
+              396,
+              355
+            ],
+            "n_words": 26,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1523,
+              2457,
+              500,
+              224
+            ],
+            "n_words": 25,
+            "median_word_h": 33
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 1,
+        "n_rescued": 2,
+        "eject_notes": [
+          "ejected caption (Figura 31) printed inside figure 216,333 322x375: 16 words at 215,330 339x205"
+        ],
+        "rescue_notes": [
+          "other #3: 3w@59.2 -> 5w@59.2",
+          "caption #22: 0w@0.0 -> 5w@96.3"
+        ]
+      },
+      "misses": [],
+      "type_ok": {
+        "D5": true,
+        "D4": true,
+        "D3": true,
+        "D2": true,
+        "D1": true,
+        "T1mid": true,
+        "T1right": true,
+        "T2mid": true,
+        "T3mid": true,
+        "T4mid": true,
+        "T5mid": true,
+        "T2right": true,
+        "T4right": true,
+        "T3right": true,
+        "C31": true,
+        "TB": true,
+        "T5right": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 0.696969696969697,
+      "n_native": 12,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 5,
+        "n_blocks": 17,
+        "seq_gt": [
+          "C31",
+          "TB",
+          "D1",
+          "T1mid",
+          "T1right",
+          "D2",
+          "T2mid",
+          "T2right",
+          "D3",
+          "T3mid",
+          "T3right",
+          "D4",
+          "T4mid",
+          "T4right",
+          "D5",
+          "T5mid",
+          "T5right"
+        ],
+        "seq_det": [
+          "C31",
+          "TB",
+          "D1",
+          "T1mid",
+          "T1right",
+          "D2",
+          "T2mid",
+          "T2right",
+          "D3",
+          "T3mid",
+          "T3right",
+          "D4",
+          "T4mid",
+          "T4right",
+          "D5",
+          "T5mid",
+          "T5right"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 29,
+      "n_header_det": 1,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "D5": true,
+        "D4": true,
+        "D3": true,
+        "D2": true,
+        "D1": true,
+        "T1mid": true,
+        "T1right": true,
+        "T2mid": true,
+        "T3mid": true,
+        "T4mid": true,
+        "T5mid": true,
+        "T2right": true,
+        "T4right": true,
+        "T3right": true,
+        "C31": true,
+        "TB": true,
+        "T5right": true
+      },
+      "caption_typed_parser": {
+        "C31": true
+      },
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 1,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 2,
+      "abstain_reasons": {
+        "det22": "carries no printed caption number on a subpage whose captions ARE numbered — more likely a mistyped label than a caption",
+        "C31": "no figure shares this caption's column within the gap limit"
+      },
+      "pairs_detail": [],
+      "groups": [
+        {
+          "caption": "C31",
+          "figure": "D1",
+          "caption_typed_ok": true,
+          "nearest_ok": false,
+          "n_figures": 6,
+          "reason": "nearest figure is NOT the partner"
+        }
+      ]
+    },
+    {
+      "name": "right.png",
+      "n_gt": 13,
+      "matched": {
+        "Dins": 13,
+        "D6": 2,
+        "D8": 10,
+        "D7": 6,
+        "T6mid": 4,
+        "T8mid": 11,
+        "T9a": 14,
+        "T7right": 8,
+        "T9c": 16,
+        "T8right": 12,
+        "T6right": 5,
+        "T9b": 15,
+        "T7mid": 7
+      },
+      "match_bbox": {
+        "Dins": [
+          124,
+          2401,
+          428,
+          399
+        ],
+        "D6": [
+          91,
+          257,
+          861,
+          469
+        ],
+        "D8": [
+          90,
+          1539,
+          855,
+          742
+        ],
+        "D7": [
+          80,
+          827,
+          865,
+          643
+        ],
+        "T6mid": [
+          979,
+          306,
+          307,
+          426
+        ],
+        "T8mid": [
+          977,
+          1550,
+          335,
+          613
+        ],
+        "T9a": [
+          591,
+          2402,
+          340,
+          398
+        ],
+        "T7right": [
+          1339,
+          864,
+          296,
+          392
+        ],
+        "T9c": [
+          1345,
+          2408,
+          326,
+          324
+        ],
+        "T8right": [
+          1343,
+          1556,
+          316,
+          537
+        ],
+        "T6right": [
+          1338,
+          307,
+          352,
+          332
+        ],
+        "T9b": [
+          976,
+          2404,
+          337,
+          395
+        ],
+        "T7mid": [
+          978,
+          850,
+          320,
+          644
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 2,
+        "n_orphan_blocks": 1,
+        "orphan_notes": [
+          {
+            "bbox": [
+              1863,
+              2891,
+              6,
+              109
+            ],
+            "type": "other",
+            "n_words": 2,
+            "median_word_h": 38,
+            "text": "iii ata"
+          }
+        ],
+        "page_wh": [
+          1958,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              75,
+              87,
+              1276,
+              52
+            ],
+            "n_words": 18,
+            "median_word_h": 23
+          },
+          {
+            "type": "header",
+            "bbox": [
+              1667,
+              107,
+              54,
+              33
+            ],
+            "n_words": 1,
+            "median_word_h": 25
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              91,
+              257,
+              861,
+              469
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              89,
+              729,
+              557,
+              60
+            ],
+            "n_words": 12,
+            "median_word_h": 20
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              979,
+              306,
+              307,
+              426
+            ],
+            "n_words": 37,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1338,
+              307,
+              352,
+              332
+            ],
+            "n_words": 33,
+            "median_word_h": 28
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              80,
+              827,
+              865,
+              643
+            ],
+            "n_words": 3,
+            "median_word_h": 20
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              978,
+              850,
+              320,
+              644
+            ],
+            "n_words": 54,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1339,
+              864,
+              296,
+              392
+            ],
+            "n_words": 32,
+            "median_word_h": 27
+          },
+          {
+            "type": "caption",
+            "bbox": [
+              84,
+              1530,
+              231,
+              34
+            ],
+            "n_words": 4,
+            "median_word_h": 19
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              90,
+              1539,
+              855,
+              742
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              977,
+              1550,
+              335,
+              613
+            ],
+            "n_words": 50,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1343,
+              1556,
+              316,
+              537
+            ],
+            "n_words": 46,
+            "median_word_h": 27
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              124,
+              2401,
+              428,
+              399
+            ],
+            "n_words": 5,
+            "median_word_h": 21
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              591,
+              2402,
+              340,
+              398
+            ],
+            "n_words": 32,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              976,
+              2404,
+              337,
+              395
+            ],
+            "n_words": 41,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1345,
+              2408,
+              326,
+              324
+            ],
+            "n_words": 24,
+            "median_word_h": 30
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "Dins": true,
+        "D6": true,
+        "D8": true,
+        "D7": true,
+        "T6mid": true,
+        "T8mid": true,
+        "T9a": true,
+        "T7right": true,
+        "T9c": true,
+        "T8right": true,
+        "T6right": true,
+        "T9b": true,
+        "T7mid": true
+      },
+      "seg_recall": 1.0,
+      "type_acc": 1.0,
+      "tau_layout": 1.0,
+      "tau_native": 0.3333333333333333,
+      "n_native": 9,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 4,
+        "n_blocks": 13,
+        "seq_gt": [
+          "D6",
+          "T6mid",
+          "T6right",
+          "D7",
+          "T7mid",
+          "T7right",
+          "D8",
+          "T8mid",
+          "T8right",
+          "Dins",
+          "T9a",
+          "T9b",
+          "T9c"
+        ],
+        "seq_det": [
+          "D6",
+          "T6mid",
+          "T6right",
+          "D7",
+          "T7mid",
+          "T7right",
+          "D8",
+          "T8mid",
+          "T8right",
+          "Dins",
+          "T9a",
+          "T9b",
+          "T9c"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 18,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "Dins": true,
+        "D6": true,
+        "D8": true,
+        "D7": true,
+        "T6mid": true,
+        "T8mid": true,
+        "T9a": true,
+        "T7right": true,
+        "T9c": true,
+        "T8right": true,
+        "T6right": true,
+        "T9b": true,
+        "T7mid": true
+      },
+      "caption_typed_parser": {},
+      "n_promoted": 0,
+      "n_fig_numbers": 0,
+      "n_pairs_by_number": 0,
+      "n_pairs_gt": 0,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 1,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "det9",
+          "figure": "D7",
+          "caption_text": "Livello de I mare",
+          "source": "geometry",
+          "verdict": "ungraded"
+        }
+      ],
+      "groups": []
+    }
+  ]
+}

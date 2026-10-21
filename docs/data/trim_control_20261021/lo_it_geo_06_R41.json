@@ -1,0 +1,590 @@
+{
+  "image_id": "it_geo_06",
+  "stage05": true,
+  "subpages": [
+    {
+      "name": "left.png",
+      "n_gt": 8,
+      "matched": {
+        "F26": 3,
+        "F25": 2,
+        "F27": 4,
+        "F28": 5,
+        "C25": 6,
+        "C26": 7,
+        "C27": 8,
+        "C28": 9
+      },
+      "match_bbox": {
+        "F26": [
+          1610,
+          255,
+          497,
+          623
+        ],
+        "F25": [
+          206,
+          272,
+          1357,
+          781
+        ],
+        "F27": [
+          205,
+          1096,
+          1355,
+          831
+        ],
+        "F28": [
+          201,
+          1972,
+          1348,
+          835
+        ],
+        "C25": [
+          1614,
+          1270,
+          433,
+          183
+        ],
+        "C26": [
+          1605,
+          1485,
+          452,
+          629
+        ],
+        "C27": [
+          1605,
+          2142,
+          437,
+          217
+        ],
+        "C28": [
+          1597,
+          2395,
+          440,
+          433
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 3,
+        "n_orphan_blocks": 1,
+        "orphan_notes": [
+          {
+            "bbox": [
+              207,
+              105,
+              467,
+              33
+            ],
+            "type": "other",
+            "n_words": 3,
+            "median_word_h": 22,
+            "text": "188 A INA"
+          }
+        ],
+        "page_wh": [
+          2127,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              665,
+              72,
+              1405,
+              60
+            ],
+            "n_words": 13,
+            "median_word_h": 22
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              206,
+              272,
+              1357,
+              781
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              1610,
+              255,
+              497,
+              623
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              205,
+              1096,
+              1355,
+              831
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              201,
+              1972,
+              1348,
+              835
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1614,
+              1270,
+              433,
+              183
+            ],
+            "n_words": 18,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1605,
+              1485,
+              452,
+              629
+            ],
+            "n_words": 49,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1605,
+              2142,
+              437,
+              217
+            ],
+            "n_words": 18,
+            "median_word_h": 28
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1597,
+              2395,
+              440,
+              433
+            ],
+            "n_words": 40,
+            "median_word_h": 28
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F26": true,
+        "F25": true,
+        "F27": true,
+        "F28": true,
+        "C25": false,
+        "C26": false,
+        "C27": false,
+        "C28": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.5,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+        "tau": 0.8571428571428571,
+        "n_fig_graded": 4,
+        "n_blocks": 8,
+        "seq_gt": [
+          "F25",
+          "F27",
+          "F28",
+          "F26",
+          "C25",
+          "C26",
+          "C27",
+          "C28"
+        ],
+        "seq_det": [
+          "F25",
+          "F26",
+          "F27",
+          "F28",
+          "C25",
+          "C26",
+          "C27",
+          "C28"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 10,
+      "n_header_det": 1,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F26": true,
+        "F25": true,
+        "F27": true,
+        "F28": true,
+        "C25": true,
+        "C26": true,
+        "C27": true,
+        "C28": true
+      },
+      "caption_typed_parser": {
+        "C25": true,
+        "C26": true,
+        "C27": true,
+        "C28": true
+      },
+      "n_promoted": 4,
+      "n_fig_numbers": 4,
+      "n_pairs_by_number": 4,
+      "n_pairs_gt": 4,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 0,
+      "abstain_reasons": {},
+      "pairs_detail": [
+        {
+          "caption": "C25",
+          "figure": "F25",
+          "caption_text": "In questa pagina: Figura 25 ; La Maiolica, affiorante lungo ",
+          "source": "number",
+          "verdict": "ok"
+        },
+        {
+          "caption": "C26",
+          "figure": "F26",
+          "caption_text": "Figura 26 I Fossili della Maiolica rinvenuti sul Monte Grapp",
+          "source": "number",
+          "verdict": "ok"
+        },
+        {
+          "caption": "C27",
+          "figure": "F27",
+          "caption_text": "Figura 27 Il Calcare di Soccher, affiorante nella località P",
+          "source": "number",
+          "verdict": "ok"
+        },
+        {
+          "caption": "C28",
+          "figure": "F28",
+          "caption_text": "Figura 28 1] Calcare del Fadalto (FAD), affiorante nella loc",
+          "source": "number",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C25",
+          "figure": "F25",
+          "caption_typed_ok": false,
+          "nearest_ok": false,
+          "n_figures": 4,
+          "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+        },
+        {
+          "caption": "C26",
+          "figure": "F26",
+          "caption_typed_ok": false,
+          "nearest_ok": false,
+          "n_figures": 4,
+          "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+        },
+        {
+          "caption": "C27",
+          "figure": "F27",
+          "caption_typed_ok": false,
+          "nearest_ok": false,
+          "n_figures": 4,
+          "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+        },
+        {
+          "caption": "C28",
+          "figure": "F28",
+          "caption_typed_ok": false,
+          "nearest_ok": true,
+          "n_figures": 4,
+          "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+        }
+      ]
+    },
+    {
+      "name": "right.png",
+      "n_gt": 6,
+      "matched": {
+        "F29": 2,
+        "F30": 4,
+        "P1": 6,
+        "C30": 5,
+        "P2": 8,
+        "C29": 3
+      },
+      "match_bbox": {
+        "F29": [
+          143,
+          284,
+          1524,
+          1024
+        ],
+        "F30": [
+          584,
+          1342,
+          1083,
+          841
+        ],
+        "P1": [
+          608,
+          2221,
+          523,
+          254
+        ],
+        "C30": [
+          146,
+          2239,
+          422,
+          581
+        ],
+        "P2": [
+          1160,
+          2227,
+          515,
+          468
+        ],
+        "C29": [
+          146,
+          1489,
+          418,
+          719
+        ]
+      },
+      "stage05_detail": {
+        "orphan_words": 0,
+        "n_orphan_blocks": 0,
+        "orphan_notes": [],
+        "page_wh": [
+          1910,
+          3000
+        ],
+        "real_blocks": [
+          {
+            "type": "header",
+            "bbox": [
+              117,
+              101,
+              1223,
+              47
+            ],
+            "n_words": 19,
+            "median_word_h": 20
+          },
+          {
+            "type": "header",
+            "bbox": [
+              1645,
+              112,
+              52,
+              30
+            ],
+            "n_words": 1,
+            "median_word_h": 23
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              143,
+              284,
+              1524,
+              1024
+            ],
+            "n_words": 0,
+            "median_word_h": 0
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              146,
+              1489,
+              418,
+              719
+            ],
+            "n_words": 65,
+            "median_word_h": 27
+          },
+          {
+            "type": "figure",
+            "bbox": [
+              584,
+              1342,
+              1083,
+              841
+            ],
+            "n_words": 2,
+            "median_word_h": 43
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              146,
+              2239,
+              422,
+              581
+            ],
+            "n_words": 47,
+            "median_word_h": 27
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              608,
+              2221,
+              523,
+              254
+            ],
+            "n_words": 35,
+            "median_word_h": 30
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              613,
+              2477,
+              517,
+              339
+            ],
+            "n_words": 46,
+            "median_word_h": 31
+          },
+          {
+            "type": "paragraph",
+            "bbox": [
+              1160,
+              2227,
+              515,
+              468
+            ],
+            "n_words": 52,
+            "median_word_h": 30
+          }
+        ],
+        "n_absorbed": 0,
+        "absorbed_words": 0,
+        "absorb_notes": [],
+        "n_ejected": 0,
+        "n_rescued": 0,
+        "eject_notes": [],
+        "rescue_notes": []
+      },
+      "misses": [],
+      "type_ok": {
+        "F29": true,
+        "F30": true,
+        "P1": true,
+        "C30": false,
+        "P2": true,
+        "C29": false
+      },
+      "seg_recall": 1.0,
+      "type_acc": 0.6666666666666666,
+      "tau_layout": 1.0,
+      "tau_native": 1.0,
+      "n_native": 4,
+      "order_all": {
+        "tau": 1.0,
+        "n_fig_graded": 2,
+        "n_blocks": 6,
+        "seq_gt": [
+          "F29",
+          "C29",
+          "F30",
+          "C30",
+          "P1",
+          "P2"
+        ],
+        "seq_det": [
+          "F29",
+          "C29",
+          "F30",
+          "C30",
+          "P1",
+          "P2"
+        ],
+        "note": ""
+      },
+      "n_det_blocks": 9,
+      "n_header_det": 2,
+      "n_stripped_gt": 2,
+      "type_ok_parser": {
+        "F29": true,
+        "F30": true,
+        "P1": true,
+        "C30": true,
+        "P2": true,
+        "C29": true
+      },
+      "caption_typed_parser": {
+        "C29": true,
+        "C30": true
+      },
+      "n_promoted": 2,
+      "n_fig_numbers": 1,
+      "n_pairs_by_number": 1,
+      "n_pairs_gt": 2,
+      "n_pairs_wrong": 0,
+      "n_pairs_geometry": 0,
+      "n_pairs_sole": 0,
+      "n_abstained": 1,
+      "abstain_reasons": {
+        "C30": "printed caption number 30 matched no figure number on a subpage that DOES print figure numbers — abstaining rather than overruling the printed numbering"
+      },
+      "pairs_detail": [
+        {
+          "caption": "C29",
+          "figure": "F29",
+          "caption_text": "Sopra: Figura 29 Il tipico paesaggio modellato sulla Miaioli",
+          "source": "number",
+          "verdict": "ok"
+        }
+      ],
+      "groups": [
+        {
+          "caption": "C29",
+          "figure": "F29",
+          "caption_typed_ok": false,
+          "nearest_ok": false,
+          "n_figures": 2,
+          "reason": "nearest figure is NOT the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+        },
+        {
+          "caption": "C30",
+          "figure": "F30",
+          "caption_typed_ok": false,
+          "nearest_ok": true,
+          "n_figures": 2,
+          "reason": "nearest figure is the partner; caption block mistyped 'paragraph' (breaks Gate-4 float)"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3104 @@
+{
+ "R157": {
+  "summary": {
+   "segments": 134,
+   "coverage": 0.94,
+   "a": 2.46,
+   "m": 49.8,
+   "per_frame": {
+    "frame_01.png": {
+     "n": 605,
+     "a_ed": 3,
+     "c_ed": 17,
+     "segments": 11,
+     "a_cer": 0.5,
+     "c_cer": 2.81
+    },
+    "frame_02.png": {
+     "n": 1247,
+     "a_ed": 34,
+     "c_ed": 1247,
+     "segments": 13,
+     "a_cer": 2.73,
+     "c_cer": 100.0
+    },
+    "frame_04.png": {
+     "n": 832,
+     "a_ed": 21,
+     "c_ed": 297,
+     "segments": 13,
+     "a_cer": 2.52,
+     "c_cer": 35.7
+    },
+    "frame_05.png": {
+     "n": 637,
+     "a_ed": 21,
+     "c_ed": 318,
+     "segments": 12,
+     "a_cer": 3.3,
+     "c_cer": 49.92
+    },
+    "frame_11.png": {
+     "n": 813,
+     "a_ed": 19,
+     "c_ed": 33,
+     "segments": 17,
+     "a_cer": 2.34,
+     "c_cer": 4.06
+    },
+    "frame_12.png": {
+     "n": 1191,
+     "a_ed": 24,
+     "c_ed": 131,
+     "segments": 17,
+     "a_cer": 2.02,
+     "c_cer": 11.0
+    },
+    "frame_13.png": {
+     "n": 1514,
+     "a_ed": 18,
+     "c_ed": 1148,
+     "segments": 17,
+     "a_cer": 1.19,
+     "c_cer": 75.83
+    },
+    "frame_14.png": {
+     "n": 1272,
+     "a_ed": 36,
+     "c_ed": 576,
+     "segments": 17,
+     "a_cer": 2.83,
+     "c_cer": 45.28
+    },
+    "frame_15.png": {
+     "n": 855,
+     "a_ed": 45,
+     "c_ed": 698,
+     "segments": 17,
+     "a_cer": 5.26,
+     "c_cer": 81.64
+    }
+   }
+  },
+  "segments": [
+   {
+    "frame": "frame_01.png",
+    "line": 0,
+    "x": [
+     702,
+     1316
+    ],
+    "gt": "from Spain, both Peru and Bolivia maintained",
+    "anchor": "from Spain, both Peru and Bolivia maintained",
+    "closeup": "from Spain, both Peru and Bolivia maintained",
+    "n": 44,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 1,
+    "x": [
+     692,
+     1322
+    ],
+    "gt": "Bolivia with the intent to create a shared government, entering",
+    "anchor": "Bolivia with the intent to create a shared government, entering",
+    "closeup": "Bolivia with the intent to create 2 shared government, entering",
+    "n": 63,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 2,
+    "x": [
+     679,
+     1335
+    ],
+    "gt": "Sucre, a close ally of Simón Bolívar, who maintained his own",
+    "anchor": "Sucre, a close ally of Simén Bolivar, who maintained his own",
+    "closeup": "Sucre, a close ally of Simon Bolivar, who maintained his own",
+    "n": 60,
+    "a_ed": 2,
+    "c_ed": 2
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 3,
+    "x": [
+     693,
+     1321
+    ],
+    "gt": "Subsequent years were chaotic, including the declaration",
+    "anchor": "Subsequent years were chaotic, including the declaration",
+    "closeup": "Subsequent years Were chaotic, including the declaration",
+    "n": 56,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 4,
+    "x": [
+     672,
+     1342
+    ],
+    "gt": "the deaths of both Sucre and Bolívar in 1830. A unification",
+    "anchor": "the deaths of both Sucre and Bolivar in 1830. A unification",
+    "closeup": "the deaths of both Sucre and Bolivar in 1830. A unification",
+    "n": 59,
+    "a_ed": 1,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 5,
+    "x": [
+     682,
+     1328
+    ],
+    "gt": "Peru-Bolivian Confederation, composed of three states:",
+    "anchor": "Peru-Bolivian Confederation, composed of three states:",
+    "closeup": "Peru-Bolivian Confederation, composed of three states:",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 6,
+    "x": [
+     682,
+     1329
+    ],
+    "gt": "by both a shared history and ethnic similarities, but",
+    "anchor": "by both a shared history and ethnic similarities, but",
+    "closeup": "by both a shared history and ethnic similarities, but",
+    "n": 53,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 7,
+    "x": [
+     689,
+     1321
+    ],
+    "gt": "region had previously enjoyed when united under Spanish",
+    "anchor": "region had previously enjoyed when united under Spanish",
+    "closeup": "region had previously enjoyed when united under Spanish",
+    "n": 55,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 8,
+    "x": [
+     681,
+     1326
+    ],
+    "gt": "Argentina and Chile, fearful of the influence that a unified",
+    "anchor": "Argentina and Chile, fearful of the influence that a unified",
+    "closeup": "i d Chile, fearful of the influence that a unified",
+    "n": 60,
+    "a_ed": 0,
+    "c_ed": 10
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 9,
+    "x": [
+     675,
+     1332
+    ],
+    "gt": "to confront and dissolve the combined state in the War",
+    "anchor": "to confront and dissolve the combined state in the War",
+    "closeup": "to confront an d dissolve the combined state in the War",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_01.png",
+    "line": 10,
+    "x": [
+     762,
+     1332
+    ],
+    "gt": "after which both Peru and Bolivia were restored",
+    "anchor": "after which both Peru and Bolivia were restored",
+    "closeup": "after which both Peru and Bo livia were restored",
+    "n": 47,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 0,
+    "x": [
+     72,
+     1284
+    ],
+    "gt": "Though they became independent entities upon their liberation from Spain, both Peru and Bolivia maintained",
+    "anchor": "Though they became independent entities upon their liberation from Spain, both Peru and Bolivia maintained",
+    "closeup": "",
+    "n": 106,
+    "a_ed": 0,
+    "c_ed": 106
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 1,
+    "x": [
+     66,
+     1290
+    ],
+    "gt": "for reunification. In 1827, Peruvian forces invaded Bolivia with the intent to create a shared government,",
+    "anchor": "for reunification. In 1827, Peruvian forces invaded Bolivia with the intent to create a shared government,",
+    "closeup": "",
+    "n": 106,
+    "a_ed": 0,
+    "c_ed": 106
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 2,
+    "x": [
+     53,
+     1304
+    ],
+    "gt": "in 1828 and forcing the resignation of Antonio José de Sucre, a close ally of Simón Bolívar, who maintained his",
+    "anchor": "in 1828 and forcing the resignation of Antonio José de Sucre, a close ally of Simén Bolivar, who maintained his",
+    "closeup": "",
+    "n": 111,
+    "a_ed": 2,
+    "c_ed": 111
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 3,
+    "x": [
+     67,
+     1290
+    ],
+    "gt": "of South American unity under his nation of Gran Colombia. Subsequent years were chaotic, including the",
+    "anchor": "of South American unity under his nation of Gran Colombia. Subsequent years were chaotic, including the",
+    "closeup": "",
+    "n": 103,
+    "a_ed": 0,
+    "c_ed": 103
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 4,
+    "x": [
+     46,
+     1310
+    ],
+    "gt": "by Gran Colombia on Peru, which came to an end with the deaths of both Sucre and Bolívar in 1830. A unification",
+    "anchor": "by Gran Colombia on Peru, which came to an end with the deaths of both Sucre and Bolivar in 1830. A unification",
+    "closeup": "",
+    "n": 111,
+    "a_ed": 1,
+    "c_ed": 111
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 5,
+    "x": [
+     60,
+     1297
+    ],
+    "gt": "not put in place until 1836, with the emergence of the Peru-Bolivian Confederation, composed of three states:",
+    "anchor": "not put in place until 1836, with the emergence of the Peru-Bolivian Confederation, composed of three states:",
+    "closeup": "",
+    "n": 109,
+    "a_ed": 0,
+    "c_ed": 109
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 6,
+    "x": [
+     59,
+     1294
+    ],
+    "gt": "North Peru, and South Peru; the confederation was motivated by both a shared history and ethnic similarities,",
+    "anchor": "North Peru, and South Peru; the confederation was motivated by both a shared history and ethnic similarities,",
+    "closeup": "",
+    "n": 109,
+    "a_ed": 0,
+    "c_ed": 109
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 7,
+    "x": [
+     67,
+     1287
+    ],
+    "gt": "for a reemergence of the commercial prominence that the region had previously enjoyed when united under",
+    "anchor": "for a reemergence of the commercial prominence that the region had previously enjoyed when united under",
+    "closeup": "",
+    "n": 103,
+    "a_ed": 0,
+    "c_ed": 103
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 8,
+    "x": [
+     62,
+     1291
+    ],
+    "gt": "authority. However, the state was loosely arranged and short-lived. Argentina and Chile, fearful of the influence that a",
+    "anchor": "However, the state was loosely arranged and short-lived. Argentina and Chile, fearful of the influence that a",
+    "closeup": "",
+    "n": 120,
+    "a_ed": 11,
+    "c_ed": 120
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 9,
+    "x": [
+     56,
+     1297
+    ],
+    "gt": "such magnitude could wield, quickly entered into an alliance to confront and dissolve the combined state in the",
+    "anchor": "such magnitude could wield, quickly entered into an alliance to confront and dissolve the combined state in the",
+    "closeup": "",
+    "n": 111,
+    "a_ed": 0,
+    "c_ed": 111
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 10,
+    "x": [
+     56,
+     1297
+    ],
+    "gt": "Confederation, which concluded with the Battle of Yungay in 1839, after which both Peru and Bolivia were restored",
+    "anchor": "Confederation, which concluded with the Battle of Yungay in 1839, after which both Peru and Bolivia were restored",
+    "closeup": "",
+    "n": 113,
+    "a_ed": 0,
+    "c_ed": 113
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 11,
+    "x": [
+     440,
+     1303
+    ],
+    "gt": "independent nations.",
+    "anchor": "",
+    "closeup": "",
+    "n": 20,
+    "a_ed": 20,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_02.png",
+    "line": 12,
+    "x": [
+     967,
+     1291
+    ],
+    "gt": "Peru, which included Lima",
+    "anchor": "Peru, which included Lima",
+    "closeup": "",
+    "n": 25,
+    "a_ed": 0,
+    "c_ed": 25
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 0,
+    "x": [
+     72,
+     828
+    ],
+    "gt": "Though they became independent entities upon their liberation from",
+    "anchor": "Though they became independent entities upon their liberation from",
+    "closeup": "cars fy) 4, Decame i :",
+    "n": 66,
+    "a_ed": 0,
+    "c_ed": 57
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 1,
+    "x": [
+     66,
+     835
+    ],
+    "gt": "for reunification. In 1827, Peruvian forces invaded Bolivia with the",
+    "anchor": "for reunification. In 1827, Peruvian forces invaded Bolivia with the",
+    "closeup": ", Peruvian forces invaded Bolivia with the",
+    "n": 68,
+    "a_ed": 0,
+    "c_ed": 26
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 2,
+    "x": [
+     53,
+     848
+    ],
+    "gt": "in 1828 and forcing the resignation of Antonio José de Sucre, a close ally",
+    "anchor": "in 1828 and forcing the resignation of Antonio José de Sucre, a close ally",
+    "closeup": "South A. erican CTeIng unity the resi Ln of Antonio José de Sucre, a close ally",
+    "n": 74,
+    "a_ed": 0,
+    "c_ed": 30
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 3,
+    "x": [
+     67,
+     834
+    ],
+    "gt": "of South American unity under his nation of Gran Colombia. Subsequent",
+    "anchor": "of South American unity under his nation of Gran Colombia. Subsequent",
+    "closeup": "Rot Gaae lombi, or bos 4 er his nation of Gran Colombia. Subsequent",
+    "n": 69,
+    "a_ed": 0,
+    "c_ed": 23
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 4,
+    "x": [
+     46,
+     855
+    ],
+    "gt": "by Gran Colombia on Peru, which came to an end with the deaths of both",
+    "anchor": "by Gran Colombia on Peru, which came to an end with the deaths of both",
+    "closeup": "Nor, py, 10 place yn] which came to an end with the deaths of both",
+    "n": 70,
+    "a_ed": 0,
+    "c_ed": 22
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 5,
+    "x": [
+     60,
+     841
+    ],
+    "gt": "not put in place until 1836, with the emergence of the Peru-Bolivian",
+    "anchor": "not put in place until 1836, with the emergence of the Peru-Bolivian",
+    "closeup": "p CT, and South 1 Eu with the emergence of the Peru-Bolivian",
+    "n": 68,
+    "a_ed": 0,
+    "c_ed": 21
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 6,
+    "x": [
+     59,
+     838
+    ],
+    "gt": "North Peru, and South Peru; the confederation was motivated by both a",
+    "anchor": "North Peru, and South Peru; the confederation was motivated by both a",
+    "closeup": "Hoy, Mergence of eru; the confederation was motivated by both 2",
+    "n": 69,
+    "a_ed": 0,
+    "c_ed": 17
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 7,
+    "x": [
+     67,
+     831
+    ],
+    "gt": "for a reemergence of the commercial prominence that the region had",
+    "anchor": "for a reemergence of the commercial prominence that the region had",
+    "closeup": "Such > the state the commercial prominence that the region had",
+    "n": 66,
+    "a_ed": 0,
+    "c_ed": 17
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 8,
+    "x": [
+     62,
+     836
+    ],
+    "gt": "authority. However, the state was loosely arranged and short-lived. Argentina and",
+    "anchor": "However, the state was loosely arranged and short-lived. Argentina and",
+    "closeup": "gn e Sod ew arranged and short-lived. Argentina and",
+    "n": 81,
+    "a_ed": 11,
+    "c_ed": 35
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 9,
+    "x": [
+     56,
+     842
+    ],
+    "gt": "such magnitude could wield, quickly entered into an alliance to confront",
+    "anchor": "such magnitude could wield, quickly entered into an alliance to confront",
+    "closeup": "nag. Which eld, quickly entered into 20 alliance to confront",
+    "n": 72,
+    "a_ed": 0,
+    "c_ed": 21
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 10,
+    "x": [
+     56,
+     841
+    ],
+    "gt": "Confederation, which concluded with the Battle of Yungay in 1839, after",
+    "anchor": "Confederation, which concluded with the Battle of Yungay in 1839, after",
+    "closeup": "Hong, concluded with the Battle of Yungay in 1839, after",
+    "n": 71,
+    "a_ed": 0,
+    "c_ed": 17
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 11,
+    "x": [
+     50,
+     844
+    ],
+    "gt": "independent",
+    "anchor": "ent nations,",
+    "closeup": "2¢ Conf,",
+    "n": 11,
+    "a_ed": 10,
+    "c_ed": 10
+   },
+   {
+    "frame": "frame_04.png",
+    "line": 12,
+    "x": [
+     375,
+     832
+    ],
+    "gt": "coinage of the state was altered appropriately.",
+    "anchor": "coinage of the state was altered appropriately.",
+    "closeup": "coinage of the state was altered app ropriately.",
+    "n": 47,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 0,
+    "x": [
+     72,
+     682
+    ],
+    "gt": "Though they became independent entities upon their",
+    "anchor": "Though they became independent entities upon their",
+    "closeup": "Bt ! they Ruin be independen t entitt it 5 ah 1",
+    "n": 50,
+    "a_ed": 0,
+    "c_ed": 24
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 1,
+    "x": [
+     66,
+     685
+    ],
+    "gt": "for reunification. In 1827, Peruvian forces invaded",
+    "anchor": "for reunification. In 1827, Peruvian forces invaded",
+    "closeup": "o a 827, Peruvian",
+    "n": 51,
+    "a_ed": 0,
+    "c_ed": 34
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 2,
+    "x": [
+     53,
+     698
+    ],
+    "gt": "in 1828 and forcing the resignation of Antonio José de Sucre,",
+    "anchor": "in 1828 and forcing the resignation of Antonio José de Sucre,",
+    "closeup": "South pg CrCing SE",
+    "n": 61,
+    "a_ed": 0,
+    "c_ed": 52
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 3,
+    "x": [
+     67,
+     685
+    ],
+    "gt": "of South American unity under his nation of Gran Colombia.",
+    "anchor": "of South American unity under his nation of Gran Colombia.",
+    "closeup": "©mbia Ld bis nation of Gran",
+    "n": 58,
+    "a_ed": 0,
+    "c_ed": 35
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 4,
+    "x": [
+     46,
+     705
+    ],
+    "gt": "by Gran Colombia on Peru, which came to an end with the",
+    "anchor": "by Gran Colombia on Peru, which came to an end with the",
+    "closeup": "th Put in Lo unl op in Frhich came to an end with",
+    "n": 55,
+    "a_ed": 0,
+    "c_ed": 26
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 5,
+    "x": [
+     60,
+     688
+    ],
+    "gt": "not put in place until 1836, with the emergence of the",
+    "anchor": "not put in place until 1836, with the emergence of the",
+    "closeup": "pe South Per En the emergence of the",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 27
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 6,
+    "x": [
+     59,
+     689
+    ],
+    "gt": "North Peru, and South Peru; the confederation was motivated",
+    "anchor": "North Peru, and South Peru; the confederation was motivated",
+    "closeup": "re Owe of ih confederation was motivated",
+    "n": 59,
+    "a_ed": 0,
+    "c_ed": 24
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 7,
+    "x": [
+     67,
+     681
+    ],
+    "gt": "for a reemergence of the commercial prominence that the",
+    "anchor": "for a reemergence of the commercial prominence that the",
+    "closeup": "So a State the ercial prominence that the",
+    "n": 55,
+    "a_ed": 0,
+    "c_ed": 19
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 8,
+    "x": [
+     62,
+     686
+    ],
+    "gt": "authority. However, the state was loosely arranged and short-lived.",
+    "anchor": "However, the state was loosely arranged and short-lived.",
+    "closeup": "tation, ait € was ely arranged and short-lived.",
+    "n": 67,
+    "a_ed": 11,
+    "c_ed": 27
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 9,
+    "x": [
+     56,
+     692
+    ],
+    "gt": "such magnitude could wield, quickly entered into an alliance",
+    "anchor": "such magnitude could wield, quickly entered into an alliance",
+    "closeup": "> Which could reli wield quickly entered into an alliance",
+    "n": 60,
+    "a_ed": 0,
+    "c_ed": 17
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 10,
+    "x": [
+     56,
+     688
+    ],
+    "gt": "Confederation, which concluded with the Battle of Yungay",
+    "anchor": "Confederation, which concluded with the Battle of Yungay",
+    "closeup": "ih ed with the Battle of Yungay",
+    "n": 56,
+    "a_ed": 0,
+    "c_ed": 25
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 11,
+    "x": [
+     50,
+     694
+    ],
+    "gt": "independent",
+    "anchor": "ent nations,",
+    "closeup": "ge Cont",
+    "n": 11,
+    "a_ed": 10,
+    "c_ed": 8
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 0,
+    "x": [
+     733,
+     1316
+    ],
+    "gt": "from Spain, both Peru and Bolivia maintained",
+    "anchor": "from Spain, both Peru and Bolivia maintained",
+    "closeup": "from Spain, both Peru and Bolivia maintained",
+    "n": 44,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 1,
+    "x": [
+     727,
+     1322
+    ],
+    "gt": "with the intent to create a shared government, entering",
+    "anchor": "with the intent to create a shared government, entering",
+    "closeup": "with the intent to create 4 shared government, entering",
+    "n": 55,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 2,
+    "x": [
+     714,
+     1335
+    ],
+    "gt": "a close ally of Simón Bolívar, who maintained his own",
+    "anchor": "a close ally of Simén Bolivar, who maintained his own",
+    "closeup": "a close ally of Simén Bolivar, who maintained his own",
+    "n": 53,
+    "a_ed": 2,
+    "c_ed": 2
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 3,
+    "x": [
+     728,
+     1321
+    ],
+    "gt": "Subsequent years were chaotic, including the declaration",
+    "anchor": "Subsequent years were chaotic, including the declaration",
+    "closeup": "Subsequent years were chaotic, including the declaration",
+    "n": 56,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 4,
+    "x": [
+     707,
+     1342
+    ],
+    "gt": "deaths of both Sucre and Bolívar in 1830. A unification",
+    "anchor": "deaths of both Sucre and Bolivar in 1830. A unification",
+    "closeup": "deaths of both Sucre and Bolivar in 1830. A unification",
+    "n": 55,
+    "a_ed": 1,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 5,
+    "x": [
+     721,
+     1328
+    ],
+    "gt": "Peru-Bolivian Confederation, composed of three states:",
+    "anchor": "Peru-Bolivian Confederation, composed of three states:",
+    "closeup": "Peru-Bolivian Confederation, composed of three states:",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 6,
+    "x": [
+     720,
+     1329
+    ],
+    "gt": "by both a shared history and ethnic similarities, but",
+    "anchor": "by both a shared history and ethnic similarities, but",
+    "closeup": "by both a shared history and ethnic similarities, but",
+    "n": 53,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 7,
+    "x": [
+     728,
+     1321
+    ],
+    "gt": "region had previously enjoyed when united under Spanish",
+    "anchor": "region had previously enjoyed when united under Spanish",
+    "closeup": "region had previously enjoyed when united under Spanish",
+    "n": 55,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 8,
+    "x": [
+     723,
+     1326
+    ],
+    "gt": "Argentina and Chile, fearful of the influence that a unified",
+    "anchor": "Argentina and Chile, fearful of the influence that a unified",
+    "closeup": "Argentina and Chile, fearful of the influence that a unified",
+    "n": 60,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 9,
+    "x": [
+     717,
+     1332
+    ],
+    "gt": "to confront and dissolve the combined state in the War",
+    "anchor": "to confront and dissolve the combined state in the War",
+    "closeup": "to confront and dissolve the combined state in the War",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 10,
+    "x": [
+     717,
+     1332
+    ],
+    "gt": "1839, after which both Peru and Bolivia were restored",
+    "anchor": "1839, after which both Peru and Bolivia were restored",
+    "closeup": "1839, after which both Peru and Bolivia were restored",
+    "n": 53,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 11,
+    "x": [
+     711,
+     1338
+    ],
+    "gt": "nations.",
+    "anchor": "",
+    "closeup": "",
+    "n": 8,
+    "a_ed": 8,
+    "c_ed": 8
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 12,
+    "x": [
+     723,
+     1326
+    ],
+    "gt": "appropriately. North Peru, which included Lima and",
+    "anchor": "appropriately. North Peru, which included Lima and",
+    "closeup": "appropriately. North Peru, which included Lima and",
+    "n": 50,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 13,
+    "x": [
+     720,
+     1329
+    ],
+    "gt": "the alteration of the legend to reflect the new nomencla-",
+    "anchor": "the alteration of the legend to reflect the new nomencla-",
+    "closeup": "the alteration of the legend to reflect the new nomencla-",
+    "n": 57,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 14,
+    "x": [
+     731,
+     1318
+    ],
+    "gt": "Both are considerably scarcer than the stan-",
+    "anchor": "Both are considerably scarcer than the stan-",
+    "closeup": "OR-PERUANA'. Both are considerably scarcer than the stan-",
+    "n": 44,
+    "a_ed": 0,
+    "c_ed": 13
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 15,
+    "x": [
+     727,
+     1322
+    ],
+    "gt": "debasement of silver coinage (moneda feble) undertaken",
+    "anchor": "debasement of silver coinage (moneda feble) undertaken",
+    "closeup": "debasement of silver coinage (moneda feble) undertaken",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_11.png",
+    "line": 16,
+    "x": [
+     750,
+     1299
+    ],
+    "gt": "1835-45.",
+    "anchor": "",
+    "closeup": "",
+    "n": 8,
+    "a_ed": 8,
+    "c_ed": 8
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 0,
+    "x": [
+     455,
+     1316
+    ],
+    "gt": "entities upon their liberation from Spain, both Peru and Bolivia maintained",
+    "anchor": "entities upon their liberation from Spain, both Peru and Bolivia maintained",
+    "closeup": "cannes upon their liberation from Spain, both Peru 2nd Bolivia maintzined",
+    "n": 75,
+    "a_ed": 0,
+    "c_ed": 8
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 1,
+    "x": [
+     445,
+     1322
+    ],
+    "gt": "forces invaded Bolivia with the intent to create a shared government, entering",
+    "anchor": "forces invaded Bolivia with the intent to create a shared government, entering",
+    "closeup": "forces invaded Bolivia with the inteqr 0, create 2 shared government.",
+    "n": 78,
+    "a_ed": 0,
+    "c_ed": 15
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 2,
+    "x": [
+     432,
+     1335
+    ],
+    "gt": "of Antonio José de Sucre, a close ally of Simón Bolívar, who maintained his own",
+    "anchor": "of Antonio José de Sucre, a close ally of Simén Bolivar, who maintained his own",
+    "closeup": "of Antonio José de Sucre, 2 close ally of Simon Bolivar, who oa his own",
+    "n": 79,
+    "a_ed": 2,
+    "c_ed": 12
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 3,
+    "x": [
+     446,
+     1321
+    ],
+    "gt": "nation of Gran Colombia. Subsequent years were chaotic, including the declaration",
+    "anchor": "nation of Gran Colombia. Subsequent years were chaotic, including the declaration",
+    "closeup": "nation of Gran Colombia. Subsequent years were chaotic, including the delaras",
+    "n": 81,
+    "a_ed": 0,
+    "c_ed": 5
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 4,
+    "x": [
+     425,
+     1342
+    ],
+    "gt": "came to an end with the deaths of both Sucre and Bolívar in 1830. A unification",
+    "anchor": "came to an end with the deaths of both Sucre and Bolivar in 1830. A unification",
+    "closeup": "came to 2n end with the deaths of both Sucre 20d Boffras in 1830. A unificzrion",
+    "n": 79,
+    "a_ed": 1,
+    "c_ed": 9
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 5,
+    "x": [
+     439,
+     1328
+    ],
+    "gt": "emergence of the Peru-Bolivian Confederation, composed of three states:",
+    "anchor": "emergence of the Peru-Bolivian Confederation, composed of three states:",
+    "closeup": "emergence of the Peru-Bolivian Confederation, composed of three stare",
+    "n": 71,
+    "a_ed": 0,
+    "c_ed": 3
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 6,
+    "x": [
+     438,
+     1329
+    ],
+    "gt": "confederation was motivated by both a shared history and ethnic similarities, but",
+    "anchor": "confederation was motivated by both a shared history and ethnic similarities, but",
+    "closeup": "confederation was motivated by both 2 shared history 2nd ethnic similarities, but",
+    "n": 81,
+    "a_ed": 0,
+    "c_ed": 2
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 7,
+    "x": [
+     446,
+     1321
+    ],
+    "gt": "prominence that the region had previously enjoyed when united under Spanish",
+    "anchor": "prominence that the region had previously enjoyed when united under Spanish",
+    "closeup": "prominence that the region had previously enjoyed when united under Spanish",
+    "n": 75,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 8,
+    "x": [
+     441,
+     1326
+    ],
+    "gt": "arranged and short-lived. Argentina and Chile, fearful of the influence that a unified",
+    "anchor": "arranged and short-lived. Argentina and Chile, fearful of the influence that a unified",
+    "closeup": "arranged and short-lived. Argentina and Chile, fearful of the influence that 2 unified",
+    "n": 86,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 9,
+    "x": [
+     435,
+     1332
+    ],
+    "gt": "entered into an alliance to confront and dissolve the combined state in the War",
+    "anchor": "entered into an alliance to confront and dissolve the combined state in the War",
+    "closeup": "entered into 2n alliance to confront and dissolve the combined state in the War",
+    "n": 79,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 10,
+    "x": [
+     435,
+     1332
+    ],
+    "gt": "the Battle of Yungay in 1839, after which both Peru and Bolivia were restored",
+    "anchor": "the Battle of Yungay in 1839, after which both Peru and Bolivia were restored",
+    "closeup": "the Battle of Yungay in 1839, after which both Peru and Bolivia were restored",
+    "n": 77,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 11,
+    "x": [
+     426,
+     1338
+    ],
+    "gt": "independent nations.",
+    "anchor": "",
+    "closeup": "",
+    "n": 20,
+    "a_ed": 20,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 12,
+    "x": [
+     438,
+     1326
+    ],
+    "gt": "of the state was altered appropriately. North Peru, which included Lima and",
+    "anchor": "of the state was altered appropriately. North Peru, which included Lima and",
+    "closeup": "of the state was altered appropriately. North Peru, which included Lima 5",
+    "n": 75,
+    "a_ed": 0,
+    "c_ed": 3
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 13,
+    "x": [
+     435,
+     1329
+    ],
+    "gt": "Liberty design, with the alteration of the legend to reflect the new nomencla-",
+    "anchor": "Liberty design, with the alteration of the legend to reflect the new nomencla-",
+    "closeup": "Liberty design, with the alteration of the legend to reflect the new",
+    "n": 78,
+    "a_ed": 0,
+    "c_ed": 10
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 14,
+    "x": [
+     446,
+     1318
+    ],
+    "gt": "and 'REP NOR-PERUANA'. Both are considerably scarcer than the stan-",
+    "anchor": "and 'REP NOR-PERUANA'. Both are considerably scarcer than the stan-",
+    "closeup": "and 'REP NOR-PERUANA. Both are considerably BNE",
+    "n": 67,
+    "a_ed": 0,
+    "c_ed": 23
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 15,
+    "x": [
+     441,
+     1322
+    ],
+    "gt": "possibly due in part to the debasement of silver coinage (moneda feble) undertaken",
+    "anchor": "possibly due in part to the debasement of silver coinage (moneda feble) undertaken",
+    "closeup": "possibly due : in part to the de basement of silver coinage (monzda fama) j2bik2) underiax pon",
+    "n": 82,
+    "a_ed": 0,
+    "c_ed": 19
+   },
+   {
+    "frame": "frame_12.png",
+    "line": 16,
+    "x": [
+     465,
+     1299
+    ],
+    "gt": "1835-45.",
+    "anchor": "1835-45.\"",
+    "closeup": "1835-45.",
+    "n": 8,
+    "a_ed": 1,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 0,
+    "x": [
+     132,
+     1232
+    ],
+    "gt": "they became independent entities upon their liberation from Spain, both Peru and Bolivia maintained",
+    "anchor": "they became independent entities upon their liberation from Spain, both Peru and Bolivia maintained",
+    "closeup": "they t enti",
+    "n": 99,
+    "a_ed": 0,
+    "c_ed": 88
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 1,
+    "x": [
+     129,
+     1238
+    ],
+    "gt": "reunification. In 1827, Peruvian forces invaded Bolivia with the intent to create a shared government,",
+    "anchor": "reunification. In 1827, Peruvian forces invaded Bolivia with the intent to create a shared government,",
+    "closeup": "",
+    "n": 102,
+    "a_ed": 0,
+    "c_ed": 102
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 2,
+    "x": [
+     116,
+     1251
+    ],
+    "gt": "and forcing the resignation of Antonio José de Sucre, a close ally of Simón Bolívar, who maintained",
+    "anchor": "and forcing the resignation of Antonio José de Sucre, a close ally of Simén Bolivar, who maintained",
+    "closeup": "",
+    "n": 99,
+    "a_ed": 2,
+    "c_ed": 99
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 3,
+    "x": [
+     133,
+     1238
+    ],
+    "gt": "American unity under his nation of Gran Colombia. Subsequent years were chaotic, including the",
+    "anchor": "American unity under his nation of Gran Colombia. Subsequent years were chaotic, including the",
+    "closeup": "",
+    "n": 94,
+    "a_ed": 0,
+    "c_ed": 94
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 4,
+    "x": [
+     112,
+     1258
+    ],
+    "gt": "Gran Colombia on Peru, which came to an end with the deaths of both Sucre and Bolívar in 1830. A",
+    "anchor": "Gran Colombia on Peru, which came to an end with the deaths of both Sucre and Bolivar in 1830. A",
+    "closeup": "",
+    "n": 96,
+    "a_ed": 1,
+    "c_ed": 96
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 5,
+    "x": [
+     126,
+     1248
+    ],
+    "gt": "put in place until 1836, with the emergence of the Peru-Bolivian Confederation, composed of three",
+    "anchor": "put in place until 1836, with the emergence of the Peru-Bolivian Confederation, composed of three",
+    "closeup": "",
+    "n": 97,
+    "a_ed": 0,
+    "c_ed": 97
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 6,
+    "x": [
+     129,
+     1249
+    ],
+    "gt": "Peru, and South Peru; the confederation was motivated by both a shared history and ethnic similarities,",
+    "anchor": "Peru, and South Peru; the confederation was motivated by both a shared history and ethnic similarities,",
+    "closeup": "",
+    "n": 103,
+    "a_ed": 0,
+    "c_ed": 103
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 7,
+    "x": [
+     136,
+     1241
+    ],
+    "gt": "reemergence of the commercial prominence that the region had previously enjoyed when united under",
+    "anchor": "reemergence of the commercial prominence that the region had previously enjoyed when united under",
+    "closeup": "",
+    "n": 97,
+    "a_ed": 0,
+    "c_ed": 97
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 8,
+    "x": [
+     135,
+     1246
+    ],
+    "gt": "the state was loosely arranged and short-lived. Argentina and Chile, fearful of the influence that",
+    "anchor": "the state was loosely arranged and short-lived. Argentina and Chile, fearful of the influence that",
+    "closeup": "",
+    "n": 98,
+    "a_ed": 0,
+    "c_ed": 98
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 9,
+    "x": [
+     129,
+     1252
+    ],
+    "gt": "magnitude could wield, quickly entered into an alliance to confront and dissolve the combined state in",
+    "anchor": "magnitude could wield, quickly entered into an alliance to confront and dissolve the combined state in",
+    "closeup": "",
+    "n": 102,
+    "a_ed": 0,
+    "c_ed": 102
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 10,
+    "x": [
+     129,
+     1252
+    ],
+    "gt": "which concluded with the Battle of Yungay in 1839, after which both Peru and Bolivia were",
+    "anchor": "which concluded with the Battle of Yungay in 1839, after which both Peru and Bolivia were",
+    "closeup": "",
+    "n": 89,
+    "a_ed": 0,
+    "c_ed": 89
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 11,
+    "x": [
+     127,
+     1257
+    ],
+    "gt": "independent nations.",
+    "anchor": "nations,",
+    "closeup": "",
+    "n": 20,
+    "a_ed": 13,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 12,
+    "x": [
+     142,
+     1246
+    ],
+    "gt": "the Confederation, the coinage of the state was altered appropriately. North Peru, which included",
+    "anchor": "the Confederation, the coinage of the state was altered appropriately. North Peru, which included",
+    "closeup": "be ederation, : the : Comnage of the state was altered appropriately. North Peru, which included Lima",
+    "n": 97,
+    "a_ed": 0,
+    "c_ed": 17
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 13,
+    "x": [
+     139,
+     1249
+    ],
+    "gt": "largely retained the Standing Liberty design, with the alteration of the legend to reflect the new",
+    "anchor": "largely retained the Standing Liberty design, with the alteration of the legend to reflect the new",
+    "closeup": "is Bl I€ained the Standing Liberty design, with the alteration of the legend to reflect the new",
+    "n": 98,
+    "a_ed": 0,
+    "c_ed": 9
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 14,
+    "x": [
+     150,
+     1238
+    ],
+    "gt": "as both 'EST NOR-PERUANO' and 'REP NOR-PERUANA'. Both are considerably scarcer than",
+    "anchor": "as both 'EST NOR-PERUANO?' and 'REP NOR-PERUANA'. Both are considerably scarcer than",
+    "closeup": "EST NOR-PERUANO' and 'REP NOR-PERUAN A'. Both are considerably scarcer than",
+    "n": 83,
+    "a_ed": 1,
+    "c_ed": 10
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 15,
+    "x": [
+     149,
+     1246
+    ],
+    "gt": "Standing Liberty Eight Reales, possibly due in part to the debasement of silver coinage (moneda feble)",
+    "anchor": "Standing Liberty Eight Reales, possibly due in part to the debasement of silver coinage (moneda feble)",
+    "closeup": "Eight Reales, possibly due in part to the debasement of silver coinage (moneda fzbl)",
+    "n": 102,
+    "a_ed": 0,
+    "c_ed": 19
+   },
+   {
+    "frame": "frame_13.png",
+    "line": 16,
+    "x": [
+     172,
+     1223
+    ],
+    "gt": "government from approximately 1835-45.",
+    "anchor": "government from approximately 1835-45.\"",
+    "closeup": "~S7ement frp approximately 1835.45.",
+    "n": 38,
+    "a_ed": 1,
+    "c_ed": 8
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 0,
+    "x": [
+     72,
+     926
+    ],
+    "gt": "Though they became independent entities upon their liberation from Spain, both",
+    "anchor": "Though they became independent entities upon their liberation from Spain, both",
+    "closeup": "Though they became independent entities upon thei, liberation # Om Spain, both,",
+    "n": 78,
+    "a_ed": 0,
+    "c_ed": 5
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 1,
+    "x": [
+     66,
+     932
+    ],
+    "gt": "for reunification. In 1827, Peruvian forces invaded Bolivia with the intent to",
+    "anchor": "for reunification. In 1827, Peruvian forces invaded Bolivia with the intent to",
+    "closeup": "for reunification. In 1827, Peruvian forces inv, ded Bolivia : ; with the inten;",
+    "n": 78,
+    "a_ed": 0,
+    "c_ed": 10
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 2,
+    "x": [
+     53,
+     945
+    ],
+    "gt": "in 1828 and forcing the resignation of Antonio José de Sucre, a close ally of Simón",
+    "anchor": "in 1828 and forcing the resignation of Antonio José de Sucre, a close ally of Simén",
+    "closeup": "\"F210 sements 1828 and forcing the re BR ation o Ph tonio José de Sucre, 2 cose ally of a Sis",
+    "n": 83,
+    "a_ed": 1,
+    "c_ed": 27
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 3,
+    "x": [
+     67,
+     932
+    ],
+    "gt": "of South American unity under his nation of Gran Colombia. Subsequent years",
+    "anchor": "of South American unity under his nation of Gran Colombia. Subsequent years",
+    "closeup": "0f i South American unity under his natjoq of Gran Colombia, Subsequent oe",
+    "n": 75,
+    "a_ed": 0,
+    "c_ed": 10
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 4,
+    "x": [
+     46,
+     952
+    ],
+    "gt": "by Gran Colombia on Peru, which came to an end with the deaths of both Sucre",
+    "anchor": "by Gran Colombia on Peru, which came to an end with the deaths of both Sucre",
+    "closeup": "m0 Waly Gran Colombia on Peru, which ame to an end with the deaths of Bi : oe",
+    "n": 76,
+    "a_ed": 0,
+    "c_ed": 15
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 5,
+    "x": [
+     60,
+     942
+    ],
+    "gt": "not put in place until 1836, with the emergence of the Peru-Bolivian Confederation,",
+    "anchor": "not put in place until 1836, with the emergence of the Peru-Bolivian Confederation,",
+    "closeup": "Rl Place unt] 1836, with the ¢mergence of the Peru-Bolivian Confed",
+    "n": 83,
+    "a_ed": 0,
+    "c_ed": 22
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 6,
+    "x": [
+     59,
+     943
+    ],
+    "gt": "North Peru, and South Peru; the confederation was motivated by both a shared",
+    "anchor": "North Peru, and South Peru; the confederation was motivated by both a shared",
+    "closeup": "Liy7i 0 €ru, and South Peru; the confederation Was motivated by both a shared",
+    "n": 76,
+    "a_ed": 0,
+    "c_ed": 9
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 7,
+    "x": [
+     67,
+     935
+    ],
+    "gt": "for a reemergence of the commercial prominence that the region had previously",
+    "anchor": "for a reemergence of the commercial prominence that the region had previously",
+    "closeup": "m ty > Le of the CoOmmercjz] Prominence that the A region had Previous",
+    "n": 77,
+    "a_ed": 0,
+    "c_ed": 26
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 8,
+    "x": [
+     62,
+     940
+    ],
+    "gt": "authority. However, the state was loosely arranged and short-lived. Argentina and Chile,",
+    "anchor": "However, the state was loosely arranged and short-lived. Argentina and Chile,",
+    "closeup": "> Re CL, the state wa S a arranged and short-lived",
+    "n": 88,
+    "a_ed": 11,
+    "c_ed": 46
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 9,
+    "x": [
+     56,
+     946
+    ],
+    "gt": "such magnitude could wield, quickly entered into an alliance to confront and dissolve",
+    "anchor": "such magnitude could wield, quickly entered into an alliance to confront and dissolve",
+    "closeup": "[ecto issolve",
+    "n": 85,
+    "a_ed": 0,
+    "c_ed": 73
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 10,
+    "x": [
+     56,
+     946
+    ],
+    "gt": "Confederation, which concluded with the Battle of Yungay in 1839, after which both",
+    "anchor": "Confederation, which concluded with the Battle of Yungay in 1839, after which both",
+    "closeup": "attle of Yungay in 1839, after which both",
+    "n": 82,
+    "a_ed": 0,
+    "c_ed": 41
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 11,
+    "x": [
+     50,
+     951
+    ],
+    "gt": "independent nations.",
+    "anchor": "ent nations,",
+    "closeup": "",
+    "n": 20,
+    "a_ed": 9,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 12,
+    "x": [
+     62,
+     943
+    ],
+    "gt": "During the Confederation, the coinage of the state was altered appropriately. North",
+    "anchor": "During the Confederation, the coinage of the state was altered appropriately. North",
+    "closeup": "",
+    "n": 83,
+    "a_ed": 0,
+    "c_ed": 83
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 13,
+    "x": [
+     59,
+     946
+    ],
+    "gt": "coinage facilities, largely retained the Standing Liberty design, with the alteration of the",
+    "anchor": "facilities, largely retained the Standing Liberty design, with the alteration of the",
+    "closeup": "",
+    "n": 92,
+    "a_ed": 8,
+    "c_ed": 92
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 14,
+    "x": [
+     70,
+     935
+    ],
+    "gt": "exists as both 'EST NOR-PERUANO' and 'REP NOR-PERUANA'. Both are",
+    "anchor": "exists as both 'EST NOR-PERUANO?' and 'REP NOR-PERUANA'. Both are",
+    "closeup": "PERUANA'. Both are",
+    "n": 64,
+    "a_ed": 1,
+    "c_ed": 46
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 15,
+    "x": [
+     66,
+     940
+    ],
+    "gt": "Republic Standing Liberty Eight Reales, possibly due in part to the debasement of",
+    "anchor": "Republic Standing Liberty Eight Reales, possibly due in part to the debasement of",
+    "closeup": "Trigg erly ight Reales, possibly due in part to the debasement of silver",
+    "n": 81,
+    "a_ed": 0,
+    "c_ed": 27
+   },
+   {
+    "frame": "frame_14.png",
+    "line": 16,
+    "x": [
+     89,
+     917
+    ],
+    "gt": "the Peruvian government from approximately 1835-45.",
+    "anchor": "Peruyian government from approximately 1835-45.\"",
+    "closeup": "govern, TOM Approximately 1835.45",
+    "n": 51,
+    "a_ed": 6,
+    "c_ed": 24
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 0,
+    "x": [
+     72,
+     627
+    ],
+    "gt": "Though they became independent entities upon their",
+    "anchor": "Though they became independent entities upon their",
+    "closeup": "",
+    "n": 50,
+    "a_ed": 0,
+    "c_ed": 50
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 1,
+    "x": [
+     66,
+     633
+    ],
+    "gt": "for reunification. In 1827, Peruvian forces invaded",
+    "anchor": "for reunification. In 1827, Peruvian forces invaded",
+    "closeup": "",
+    "n": 51,
+    "a_ed": 0,
+    "c_ed": 51
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 2,
+    "x": [
+     53,
+     646
+    ],
+    "gt": "in 1828 and forcing the resignation of Antonio José de",
+    "anchor": "in 1828 and forcing the resignation of Antonio José de",
+    "closeup": "",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 54
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 3,
+    "x": [
+     67,
+     633
+    ],
+    "gt": "of South American unity under his nation of Gran",
+    "anchor": "of South American unity under his nation of Gran",
+    "closeup": "",
+    "n": 48,
+    "a_ed": 0,
+    "c_ed": 48
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 4,
+    "x": [
+     46,
+     653
+    ],
+    "gt": "by Gran Colombia on Peru, which came to an end with",
+    "anchor": "by Gran Colombia on Peru, which came to an end with",
+    "closeup": "",
+    "n": 51,
+    "a_ed": 0,
+    "c_ed": 51
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 5,
+    "x": [
+     60,
+     640
+    ],
+    "gt": "not put in place until 1836, with the emergence of the",
+    "anchor": "not put in place until 1836, with the emergence of the",
+    "closeup": "",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 54
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 6,
+    "x": [
+     59,
+     640
+    ],
+    "gt": "North Peru, and South Peru; the confederation was",
+    "anchor": "North Peru, and South Peru; the confederation was",
+    "closeup": "",
+    "n": 49,
+    "a_ed": 0,
+    "c_ed": 49
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 7,
+    "x": [
+     67,
+     633
+    ],
+    "gt": "for a reemergence of the commercial prominence that",
+    "anchor": "for a reemergence of the commercial prominence that",
+    "closeup": "",
+    "n": 51,
+    "a_ed": 0,
+    "c_ed": 51
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 8,
+    "x": [
+     62,
+     637
+    ],
+    "gt": "authority. However, the state was loosely arranged and short-lived.",
+    "anchor": "However, the state was loosely arranged and short-lived.",
+    "closeup": "",
+    "n": 67,
+    "a_ed": 11,
+    "c_ed": 67
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 9,
+    "x": [
+     56,
+     643
+    ],
+    "gt": "such magnitude could wield, quickly entered into an",
+    "anchor": "such magnitude could wield, quickly entered into an",
+    "closeup": "",
+    "n": 51,
+    "a_ed": 0,
+    "c_ed": 51
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 10,
+    "x": [
+     56,
+     643
+    ],
+    "gt": "Confederation, which concluded with the Battle of Yungay",
+    "anchor": "Confederation, which concluded with the Battle of Yungay",
+    "closeup": "",
+    "n": 56,
+    "a_ed": 0,
+    "c_ed": 56
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 11,
+    "x": [
+     50,
+     649
+    ],
+    "gt": "independent",
+    "anchor": "ent nations,",
+    "closeup": "",
+    "n": 11,
+    "a_ed": 10,
+    "c_ed": 11
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 12,
+    "x": [
+     62,
+     637
+    ],
+    "gt": "During the Confederation, the coinage of the state was",
+    "anchor": "During the Confederation, the coinage of the state was",
+    "closeup": "Craton, the Colnage of the state was",
+    "n": 54,
+    "a_ed": 0,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 13,
+    "x": [
+     59,
+     640
+    ],
+    "gt": "coinage facilities, largely retained the Standing Liberty design,",
+    "anchor": "facilities, largely retained the Standing Liberty design,",
+    "closeup": "acilitj 0 wh the Standing Liberty design,",
+    "n": 65,
+    "a_ed": 8,
+    "c_ed": 28
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 14,
+    "x": [
+     70,
+     633
+    ],
+    "gt": "exists as both 'EST NOR-PERUANO' and 'REP",
+    "anchor": "exists as both 'EST NOR-PERUANO?' and 'REP",
+    "closeup": ": CXists gg ee ST NOR-p ERUANO' and 'REP",
+    "n": 41,
+    "a_ed": 1,
+    "c_ed": 14
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 15,
+    "x": [
+     66,
+     637
+    ],
+    "gt": "Republic Standing Liberty Eight Reales, possibly due in part",
+    "anchor": "Republic Standing Liberty Eight Reales, possibly due in part",
+    "closeup": "er > Standing Lib S10 Reales, possibly due in part",
+    "n": 60,
+    "a_ed": 0,
+    "c_ed": 16
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 16,
+    "x": [
+     89,
+     614
+    ],
+    "gt": "the Peruvian government from approximately",
+    "anchor": "Peruyian government from approximately 1835-45.\"",
+    "closeup": "OVernment foo approximately 1835-45.",
+    "n": 42,
+    "a_ed": 15,
+    "c_ed": 27
+   }
+  ]
+ },
+ "R156": {
+  "summary": {
+   "segments": 75,
+   "coverage": 0.91,
+   "a": 3.16,
+   "m": 44.36,
+   "per_frame": {
+    "frame_05.png": {
+     "n": 235,
+     "a_ed": 11,
+     "c_ed": 171,
+     "segments": 5,
+     "a_cer": 4.68,
+     "c_cer": 72.77
+    },
+    "frame_06.png": {
+     "n": 269,
+     "a_ed": 2,
+     "c_ed": 201,
+     "segments": 5,
+     "a_cer": 0.74,
+     "c_cer": 74.72
+    },
+    "frame_08.png": {
+     "n": 211,
+     "a_ed": 3,
+     "c_ed": 155,
+     "segments": 5,
+     "a_cer": 1.42,
+     "c_cer": 73.46
+    },
+    "frame_09.png": {
+     "n": 176,
+     "a_ed": 1,
+     "c_ed": 87,
+     "segments": 4,
+     "a_cer": 0.57,
+     "c_cer": 49.43
+    },
+    "frame_10.png": {
+     "n": 68,
+     "a_ed": 1,
+     "c_ed": 59,
+     "segments": 2,
+     "a_cer": 1.47,
+     "c_cer": 86.76
+    },
+    "frame_15.png": {
+     "n": 303,
+     "a_ed": 24,
+     "c_ed": 66,
+     "segments": 10,
+     "a_cer": 7.92,
+     "c_cer": 21.78
+    },
+    "frame_16.png": {
+     "n": 736,
+     "a_ed": 30,
+     "c_ed": 260,
+     "segments": 11,
+     "a_cer": 4.08,
+     "c_cer": 35.33
+    },
+    "frame_17.png": {
+     "n": 887,
+     "a_ed": 42,
+     "c_ed": 475,
+     "segments": 11,
+     "a_cer": 4.74,
+     "c_cer": 53.55
+    },
+    "frame_18.png": {
+     "n": 1035,
+     "a_ed": 18,
+     "c_ed": 507,
+     "segments": 11,
+     "a_cer": 1.74,
+     "c_cer": 48.99
+    },
+    "frame_19.png": {
+     "n": 821,
+     "a_ed": 18,
+     "c_ed": 122,
+     "segments": 11,
+     "a_cer": 2.19,
+     "c_cer": 14.86
+    }
+   }
+  },
+  "segments": [
+   {
+    "frame": "frame_05.png",
+    "line": 0,
+    "x": [
+     738,
+     1224
+    ],
+    "gt": "Reales compared to commonly accepted",
+    "anchor": "Reales compared to commonly accepted",
+    "closeup": "R eales C ompared to comm only an r s SU tyP°",
+    "n": 36,
+    "a_ed": 0,
+    "c_ed": 16
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 1,
+    "x": [
+     719,
+     1243
+    ],
+    "gt": "at Lima, in practice excess weight or superior fineness",
+    "anchor": "at Lima, in practice excess weight or superior",
+    "closeup": "at Lim i 5 ertheless \")",
+    "n": 55,
+    "a_ed": 9,
+    "c_ed": 40
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 2,
+    "x": [
+     728,
+     1237
+    ],
+    "gt": "surplus intrinsic value. Nevertheless, this type is",
+    "anchor": "surplus intrinsic value. Nevertheless, this type is",
+    "closeup": "Wg a Su = 25",
+    "n": 51,
+    "a_ed": 0,
+    "c_ed": 46
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 3,
+    "x": [
+     735,
+     1233
+    ],
+    "gt": "during the second quarter of the 19th century,",
+    "anchor": "during the second quarter of the 19\" century,",
+    "closeup": "int Fi I",
+    "n": 46,
+    "a_ed": 2,
+    "c_ed": 41
+   },
+   {
+    "frame": "frame_05.png",
+    "line": 4,
+    "x": [
+     731,
+     1241
+    ],
+    "gt": "issued under the authority of Ferdinand VII and",
+    "anchor": "issued under the authority of Ferdinand VII and",
+    "closeup": "hs es e authority pay of ants W",
+    "n": 47,
+    "a_ed": 0,
+    "c_ed": 28
+   },
+   {
+    "frame": "frame_06.png",
+    "line": 0,
+    "x": [
+     449,
+     1224
+    ],
+    "gt": "Standing Liberty Eight Reales compared to commonly accepted",
+    "anchor": "Standing Liberty Eight Reales compared to commonly accepted",
+    "closeup": "Reales compared practice to excess W e1gh ais 9 Ar x",
+    "n": 59,
+    "a_ed": 0,
+    "c_ed": 49
+   },
+   {
+    "frame": "frame_06.png",
+    "line": 1,
+    "x": [
+     433,
+     1201
+    ],
+    "gt": "its quality by the mintmasters at Lima, in practice excess weight or superior",
+    "anchor": "its quality by the mintmasters at Lima, in practice excess weight or superior",
+    "closeup": "hn ay at Lima, Intrinsic jn value. ee of the a",
+    "n": 77,
+    "a_ed": 0,
+    "c_ed": 54
+   },
+   {
+    "frame": "frame_06.png",
+    "line": 2,
+    "x": [
+     442,
+     1065
+    ],
+    "gt": "from circulation for their surplus intrinsic value. Nevertheless,",
+    "anchor": "from arculation for their surplus intrinsic value. Nevertheless,",
+    "closeup": "fom on rplus second quarter of Ferdi",
+    "n": 65,
+    "a_ed": 2,
+    "c_ed": 47
+   },
+   {
+    "frame": "frame_06.png",
+    "line": 3,
+    "x": [
+     449,
+     944
+    ],
+    "gt": "its contemporaries struck during the second",
+    "anchor": "its contemporaries struck during the second",
+    "closeup": "during the the tasty",
+    "n": 43,
+    "a_ed": 0,
+    "c_ed": 34
+   },
+   {
+    "frame": "frame_06.png",
+    "line": 4,
+    "x": [
+     445,
+     802
+    ],
+    "gt": "of the Philippines issued",
+    "anchor": "of the Philippines issued",
+    "closeup": "Spon Be Pp = issued ed",
+    "n": 25,
+    "a_ed": 0,
+    "c_ed": 17
+   },
+   {
+    "frame": "frame_08.png",
+    "line": 0,
+    "x": [
+     72,
+     720
+    ],
+    "gt": "the superior fineness of the Peruvian Standing Liberty Eight",
+    "anchor": "the superior fineness of the Peruvian Standing Liberty Eight",
+    "closeup": "\"Werior SS of th © Peruvian 30 Sy",
+    "n": 60,
+    "a_ed": 0,
+    "c_ed": 37
+   },
+   {
+    "frame": "frame_08.png",
+    "line": 1,
+    "x": [
+     53,
+     642
+    ],
+    "gt": "been interpreted as a testament to its quality by the",
+    "anchor": "been interpreted 2s a testament to its quality by the",
+    "closeup": "Prete 232 teg ent tg;",
+    "n": 53,
+    "a_ed": 1,
+    "c_ed": 40
+   },
+   {
+    "frame": "frame_08.png",
+    "line": 2,
+    "x": [
+     59,
+     539
+    ],
+    "gt": "led to such pieces being withdrawn from",
+    "anchor": "led to such pieces being withdrawn from",
+    "closeup": "eg © Such ES bein,",
+    "n": 39,
+    "a_ed": 0,
+    "c_ed": 27
+   },
+   {
+    "frame": "frame_08.png",
+    "line": 3,
+    "x": [
+     63,
+     450
+    ],
+    "gt": "common chopmarked crowns among",
+    "anchor": "common chopmarked crowns among",
+    "closeup": "Mom ch",
+    "n": 30,
+    "a_ed": 0,
+    "c_ed": 25
+   },
+   {
+    "frame": "frame_08.png",
+    "line": 4,
+    "x": [
+     55,
+     347
+    ],
+    "gt": "frequently be found as a host",
+    "anchor": "frequently be found 2s 2 host",
+    "closeup": "Frege,",
+    "n": 29,
+    "a_ed": 2,
+    "c_ed": 26
+   },
+   {
+    "frame": "frame_09.png",
+    "line": 0,
+    "x": [
+     72,
+     733
+    ],
+    "gt": "the superior fineness of the Peruvian Standing Liberty Eight",
+    "anchor": "the superior fineness of the Peruvian Standing Liberty Eight",
+    "closeup": "the Superior SSiofithe ta g erty Eight",
+    "n": 60,
+    "a_ed": 0,
+    "c_ed": 28
+   },
+   {
+    "frame": "frame_09.png",
+    "line": 1,
+    "x": [
+     53,
+     626
+    ],
+    "gt": "been interpreted as a testament to its quality by the",
+    "anchor": "been interpreted 2s a testament to its quality by the",
+    "closeup": "bee terprey Men Its q ality by the",
+    "n": 53,
+    "a_ed": 1,
+    "c_ed": 23
+   },
+   {
+    "frame": "frame_09.png",
+    "line": 2,
+    "x": [
+     59,
+     496
+    ],
+    "gt": "led to such pieces being withdrawn from",
+    "anchor": "led to such pieces being withdrawn from",
+    "closeup": "Jey Such piece, bej ithdryy,",
+    "n": 39,
+    "a_ed": 0,
+    "c_ed": 19
+   },
+   {
+    "frame": "frame_09.png",
+    "line": 3,
+    "x": [
+     63,
+     382
+    ],
+    "gt": "common chopmarked crowns",
+    "anchor": "common chopmarked crowns",
+    "closeup": "n chop. d",
+    "n": 24,
+    "a_ed": 0,
+    "c_ed": 17
+   },
+   {
+    "frame": "frame_10.png",
+    "line": 0,
+    "x": [
+     72,
+     529
+    ],
+    "gt": "the superior fineness of the Peruvian",
+    "anchor": "the superior fineness of the Peruvian",
+    "closeup": "the eruy lan",
+    "n": 37,
+    "a_ed": 0,
+    "c_ed": 28
+   },
+   {
+    "frame": "frame_10.png",
+    "line": 1,
+    "x": [
+     53,
+     408
+    ],
+    "gt": "been interpreted as a testament",
+    "anchor": "been interpreted 2s a testament",
+    "closeup": "",
+    "n": 31,
+    "a_ed": 1,
+    "c_ed": 31
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 0,
+    "x": [
+     917,
+     1224
+    ],
+    "gt": "to commonly accepted",
+    "anchor": "to commonly accepted",
+    "closeup": "to commonly accepted",
+    "n": 20,
+    "a_ed": 0,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 1,
+    "x": [
+     897,
+     1243
+    ],
+    "gt": "practice excess weight or superior fineness",
+    "anchor": "practice excess weight or superior",
+    "closeup": "practice excess weight or superior",
+    "n": 43,
+    "a_ed": 9,
+    "c_ed": 9
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 2,
+    "x": [
+     907,
+     1237
+    ],
+    "gt": "value. Nevertheless, this type is",
+    "anchor": "value. Nevertheless, this type is",
+    "closeup": "value, Nevertheless, this type is",
+    "n": 33,
+    "a_ed": 0,
+    "c_ed": 1
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 3,
+    "x": [
+     911,
+     1233
+    ],
+    "gt": "quarter of the 19th century,",
+    "anchor": "quarter of the 19\" century,",
+    "closeup": "quarter of the 19% 19% ce century. 1,",
+    "n": 28,
+    "a_ed": 2,
+    "c_ed": 11
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 4,
+    "x": [
+     906,
+     1241
+    ],
+    "gt": "authority of Ferdinand VII and",
+    "anchor": "authority of Ferdinand VII and",
+    "closeup": "authority of Ferdinand VII 2",
+    "n": 30,
+    "a_ed": 0,
+    "c_ed": 3
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 5,
+    "x": [
+     910,
+     1240
+    ],
+    "gt": "merchants were probing",
+    "anchor": "merchants were probing",
+    "closeup": "merchants were a",
+    "n": 22,
+    "a_ed": 0,
+    "c_ed": 7
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 6,
+    "x": [
+     910,
+     1240
+    ],
+    "gt": "deal with a greater range of",
+    "anchor": "deal with a greater range of",
+    "closeup": "deal . with a greater pe (0)",
+    "n": 28,
+    "a_ed": 0,
+    "c_ed": 9
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 7,
+    "x": [
+     907,
+     1246
+    ],
+    "gt": "a greater range of types into",
+    "anchor": "a greater range of types into",
+    "closeup": "a greater range of types",
+    "n": 29,
+    "a_ed": 0,
+    "c_ed": 5
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 8,
+    "x": [
+     903,
+     1254
+    ],
+    "gt": "size is unusual for the period (larger",
+    "anchor": "size is unusual for the period",
+    "closeup": "size is unusual for th the e p eriod",
+    "n": 38,
+    "a_ed": 8,
+    "c_ed": 13
+   },
+   {
+    "frame": "frame_15.png",
+    "line": 9,
+    "x": [
+     922,
+     1238
+    ],
+    "gt": "mark are not often recorded with",
+    "anchor": "mark are not often recorded",
+    "closeup": "mark are not often ecordc",
+    "n": 32,
+    "a_ed": 5,
+    "c_ed": 8
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 0,
+    "x": [
+     459,
+     1224
+    ],
+    "gt": "Standing Liberty Eight Reales compared to commonly accepted",
+    "anchor": "Standing Liberty Eight Reales compared to commonly accepted",
+    "closeup": "« Sundiag Liberty Eight Reales compared to commonly accepted standards,",
+    "n": 59,
+    "a_ed": 0,
+    "c_ed": 16
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 1,
+    "x": [
+     443,
+     1243
+    ],
+    "gt": "its quality by the mintmasters at Lima, in practice excess weight or superior fineness",
+    "anchor": "its quality by the mintmasters at Lima, in practice excess weight or superior",
+    "closeup": "WE he muntmasters at Lima, in practice excess weight or superior finege",
+    "n": 86,
+    "a_ed": 9,
+    "c_ed": 19
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 2,
+    "x": [
+     452,
+     1237
+    ],
+    "gt": "from circulation for their surplus intrinsic value. Nevertheless, this type is",
+    "anchor": "from arculation for their surplus intrinsic value. Nevertheless, this type is",
+    "closeup": "* Gicwaon for their surplus intringjc value. N evertheless. this type is among:",
+    "n": 78,
+    "a_ed": 2,
+    "c_ed": 21
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 3,
+    "x": [
+     459,
+     1233
+    ],
+    "gt": "its contemporaries struck during the second quarter of the 19th century,",
+    "anchor": "its contemporaries struck during the second quarter of the 19\" century,",
+    "closeup": "+E ditemporanes struck during the second quarter of the 19\" century, andes",
+    "n": 72,
+    "a_ed": 2,
+    "c_ed": 16
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 4,
+    "x": [
+     455,
+     1241
+    ],
+    "gt": "of the Philippines issued under the authority of Ferdinand VII and",
+    "anchor": "of the Philippines issued under the authority of Ferdinand VII and",
+    "closeup": "prof the Philippines jsoued under the authority of Ferdinand VII and ls «fb",
+    "n": 66,
+    "a_ed": 0,
+    "c_ed": 11
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 5,
+    "x": [
+     462,
+     1240
+    ],
+    "gt": "time as the introduction of the type, foreign merchants were probing",
+    "anchor": "me as the introduction of the type, foreign merchants were probing",
+    "closeup": "BE M0duction of gh pe, foreign merchants were probing of : 1",
+    "n": 68,
+    "a_ed": 2,
+    "c_ed": 27
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 6,
+    "x": [
+     465,
+     1240
+    ],
+    "gt": "the monopoly of the hong merchants and deal with a greater range of",
+    "anchor": "the monopoly of the hong merchants and deal with a greater range of",
+    "closeup": "- ply Of the funy merchants and deg] with a greater of types range into circ",
+    "n": 67,
+    "a_ed": 0,
+    "c_ed": 31
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 7,
+    "x": [
+     465,
+     1246
+    ],
+    "gt": "2, 1828), which might have introduced a greater range of types into",
+    "anchor": "2, 1828), which might have introduced a greater range of types into",
+    "closeup": "© 1528), which Might haye introduced , greater range for the period + 1 (\"8° floyd |",
+    "n": 67,
+    "a_ed": 0,
+    "c_ed": 30
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 8,
+    "x": [
+     461,
+     1254
+    ],
+    "gt": "depicted in Fig. 171 is of a distinctive type; the size is unusual for the period (larger",
+    "anchor": "depicted in Fig. 171 is of a distinctive type; the size is unusual for the period",
+    "closeup": "pci \"uF 2 1 is i Btnctive Pe; the size is unusual often recorde",
+    "n": 89,
+    "a_ed": 8,
+    "c_ed": 40
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 9,
+    "x": [
+     481,
+     1238
+    ],
+    "gt": "mid-19th century), and hosts bearing this mark are not often recorded with",
+    "anchor": "mid-19\" century), and hosts bearing this mark are not often recorded",
+    "closeup": "«TE Mg-1Ge )» and hogy bear 0g this mark are not",
+    "n": 74,
+    "a_ed": 7,
+    "c_ed": 41
+   },
+   {
+    "frame": "frame_16.png",
+    "line": 10,
+    "x": [
+     471,
+     1254
+    ],
+    "gt": "on p. 233.",
+    "anchor": "on p. 233.",
+    "closeup": "Cy, 2%,",
+    "n": 10,
+    "a_ed": 0,
+    "c_ed": 8
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 0,
+    "x": [
+     313,
+     1224
+    ],
+    "gt": "of the Peruvian Standing Liberty Eight Reales compared to commonly accepted",
+    "anchor": "of the Peruvian Standing Liberty Eight Reales compared to commonly accepted",
+    "closeup": "\"wan Standing Liberty Eight Reales compared to co mmonly accepted standudszf",
+    "n": 75,
+    "a_ed": 0,
+    "c_ed": 25
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 1,
+    "x": [
+     297,
+     1243
+    ],
+    "gt": "testament to its quality by the mintmasters at Lima, in practice excess weight or superior fineness",
+    "anchor": "testament to its quality by the mintmasters at Lima, in practice excess weight or superior",
+    "closeup": "A010 1s quality by the mintmasters at Lima, in prac tice excess weight or supetior finer",
+    "n": 99,
+    "a_ed": 9,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 2,
+    "x": [
+     306,
+     1237
+    ],
+    "gt": "withdrawn from circulation for their surplus intrinsic value. Nevertheless, this type is",
+    "anchor": "withdrawn from arculation for their surplus intrinsic value. Nevertheless, this type is",
+    "closeup": "arawn from areulation for th eit surplus intrinsic value, N evertheless, this type is amoy 3",
+    "n": 88,
+    "a_ed": 2,
+    "c_ed": 19
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 3,
+    "x": [
+     313,
+     1233
+    ],
+    "gt": "crowns among its contemporaries struck during the second quarter of the 19th century,",
+    "anchor": "crowns among its contemporaries struck during the second quarter of the 19\" century,",
+    "closeup": ": i ond quarter of the 19 century, and ad",
+    "n": 85,
+    "a_ed": 2,
+    "c_ed": 59
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 4,
+    "x": [
+     312,
+     1241
+    ],
+    "gt": "for counterstamps of the Philippines issued under the authority of Ferdinand VII and",
+    "anchor": "for countersamps of the Philippines issued under the authority of Ferdinand VII and",
+    "closeup": "authority of Ferdinand probing VII the Iu (#1 o",
+    "n": 84,
+    "a_ed": 1,
+    "c_ed": 65
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 5,
+    "x": [
+     315,
+     1240
+    ],
+    "gt": "the same time as the introduction of the type, foreign merchants were probing",
+    "anchor": "the same me as the introduction of the type, foreign merchants were probing",
+    "closeup": "the type, foreign : merchants were range of On ho IK",
+    "n": 77,
+    "a_ed": 2,
+    "c_ed": 54
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 6,
+    "x": [
+     319,
+     1240
+    ],
+    "gt": "to break the monopoly of the hong merchants and deal with a greater range of",
+    "anchor": "a2nempting to break the monopoly of the hong merchants and deal with a greater range of",
+    "closeup": "gmerchantg 5nd deal with 4 greater of types into cei .",
+    "n": 76,
+    "a_ed": 11,
+    "c_ed": 52
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 7,
+    "x": [
+     319,
+     1246
+    ],
+    "gt": "1, No. 30, August 2, 1828), which might have introduced a greater range of types into",
+    "anchor": "1, No. 30, August 2, 1828), which might have introduced a greater range of types into",
+    "closeup": "gut 19g) ) . ght haye Introduced , greater range doy ths eriod ded (4% : AE, Bd",
+    "n": 85,
+    "a_ed": 0,
+    "c_ed": 56
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 8,
+    "x": [
+     315,
+     1254
+    ],
+    "gt": "on the coin depicted in Fig. 171 is of a distinctive type; the size is unusual for the period (larger",
+    "anchor": "on the coin depicted in Fig. 171 is of a distinctive type; the size is unusual for the period",
+    "closeup": "\"Seg ~ gy Sepicted jn 7 2 distintiye pe the Th size [i tasual not often reco by P y,",
+    "n": 101,
+    "a_ed": 8,
+    "c_ed": 56
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 9,
+    "x": [
+     338,
+     1238
+    ],
+    "gt": "applied in the mid-19th century), and hosts bearing this mark are not often recorded with",
+    "anchor": "applied in the mid-19\" century), and hosts bearing this mark are not often recorded",
+    "closeup": "y+ 0 the ig X ron \"ntury) and hosts \"ating this mark are",
+    "n": 89,
+    "a_ed": 7,
+    "c_ed": 47
+   },
+   {
+    "frame": "frame_17.png",
+    "line": 10,
+    "x": [
+     325,
+     1254
+    ],
+    "gt": "in greater detail on p. 233.",
+    "anchor": "in greater detail on p. 233.",
+    "closeup": "er egy P25,",
+    "n": 28,
+    "a_ed": 0,
+    "c_ed": 22
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 0,
+    "x": [
+     72,
+     1094
+    ],
+    "gt": "the superior fineness of the Peruvian Standing Liberty Eight Reales compared to commonly",
+    "anchor": "the superior fineness of the Peruvian Standing Liberty Eight Reales compared to commonly",
+    "closeup": "g i",
+    "n": 88,
+    "a_ed": 0,
+    "c_ed": 85
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 1,
+    "x": [
+     53,
+     1113
+    ],
+    "gt": "been interpreted as a testament to its quality by the mintmasters at Lima, in practice excess weight",
+    "anchor": "been interpreted 2s a testament to its quality by the mintmasters at Lima, in practice excess weight",
+    "closeup": "at \" ment \"0 its quality by the mintmasters 2 Lima, . oe \"i Do i 0",
+    "n": 100,
+    "a_ed": 1,
+    "c_ed": 48
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 2,
+    "x": [
+     59,
+     1107
+    ],
+    "gt": "led to such pieces being withdrawn from circulation for their surplus intrinsic value. Nevertheless,",
+    "anchor": "led to such pieces being withdrawn from arculation for their surplus intrinsic value. Nevertheless,",
+    "closeup": "led - : vn Camry, from circulation for their Surplus Intrinsic value. Ney SG, i ; O¥",
+    "n": 100,
+    "a_ed": 2,
+    "c_ed": 39
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 3,
+    "x": [
+     63,
+     1106
+    ],
+    "gt": "common chopmarked crowns among its contemporaries struck during the second quarter of the",
+    "anchor": "common chopmarked crowns among its contemporaries struck during the second quarter of the",
+    "closeup": "s iy chopmarkeg crowns among js contemporaries struck during the second quarter of the - 19=. IVT",
+    "n": 89,
+    "a_ed": 0,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 4,
+    "x": [
+     55,
+     1114
+    ],
+    "gt": "frequently be found as a host for counterstamps of the Philippines issued under the authority of Ferdinand",
+    "anchor": "frequently be found 2s 2 host for countersamps of the Philippines issued under the authority of Ferdinand",
+    "closeup": "> found as 4 hog £0 countersamps of the Phili Ppines issued under the authority ot ge Ferdinand prob 11» iy: wk",
+    "n": 106,
+    "a_ed": 3,
+    "c_ed": 42
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 5,
+    "x": [
+     56,
+     1114
+    ],
+    "gt": "p. 162-165). At approximately the same time as the introduction of the type, foreign merchants were",
+    "anchor": "p. 162-163). At approximately the same me as the introduction of the type, foreign merchants were",
+    "closeup": "RTP 162-168 Al appr XMately the same € 3s the introduce ton of the type, for eign merchants were",
+    "n": 99,
+    "a_ed": 3,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 6,
+    "x": [
+     56,
+     1114
+    ],
+    "gt": "System for weaknesses, attempting to break the monopoly of the hong merchants and deal with a greater",
+    "anchor": "System for weaknesses, a2nempting to break the monopoly of the hong merchants and deal with a greater",
+    "closeup": "'Or weaknesses Aempring 1 break 'ic monopojy of 4, i of toes",
+    "n": 101,
+    "a_ed": 2,
+    "c_ed": 57
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 7,
+    "x": [
+     50,
+     1123
+    ],
+    "gt": "The Canton Register Vol. 1, No. 30, August 2, 1828), which might have introduced a greater range of",
+    "anchor": "(pex The Canton Register Vol. 1, No. 30, August 2, 1828), which might have introduced a greater range of",
+    "closeup": "© Ll Canty Kegiszer \\ ol, 1 No. 30, A 8 ght have : Introduced a . : greager urns rang sual or for the the: pent S a Ja Rad",
+    "n": 99,
+    "a_ed": 5,
+    "c_ed": 78
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 8,
+    "x": [
+     42,
+     1130
+    ],
+    "gt": "The mark shown on the coin depicted in Fig. 171 is of a distinctive type; the size is unusual for",
+    "anchor": "The mark shown on the coin depicted in Fig. 171 is of a distinctive type; the size is unusual for",
+    "closeup": "= : HC Mgr Shown 3% Nn th i : : . . Lm . Bof 2 distintiye ; tYPe; the size Is ar fren re",
+    "n": 97,
+    "a_ed": 0,
+    "c_ed": 55
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 9,
+    "x": [
+     58,
+     1118
+    ],
+    "gt": "chopmarks were typically being applied in the mid-19th century), and hosts bearing this mark are not",
+    "anchor": "chopmarks were typically being applied in the mid-19\" century), and hosts bearing this mark are not",
+    "closeup": "Hopmar, WEIE typical], big gps Pid century), and hosts bearing this mark",
+    "n": 100,
+    "a_ed": 2,
+    "c_ed": 39
+   },
+   {
+    "frame": "frame_18.png",
+    "line": 10,
+    "x": [
+     49,
+     1134
+    ],
+    "gt": "chops. The mark is explored in greater detail on p. 233.",
+    "anchor": "chops. The mark is explored in greater detail on p. 233.",
+    "closeup": "49Ps. The meg plored i, BICater dey; np, 233",
+    "n": 56,
+    "a_ed": 0,
+    "c_ed": 24
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 0,
+    "x": [
+     72,
+     860
+    ],
+    "gt": "the superior fineness of the Peruvian Standing Liberty Eight Reales",
+    "anchor": "the superior fineness of the Peruvian Standing Liberty Eight Reales",
+    "closeup": "the superior fineness of the Peruvian Standing Liberty Eight Reales compared",
+    "n": 67,
+    "a_ed": 0,
+    "c_ed": 9
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 1,
+    "x": [
+     53,
+     879
+    ],
+    "gt": "been interpreted as a testament to its quality by the mintmasters at Lima, in",
+    "anchor": "been interpreted 2s a testament to its quality by the mintmasters at Lima, in",
+    "closeup": "been interpreted 2s 4 testament to its quality by the mintmasters at | Ama, in",
+    "n": 77,
+    "a_ed": 1,
+    "c_ed": 5
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 2,
+    "x": [
+     59,
+     877
+    ],
+    "gt": "led to such pieces being withdrawn from circulation for their surplus intrinsic",
+    "anchor": "led to such pieces being withdrawn from arculation for their surplus intrinsic",
+    "closeup": "led to such pieces being withdrawn from circulation for their surplus intrinsic",
+    "n": 79,
+    "a_ed": 2,
+    "c_ed": 0
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 3,
+    "x": [
+     63,
+     873
+    ],
+    "gt": "common chopmarked crowns among its contemporaries struck during the",
+    "anchor": "common chopmarked crowns among its contemporaries struck during the",
+    "closeup": "common chopmarked crowns #MONg its contemporaries struck during the",
+    "n": 67,
+    "a_ed": 0,
+    "c_ed": 4
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 4,
+    "x": [
+     55,
+     883
+    ],
+    "gt": "frequently be found as a host for counterstamps of the Philippines issued under the",
+    "anchor": "frequently be found 2s 2 host for countersamps of the Philippines issued under the",
+    "closeup": "an 2 host for counterstamps of the Philippines issued under the",
+    "n": 83,
+    "a_ed": 3,
+    "c_ed": 22
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 5,
+    "x": [
+     56,
+     883
+    ],
+    "gt": "p. 162-165). At approximately the same time as the introduction of the type,",
+    "anchor": "p. 162-163). At approximately the same me as the introduction of the type,",
+    "closeup": "=p. Bogen be 102-165), fone At approgimately the same time 5 the introduction of the type,",
+    "n": 76,
+    "a_ed": 3,
+    "c_ed": 20
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 6,
+    "x": [
+     56,
+     883
+    ],
+    "gt": "System for weaknesses, attempting to break the monopoly of the hong merchants",
+    "anchor": "System for weaknesses, a2nempting to break the monopoly of the hong merchants",
+    "closeup": "System for weaknesses attempting A to break the monopoly cs of the ae hong Cry merchants masclants - aud",
+    "n": 77,
+    "a_ed": 2,
+    "c_ed": 29
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 7,
+    "x": [
+     50,
+     892
+    ],
+    "gt": "The Canton Register Vol. 1, No. 30, August 2, 1828), which might have introduced",
+    "anchor": "(pex The Canton Register Vol. 1, No. 30, August 2, 1828), which might have introduced",
+    "closeup": "ex a The Canton Rgister hie Vo, 1, No, 30, August 2, 1828), which might have introduced",
+    "n": 80,
+    "a_ed": 5,
+    "c_ed": 13
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 8,
+    "x": [
+     42,
+     900
+    ],
+    "gt": "The mark shown on the coin depicted in Fig. 171 is of a distinctive type; the",
+    "anchor": "The mark shown on the coin depicted in Fig. 171 is of a distinctive type; the",
+    "closeup": "The mark shown on the coin depicted in in Fig, §4 17 Vis of a distinctive type; the",
+    "n": 77,
+    "a_ed": 0,
+    "c_ed": 9
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 9,
+    "x": [
+     58,
+     887
+    ],
+    "gt": "chopmarks were typically being applied in the mid-19th century), and hosts bearing",
+    "anchor": "chopmarks were typically being applied in the mid-19\" century), and hosts bearing",
+    "closeup": "choptarks were ; typically ' being applied in the mid 1 century), and hosts bearing",
+    "n": 82,
+    "a_ed": 2,
+    "c_ed": 9
+   },
+   {
+    "frame": "frame_19.png",
+    "line": 10,
+    "x": [
+     42,
+     903
+    ],
+    "gt": "chops. The mark is explored in greater detail on p. 233.",
+    "anchor": "chops. The mark is explored in greater detail on p. 233.",
+    "closeup": "chops. The mark is explored in greater detail on p, 233",
+    "n": 56,
+    "a_ed": 0,
+    "c_ed": 2
+   }
+  ]
+ }
+}

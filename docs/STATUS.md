@@ -1111,3 +1111,10 @@ rules for it:
   distance no close-up holds a whole paragraph, nor a whole printed line
   (they hold about half to nine-tenths of a line), so any text merge must piece
   lines together from several photographs. Continued below.
+- **Text test, result (continued from above): REFUSED, no merger built.**
+  Part-line segments, 209 of them, 91–94 % of the reference covered: the
+  flattened whole-spread photo reads 2.5 % / 3.2 % CER, the close-ups 50 % /
+  44 % on the same text; every close-up worse. The reader fails on raw curved
+  close-ups (zero words from Tesseract on a crisp crop), so the untested next
+  steps are flattening close-ups first or a model reader. Reference text typed
+  by Claude; owner offered a spot check. RESULTS 2026-10-21.

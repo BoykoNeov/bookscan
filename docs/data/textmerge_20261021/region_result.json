@@ -1,0 +1,322 @@
+{
+ "R157": {
+  "anchor": {
+   "cer": 2.77,
+   "wer": 8.05,
+   "n_words": 295,
+   "diffs": [
+    {
+     "op": "replace",
+     "gt": "La Paz",
+     "ocr": "L2Paz"
+    },
+    {
+     "op": "replace",
+     "gt": "Simón Bolívar,",
+     "ocr": "Simén Bolivar,"
+    },
+    {
+     "op": "replace",
+     "gt": "vision",
+     "ocr": "msion"
+    },
+    {
+     "op": "replace",
+     "gt": "Bolívar",
+     "ocr": "Bolivar"
+    },
+    {
+     "op": "replace",
+     "gt": "Bolivia,",
+     "ocr": "Baliviz,"
+    },
+    {
+     "op": "replace",
+     "gt": "by plans",
+     "ocr": "byplans"
+    },
+    {
+     "op": "replace",
+     "gt": "authority.",
+     "ocr": "whonty,"
+    },
+    {
+     "op": "replace",
+     "gt": "state",
+     "ocr": "Sate"
+    },
+    {
+     "op": "replace",
+     "gt": "independent nations.",
+     "ocr": "ent nations, _"
+    },
+    {
+     "op": "replace",
+     "gt": "its coinage",
+     "ocr": "8 inage"
+    },
+    {
+     "op": "replace",
+     "gt": "nomenclature,",
+     "ocr": "nomencla6"
+    },
+    {
+     "op": "replace",
+     "gt": "NOR-PERUANO'",
+     "ocr": "NOR-PERUANO?'"
+    },
+    {
+     "op": "replace",
+     "gt": "standard Republic",
+     "ocr": "stanRepublic"
+    },
+    {
+     "op": "replace",
+     "gt": "by the Peruvian",
+     "ocr": "21 Peruyian"
+    },
+    {
+     "op": "replace",
+     "gt": "1835-45.",
+     "ocr": "1835-45.\""
+    }
+   ],
+   "text": "Though they became independent entities upon their liberation from Spain, both Peru and Bolivia maintained popular movements for reunification. In 1827, Peruvian forces invaded Bolivia with the intent to create a shared government, entering L2Paz in 1828 and forcing the resignation of Antonio José de Sucre, a close ally of Simén Bolivar, who maintained his own msion of South American unity under his nation of Gran Colombia. Subsequent years were chaotic, including the declaration of war by Gran Colombia on Peru, which came to an end with the deaths of both Sucre and Bolivar in 1830. A unification plan was not put in place until 1836, with the emergence of the Peru-Bolivian Confederation, composed of three states: Baliviz, North Peru, and South Peru; the confederation was motivated by both a shared history and ethnic similarities, but also byplans for a reemergence of the commercial prominence that the region had previously enjoyed when united under Spanish whonty, However, the state was loosely arranged and short-lived. Argentina and Chile, fearful of the influence that a unified Sate of such magnitude could wield, quickly entered into an alliance to confront and dissolve the combined state in the War of the Confederation, which concluded with the Battle of Yungay in 1839, after which both Peru and Bolivia were restored as ent nations, _ During the Confederation, the coinage of the state was altered appropriately. North Peru, which included Lima and 8 inage facilities, largely retained the Standing Liberty design, with the alteration of the legend to reflect the new nomencla6 which exists as both 'EST NOR-PERUANO?' and 'REP NOR-PERUANA'. Both are considerably scarcer than the stanRepublic Standing Liberty Eight Reales, possibly due in part to the debasement of silver coinage (moneda feble) undertaken 21 Peruyian government from approximately 1835-45.\""
+  },
+  "closeups": {},
+  "partial": [
+   {
+    "frame": "frame_01.png",
+    "coverage": 0.398
+   },
+   {
+    "frame": "frame_02.png",
+    "coverage": 0.707
+   },
+   {
+    "frame": "frame_03.png",
+    "coverage": 0.539
+   },
+   {
+    "frame": "frame_04.png",
+    "coverage": 0.5
+   },
+   {
+    "frame": "frame_05.png",
+    "coverage": 0.434
+   },
+   {
+    "frame": "frame_11.png",
+    "coverage": 0.562
+   },
+   {
+    "frame": "frame_12.png",
+    "coverage": 0.75
+   },
+   {
+    "frame": "frame_13.png",
+    "coverage": 0.875
+   },
+   {
+    "frame": "frame_14.png",
+    "coverage": 0.719
+   },
+   {
+    "frame": "frame_15.png",
+    "coverage": 0.5
+   },
+   {
+    "frame": "frame_16.png",
+    "coverage": 0.25
+   },
+   {
+    "frame": "frame_17.png",
+    "coverage": 0.188
+   }
+  ],
+  "absent": [
+   "frame_06.png",
+   "frame_07.png",
+   "frame_08.png",
+   "frame_09.png",
+   "frame_10.png",
+   "frame_18.png",
+   "frame_19.png"
+  ],
+  "summary": {
+   "anchor_cer": 2.77,
+   "n_whole": 0,
+   "n_partial": 12,
+   "n_absent": 7,
+   "median_cer": null,
+   "best_cer": null
+  }
+ },
+ "R156": {
+  "anchor": {
+   "cer": 5.26,
+   "wer": 11.74,
+   "n_words": 209,
+   "diffs": [
+    {
+     "op": "delete",
+     "gt": "may",
+     "ocr": ""
+    },
+    {
+     "op": "replace",
+     "gt": "as",
+     "ocr": "2s"
+    },
+    {
+     "op": "replace",
+     "gt": "fineness",
+     "ocr": "fine"
+    },
+    {
+     "op": "replace",
+     "gt": "circulation",
+     "ocr": "arculation"
+    },
+    {
+     "op": "replace",
+     "gt": "among the",
+     "ocr": "ang?"
+    },
+    {
+     "op": "replace",
+     "gt": "19th",
+     "ocr": "19\""
+    },
+    {
+     "op": "replace",
+     "gt": "can",
+     "ocr": "oe"
+    },
+    {
+     "op": "replace",
+     "gt": "as a",
+     "ocr": "2s 2"
+    },
+    {
+     "op": "replace",
+     "gt": "counterstamps",
+     "ocr": "countersamps"
+    },
+    {
+     "op": "replace",
+     "gt": "Isabel II (see",
+     "ocr": "JuabdlF (sce"
+    },
+    {
+     "op": "replace",
+     "gt": "162-165).",
+     "ocr": "162-163)."
+    },
+    {
+     "op": "replace",
+     "gt": "time",
+     "ocr": "me"
+    },
+    {
+     "op": "replace",
+     "gt": "Canton",
+     "ocr": "Cant"
+    },
+    {
+     "op": "replace",
+     "gt": "attempting",
+     "ocr": "a2nempting"
+    },
+    {
+     "op": "replace",
+     "gt": "'shopmen' (per",
+     "ocr": "'shopo? (pex"
+    },
+    {
+     "op": "replace",
+     "gt": "circulation.",
+     "ocr": "clrau®"
+    },
+    {
+     "op": "replace",
+     "gt": "(larger",
+     "ocr": "(42"
+    },
+    {
+     "op": "replace",
+     "gt": "mid-19th",
+     "ocr": "mid-19\""
+    },
+    {
+     "op": "replace",
+     "gt": "with other",
+     "ocr": "wih?"
+    }
+   ],
+   "text": "Though the superior fineness of the Peruvian Standing Liberty Eight Reales compared to commonly accepted standards have been interpreted 2s a testament to its quality by the mintmasters at Lima, in practice excess weight or superior fine often led to such pieces being withdrawn from arculation for their surplus intrinsic value. Nevertheless, this type is ang? most common chopmarked crowns among its contemporaries struck during the second quarter of the 19\" century, and oe frequently be found 2s 2 host for countersamps of the Philippines issued under the authority of Ferdinand VII and JuabdlF (sce p. 162-163). At approximately the same me as the introduction of the type, foreign merchants were probing the Cant System for weaknesses, a2nempting to break the monopoly of the hong merchants and deal with a greater range of 'shopo? (pex The Canton Register Vol. 1, No. 30, August 2, 1828), which might have introduced a greater range of types into clrau® The mark shown on the coin depicted in Fig. 171 is of a distinctive type; the size is unusual for the period (42 chopmarks were typically being applied in the mid-19\" century), and hosts bearing this mark are not often recorded wih? chops. The mark is explored in greater detail on p. 233."
+  },
+  "closeups": {},
+  "partial": [
+   {
+    "frame": "frame_05.png",
+    "coverage": 0.277
+   },
+   {
+    "frame": "frame_06.png",
+    "coverage": 0.328
+   },
+   {
+    "frame": "frame_08.png",
+    "coverage": 0.316
+   },
+   {
+    "frame": "frame_09.png",
+    "coverage": 0.289
+   },
+   {
+    "frame": "frame_10.png",
+    "coverage": 0.188
+   },
+   {
+    "frame": "frame_15.png",
+    "coverage": 0.375
+   },
+   {
+    "frame": "frame_16.png",
+    "coverage": 0.688
+   },
+   {
+    "frame": "frame_17.png",
+    "coverage": 0.809
+   },
+   {
+    "frame": "frame_18.png",
+    "coverage": 0.875
+   },
+   {
+    "frame": "frame_19.png",
+    "coverage": 0.727
+   }
+  ],
+  "absent": [
+   "frame_01.png",
+   "frame_02.png",
+   "frame_03.png",
+   "frame_04.png",
+   "frame_07.png",
+   "frame_11.png",
+   "frame_12.png",
+   "frame_13.png",
+   "frame_14.png"
+  ],
+  "summary": {
+   "anchor_cer": 5.26,
+   "n_whole": 0,
+   "n_partial": 10,
+   "n_absent": 9,
+   "median_cer": null,
+   "best_cer": null
+  }
+ }
+}

@@ -9822,3 +9822,53 @@ blended anchors (`103158` page_001, `104424` pages 2–4). The refusal stands �
 157 of the 178 figures are the owner's book, untouched by this, and no figure
 changed in either subset — but those 21 rows describe crops of a page that no
 longer exists.
+
+## 2026-10-21 — Do full-size close-ups READ better than the whole-spread photo? Not with Tesseract on raw close-ups: REFUSED (merger not built)
+
+The owner approved the capture plan today (whole-spread photo + tapped
+close-ups, text merged as readings). This is the step before any merger: does
+a close-up read its text better than the flattened whole-spread photograph?
+Pre-registration `docs/data/textmerge_prereg_20261021.md` (854756c), with two
+dated amendments committed before any close-up was read (d54864a, 9efc002). Fixture: job `20261021-104424-6d43b587` page_003 (coin
+book pp. 156–157, Stage 01 v0.4.0 so the anchor is the untouched photo), 19
+close-ups at 2.0–2.9× the anchor's scale. Two regions of body text, one per
+page. **Reference text typed by Claude** from the sharpest close-ups, not by
+the owner (`gt_p157_description.txt`, `gt_p156_body.txt`); offered to the
+owner for a spot check. Data, probes, placement contact sheets:
+`docs/data/textmerge_20261021/`.
+
+**Coverage, the first finding.** No close-up holds either region whole (best
+0.875), nor even one whole printed line: the largest share of a line a
+correctly placed close-up holds is 0.52–0.99 on p. 157 and 0.36–0.92 on
+p. 156. At this distance a text merge would always piece each line together
+from several photographs. Hence the second amendment: part-line segments
+(≥ 30 % of the line, edges trimmed by one word width, the reference cut using
+the anchor's word positions — stated). Placement adjudicated by eye first;
+2 of 30 placements excluded (one misplaced, one degenerate).
+
+**Result (209 segments, 94 % / 91 % of the reference characters covered):**
+
+| region | anchor CER on the segments | close-up CER on the same segments |
+|---|---|---|
+| p. 157 (134 segments, 9 close-ups) | **2.46 %** | 49.8 % |
+| p. 156 (75 segments, 10 close-ups) | **3.16 %** | 44.4 % |
+
+Per close-up, paired on its own segments: the best are frame_01 (0.50 % vs
+2.81 %), frame_11 (2.34 % vs 4.06 %), frame_19 (2.19 % vs 14.86 %); **every
+one of the 19 reads worse than the anchor on the same text.** By the registered
+rule: refused, no merger built.
+
+**Why — and what this does NOT show.** The close-ups are not short of detail;
+the reader fails on them. On frame_02, a crisp crop of the whole p. 157
+paragraph block, Tesseract (`--psm 3`, as Stage 05 runs it) returns **zero
+words**: its page-layout step finds no text. `--psm 6` on the same crop returns
+250 words mixed with junk ("CS - < - ~ Pi Baie In 1827, Peruvian f upon
+their liberation…"); Otsu binarisation still returns zero. Other close-ups read
+partly ("upon thei, liberation # Om Spain"). The arm read raw, unflattened,
+curved close-ups with the gutter shadow in frame — what the pre-registration
+fixed, and the reason it loses. So the refusal is: *Tesseract reading raw
+close-ups*, not *close-ups*. A close-up flattened first, or read by another
+reader, is untested. Also: the flattened whole-spread photo already reads body
+text at 2.5–3 % CER here, so the headroom on plain body text is small.
+
+n = 1 spread, one book, one session.

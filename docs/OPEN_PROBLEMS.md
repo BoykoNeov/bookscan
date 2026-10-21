@@ -263,6 +263,16 @@ close-up can be read on its own and the readings ordered and de-duplicated by
 the placement Phase 0 already has (within about a word). Pixel-exact stitching
 is then needed only for pictures larger than one close-up. Test on the sweep
 below, against the single-photo read, with a text diff.
+**Tested 2026-10-21 (owner approved the plan; RESULTS same day): REFUSED as
+built.** On pp. 156–157, every one of 19 full-size close-ups read its text
+worse than the flattened whole-spread photo (anchor 2.5–3 % CER, close-ups
+~45–50 % on the same part-lines). The reader is the reason, not the pixels:
+Tesseract finds no text at all on a crisp, unflattened close-up crop with its
+layout mode. Also found: at today's distance a close-up holds only half to
+nine-tenths of one printed line, so any merge pieces lines together.
+**Next, if pursued:** flatten each close-up before reading it, or let a local
+model read it (owner allowed, flag condition). Either is a new
+pre-registration; the plain-body-text headroom is small (≈ 3 % CER).
 
 **BLOCKED ON DATA:** a data famine, not a refusal. The sweep capture mode on
 the phone (M7, 2026-08-31, unverified on a device) exists to feed it. **Next

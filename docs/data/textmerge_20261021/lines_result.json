@@ -1,0 +1,198 @@
+{
+ "R157": {
+  "summary": {
+   "lines": "tesseract lines",
+   "n_lines": 17,
+   "held_lines": 0,
+   "gt_chars_held": 0,
+   "a": null,
+   "m": null,
+   "b": null,
+   "anchor_all_lines_cer": 2.79
+  },
+  "lines": [
+   {
+    "gt": "Though they became independent entities upon their liberation from Spain, both Peru and Bolivia maintained popular",
+    "anchor": "Though they became independent entities upon their liberation from Spain, both Peru and Bolivia maintained popular",
+    "anchor_ed": 0,
+    "closeups": {}
+   },
+   {
+    "gt": "movements for reunification. In 1827, Peruvian forces invaded Bolivia with the intent to create a shared government, entering",
+    "anchor": "movements for reunification. In 1827, Peruvian forces invaded Bolivia with the intent to create a shared government, entering",
+    "anchor_ed": 0,
+    "closeups": {}
+   },
+   {
+    "gt": "La Paz in 1828 and forcing the resignation of Antonio José de Sucre, a close ally of Simón Bolívar, who maintained his own",
+    "anchor": "L2Paz in 1828 and forcing the resignation of Antonio José de Sucre, a close ally of Simén Bolivar, who maintained his own",
+    "anchor_ed": 4,
+    "closeups": {}
+   },
+   {
+    "gt": "vision of South American unity under his nation of Gran Colombia. Subsequent years were chaotic, including the declaration",
+    "anchor": "msion of South American unity under his nation of Gran Colombia. Subsequent years were chaotic, including the declaration",
+    "anchor_ed": 2,
+    "closeups": {}
+   },
+   {
+    "gt": "of war by Gran Colombia on Peru, which came to an end with the deaths of both Sucre and Bolívar in 1830. A unification",
+    "anchor": "of war by Gran Colombia on Peru, which came to an end with the deaths of both Sucre and Bolivar in 1830. A unification",
+    "anchor_ed": 1,
+    "closeups": {}
+   },
+   {
+    "gt": "plan was not put in place until 1836, with the emergence of the Peru-Bolivian Confederation, composed of three states:",
+    "anchor": "plan was not put in place until 1836, with the emergence of the Peru-Bolivian Confederation, composed of three states:",
+    "anchor_ed": 0,
+    "closeups": {}
+   },
+   {
+    "gt": "Bolivia, North Peru, and South Peru; the confederation was motivated by both a shared history and ethnic similarities, but also",
+    "anchor": "Baliviz, North Peru, and South Peru; the confederation was motivated by both a shared history and ethnic similarities, but also",
+    "anchor_ed": 2,
+    "closeups": {}
+   },
+   {
+    "gt": "by plans for a reemergence of the commercial prominence that the region had previously enjoyed when united under Spanish",
+    "anchor": "byplans for a reemergence of the commercial prominence that the region had previously enjoyed when united under Spanish",
+    "anchor_ed": 1,
+    "closeups": {}
+   },
+   {
+    "gt": "authority. However, the state was loosely arranged and short-lived. Argentina and Chile, fearful of the influence that a unified",
+    "anchor": "whonty, However, the state was loosely arranged and short-lived. Argentina and Chile, fearful of the influence that a unified",
+    "anchor_ed": 6,
+    "closeups": {}
+   },
+   {
+    "gt": "state of such magnitude could wield, quickly entered into an alliance to confront and dissolve the combined state in the War",
+    "anchor": "Sate of such magnitude could wield, quickly entered into an alliance to confront and dissolve the combined state in the War",
+    "anchor_ed": 2,
+    "closeups": {}
+   },
+   {
+    "gt": "of the Confederation, which concluded with the Battle of Yungay in 1839, after which both Peru and Bolivia were restored as",
+    "anchor": "of the Confederation, which concluded with the Battle of Yungay in 1839, after which both Peru and Bolivia were restored as",
+    "anchor_ed": 0,
+    "closeups": {}
+   },
+   {
+    "gt": "independent nations.",
+    "anchor": "ent nations,",
+    "anchor_ed": 9,
+    "closeups": {}
+   },
+   {
+    "gt": "During the Confederation, the coinage of the state was altered appropriately. North Peru, which included Lima and",
+    "anchor": "_ During the Confederation, the coinage of the state was altered appropriately. North Peru, which included Lima and",
+    "anchor_ed": 2,
+    "closeups": {}
+   },
+   {
+    "gt": "its coinage facilities, largely retained the Standing Liberty design, with the alteration of the legend to reflect the new nomencla-",
+    "anchor": "8 inage facilities, largely retained the Standing Liberty design, with the alteration of the legend to reflect the new nomencla-",
+    "anchor_ed": 5,
+    "closeups": {}
+   },
+   {
+    "gt": "ture, which exists as both 'EST NOR-PERUANO' and 'REP NOR-PERUANA'. Both are considerably scarcer than the stan-",
+    "anchor": "6 which exists as both 'EST NOR-PERUANO?' and 'REP NOR-PERUANA'. Both are considerably scarcer than the stan-",
+    "anchor_ed": 6,
+    "closeups": {}
+   },
+   {
+    "gt": "dard Republic Standing Liberty Eight Reales, possibly due in part to the debasement of silver coinage (moneda feble) undertaken",
+    "anchor": "Republic Standing Liberty Eight Reales, possibly due in part to the debasement of silver coinage (moneda feble) undertaken",
+    "anchor_ed": 5,
+    "closeups": {}
+   },
+   {
+    "gt": "by the Peruvian government from approximately 1835-45.",
+    "anchor": "21 Peruyian government from approximately 1835-45.\"",
+    "anchor_ed": 8,
+    "closeups": {}
+   }
+  ]
+ },
+ "R156": {
+  "summary": {
+   "lines": "tesseract lines",
+   "n_lines": 11,
+   "held_lines": 0,
+   "gt_chars_held": 0,
+   "a": null,
+   "m": null,
+   "b": null,
+   "anchor_all_lines_cer": 5.3
+  },
+  "lines": [
+   {
+    "gt": "Though the superior fineness of the Peruvian Standing Liberty Eight Reales compared to commonly accepted standards may",
+    "anchor": "Though the superior fineness of the Peruvian Standing Liberty Eight Reales compared to commonly accepted standards",
+    "anchor_ed": 4,
+    "closeups": {}
+   },
+   {
+    "gt": "have been interpreted as a testament to its quality by the mintmasters at Lima, in practice excess weight or superior fineness",
+    "anchor": "have been interpreted 2s a testament to its quality by the mintmasters at Lima, in practice excess weight or superior fine",
+    "anchor_ed": 5,
+    "closeups": {}
+   },
+   {
+    "gt": "often led to such pieces being withdrawn from circulation for their surplus intrinsic value. Nevertheless, this type is among the",
+    "anchor": "often led to such pieces being withdrawn from arculation for their surplus intrinsic value. Nevertheless, this type is ang?",
+    "anchor_ed": 8,
+    "closeups": {}
+   },
+   {
+    "gt": "most common chopmarked crowns among its contemporaries struck during the second quarter of the 19th century, and can",
+    "anchor": "most common chopmarked crowns among its contemporaries struck during the second quarter of the 19\" century, and oe",
+    "anchor_ed": 5,
+    "closeups": {}
+   },
+   {
+    "gt": "frequently be found as a host for counterstamps of the Philippines issued under the authority of Ferdinand VII and Isabel II",
+    "anchor": "frequently be found 2s 2 host for countersamps of the Philippines issued under the authority of Ferdinand VII and JuabdlF",
+    "anchor_ed": 9,
+    "closeups": {}
+   },
+   {
+    "gt": "(see p. 162-165). At approximately the same time as the introduction of the type, foreign merchants were probing the Canton",
+    "anchor": "(sce p. 162-163). At approximately the same me as the introduction of the type, foreign merchants were probing the Cant",
+    "anchor_ed": 6,
+    "closeups": {}
+   },
+   {
+    "gt": "System for weaknesses, attempting to break the monopoly of the hong merchants and deal with a greater range of 'shopmen'",
+    "anchor": "System for weaknesses, a2nempting to break the monopoly of the hong merchants and deal with a greater range of 'shopo?",
+    "anchor_ed": 6,
+    "closeups": {}
+   },
+   {
+    "gt": "(per The Canton Register Vol. 1, No. 30, August 2, 1828), which might have introduced a greater range of types into circulation.",
+    "anchor": "(pex The Canton Register Vol. 1, No. 30, August 2, 1828), which might have introduced a greater range of types into clrau®",
+    "anchor_ed": 10,
+    "closeups": {}
+   },
+   {
+    "gt": "The mark shown on the coin depicted in Fig. 171 is of a distinctive type; the size is unusual for the period (larger",
+    "anchor": "The mark shown on the coin depicted in Fig. 171 is of a distinctive type; the size is unusual for the period (42",
+    "anchor_ed": 6,
+    "closeups": {}
+   },
+   {
+    "gt": "chopmarks were typically being applied in the mid-19th century), and hosts bearing this mark are not often recorded with other",
+    "anchor": "chopmarks were typically being applied in the mid-19\" century), and hosts bearing this mark are not often recorded wih?",
+    "anchor_ed": 9,
+    "closeups": {}
+   },
+   {
+    "gt": "chops. The mark is explored in greater detail on p. 233.",
+    "anchor": "chops. The mark is explored in greater detail on p. 233.",
+    "anchor_ed": 0,
+    "closeups": {}
+   }
+  ]
+ }
+}

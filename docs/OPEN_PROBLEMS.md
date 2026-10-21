@@ -57,11 +57,13 @@ an unregistered layout check found 2 of 2 graded block-GT pages worse after
 trimming only strips of sofa (`it_geo_06` pairs 5/6 → 3/6, `it_geo_07`
 segmentation 30/30 → 28/30). The reframing control has since run (RESULTS
 2026-10-21, second row): trimming the same pages by equal strips of sofa with
-**no model** does the same kind of damage, and 4 px is enough on `it_geo_07`,
-so the regression is the downstream stages' framing sensitivity, not the
-model's box. Turning it on needs a new pre-registration with
-`layout_order_eval` as a gate **measured against a spread of model-free
-reframings** (a single uncut run is a bar every framing fails), and that
+**no model** often does the same kind of damage, and 4 px is enough on
+`it_geo_07`, so most of the regression is the downstream stages' framing
+sensitivity. Not all of it: no control reproduced `it_geo_07`'s lost D1, which
+only the model's own rectangle lost. Turning it on needs a new
+pre-registration with `layout_order_eval` as a gate **measured against a
+spread of model-free reframings** (a single uncut run cannot tell a bad crop
+from ordinary framing noise; most such trims pass, several do not), and that
 harness routed through Stage 02's model path.
 
 **BLOCKED ON DATA:** every automatic route for (a) and (c) needs a precondition
@@ -345,6 +347,14 @@ It needs a Bulgarian page carrying an English/other-language block.
 - **The clipping metric divides by the label area**, so a 20 px label error
   reads as 3 % on the paleset rows. Any clip under ~2 % in an edge band is
   adjudicated by looking at the band, and the adjudication is written down.
+- **Framing is a draw too (found 2026-10-21).** Every `layout_order_eval` row
+  grades one framing of each photograph, and a sofa-only trim of 4–41 px moves
+  caption typing, segmentation, order and even makes a wrong pair (RESULTS
+  2026-10-21, reframing control). So past single-framing changes of one block,
+  one pair or a tau step on these pages may be framing noise. Not yet
+  re-checked: which earlier rows' deltas survive a few model-free reframings.
+  Until then, read a small layout delta as unconfirmed unless it holds across
+  a few slightly different trims.
 
 ---
 

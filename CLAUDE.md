@@ -92,9 +92,10 @@ pointer is the date in `docs/STATUS.md` / `docs/RESULTS.md`.
 - **Rows from the two `layout_order_eval` arms are different quantities.**
   Never compare `--no-stage05` against the default.
 - **A crop is graded against model-free reframings, not one uncut run.**
-  Trimming 4–41 px of pure sofa moves caption typing, segmentation, order and
-  even makes a wrong pair on `it_geo_06`/`07`; a single uncut baseline is a bar
-  every framing fails. (2026-10-21, reframing control)
+  Some 4–41 px trims of pure sofa move caption typing, segmentation, order and
+  even make a wrong pair on `it_geo_06`/`07` (most such trims pass); a single
+  uncut baseline cannot tell a bad crop from that noise. (2026-10-21,
+  reframing control)
 - **Verify pictures by checkerboard, never side by side** — a sharper crop
   reveals text the blurry one hid, which reads as a framing change.
 - **n counts scenes, not frames.** Thirty-one photographs of one sofa are n = 1;

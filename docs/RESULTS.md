@@ -9628,3 +9628,14 @@ Correction to the pre-registration's wording, not its rule: it called the
 total over both subpages (4 left + 1 right), which is the number the row above
 quoted. Graded on the row total; every loss above is on the left subpage, so
 either reading gives the same verdicts.
+
+**Correction (same day) to the row above.** Two phrasings overstated the table.
+(1) "a gate every framing fails": most model-free trims pass on every column
+(`it_geo_06` R41 and L4; `it_geo_07` R41, T41, B41); the supported claim is that
+a single uncut run cannot tell a bad crop from ordinary framing noise, because
+several sofa-only trims of the same size move the graded numbers. (2) "cannot be
+charged to the model's box" is flatter than the registered verdicts: on
+`it_geo_07` the verdict is knife edge + partly framing (1 of 5 controls repeats
+the tau drop), and the D1 loss was reproduced by **no** control, only by the
+model's own rectangle. Read: the damage is the kind small reframings do; on
+`it_geo_07` part of it (D1) is not yet explained by framing alone.

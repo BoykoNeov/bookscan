@@ -943,3 +943,7 @@ rules for it:
   background pixels; open.
 - Consequence recorded: a layout gate for any crop needs a noise floor from
   model-free reframings. Nothing shipped changes; `vlm_box.cut` stays off.
+- Correction (same day): "the model's box is not the cause" was too flat — on
+  `it_geo_07` no control lost D1, only the model's rectangle did; and most
+  model-free trims pass, so the rule is "one uncut run cannot separate a bad
+  crop from framing noise", not "every framing fails" (RESULTS correction clause).

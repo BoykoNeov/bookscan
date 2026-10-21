@@ -154,8 +154,9 @@ different garbage, not better. The panels are unreadable because of the
 
 **Measured 2026-10-21 (RESULTS, pre-registered): the pixels were never the
 whole problem — the reader was.** The local model (qwen3.6:27b) reads the 14
-panels at 5.2 % word error from the shipped page crops, Tesseract at 79 %; from
-the (shrunk) close-ups that exist for 11 of them, 0.8 %. It invents nothing on
+panels at 5.2 % word error from the shipped page crops, Tesseract at 79 %. On
+the 11 panels that have a (shrunk) close-up: 0.8 % from the close-up against
+5.7 % from the page crop of the same 11. It invents nothing on
 sofa or photographs. **It cannot ship yet:** it reads a printed ¾ as ¼ (even on
 a crisp close-up), and no second opinion tested flags that — Tesseract flags
 78 % of the correct words, a second model or a second photo shares the error.
@@ -311,8 +312,8 @@ nine-tenths of one printed line, so any merge pieces lines together.
 model read it (owner allowed, flag condition). Either is a new
 pre-registration; the plain-body-text headroom is small (≈ 3 % CER).
 **The model-reader half is answered for panels (2026-10-21, RESULTS):** the
-local model reads a close-up of a panel at 0.8 % word error vs 5.2 % from the
-page crop (11 panels, shrunk close-ups, cut to the block). Where the text is
+local model reads a close-up of a panel at 0.8 % word error vs 5.7 % from the
+page crop of the same 11 panels (shrunk close-ups, cut to the block). Where the text is
 lost, a close-up aimed at the block plus a model reader is the lever; blocked
 on the flag (P2a), not on reading.
 

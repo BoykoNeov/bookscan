@@ -9961,3 +9961,21 @@ verdict):** it says "14 text blocks with a usable close-up" and that S3 covers
 comparison and S3 therefore run on 11 blocks, as reported above. The maps'
 close-up readings are in `scores.json` (qwen 8/9 and 16/20 against 9/9 and
 19/20 from the page; the close-up of the second map misses its top labels).
+
+**Three more clauses to the row above (same day, after review; no verdict
+changes).** (1) *Like-for-like:* the table's "panels WER" column mixes 14-block
+figures (Tesseract, qwen page, gemma page) with the 11-block close-up figure.
+On the same 11 panels qwen's page crop scores **5.7 %** (21 errors in 368
+words) against the close-up's 0.8 % (3 errors); every comparison of the two
+quotes 5.7 %. (2) *How each disputed number was settled:* at full zoom — the
+fraction cells of all four route tables and "Roghel: 1¾"; by meaning — I1
+against II/11 (route codes run F1…, P1…, Q1…), O against 0 and SO against S0
+(compass directions); by consistency — gemma's page-number column, shifted one
+row against the paired F2/F3 rows. gemma's "+ 39" for "+39" (2 of its 4 wrong
+panel numbers) is a space splitting one token, not a misreading; it also adds
+false alarms to the S2 flag. (3) *A bias favouring the close-up arm:* where a close-up existed,
+the reference was typed from the close-up, and only numbers were adjudicated
+afterwards. The page arm's 21 word errors on those panels read as genuine model
+errors ("Costa" for Casto, "agility" for aglets, "Salzsteg" for Salasteig), so
+the close-up verdict likely stands, but it rests partly on Claude's reading of
+the close-up.

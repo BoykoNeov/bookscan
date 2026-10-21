@@ -2,7 +2,7 @@
 
 Written 2026-10-21 after the panel-reading test (RESULTS 2026-10-21). That test
 found the local model reads a panel from a close-up at 0.8 % word error against
-5.2 % from the page photo, but **none of the six route tables has a close-up**,
+5.7 % from the page photo (the same 11 panels), but **none of the six route tables has a close-up**,
 so whether a close-up helps a table is untested. Every close-up then was also
 shrunk by the old app; the app now uploads them at full size.
 

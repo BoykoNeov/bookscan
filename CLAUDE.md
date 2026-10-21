@@ -76,7 +76,11 @@ pointer is the date in `docs/STATUS.md` / `docs/RESULTS.md`.
 - **OWNER DECISION 2026-10-21 supersedes the text half of the next rule: a model
   MAY write the text.** Condition, not yet met: model text reaches no PDF until
   something flags its mistakes (it misreads fluently and has no confidence;
-  first candidate: mark model-vs-Tesseract disagreements). The pixel-deleting
+  first candidate: mark model-vs-Tesseract disagreements — **measured the same
+  day on the owner's tables and panels and it is NOT the flag there: it marks
+  71–78 % of the correct words**; a second model and a second photo were also
+  measured and miss the model's ¾→¼ misreading; see `docs/OPEN_PROBLEMS.md`
+  P2a). The pixel-deleting
   half ("two questions that agree") is unchanged. See STATUS 2026-10-21.
 - **Tesseract is the text and confidence backbone.** A vision-language model
   answers only questions a person answers in one second by looking (where is

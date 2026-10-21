@@ -1140,3 +1140,9 @@ rules for it:
   photo stay quiet but share the error. New register entry P2a.
 - Shot list for the owner: `plans/closeup-shotlist-tables-panels.md`.
   RESULTS 2026-10-21.
+- Correction to the lines above: the close-up comparison is 0.8 % against
+  **5.7 %** on the same 11 panels (5.2 % was all 14). CLAUDE.md's guardrail now
+  notes that the Tesseract-disagreement flag was measured and is not the flag
+  on these blocks. `cut_hand.py` moved into `docs/data/panelread_20261021/`
+  (re-running extraction drops the hand cuts; run order in its docstring).
+  RESULTS 2026-10-21, added clauses.

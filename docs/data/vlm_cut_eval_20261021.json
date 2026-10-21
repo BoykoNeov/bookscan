@@ -1,0 +1,2119 @@
+{
+ "prereg": "docs/data/vlm_cut_prereg_20261021.md",
+ "check_prompt": "This image was cropped from a photograph of an open book. Look at each of the four edges of this image. For each edge, say whether the book is cut off by that edge: true if any part of the book - its paper, printed text, pictures, page edges or tabs - continues beyond that edge of the image, false if the whole book stops before that edge. Answer with JSON only, exactly: {\"left\": true or false, \"right\": true or false, \"top\": true or false, \"bottom\": true or false}. No other text.",
+ "summary": {
+  "G1": {
+   "gutters": "21/21",
+   "worst_clip_pct": 0.0,
+   "pass": true
+  },
+  "G2": {
+   "targets_cut": [
+    "paleset_01",
+    "paleset_02"
+   ],
+   "pass": true
+  },
+  "G3": {
+   "rows": [
+    "bg_01",
+    "bg_03",
+    "en_coins_02",
+    "it_geo_06",
+    "it_geo_07",
+    "paleset_01",
+    "paleset_02"
+   ],
+   "fail": [],
+   "pass": true
+  },
+  "cut_rows": [
+   "bg_01",
+   "bg_03",
+   "en_coins_02",
+   "it_geo_06",
+   "it_geo_07",
+   "paleset_01",
+   "paleset_02",
+   "owner_02"
+  ]
+ },
+ "rows": {
+  "bg_01": {
+   "pop": "T",
+   "box": [
+    228,
+    321,
+    3652,
+    2712
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    0,
+    129,
+    3925,
+    2903
+   ],
+   "check": {
+    "cut": [
+     0,
+     129,
+     3925,
+     2903
+    ],
+    "moved_edges": [
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 33057.8,
+    "answer": "{\n  \"left\": false,\n  \"right\": false,\n  \"top\": false,\n  \"bottom\": false\n}",
+    "edges": {
+     "left": false,
+     "right": false,
+     "top": false,
+     "bottom": false
+    }
+   },
+   "route": "CUT",
+   "gutter": 1811,
+   "emit": [
+    0,
+    129,
+    3925,
+    2903
+   ],
+   "hit": true,
+   "g3": {
+    "lang": "bul",
+    "uncut": {
+     "gutter": 1811,
+     "conf_ge_80": 706,
+     "words": 744,
+     "word_acc": 89.37,
+     "cer": 6.79
+    },
+    "cut": {
+     "gutter": 1811,
+     "conf_ge_80": 743,
+     "words": 759,
+     "word_acc": 97.11,
+     "cer": 0.85
+    },
+    "d_conf_ge_80": 37,
+    "diff": {
+     "only_uncut": [
+      "(123",
+      ",",
+      ",",
+      "-15\u0438",
+      "191",
+      "2",
+      "3",
+      "4",
+      "4",
+      ":",
+      ":",
+      ":",
+      ":",
+      "|",
+      "\u0410\u041d",
+      "\u0413\u044e\u043c\u0443\u0440\u0434\u0436\u0438\u043d\u0441\u043a\u0430\u0442\u0430",
+      "\u0414\u0435\u0434\u0435\u0430\u0433\u0430\u0447",
+      "\u0414\u0435\u0434\u0435\u0430\u0433\u0430\u0447\u0441\u043a\u043e",
+      "\u0417\u0430",
+      "\u0418",
+      "\u0418\u04315\u0438\u0442.",
+      "\u041a",
+      "\u041c\u043d",
+      "\u041d\u0415",
+      "\u0421.",
+      "\u0427\u043e\u0431\u0430\u043d\u043a\u044a\u044c\u043e\u0439",
+      "\u0431\u044a\u043b\u0433.",
+      "\u0431\u044a\u043b\u0433.",
+      "\u0432\u0442\u0435\u043d\u0442\u0438\u0447\u043d\u0438",
+      "\u0433\u043e\u0434.",
+      "\u0435\u0438",
+      "\u0435\u0441\u0442\u0430\u0442\u0430",
+      "\u043a",
+      "\u043c\u0438",
+      "\u043c\u043e",
+      "\u043c\u043e\u0436\u043d\u043e",
+      "\u043d",
+      "\u043d\u0430\u0439-\u0430",
+      "\u0441\u0430\u043a\u0430",
+      "\u201c"
+     ],
+     "only_cut": [
+      "(125",
+      "-",
+      "-",
+      "14",
+      "15",
+      "1913",
+      "\u0410\u0444\u0432\u0438\u0430\u0447\u0435\u0431",
+      "\u0413\u044e\u043c\u0443\u0440\u0434\u0436\u0438\u043d\u0430,",
+      "\u0414\u0435\u043b\u0435\u0430\u0433\u0430\u0447",
+      "\u0415\u0432\u0440\u0435\u043d\u043a\u044c\u043e\u0439",
+      "\u0418\u0417\u0438\u0442.\u043d",
+      "\u0422\u043e\u0432\u0430",
+      "\u0427\u043e\u0431\u0430\u043d\u043a\u044c\u043e\u0439",
+      "\u0431\u044a\u043b\u0433.,",
+      "\u0431\u044a\u043b\u0433.,",
+      "\u0431\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u043e",
+      "\u0432",
+      "\u0432\u0438\u0434\u0438\u043c",
+      "\u0432\u044a\u0440\u0432\u044f\u0442",
+      "\u0433\u043e\u0434.,",
+      "\u0434\u0430",
+      "\u0435",
+      "\u0435,",
+      "\u0435\u0420\u043e\u043c\u0443\u0440\u0430\u043a\u0438\u043d\u0441\u043a\u0430",
+      "\u0437\u0430",
+      "\u0437\u0430\u0433\u0438\u043d\u0435",
+      "\u0438",
+      "\u0438",
+      "\u0438",
+      "\u043a\u043e\u0435\u0442\u043e",
+      "\u043c\u0430\u043a\u0430\u0440",
+      "\u043c\u0430\u043b\u043a\u0438",
+      "\u043c\u0435\u0441\u0442\u0430\u0442\u0430",
+      "\u043c\u0438\u0440\u043d\u043e\u0442\u043e",
+      "\u043c\u043d\u043e\u0433\u043e",
+      "\u043c\u043e\u0436\u0435\u043b\u043e",
+      "\u043d\u0430",
+      "\u043d\u0430\u0439-\u0430\u0432\u0442\u0435\u043d\u0442\u0438\u0447\u043d\u0438",
+      "\u043d\u0430\u0441\u0435\u043b\u0435\u043d\u0438\u0435,",
+      "\u043d\u0435\u0432\u0438\u043d\u0435\u043d",
+      "\u043d\u043e",
+      "\u043e\u0442",
+      "\u043e\u0442\u0441\u0442\u044a\u043f\u043b\u0435\u043d\u0438\u0435,",
+      "\u043f\u0430\u043a",
+      "\u043f\u043e-\u0434\u043e\u043b\u0443,",
+      "\u043f\u043e-\u043d\u0430\u0442\u0430\u0442\u044a\u043a",
+      "\u043f\u0440\u0435\u0437",
+      "\u043f\u0440\u0438\u0431\u044a\u0440\u0437\u0430\u043d\u043e",
+      "\u043f\u0440\u0438\u0447\u0438\u043d\u0430",
+      "\u0441",
+      "\u0441.",
+      "\u0441\u0430\u043c\u043e",
+      "\u0441\u0432\u044f\u0442",
+      "\u0441\u043a\u0440\u0438\u0442\u043e\u043c",
+      "\u0441\u0442\u0430\u043d\u0430\u043b\u043e",
+      "\u0449\u0435"
+     ]
+    },
+    "d_word_acc_pp": 7.74
+   }
+  },
+  "bg_02": {
+   "pop": "T",
+   "box": [
+    148,
+    111,
+    3848,
+    2862
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": null,
+   "route": "padded box reaches every frame edge; nothing to cut",
+   "gutter": 1940,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true
+  },
+  "bg_03": {
+   "pop": "T",
+   "box": [
+    332,
+    219,
+    3812,
+    2838
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    53,
+    9,
+    4000,
+    3000
+   ],
+   "check": {
+    "cut": [
+     53,
+     9,
+     4000,
+     3000
+    ],
+    "moved_edges": [
+     "left",
+     "top"
+    ],
+    "ms": 1144.3,
+    "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+    "edges": {
+     "left": false,
+     "right": false,
+     "top": false,
+     "bottom": false
+    }
+   },
+   "route": "CUT",
+   "gutter": 2010,
+   "emit": [
+    53,
+    9,
+    4000,
+    3000
+   ],
+   "hit": true,
+   "g3": {
+    "lang": "bul",
+    "uncut": {
+     "gutter": 2010,
+     "conf_ge_80": 823,
+     "words": 845
+    },
+    "cut": {
+     "gutter": 2010,
+     "conf_ge_80": 819,
+     "words": 844
+    },
+    "d_conf_ge_80": -4,
+    "diff": {
+     "only_uncut": [
+      "(50",
+      "-\u0430\u0433\u044a\u043b;",
+      "\u0413",
+      "\u0413.),",
+      "\u041c\u0435",
+      "\u041d\u0430:",
+      "\u0421\u0442\u0435\u0444\u0440\u0430\u043d",
+      "\u0422\u0443\u0440\u0446\u0438\u0442\u0435",
+      "\u0433\u043e\u0434.),",
+      "\u0433\u0440\u0430\u0434\u0430",
+      "\u0434\u043e",
+      "\u0435\u043e\u0440\u0433\u0435\u0432",
+      "\u0437\u0430",
+      "\u043e\u0431\u0430\u0434\u0438\u0445\u0430,",
+      "\u0441\u0435\u043b\u0430."
+     ],
+     "only_cut": [
+      "(30",
+      "-",
+      "6",
+      "\u0413\u0435\u043e\u0440\u0433\u0435\u0432",
+      "\u0417\u0430",
+      "\u041d\u0430",
+      "\u0421\u0442\u0435\u0444\u0430\u043d",
+      "\u0430\u0433\u044a\u043b;",
+      "\u0433.),",
+      "\u0433\u043e\u0434.)",
+      "\u0434\u043e\u0433\u0440\u0430\u0434\u0430",
+      "\u043e\u0431\u0430\u0434\u0438\u0445\u0430\u00bb",
+      "\u0441\u0435\u043b\u0430,",
+      "\u0442\u0443\u0440\u0446\u0438\u0442\u0435"
+     ]
+    }
+   }
+  },
+  "en_coins_01": {
+   "pop": "T",
+   "box": [
+    68,
+    129,
+    3996,
+    2802
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": null,
+   "route": "padded box reaches every frame edge; nothing to cut",
+   "gutter": 1960,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true
+  },
+  "en_coins_02": {
+   "pop": "T",
+   "box": [
+    148,
+    111,
+    3872,
+    2742
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    0,
+    0,
+    4000,
+    2952
+   ],
+   "check": {
+    "cut": [
+     0,
+     0,
+     4000,
+     2952
+    ],
+    "moved_edges": [
+     "bottom"
+    ],
+    "ms": 1038.2,
+    "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+    "edges": {
+     "left": false,
+     "right": false,
+     "top": false,
+     "bottom": false
+    }
+   },
+   "route": "CUT",
+   "gutter": 1994,
+   "emit": [
+    0,
+    0,
+    4000,
+    2952
+   ],
+   "hit": true,
+   "g3": {
+    "lang": "eng",
+    "uncut": {
+     "gutter": 1994,
+     "conf_ge_80": 758,
+     "words": 841
+    },
+    "cut": {
+     "gutter": 1994,
+     "conf_ge_80": 746,
+     "words": 836
+    },
+    "d_conf_ge_80": -12,
+    "diff": {
+     "only_uncut": [
+      "(566",
+      "(Match",
+      "(ie,",
+      ".",
+      "102",
+      "17\"",
+      "1894.",
+      "2",
+      "2",
+      "2",
+      "2",
+      "2",
+      "2",
+      "2",
+      "3",
+      "56)",
+      "8\u00b0",
+      ":",
+      ";",
+      ";",
+      "America,",
+      "Chgpmarks),",
+      "Chopmark\u00e9d",
+      "Coins",
+      "Collection.",
+      "Connterstamp",
+      "Detail",
+      "EJ",
+      "Epis",
+      "Ex-Colin",
+      "FM.",
+      "Fig,",
+      "Fig,",
+      "Guatem",
+      "Huntsinger",
+      "I1I",
+      "KM",
+      "Me",
+      "Michael",
+      "Oe",
+      "R-4",
+      "Rarity",
+      "So",
+      "Soh",
+      "Standard",
+      "The",
+      "UNC",
+      "_baopmarked",
+      "ae",
+      "al",
+      "and",
+      "anew",
+      "are",
+      "ari",
+      "authorities.",
+      "chopmar",
+      "circle",
+      "circle.",
+      "clites",
+      "counterstamped",
+      "currendy",
+      "er",
+      "et",
+      "exEF.",
+      "example",
+      "forei",
+      "gold/",
+      "he",
+      "i,",
+      "in",
+      "inidallv",
+      "into",
+      "issue",
+      "known",
+      "marks)",
+      "nL",
+      "ohyerse",
+      "os",
+      "peadirton)",
+      "pes",
+      "ra!",
+      "rs",
+      "silver",
+      "stru",
+      "to",
+      "was",
+      "were.",
+      "with",
+      "\u00bb",
+      "\u2014",
+      "\u201cOby:"
+     ],
+     "only_cut": [
+      "\"2",
+      "'",
+      "(366-569),",
+      "(March",
+      "(i.e,",
+      "10",
+      "17\u00b0",
+      "27",
+      "8",
+      "America.",
+      "Cains",
+      "Chopmarked",
+      "Choprmarks),",
+      "Collection:",
+      "Counterstanmp",
+      "EC",
+      "Empl",
+      "FE]",
+      "Fig.",
+      "Fig.",
+      "Gas",
+      "Hunsinger",
+      "Hx-Colin",
+      "I'he",
+      "III",
+      "Jo",
+      "KM#",
+      "LDopmarked",
+      "Michac",
+      "N",
+      "PE",
+      "R4",
+      "Ranty",
+      "Reference(s):",
+      "SE",
+      "Sa",
+      "See",
+      "Sn",
+      "Sonth",
+      "VM.",
+      "]",
+      "a",
+      "a",
+      "a",
+      "a",
+      "a",
+      "a",
+      "an",
+      "andard",
+      "ared",
+      "authorities.\u201d",
+      "boomy",
+      "circle.\u201d",
+      "circle\u201d",
+      "currently",
+      "de",
+      "e",
+      "elites",
+      "exE.",
+      "examp",
+      "foreign",
+      "gold/silver",
+      "i",
+      "ine",
+      "narks)",
+      "new",
+      "ns",
+      "obverse",
+      "od",
+      "op",
+      "or",
+      "ox",
+      "pe",
+      "pol",
+      "sf",
+      "si",
+      "the",
+      "types",
+      "were",
+      "wit",
+      "x",
+      "|",
+      "|",
+      "\u00a5ic",
+      "\u2014\u2014",
+      "\u201cOb:"
+     ]
+    }
+   }
+  },
+  "en_coins_03": {
+   "pop": "T",
+   "box": [
+    4,
+    3,
+    3996,
+    2997
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 98% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "route": "no usable model box",
+   "gutter": 2024,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true
+  },
+  "it_geo_01": {
+   "pop": "T",
+   "box": [
+    68,
+    141,
+    3996,
+    2928
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": null,
+   "route": "padded box reaches every frame edge; nothing to cut",
+   "gutter": 2091,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true
+  },
+  "it_geo_02": {
+   "pop": "T",
+   "box": [
+    156,
+    81,
+    3908,
+    2913
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": null,
+   "route": "padded box reaches every frame edge; nothing to cut",
+   "gutter": 2099,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true
+  },
+  "it_geo_03": {
+   "pop": "T",
+   "box": [
+    68,
+    111,
+    3832,
+    2934
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": null,
+   "route": "padded box reaches every frame edge; nothing to cut",
+   "gutter": 2082,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true
+  },
+  "it_geo_04": {
+   "pop": "T",
+   "box": [
+    68,
+    3,
+    3844,
+    2802
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": null,
+   "route": "padded box reaches every frame edge; nothing to cut",
+   "gutter": 1941,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true
+  },
+  "it_geo_05": {
+   "pop": "T",
+   "box": [
+    444,
+    291,
+    3616,
+    2763
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 97% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    190,
+    93,
+    3869,
+    2960
+   ],
+   "check": {
+    "cut": [
+     190,
+     93,
+     3869,
+     2960
+    ],
+    "moved_edges": [
+     "left",
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 1077.0,
+    "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+    "edges": {
+     "left": true,
+     "right": true,
+     "top": true,
+     "bottom": true
+    },
+    "refused": "the model says the book continues past the left, right, top, bottom edge of the cut"
+   },
+   "route": "check refused: the model says the book continues past the left, right, top, bottom edge of the cut",
+   "gutter": 2008,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true
+  },
+  "it_geo_06": {
+   "pop": "T",
+   "box": [
+    320,
+    213,
+    3804,
+    2868
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    41,
+    0,
+    4000,
+    3000
+   ],
+   "check": {
+    "cut": [
+     41,
+     0,
+     4000,
+     3000
+    ],
+    "moved_edges": [
+     "left"
+    ],
+    "ms": 1051.7,
+    "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+    "edges": {
+     "left": false,
+     "right": false,
+     "top": false,
+     "bottom": false
+    }
+   },
+   "route": "CUT",
+   "gutter": 2088,
+   "emit": [
+    41,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true,
+   "g3": {
+    "lang": "ita",
+    "uncut": {
+     "gutter": 2088,
+     "conf_ge_80": 380,
+     "words": 416
+    },
+    "cut": {
+     "gutter": 2088,
+     "conf_ge_80": 373,
+     "words": 412
+    },
+    "d_conf_ge_80": -7,
+    "diff": {
+     "only_uncut": [
+      "(SSA",
+      "(ec),",
+      "*",
+      "-",
+      "-",
+      "4",
+      "7",
+      ":",
+      "<",
+      "AAT",
+      "C",
+      "Den",
+      "Fi",
+      "Figura",
+      "Fossili",
+      "La",
+      "Ma",
+      "Maiolica,",
+      "N",
+      "NI.",
+      "NY",
+      "Piattaforma",
+      "T:",
+      "ana",
+      "brachiopodi",
+      "due",
+      "eli",
+      "nell\u2019area",
+      "riul",
+      "tra-Biurassico",
+      "\u201c"
+     ],
+     "only_cut": [
+      "(c),",
+      ",",
+      "-,",
+      "A_AX.",
+      "Cc",
+      "E",
+      "Figa",
+      "Friulana",
+      "LI",
+      "LR",
+      "Pi",
+      "PiattaformM",
+      "RN",
+      "T.",
+      "a",
+      "a)",
+      "dep",
+      "gli",
+      "igura",
+      "io",
+      "nell'area",
+      "olica,",
+      "pendii",
+      "pi",
+      "podi",
+      "trarBiurassico",
+      "||"
+     ]
+    }
+   }
+  },
+  "it_geo_07": {
+   "pop": "T",
+   "box": [
+    312,
+    231,
+    3696,
+    2772
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    41,
+    27,
+    3966,
+    2975
+   ],
+   "check": {
+    "cut": [
+     41,
+     27,
+     3966,
+     2975
+    ],
+    "moved_edges": [
+     "left",
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 1132.7,
+    "answer": "{\n  \"left\": false,\n  \"right\": false,\n  \"top\": false,\n  \"bottom\": false\n}",
+    "edges": {
+     "left": false,
+     "right": false,
+     "top": false,
+     "bottom": false
+    }
+   },
+   "route": "CUT",
+   "gutter": 2041,
+   "emit": [
+    41,
+    27,
+    3966,
+    2975
+   ],
+   "hit": true,
+   "g3": {
+    "lang": "ita",
+    "uncut": {
+     "gutter": 2041,
+     "conf_ge_80": 685,
+     "words": 726
+    },
+    "cut": {
+     "gutter": 2041,
+     "conf_ge_80": 665,
+     "words": 728
+    },
+    "d_conf_ge_80": -20,
+    "diff": {
+     "only_uncut": [
+      "(IGN)",
+      "(IGNI",
+      "(MAI).",
+      "(SO",
+      "(UGNAa).",
+      "68",
+      "AAA",
+      "Bajociano",
+      "C",
+      "E",
+      "ENNIO",
+      "Elle",
+      "IL",
+      "Igne",
+      "LINE,",
+      "Mazione",
+      "Oxfordiano_",
+      "PESI",
+      "Riempimento",
+      "Va).",
+      "acino",
+      "anos",
+      "contesto",
+      "crisi",
+      "di",
+      "di",
+      "evidenziarei",
+      "fondale",
+      "igne",
+      "include",
+      "le",
+      "le",
+      "nel",
+      "no,",
+      "oolitiche",
+      "ormazione",
+      "pareggiando",
+      "peliti",
+      "piattaform",
+      "profondisce",
+      "sia",
+      "ssiche",
+      "superano",
+      "te",
+      "|",
+      "|",
+      "\u00a9",
+      "\u2018oarcia",
+      "\u2019",
+      "\u201cRONOLOGIA"
+     ],
+     "only_cut": [
+      "(IGNAa).",
+      "(MA).",
+      "(SOVa).",
+      ":",
+      ":",
+      ":",
+      ";",
+      ";",
+      ";",
+      ";",
+      "CRONOLOGIA",
+      "EI",
+      "Formazio",
+      "IA",
+      "KR",
+      "Livello",
+      "Or",
+      "Oxfordiano",
+      "Paiociano",
+      "Parte",
+      "PiattaformM",
+      "Si",
+      "Toarciano",
+      "UGN},",
+      "]",
+      "ano",
+      "anossi",
+      "approfondisce",
+      "che",
+      "con",
+      "cris\u00ec",
+      "dale",
+      "de",
+      "del",
+      "e!",
+      "ee",
+      "erano",
+      "evidenziare",
+      "i",
+      "la",
+      "lempimento",
+      "oe",
+      "one",
+      "ossiche",
+      "politico",
+      "ri",
+      "sa",
+      "testo",
+      "ulle",
+      "varciane.",
+      "{sue",
+      "\u00cc"
+     ]
+    }
+   }
+  },
+  "de_01": {
+   "pop": "T",
+   "box": [
+    472,
+    192,
+    3512,
+    2811
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 85% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    228,
+    0,
+    3755,
+    3000
+   ],
+   "check": {
+    "cut": [
+     228,
+     0,
+     3755,
+     3000
+    ],
+    "moved_edges": [
+     "left",
+     "right"
+    ],
+    "ms": 1153.6,
+    "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+    "edges": {
+     "left": true,
+     "right": true,
+     "top": true,
+     "bottom": true
+    },
+    "refused": "the model says the book continues past the left, right edge of the cut"
+   },
+   "route": "check refused: the model says the book continues past the left, right edge of the cut",
+   "gutter": 1992,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true,
+   "clip_pct": 0.0,
+   "check_vs_truth": {
+    "left": {
+     "said": true,
+     "truth": false
+    },
+    "right": {
+     "said": true,
+     "truth": false
+    }
+   }
+  },
+  "de_02": {
+   "pop": "T",
+   "box": [
+    652,
+    81,
+    3524,
+    2946
+   ],
+   "detector_applied": false,
+   "detector_reason": "book box is unstable: 3 seeded GrabCut draws disagree by 12.9% of the box on one edge (> 6%, the pad that covers inward error) - not cropping",
+   "candidate": [
+    422,
+    0,
+    3753,
+    3000
+   ],
+   "check": {
+    "cut": [
+     422,
+     0,
+     3753,
+     3000
+    ],
+    "moved_edges": [
+     "left",
+     "right"
+    ],
+    "ms": 1111.7,
+    "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+    "edges": {
+     "left": true,
+     "right": true,
+     "top": true,
+     "bottom": true
+    },
+    "refused": "the model says the book continues past the left, right edge of the cut"
+   },
+   "route": "check refused: the model says the book continues past the left, right edge of the cut",
+   "gutter": 2048,
+   "emit": [
+    0,
+    0,
+    4000,
+    3000
+   ],
+   "hit": true,
+   "clip_pct": 0.0,
+   "check_vs_truth": {
+    "left": {
+     "said": true,
+     "truth": true
+    },
+    "right": {
+     "said": true,
+     "truth": false
+    }
+   }
+  },
+  "zoomset_de_01": {
+   "pop": "T",
+   "box": [
+    318,
+    392,
+    2913,
+    2577
+   ],
+   "detector_applied": true,
+   "detector_reason": "cropped to detected book",
+   "route": "detector crops",
+   "gutter": 1684,
+   "emit": [
+    157,
+    267,
+    3071,
+    3060
+   ],
+   "hit": true,
+   "clip_pct": 0.0
+  },
+  "zoomset_de_02": {
+   "pop": "T",
+   "box": [
+    322,
+    468,
+    2840,
+    2528
+   ],
+   "detector_applied": true,
+   "detector_reason": "cropped to detected book",
+   "route": "detector crops",
+   "gutter": 1626,
+   "emit": [
+    33,
+    331,
+    3536,
+    3060
+   ],
+   "hit": true,
+   "clip_pct": 0.0
+  },
+  "zoomset_en_01": {
+   "pop": "T",
+   "box": [
+    596,
+    419,
+    2607,
+    2589
+   ],
+   "detector_applied": true,
+   "detector_reason": "cropped to detected book",
+   "route": "detector crops",
+   "gutter": 1616,
+   "emit": [
+    390,
+    286,
+    4037,
+    3060
+   ],
+   "hit": true,
+   "clip_pct": 0.0
+  },
+  "zoomset_en_02": {
+   "pop": "T",
+   "box": [
+    612,
+    600,
+    2587,
+    2567
+   ],
+   "detector_applied": true,
+   "detector_reason": "cropped to detected book",
+   "route": "detector crops",
+   "gutter": 1623,
+   "emit": [
+    426,
+    395,
+    3891,
+    3060
+   ],
+   "hit": true,
+   "clip_pct": 0.0
+  },
+  "paleset_01": {
+   "pop": "T",
+   "box": [
+    4,
+    407,
+    3199,
+    2674
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 92% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    0,
+    225,
+    3454,
+    2855
+   ],
+   "check": {
+    "cut": [
+     0,
+     225,
+     3454,
+     2855
+    ],
+    "moved_edges": [
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 978.9,
+    "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+    "edges": {
+     "left": false,
+     "right": false,
+     "top": false,
+     "bottom": false
+    }
+   },
+   "route": "CUT",
+   "gutter": 1697,
+   "emit": [
+    0,
+    225,
+    3454,
+    2855
+   ],
+   "hit": true,
+   "clip_pct": 0.0,
+   "check_vs_truth": {
+    "right": {
+     "said": false,
+     "truth": false
+    },
+    "top": {
+     "said": false,
+     "truth": false
+    },
+    "bottom": {
+     "said": false,
+     "truth": false
+    }
+   },
+   "g3": {
+    "lang": "eng",
+    "uncut": {
+     "gutter": 1697,
+     "conf_ge_80": 492,
+     "words": 640
+    },
+    "cut": {
+     "gutter": 1697,
+     "conf_ge_80": 544,
+     "words": 649
+    },
+    "d_conf_ge_80": 52,
+    "diff": {
+     "only_uncut": [
+      "(",
+      "(",
+      "(1881-89);",
+      "(1894-96)",
+      "(as",
+      ")",
+      "+",
+      "++",
+      "0%",
+      "133",
+      "15",
+      "1828)",
+      "1883-1914);",
+      "18831014",
+      "1898.",
+      "19",
+      "19\u00b0",
+      "1:",
+      "1iii,",
+      "2",
+      "2",
+      "45",
+      "470,",
+      "62",
+      "7)",
+      "79",
+      "91",
+      ":",
+      ":",
+      ";",
+      "==",
+      "Americas.",
+      "Bird",
+      "Cai",
+      "Camalog",
+      "Captaincy",
+      "Chapman",
+      "Chapmarks",
+      "Chopmarks,",
+      "Choprarked",
+      "Coins\u2014",
+      "Dal",
+      "Dala;",
+      "Descapoon:",
+      "Ee",
+      "Ex-I.",
+      "Galleon",
+      "GullbeTE",
+      "Gullberg\u2019s",
+      "HM,",
+      "Ha",
+      "Hava",
+      "Havaian",
+      "Hawai'i",
+      "Hawai\u2018\u2019s",
+      "II,",
+      "Iig-",
+      "Issue",
+      "KM",
+      "KM#",
+      "KM#",
+      "King",
+      "Morzin,",
+      "Nationa",
+      "Nos",
+      "Photographt",
+      "RO",
+      "Ranty",
+      "Rating.",
+      "Refere",
+      "Rose's",
+      "SUga~",
+      "Was",
+      "Xi",
+      "Yoar(s)",
+      "aE",
+      "ambitions",
+      "ame",
+      "an",
+      "anil",
+      "axchipelago",
+      "be",
+      "bec",
+      "cen",
+      "century;",
+      "chopmarks.",
+      "con",
+      "d",
+      "earliest",
+      "emploved",
+      "enterprses",
+      "ffi).",
+      "flicts",
+      "flo",
+      "forms",
+      "from",
+      "god",
+      "he",
+      "he",
+      "hi.",
+      "hy",
+      "ieha",
+      "ific",
+      "in",
+      "in",
+      "in",
+      "in",
+      "ingle",
+      "intage",
+      "isolation,",
+      "issue",
+      "later",
+      "lopment",
+      "mblish",
+      "mona",
+      "nanve",
+      "ociety",
+      "ond",
+      "pao",
+      "pera",
+      "r",
+      "refineat",
+      "rei",
+      "relative",
+      "rer",
+      "retaliatig",
+      "rouely",
+      "s1ngi",
+      "saremala,",
+      "silver).",
+      "somewhat",
+      "successor",
+      "suld",
+      "tates",
+      "thonry",
+      "thought",
+      "tle",
+      "to",
+      "tradip",
+      "tre",
+      "uait",
+      "unde",
+      "unique.",
+      "unl",
+      "urished",
+      "v",
+      "ye",
+      "\u00a9",
+      "\u00ab",
+      "\u00ab",
+      "\u00b0C",
+      "\u20accOBOMc"
+     ],
+     "only_cut": [
+      "!",
+      "\"",
+      "(1881-83);",
+      "(1883-1914),",
+      "(IX",
+      "(KM#",
+      "(KMF",
+      "-",
+      "0",
+      "1",
+      "1",
+      "1.2",
+      "104).",
+      "104.",
+      "105",
+      "105.",
+      "11,",
+      "1883-1914",
+      "1890",
+      "1892/0",
+      "19%",
+      "197",
+      "1t5",
+      "2)",
+      "28)",
+      "2S",
+      "52).",
+      "52;",
+      "79-",
+      "9;",
+      "=",
+      ">",
+      "Affair).",
+      "Americas,",
+      "Capuaincy",
+      "Chopmarks",
+      "Chopmias",
+      "Collection.",
+      "Colleerion.",
+      "Dala",
+      "Dalz;",
+      "Description:",
+      "Duplicate",
+      "EL",
+      "Ex-F.",
+      "Fig-",
+      "Fig.",
+      "Fig.",
+      "Guatemala,",
+      "GullbeT\u00ae",
+      "HM",
+      "Hawa",
+      "Hawaiian",
+      "Hawai\u2018i\u2019s",
+      "Hawai\u2019i",
+      "Hawal",
+      "Honduras",
+      "Horacis",
+      "Hun",
+      "IKM#",
+      "Issued:",
+      "Jour)",
+      "KM#H",
+      "Kingd",
+      "Kingdom",
+      "Knit",
+      "Lo",
+      "MF",
+      "Morazin,",
+      "Murphy",
+      "Paulet",
+      "Peso",
+      "Peso",
+      "Photograph!",
+      "R-3",
+      "Rating:",
+      "Reference(s):",
+      "Rigor",
+      "Row",
+      "SE",
+      "SUCCESSOr",
+      "Type",
+      "ambidons",
+      "ar",
+      "archipelago",
+      "became",
+      "beyond",
+      "but",
+      "by",
+      "by",
+      "cenry",
+      "century,",
+      "chopmatks.",
+      "cific",
+      "conflicts",
+      "doe",
+      "during",
+      "e",
+      "economic",
+      "elopment",
+      "employed",
+      "eo",
+      "ery",
+      "est",
+      "eveloped",
+      "flourished",
+      "for",
+      "for",
+      "fr",
+      "ftle",
+      "i",
+      "iL",
+      "ime),",
+      "inl",
+      "ish",
+      "ished",
+      "islands",
+      "isolanon,",
+      "major",
+      "mintage",
+      "mons",
+      "n",
+      "ng",
+      "ning",
+      "of",
+      "of",
+      "of",
+      "orers",
+      "perio",
+      "prior",
+      "rated",
+      "refinemcat",
+      "rej",
+      "relauve",
+      "retaliang",
+      "rouonc",
+      "s",
+      "s.",
+      "single",
+      "society",
+      "sugar",
+      "sunced",
+      "suthonty",
+      "t",
+      "the",
+      "third",
+      "time",
+      "tradin",
+      "tsinger",
+      "under",
+      "unit",
+      "until",
+      "would",
+      "ww",
+      "~",
+      "\u2014",
+      "\u2018the",
+      "\u201c%",
+      "\u20acOLCIPOSE"
+     ]
+    }
+   }
+  },
+  "paleset_02": {
+   "pop": "T",
+   "box": [
+    335,
+    539,
+    3191,
+    2390
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    106,
+    390,
+    3419,
+    2538
+   ],
+   "check": {
+    "cut": [
+     106,
+     390,
+     3419,
+     2538
+    ],
+    "moved_edges": [
+     "left",
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 877.8,
+    "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+    "edges": {
+     "left": false,
+     "right": false,
+     "top": false,
+     "bottom": false
+    }
+   },
+   "route": "CUT",
+   "gutter": 1749,
+   "emit": [
+    106,
+    390,
+    3419,
+    2538
+   ],
+   "hit": true,
+   "clip_pct": 0.0,
+   "check_vs_truth": {
+    "left": {
+     "said": false,
+     "truth": false
+    },
+    "right": {
+     "said": false,
+     "truth": false
+    },
+    "top": {
+     "said": false,
+     "truth": false
+    },
+    "bottom": {
+     "said": false,
+     "truth": false
+    }
+   },
+   "g3": {
+    "lang": "eng",
+    "uncut": {
+     "gutter": 1749,
+     "conf_ge_80": 792,
+     "words": 930
+    },
+    "cut": {
+     "gutter": 1749,
+     "conf_ge_80": 869,
+     "words": 921
+    },
+    "d_conf_ge_80": 77,
+    "diff": {
+     "only_uncut": [
+      "(",
+      "(ype",
+      "-_\u2014",
+      "/",
+      "1",
+      "1810,",
+      "1838.",
+      "1875,",
+      "23",
+      "5",
+      ":",
+      ":",
+      ";",
+      "A",
+      "Chopmarked",
+      "Chopmars,",
+      "Chopmartked",
+      "Dials",
+      "E.I",
+      "Ex-I.",
+      "F.",
+      "Fig.",
+      "Hawai'i",
+      "Hawai'i",
+      "Hawai'i",
+      "Hawaiians",
+      "Hon",
+      "Issued",
+      "K",
+      "KM##",
+      "Kingdom",
+      "LT",
+      "Le",
+      "Licata",
+      "M.",
+      "Manila",
+      "Mines",
+      "Nationajisy",
+      "P",
+      "P",
+      "Rating;",
+      "Ratng:",
+      "Refe",
+      "Regan",
+      "Ror",
+      "Rose's",
+      "Rose]",
+      "SER",
+      "Ss",
+      "Sugar",
+      "Vas",
+      "[aso",
+      "a",
+      "additonal",
+      "alog",
+      "an",
+      "arity",
+      "asonably",
+      "ay",
+      "came",
+      "cao",
+      "cenDes",
+      "change.!",
+      "commisstoned",
+      "dless,",
+      "duras",
+      "eT",
+      "efor!",
+      "ek",
+      "enterprises",
+      "eo",
+      "et",
+      "ex",
+      "fro",
+      "he",
+      "i",
+      "i",
+      "i",
+      "ion",
+      "ior",
+      "ite",
+      "m",
+      "maritim,",
+      "oi",
+      "other",
+      "oy",
+      "parmer.",
+      "partmers",
+      "period",
+      "prior",
+      "que.",
+      "re",
+      "reductio",
+      "refineHond",
+      "reign",
+      "rg",
+      "roui",
+      "s",
+      "time",
+      "tury",
+      "uni",
+      "unstruck",
+      "ven).",
+      "vesscls",
+      "world\u201d",
+      "ws",
+      "{eapuleo",
+      "\u00a2",
+      "\u00ae",
+      "\u2014A"
+     ],
+     "only_cut": [
+      "(February",
+      "1,",
+      "105",
+      "1810.",
+      "1838,",
+      "1875.",
+      "19\u00b0",
+      "6",
+      "Catalog",
+      "Chaopmarked",
+      "China,",
+      "Chopmarks,",
+      "Chopmrarked",
+      "Coins",
+      "Dala",
+      "Description:",
+      "Despite",
+      "EL",
+      "Ex-F.",
+      "Fig,",
+      "Guatemala,",
+      "HaWaiians",
+      "Hany",
+      "Hawai\u2018i",
+      "Hawai\u2019i",
+      "Honduras",
+      "Honduras",
+      "I.",
+      "Issued:",
+      "KM#",
+      "Kingdor",
+      "Licato",
+      "Manils-",
+      "Mint\u2019s",
+      "NM.",
+      "Nationality",
+      "No.",
+      "Prior",
+      "R-3",
+      "Rarity",
+      "Rating:",
+      "Rating:",
+      "Reference(s):",
+      "Reforms",
+      "Regardless,",
+      "Register",
+      "Rose/Licato",
+      "Rose\u2019s",
+      "The",
+      "Vol.",
+      "additional",
+      "anc",
+      "authority",
+      "became",
+      "can",
+      "century",
+      "championed",
+      "commis",
+      "depleting",
+      "e",
+      "enterprises,",
+      "exchange.!",
+      "export",
+      "former",
+      "from",
+      "ime",
+      "is",
+      "it",
+      "major",
+      "major",
+      "mantme",
+      "of",
+      "othe;",
+      "partner.",
+      "partners",
+      "penod",
+      "power",
+      "reasonably",
+      "reduction",
+      "refinement",
+      "reigr",
+      "resource.",
+      "roufinely",
+      "service",
+      "silver).",
+      "sioned",
+      "sources;",
+      "sugar",
+      "th",
+      "the",
+      "to",
+      "to",
+      "to",
+      "type",
+      "uastruck",
+      "unique.",
+      "vessels",
+      "was",
+      "was",
+      "world.\u201d",
+      "{eapules",
+      "\u2014"
+     ]
+    }
+   }
+  },
+  "owner_01": {
+   "pop": "O",
+   "box": [
+    649,
+    765,
+    2322,
+    2396
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    515,
+    634,
+    2455,
+    2526
+   ],
+   "check": {
+    "cut": [
+     515,
+     634,
+     2455,
+     2526
+    ],
+    "moved_edges": [
+     "left",
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 1109.6,
+    "answer": "{\"left\":true,\"right\":false,\"top\":false,\"bottom\":false}",
+    "edges": {
+     "left": true,
+     "right": false,
+     "top": false,
+     "bottom": false
+    },
+    "refused": "the model says the book continues past the left edge of the cut"
+   },
+   "route": "check refused: the model says the book continues past the left edge of the cut",
+   "gutter": 1340,
+   "emit": [
+    0,
+    0,
+    4080,
+    3060
+   ]
+  },
+  "owner_03": {
+   "pop": "O",
+   "box": [
+    420,
+    633,
+    2644,
+    2362
+   ],
+   "detector_applied": false,
+   "detector_reason": "detected region covers 100% of the frame (>= 83%) - cropping to it would discard almost nothing, so not cropping",
+   "candidate": [
+    242,
+    494,
+    2821,
+    2500
+   ],
+   "check": {
+    "cut": [
+     242,
+     494,
+     2821,
+     2500
+    ],
+    "moved_edges": [
+     "left",
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 1020.7,
+    "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+    "edges": {
+     "left": true,
+     "right": true,
+     "top": true,
+     "bottom": true
+    },
+    "refused": "the model says the book continues past the left, right, top, bottom edge of the cut"
+   },
+   "route": "check refused: the model says the book continues past the left, right, top, bottom edge of the cut",
+   "gutter": 1455,
+   "emit": [
+    0,
+    0,
+    4080,
+    3060
+   ]
+  },
+  "owner_02": {
+   "pop": "O'",
+   "box": [
+    273,
+    551,
+    2640,
+    2411
+   ],
+   "detector_applied": false,
+   "detector_reason": "book box runs to 3 frame edges (left, top, bottom) - not cropping",
+   "candidate": [
+    83,
+    402,
+    2829,
+    2559
+   ],
+   "check": {
+    "cut": [
+     83,
+     402,
+     2829,
+     2559
+    ],
+    "moved_edges": [
+     "left",
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 1032.7,
+    "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+    "edges": {
+     "left": false,
+     "right": false,
+     "top": false,
+     "bottom": false
+    }
+   },
+   "route": "CUT",
+   "gutter": 1482,
+   "emit": [
+    83,
+    402,
+    2829,
+    2559
+   ]
+  },
+  "owner_04": {
+   "pop": "O'",
+   "box": [
+    465,
+    624,
+    2709,
+    2368
+   ],
+   "detector_applied": false,
+   "detector_reason": "book box runs to 3 frame edges (left, top, bottom) - not cropping",
+   "candidate": [
+    285,
+    484,
+    2888,
+    2507
+   ],
+   "check": {
+    "cut": [
+     285,
+     484,
+     2888,
+     2507
+    ],
+    "moved_edges": [
+     "left",
+     "right",
+     "top",
+     "bottom"
+    ],
+    "ms": 1022.8,
+    "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+    "edges": {
+     "left": true,
+     "right": true,
+     "top": true,
+     "bottom": true
+    },
+    "refused": "the model says the book continues past the left, right, top, bottom edge of the cut"
+   },
+   "route": "check refused: the model says the book continues past the left, right, top, bottom edge of the cut",
+   "gutter": 1485,
+   "emit": [
+    0,
+    0,
+    4080,
+    3060
+   ]
+  }
+ }
+}

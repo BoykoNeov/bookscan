@@ -1,0 +1,115 @@
+left.png BASE {'size': (1511, 3060), 'words': 377, 'c80': 327, 'blocks': Counter({'paragraph': 11, 'other': 3, 'figure': 3, 'heading': 2, 'header': 1}), 'orphans': 1}
+left.png CUT  {'size': (1426, 2157), 'words': 361, 'c80': 334, 'blocks': Counter({'paragraph': 11, 'figure': 3, 'other': 2, 'header': 1, 'heading': 1, 'page_number': 1}), 'orphans': 2}
+  only BASE: 57 %5A & - 1) 5X 8- A] All Alpi Alpinverl; BE Bren DA) DS FE Gefahr! HS In Informati LE R Ri Rodermun S S S SA SE SS Se Tourenvor- Verl X Zur ag berü cher chtigkeit cksichtigt! d, de des e g m npe ode! onen strafbar, ta teige tohnen tters vor, www.alpinverlag.at zuk! ünftigen
+  only CUT : 41 % 0 3 5 7 AR Alle Alpinverlages Brenta ES] Einspeichern Gefahr!| I) Jentzsch-Rabl Klettersteig-Informationen Klettersteige Richtigkeit Rodermund, Tourenvar- Verarbeiten Verlag Wwww.alpinverlag.at alpinverlag.at berücksichtigt! bitten elektronischen in in lohnenden oder so strafbar. und vorgestellten www. zukünftigen zur | | | ‚3
+   BASE #0 header: Klettersteigführer Dolomiten - Südtirol - Gardasee
+   BASE #1 heading: Klettersteigführer Dolomiten - Südtirol - Gardasee
+   BASE #2 paragraph: teige in den Dolomiten, in Südtirol, All tters Se tohnen SE ta und in den Vizentiner Alpen am Gardasee, in der Bren
+   BASE #3 paragraph: ISBN: 978-3-902656-32-2 EAN: 9783902656322
+   BASE #4 paragraph: 5. Auflage 2022
+   BASE #5 paragraph: © 2022 Printed in Austria - Copyright d, Fiona Aschenbrenner, Dieter Wissekal u. Andreas Jentzsch Übersetzungen: Inga Rodermun
+   BASE #6 heading: Alpinverlag
+   BASE #7 other: X
+   BASE #8 paragraph: Alpinverlag Jentzsch-Rabl GmbH Kötsching 9 A-6323 Bad Häring
+   BASE #9 paragraph: www.alpinverlag.at info@alpinverlag.at
+   BASE #10 paragraph: r Fragen zu den in diesem Buch vor, SS S S ag in Verbindung zu setzen. Über HS Touren haben, de wir ünftigen Auflagen berü cksichtigt! 8- onen würden Wenn Sie Ergänzungen ode! Sie, sich direkt mit dem Verl wir uns sehr freuen - sie werden in zuk! Informati
+   BASE #11 figure: m
+   BASE #12 paragraph: Touren-App-Zugang: Die Daten werden ab Erscheinen dieses Buches mind. 3 Jahre lang kostenlos in der App Zur Verfügung gestellt. App kostenlos In Stores downloaden und Buch mittels Rubbelcode (siehe Seite 1) für 3 Jahre freischalten.
+   BASE #13 paragraph: Danke für die Unterstützung an: Ernst Riha, Daniel Rieser, Peter Schlögel, Sebastian Gebennus, Wolf- gang Kuhlmann, Martin Kiefer, Michiel Steendam, Judith Perathoner, Josef Melchart, Bruno Deluca, Paolo de Zorzi, Daniela Kengyel, Erich Uplasnik, Irene Werner, Martina Rabl und Helga Jentzsch.
+   BASE #14 paragraph: Das gesamte Werk und die Daten in der App sind urheberrechtlich geschützt. Jede Verwendung ohne Zustimmung des Alpi LE R e SE g des Alpinverl; - unzulässig und strafbar. Dies gilt insbesondere für Vervielfältigung, Übersetzung und Mikroverfilmung, auch das npe cher SA A GmbH ist Systemen und Medien 
+   BASE #15 figure: & BE FE DS DA) N A] %5A 5X Benützung des Klettersteiges auf eigene Gefahr!
+   BASE #16 paragraph: Haftungsausschluss: Das vorliegende Buch und alle darin beschriebenen Tourenvor- schläge, GPS-Daten, Techniken und Sicherungsformen wurden vor Ort, aber auch anhand von Quellen sorgfältig erarbeitet. Dennoch erfolgen alle An- chtigkeit und Vollständigkeit. Weder Autor noch Verlag können für eventuel
+   BASE #17 other: S
+   BASE #18 other: 
+   BASE #19 figure: 
+   CUT #0 header: Klettersteigführer Dolomiten - Südtirol - Gardasee
+   CUT #1 heading: Klettersteigführer Dolomiten - Südtirol - Gardasee
+   CUT #2 paragraph: Alle lohnenden Klettersteige in den Dolomiten, in Südtirol, am Gardasee, in der Brenta und in den Vizentiner Alpen
+   CUT #3 paragraph: ISBN: 978-3-902656-32-2 EAN: 9783902656322
+   CUT #4 paragraph: 5. Auflage 2022
+   CUT #5 paragraph: Printed in Austria - Copyright © 2022 Übersetzungen: Inga Rodermund, Fiona Aschenbrenner, Dieter Wissekal u. Andreas Jentzsch
+   CUT #6 figure: Alpinverlag
+   CUT #7 paragraph: Alpinverlag Jentzsch-Rabl GmbH Kötsching 9 A-6323 Bad Häring
+   CUT #8 paragraph: Wwww.alpinverlag.at info@alpinverlag.at
+   CUT #9 paragraph: Wenn Sie Ergänzungen oder Fragen zu den in diesem Buch vorgestellten Touren haben, so bitten wir Sie, sich direkt mit dem Verlag in Verbindung zu setzen. Über Klettersteig-Informationen würden wir uns sehr freuen - sie werden in zukünftigen Auflagen berücksichtigt!
+   CUT #10 figure: 
+   CUT #11 paragraph: Touren-App-Zugang: Die Daten werden ab Erscheinen dieses Buches mind. 3 Jahre lang kostenlos in der App zur Verfügung gestellt. App kostenlos in Stores downloaden und Buch mittels Rubbelcode (siehe Seite I) für 3 Jahre freischalten.
+   CUT #12 paragraph: Danke für die Unterstützung an: Ernst Riha, Daniel Rieser, Peter Schlögel, Sebastian Gebennus, Wolf- gang Kuhlmann, Martin Kiefer, Michiel Steendam, Judith Perathoner, Josef Melchart, Bruno Deluca, Paolo de Zorzi, Daniela Kengyel, Erich Uplasnik, Irene Werner, Martina Rabl und Helga Jentzsch.
+   CUT #13 paragraph: Das gesamte Werk und die Daten in der App sind urheberrechtlich geschützt. Jede Verwendung ohne Zustimmung des Alpinverlages Jentzsch-Rabl GmbH ist unzulässig und strafbar. Dies gilt insbesondere für Vervielfältigung, Übersetzung und Mikroverfilmung, auch das Einspeichern und Verarbeiten in elektron
+   CUT #14 figure: % N 5 | ‚3 SE 7 0 A AR ES] Benützung des Klettersteiges auf eigene Gefahr!|
+   CUT #15 paragraph: Haftungsausschluss: Das vorliegende Buch und alle darin beschriebenen Tourenvar- schläge, GPS-Daten, Techniken und Sicherungsformen wurden vor Ort, aber auch anhand von Karten, Satellitenbildern und anderen Quellen sorgfältig erarbeitet. Dennoch erfolgen alle An- gaben ohne Gewähr, Anspruch auf Rich
+   CUT #16 other: |
+   CUT #17 other: |
+   CUT #18 page_number: r www. alpinverlag.at
+right.png BASE {'size': (1518, 3060), 'words': 298, 'c80': 242, 'blocks': Counter({'other': 29, 'footnote': 15, 'figure': 3, 'paragraph': 2}), 'orphans': 213}
+right.png CUT  {'size': (1374, 2157), 'words': 314, 'c80': 202, 'blocks': Counter({'other': 13, 'heading': 2, 'header': 1, 'paragraph': 1, 'table': 1, 'page_number': 1}), 'orphans': 173}
+  only BASE: 109 (B) 0 0000000 000000000000 1,3 10 100 12% 12% 14 15 21 26 28 3% 31 32 35 36 4/4 4/4 5 5 6 750 760 800 8’ A/B ABS AI AIO Alpine Am Arzalpenturm- Ausrüstung Autoren B/C B/C, B/C, B7 BOLD C C C, C/D, CS Cösare Einstieg Gefahren Gemand Gesamt Hm Hm Hm I I I- Il Inhalt Klettersteig Klettersteig Klettersteige Klettersteige Klettersteige Klettersteigindex Klettersteigindex N Piazzei SE SZ Schwierigkeit/Gesamtanspruch Std. Std. Std. Std. Std. Std. Std. Std. Std. Total Tourenbeschreibung Tourenplanung Tourenübers Var. Vorwort Wwww.alpinverlag Wörterbuch/Dictionary/Dizionario Ye Yia ZZ Zeichenerklärung a dd der el icht id m ni nr ourenübersicht re und x znsprach ‘X ‚at
+  only CUT : 125 (3) (3) (Z) .at 1 1,2 1,5 1,7 1100 13 13 13 2 3 3 4 4 4% 4% 57 750Hm| 760Hm| 800Hm| 88 @ @ @ @ @ @ @ A(B) A5 A6 A8 A8 AB AI0 AI0 AI2 AT Adventure Al Al Alpinisteig Ampezzaner Arzalpenturm-Klettersteig Arzalpenturm-Mietterstel A| B(C) B/C,I B/C,I- B/C| B_ Bonacossa C,Var CD, Cas Ceria Climb C| C| Dolomiten D| D} E)) Ferrata Ferrata Ferrata Innerkoflersteig Leiternsteig Mario Merlone O2) Roghel, Rotwandsteig Schar Sentiero Severino Sextener Std, TE Terrata Varmos Via Via Via Via Zandor [X [| [| ferrata u. www.alpinverlag | | | | | | | | | | | | | | | | | | |) |} £O ® ® ® ® ® ®@ ®@ „I €
+   BASE #0 figure: 
+   BASE #1 other: SE 0 Inhalt und Tourenübers icht ni
+   BASE #2 paragraph: 3 Inhalt und Tourenübersicht Klettersteige 9 Vorwort der Autoren 10 Tourenplanung 14 Ausrüstung 21 Am Klettersteig 26 Alpine Gefahren 31 Wörterbuch/Dictionary/Dizionario 32 Schwierigkeit/Gesamtanspruch 35 Zeichenerklärung 36 Tourenbeschreibung Klettersteige 538 Klettersteigindex
+   BASE #3 paragraph: Inhalt und Tourenübersicht Klettersteige Vorwort der Autoren Tourenplanung Ausrüstung Am Klettersteig Alpine Gefahren Wörterbuch/Dictionary/Dizionario Schwierigkeit/Gesamtanspruch Zeichenerklärung Tourenbeschreibung Klettersteige Klettersteigindex
+   BASE #4 figure: Einstieg Cösare re Piazzei Ye a N ( BOLD CS SZ el ‘X x ourenübersicht Klettersteige Gesamt znsprach Total Gemand © m
+   BASE #5 other: 0000000 000000000000
+   BASE #6 footnote: AI Arzalpenturm- Klettersteig Il A2 Via ferrata Mario Zandonella
+   BASE #7 footnote: A3 Ferrata Roghel, Ferrata Gabriella A4 Via Ferrata Severino Casara
+   BASE #8 other: A5 Alpinisteig
+   BASE #9 footnote: A6 Sextener Rotwandsteig
+   BASE #10 other: A7 Leiternsteig
+   BASE #11 footnote: ABS Innerkoflersteig u. Schartenweg A9 Via ferrata Ceria Merlone
+   BASE #12 footnote: AIO Sentiero Bonacossa
+   BASE #13 other: All Hauptmann-Bilgeri-Steig
+   BASE #14 footnote: Al2 Adventure Climb Varmost
+   BASE #15 footnote: ZZ nr id dd BI Via ferrata Rene de Pol
+   BASE #16 footnote: B2 Via ferrata Ivano Dibona
+   BASE #17 footnote: B3 Yia ferrata Marino Bianchi
+   BASE #18 footnote: B4 Yia ferrata Sci Club 18
+   BASE #19 footnote: B5 Große Sorapis Runde
+   BASE #20 footnote: B6 Strada Sanmarchi
+   BASE #21 footnote: B7 Yia ferrata Michielli A. Strobel
+   BASE #22 footnote: 28 Via ferrata Ettore Bovero
+   BASE #23 footnote: 2,0 1,7 2,1 15 15 1,3 1,4
+   BASE #24 other: 4% Std. 7% Std.
+   BASE #25 other: 10% Std. 4/4 Std. 5-8 Std. 5% Std.
+   BASE #26 other: 4 Std.
+   BASE #27 other: 4/4 Std. 5% Std.
+   BASE #28 other: 7 Std.
+   BASE #29 other: 5% Std. 3% Std.
+   BASE #30 other: 6 Std.
+   BASE #31 other: 8’ Std.
+   BASE #32 other: 6 Std.
+   BASE #33 other: 3% Std. 12% Std. 12% Std,
+   BASE #34 other: 5 Std. 5 Std.
+   BASE #35 other: C, Var. C/D C
+   BASE #36 other: C/D, I
+   BASE #37 other: C
+   BASE #38 other: A (B)
+   BASE #39 other: A/B
+   BASE #40 other: B/C
+   BASE #41 other: B/C, I
+   BASE #42 other: B/C, I-
+   BASE #43 other: 840 Hm 1450 Hm 1400 Hm 550 Hm 1300 Hm 100 Hm 760 Hm 800 Hm 100 Hm 750 Hm 1050 Hm 750 Hm
+   BASE #44 other: 1200 Hm 1720 Hm 1050 Hm 650 Hm 1400 Hm 2200 Hm 1050 Hm 870 Hm
+   BASE #45 other: 350 Hm
+   BASE #46 other: 300 Hm 1000 Hm 120 Hm 300 Hm 570 Hm 100 Hm 300 Hm 290 Hm 700 Hm 80 Hm 210 Hm
+   BASE #47 other: Wwww.alpinverlag ‚at y N
+   BASE #48 figure: 
+   CUT #0 header: Inhalt und Tourenübersicht
+   CUT #1 paragraph: Inhalt und Tourenübersicht Klettersteige Vorwort der Autoren Tourenplanung Ausrüstung Am Klettersteig Alpine Gefahren Wörterbuch/Dictionary/Dizionario Schwierigkeit/Gesamtanspruch Zeichenerklärung Tourenbeschreibung Klettersteige
+   CUT #2 other: TE
+   CUT #3 other: 3
+   CUT #4 other: 538
+   CUT #5 heading: A
+   CUT #6 other: ® Al Arzalpenturm-Mietterstel @ 2 Via ferrata Mario Zandor ®@ 3 Ferrata Roghel, Ferrata ( @ 4 Via Ferrata Severino Cas @ A5 Alpinisteig @ A6 Sextener Rotwandsteig @ A7 Leiternsteig @ A8 Innerkoflersteig u. Schar @ 9 Via ferrata Ceria Merlone ®@ AI0 Sentiero Bonacossa ® All Hauptmann-Bilgeri-Steig ® 
+   CUT #7 other: A5 Alpinisteig
+   CUT #8 other: A6 Sextener Rotwandsteig
+   CUT #9 other: AT Leiternsteig
+   CUT #10 other: A8 Innerkoflersteig u. Schartenweg A9 Via ferrata Ceria Merlone
+   CUT #11 other: A4 Via Ferrata Severino Casara
+   CUT #12 other: AI0 Sentiero Bonacossa
+   CUT #13 other: AI2 Adventure Climb Varmost
+   CUT #14 other: Al Arzalpenturm-Klettersteig A2 Via ferrata Mario Zandonella A3 Ferrata Roghel, Ferrata Gabriella
+   CUT #15 other: 2,0 | 4% Std. | C,Var C/D | 840 Hm | 350 Hm | E)) 1,7 7% Std. C| 1450 Hm | 300 Hm | O2) 2,1 10% Std. CD, 1 | 1400 Hm | 1000 Hm [| £O 1,5 4% Std. C| 550 Hm 120 Hm |) 15 5-8 Std. A(B) | 1300 Hm | 300 Hm | D} 13 5% Std, AB | 1100 Hm | 570 Hm 1,4 4 Std. B/C| 760Hm| 100 Hm 4 13 4% Std. B/C,I | 800Hm| 300
+   CUT #16 heading: B_ Ampezzaner Dolomiten
+   CUT #17 table: BI Via Terrata Rene de Pol B2 Via ferrata Ivano Dibona B3 Via ferrata Marino Bianchi B4 Yia ferrata Sci Club 18 B5 Große Sorapis Runde ® ® © € 6 B6 Strada Sanmarchi 57 Yia ferrata Michielli A. Strobel 88 Via ferrata Ettore Bovero 1200 Hm 1720 Hm 1050 Hm 650 Hm 1400 Hm 2200 Hm 1050 Hm 870 Hm
+   CUT #18 page_number: www.alpinverlag .at y 3 N

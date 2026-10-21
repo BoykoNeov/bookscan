@@ -1,0 +1,302 @@
+{
+ "bg_01": {
+  "cut": [
+   0,
+   129,
+   3925,
+   2903
+  ],
+  "moved_edges": [
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 33057.8,
+  "answer": "{\n  \"left\": false,\n  \"right\": false,\n  \"top\": false,\n  \"bottom\": false\n}",
+  "edges": {
+   "left": false,
+   "right": false,
+   "top": false,
+   "bottom": false
+  }
+ },
+ "bg_03": {
+  "cut": [
+   53,
+   9,
+   4000,
+   3000
+  ],
+  "moved_edges": [
+   "left",
+   "top"
+  ],
+  "ms": 1144.3,
+  "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+  "edges": {
+   "left": false,
+   "right": false,
+   "top": false,
+   "bottom": false
+  }
+ },
+ "en_coins_02": {
+  "cut": [
+   0,
+   0,
+   4000,
+   2952
+  ],
+  "moved_edges": [
+   "bottom"
+  ],
+  "ms": 1038.2,
+  "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+  "edges": {
+   "left": false,
+   "right": false,
+   "top": false,
+   "bottom": false
+  }
+ },
+ "it_geo_05": {
+  "cut": [
+   190,
+   93,
+   3869,
+   2960
+  ],
+  "moved_edges": [
+   "left",
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 1077.0,
+  "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+  "edges": {
+   "left": true,
+   "right": true,
+   "top": true,
+   "bottom": true
+  },
+  "refused": "the model says the book continues past the left, right, top, bottom edge of the cut"
+ },
+ "it_geo_06": {
+  "cut": [
+   41,
+   0,
+   4000,
+   3000
+  ],
+  "moved_edges": [
+   "left"
+  ],
+  "ms": 1051.7,
+  "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+  "edges": {
+   "left": false,
+   "right": false,
+   "top": false,
+   "bottom": false
+  }
+ },
+ "it_geo_07": {
+  "cut": [
+   41,
+   27,
+   3966,
+   2975
+  ],
+  "moved_edges": [
+   "left",
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 1132.7,
+  "answer": "{\n  \"left\": false,\n  \"right\": false,\n  \"top\": false,\n  \"bottom\": false\n}",
+  "edges": {
+   "left": false,
+   "right": false,
+   "top": false,
+   "bottom": false
+  }
+ },
+ "de_01": {
+  "cut": [
+   228,
+   0,
+   3755,
+   3000
+  ],
+  "moved_edges": [
+   "left",
+   "right"
+  ],
+  "ms": 1153.6,
+  "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+  "edges": {
+   "left": true,
+   "right": true,
+   "top": true,
+   "bottom": true
+  },
+  "refused": "the model says the book continues past the left, right edge of the cut"
+ },
+ "de_02": {
+  "cut": [
+   422,
+   0,
+   3753,
+   3000
+  ],
+  "moved_edges": [
+   "left",
+   "right"
+  ],
+  "ms": 1111.7,
+  "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+  "edges": {
+   "left": true,
+   "right": true,
+   "top": true,
+   "bottom": true
+  },
+  "refused": "the model says the book continues past the left, right edge of the cut"
+ },
+ "paleset_01": {
+  "cut": [
+   0,
+   225,
+   3454,
+   2855
+  ],
+  "moved_edges": [
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 978.9,
+  "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+  "edges": {
+   "left": false,
+   "right": false,
+   "top": false,
+   "bottom": false
+  }
+ },
+ "paleset_02": {
+  "cut": [
+   106,
+   390,
+   3419,
+   2538
+  ],
+  "moved_edges": [
+   "left",
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 877.8,
+  "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+  "edges": {
+   "left": false,
+   "right": false,
+   "top": false,
+   "bottom": false
+  }
+ },
+ "owner_01": {
+  "cut": [
+   515,
+   634,
+   2455,
+   2526
+  ],
+  "moved_edges": [
+   "left",
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 1109.6,
+  "answer": "{\"left\":true,\"right\":false,\"top\":false,\"bottom\":false}",
+  "edges": {
+   "left": true,
+   "right": false,
+   "top": false,
+   "bottom": false
+  },
+  "refused": "the model says the book continues past the left edge of the cut"
+ },
+ "owner_03": {
+  "cut": [
+   242,
+   494,
+   2821,
+   2500
+  ],
+  "moved_edges": [
+   "left",
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 1020.7,
+  "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+  "edges": {
+   "left": true,
+   "right": true,
+   "top": true,
+   "bottom": true
+  },
+  "refused": "the model says the book continues past the left, right, top, bottom edge of the cut"
+ },
+ "owner_02": {
+  "cut": [
+   83,
+   402,
+   2829,
+   2559
+  ],
+  "moved_edges": [
+   "left",
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 1032.7,
+  "answer": "{\"left\": false, \"right\": false, \"top\": false, \"bottom\": false}",
+  "edges": {
+   "left": false,
+   "right": false,
+   "top": false,
+   "bottom": false
+  }
+ },
+ "owner_04": {
+  "cut": [
+   285,
+   484,
+   2888,
+   2507
+  ],
+  "moved_edges": [
+   "left",
+   "right",
+   "top",
+   "bottom"
+  ],
+  "ms": 1022.8,
+  "answer": "{\"left\": true, \"right\": true, \"top\": true, \"bottom\": true}",
+  "edges": {
+   "left": true,
+   "right": true,
+   "top": true,
+   "bottom": true
+  },
+  "refused": "the model says the book continues past the left, right, top, bottom edge of the cut"
+ }
+}

@@ -9690,3 +9690,51 @@ Correction to the 2b pre-registration note in `plans/sweep-to-panorama-handoff.m
 the new population differs from Phase 2's in three ways (full size, closer,
 and — by the owner's call the same day — tapped rather than swept), so nothing
 from it compares with Phase 2's 5 of 40.
+
+## 2026-10-21 — Does `figure_hires`' likeness gate punish sharp close-ups? Barely; smoothing first is REFUSED
+
+STATUS 2026-10-21 suspected that the per-source likeness check (`min_ncc` 0.60)
+refuses the sharpest close-ups. The check shrinks the close-up to the page
+crop's size with no smoothing (`figure_hires.py:447`), so a source that
+resolves the printed halftone screen could alias into moiré and look *less*
+like the soft crop. Pre-registration `docs/data/hires_antialias_prereg_20261021.md`
+(9627333, committed before any smoothed number). Probe and per-candidate data:
+`docs/data/hires_antialias_probe_20261021.py`, `docs/data/hires_antialias_20261021/`.
+Change under test: a Gaussian prefilter of σ = ½·√(s² − 1) source px (from
+theory, not tuned) before the pull-back, `min_ncc` unchanged.
+
+Population: 178 figures over the owner's book (`20260829-084115-de3c20d3`) and
+today's two phone jobs; 417 candidates reach the gate. The probe's
+current-statistic arm reproduces the shipped runs (25 and 8 upgrades against
+24 and 7 shipped; the one extra in each is a block that `unreadable_panel`
+turns into a picture *after* the hires pass, the known P7 mechanism).
+
+| gate | result |
+|---|---|
+| G1 no regression (231 sources accepted today stay ≥ 0.60) | pass, 0 fall below |
+| G2 shifted copies passing (8 per accepted source, 5 % / 10 % shifts) | **fail: 216 → 222** |
+| G3 at least one delivered picture changes | **fail: 0 of 178** |
+| G4 by eye | not reached (nothing changed) |
+
+**Aliasing is real and small.** The prefilter's gain grows with scale as
+aliasing predicts — median +0.001 at 1.15–1.5×, +0.004 at 1.5–2×, +0.009 at
+2–2.5×, +0.012 at 2.5–4× — but never exceeds +0.051. Two sources cross 0.60
+(0.598 → 0.602, 0.599 → 0.606), and neither changes a picture. The coin of
+`20261021-103158` goes 0.587 → 0.596 and stays refused (and would be refused
+anyway: coverage 0.75 against the guarded 0.90, stated in the
+pre-registration). As feared, the smoother statistic also forgives
+misplacement: more shifted copies pass.
+
+**Reading.** The sharp close-ups that fail this gate fail it for a reason
+other than moiré. The likeliest remaining one is the one `_result_agreement`'s
+docstring already names: the crop comes from the *flattened* page and the
+source is the raw photograph, so at full resolution the remaining bend
+disagrees with fine texture. Not measured here. **Refused; nothing changed.**
+Out of scope and untested: the same unsmoothed shrink in `_agree_at`, which
+chooses the ECC alignment.
+
+**Seen on the way (not a gate; worth knowing):** of today's accepted sources,
+146 of 924 copies shifted by 5 % of the picture's short side, and 70 of 924
+shifted by 10 %, still pass `min_ncc` 0.60. The per-source gate alone does not
+stop a displaced source. The finished-picture check (`min_result_ncc`) and the
+greedy source choice are what stop it, as the 2026-08-29 row says.

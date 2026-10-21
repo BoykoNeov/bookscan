@@ -30,6 +30,34 @@ famine and has never run on a phone.
 
 ## The session, in order
 
+> **Changed 2026-10-21 — read before step 1.** The app no longer shrinks
+> close-ups and sweep frames: it uploads the camera's full-size file (JPEG 100)
+> named `frame_NN_closeup` / `frame_NN_sweep`, and Stage 01 v0.3.0 reads that
+> name to keep a full-size close-up from becoming the anchor (STATUS 2026-10-21).
+> Three consequences for this session:
+>
+> 1. **Restart the console (`bookscan.bat`) before the new app uploads
+>    anything, and install the app only after that.** A console started before
+>    commit e5fe8bf strips the `_closeup` marker, and Stage 01 can then elect a
+>    sharper full-size close-up as the anchor and drop half the spread. Do not
+>    kill the owner's console by name; ask them to restart it.
+> 2. **First check, before shooting the sweep:** upload one spread with a tapped
+>    close-up and confirm on the desktop that the close-up arrived at the
+>    anchor's pixel size, with EXIF intact, its `source` ending `_closeup`, and
+>    that `fuse.json`'s `anchor_source` is the whole-spread shot. Read the
+>    zoom ratio and which lens the phone used from the EXIF: if the zoom is
+>    digital, full size means interpolated pixels, and that bounds what any
+>    stitching can gain.
+> 3. **For the 2b pre-registration:** the new population differs from Phase 2's
+>    in two ways — sweeping, and full-size frames. A 2b result cannot be
+>    credited to sweeping alone, and is not directly comparable to Phase 2's
+>    5 of 40. Say so in the pre-registration.
+>
+> Uploads are now in the low hundreds of MB per swept spread. The server side
+> takes a 250 MB spread in 1.6 s (in process, 2026-10-21), and the phone
+> deletes a spread's files once it has uploaded (both the batch and the
+> upload-now path).
+
 ### 1. Build and install the app (Claude, needs the owner only for pairing)
 
 ```

@@ -103,6 +103,21 @@ def test_upload_preserves_a_sweep_origin_marker(client: TestClient, tmp_path: Pa
     assert (raw_dir / "frame_01_sweep.jpg").read_bytes() == b"swept"
 
 
+def test_upload_preserves_a_closeup_origin_marker(client: TestClient, tmp_path: Path):
+    """Load-bearing since 2026-10-21: close-ups arrive at full size, and this
+    saved name is what Stage 01's ``partition_frames`` reads to keep one from
+    becoming the anchor. Matched by the app's ``MultipartPartTest``."""
+    job_id = client.post("/api/jobs").json()["job_id"]
+    files = [
+        ("files", ("frame_00.jpg", io.BytesIO(b"anchor"), "image/jpeg")),
+        ("files", ("frame_01_closeup.jpg", io.BytesIO(b"close"), "image/jpeg")),
+    ]
+    r = client.post(f"/api/jobs/{job_id}/pages", files=files)
+    assert r.json()["files"] == ["frame_00.jpg", "frame_01_closeup.jpg"]
+    raw_dir = tmp_path / job_id / "page_001" / "raw"
+    assert (raw_dir / "frame_01_closeup.jpg").read_bytes() == b"close"
+
+
 def test_upload_index_is_arrival_order_not_the_client_s_claim(client: TestClient):
     """Only the marker is taken from the uploaded name. The index is the
     server's, so a client cannot renumber a page's frames by naming them."""

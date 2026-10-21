@@ -978,3 +978,11 @@ rules for it:
   1.30× close-up framing figure in P5 was measured on shrunk frames. Read the
   lens and zoom off the phone at the next shoot. Upload size per spread rises
   roughly 3–5×; not yet exercised on a phone. Not installed on the phone yet.
+- Follow-up (same day): the phone's "upload now" path never deleted a spread's
+  files after a successful upload (the batch path did); it does now, since
+  full-size files would fill the phone within a book. Server test added for
+  the `_closeup` marker. A 250 MB spread (anchor + 24 × 10 MB) passes the real
+  upload route in 1.6 s in process; Wi-Fi transfer not measured. The sweep
+  handoff plan now says: restart the console before installing the new app,
+  check close-ups arrive full size first, and pre-register 2b as differing from
+  Phase 2 in two ways.

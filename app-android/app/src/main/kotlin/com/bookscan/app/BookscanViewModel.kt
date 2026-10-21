@@ -119,7 +119,12 @@ class BookscanViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             updateReady { it.copy(uploading = true, error = null) }
             try {
-                sendSpread(api, jobId, PendingSpread(anchors, closeups))
+                val spread = PendingSpread(anchors, closeups)
+                sendSpread(api, jobId, spread)
+                // Same rule as uploadAll: once the server has the spread, its
+                // files go. Close-ups are full-size since 2026-10-21, so leaving
+                // them would fill the phone within a book.
+                spread.files.forEach { it.delete() }
                 refreshStatus(jobId)
             } catch (e: Exception) {
                 updateReady { it.copy(error = "upload failed after retries: ${e.message}") }

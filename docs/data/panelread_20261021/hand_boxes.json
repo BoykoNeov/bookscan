@@ -1,0 +1,12 @@
+{
+ "_note": "Close-up cuts drawn by hand (Claude, by eye on a 100 px grid in FRAME coordinates) for the 9 blocks whose automatic placement failed its likeness check. Drawn 2026-10-21 before any reader ran. Box = [x0, y0, x1, y1] in the named close-up frame, cut raw (no resampling). Frame = the census's highest-scale close-up holding >= 90 % of the block (same rule as the automatic cuts). page_020__left #1: that frame cuts off the 'Gehzeiten/Time' heading; kept by the rule, scored as is. page_025__right #8: frame_41 is soft and misses the map's top labels; kept by the rule.",
+ "page_017__left__b002": {"frame": "frame_01.png", "box": [830, 1170, 1245, 1710]},
+ "page_017__left__b007": {"frame": "frame_06.png", "box": [783, 794, 1222, 1580]},
+ "page_018__left__b004": {"frame": "frame_01.png", "box": [800, 1285, 1220, 1625]},
+ "page_018__left__b009": {"frame": "frame_07.png", "box": [790, 870, 1200, 1265]},
+ "page_019__left__b005": {"frame": "frame_01.png", "box": [880, 830, 1245, 1140]},
+ "page_020__left__b001": {"frame": "frame_01.png", "box": [585, 1682, 990, 1875]},
+ "page_020__left__b002": {"frame": "frame_03.png", "box": [750, 30, 1320, 2050]},
+ "page_024__left__b003": {"frame": "frame_03.png", "box": [715, 1600, 1185, 1860]},
+ "page_025__right__b008": {"frame": "frame_41.png", "box": [440, 0, 1420, 595]}
+}

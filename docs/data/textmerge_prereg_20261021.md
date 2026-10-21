@@ -93,3 +93,34 @@ One spread, one book, one session, one reader; a raw (unflattened) close-up;
 two regions of plain body text (no tables, no small print). It says nothing
 about the merge, about placement of partial close-ups, or about text a model
 writes.
+
+## Amendment (same day, before any close-up was read)
+
+The region-level B arm is empty: by the match, **no close-up holds either
+region whole** (best coverage 0.875 on R157 and on R156; 12 and 10 partial, 7
+and 9 absent). Seen at that point: the anchor's region CER only (R157 2.77 %,
+R156 5.26 %); no close-up reading. The unit therefore moves from the region to
+the **printed line**, fixed as follows before any close-up is read:
+
+- **Lines.** The anchor's region read is grouped by Tesseract's own lines;
+  if that gives exactly as many lines as the reference (17 and 11), line *i* is
+  reference line *i* (the reference was typed line for line as printed). If not,
+  ink-row projection of the region crop is used instead, under the same
+  count rule; if neither gives the count, the region is dropped and said so.
+  Each line's band runs halfway to its neighbours.
+- **Close-up placement.** The region's own match (the same crop→frame
+  homography as above) maps each line band into the close-up. A close-up
+  **holds a line** if all four corners of the band, shrunk 1 % horizontally,
+  land inside the frame at least 1 % of its size from the edge.
+- **Reading.** Each close-up reads its part of the region once (bounding
+  rectangle of the region's quadrilateral clipped to the frame, turned
+  upright as above). Every word's centre is mapped back into page coordinates
+  and given to the band containing it; a line's text is its words in
+  page-x order. The anchor's words are assigned the same way.
+- **Scoring.** Per line, CER against the reference line (quotes and dashes
+  normalised, whitespace collapsed; no hyphen joining, since a line is scored
+  alone). Over the lines held by at least one close-up: `a` = the anchor's
+  character-weighted CER on those lines; `m` = character-weighted mean of
+  each line's *median* close-up CER; `b` = same with each line's *best*
+  close-up. The decision rules above apply unchanged to `a`, `m`, `b`.
+- Coverage reported as lines held by ≥ 1 close-up / all lines.

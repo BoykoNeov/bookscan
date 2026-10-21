@@ -303,6 +303,9 @@ keeps — the median 1.30× above was measured on shrunk frames, and if the zoom
 is digital the shrink discarded mostly interpolated pixels. Read lens and zoom
 off the phone at the next shoot (the sweep session in P4). Upload size per
 spread rises roughly 3–5×, not yet exercised on a phone.
+**Side effect found and fixed the same day:** full-size close-ups passed
+Stage 01's sharpness gate and were pasted into 4 pages, which then printed text
+twice. Stage 01 no longer blends close-ups at all (v0.4.0, RESULTS 2026-10-21).
 
 ---
 

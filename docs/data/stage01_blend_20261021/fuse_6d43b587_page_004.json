@@ -1,0 +1,452 @@
+{
+  "n_frames": 18,
+  "anchor_source": "frame_00.png",
+  "method": "sharpest+stitch",
+  "fullspread_frames": [
+    "frame_00.png"
+  ],
+  "closeups": [
+    {
+      "name": "frame_01.png",
+      "matched": true,
+      "inliers": 141,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 177,
+      "inlier_ratio": 0.797,
+      "ncc": 0.861,
+      "sharpness_ratio": 1.018,
+      "corners": [
+        [
+          1863.2,
+          505.8
+        ],
+        [
+          3008.0,
+          575.5
+        ],
+        [
+          3013.9,
+          2257.1
+        ],
+        [
+          1823.9,
+          2192.8
+        ]
+      ]
+    },
+    {
+      "name": "frame_02.png",
+      "matched": true,
+      "inliers": 44,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 86,
+      "inlier_ratio": 0.512,
+      "ncc": 0.739,
+      "sharpness_ratio": 1.181,
+      "corners": [
+        [
+          1382.9,
+          506.2
+        ],
+        [
+          2684.6,
+          435.1
+        ],
+        [
+          2721.2,
+          2281.4
+        ],
+        [
+          1417.4,
+          2217.8
+        ]
+      ]
+    },
+    {
+      "name": "frame_03.png",
+      "matched": false,
+      "inliers": 39,
+      "note": "correctly located (ncc 0.725) but SOFTER than the anchor there (sharpness ratio 0.959 < 1.0) - blending it would make the page worse, so it is left out",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 76,
+      "inlier_ratio": 0.513,
+      "ncc": 0.725,
+      "sharpness_ratio": 0.959,
+      "corners": [
+        [
+          1253.5,
+          427.5
+        ],
+        [
+          2598.4,
+          484.1
+        ],
+        [
+          2615.1,
+          2194.2
+        ],
+        [
+          1298.8,
+          2271.3
+        ]
+      ]
+    },
+    {
+      "name": "frame_04.png",
+      "matched": true,
+      "inliers": 49,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 90,
+      "inlier_ratio": 0.544,
+      "ncc": 0.754,
+      "sharpness_ratio": 1.159,
+      "corners": [
+        [
+          1009.1,
+          452.6
+        ],
+        [
+          2336.0,
+          468.0
+        ],
+        [
+          2412.2,
+          2216.3
+        ],
+        [
+          1013.8,
+          2319.5
+        ]
+      ]
+    },
+    {
+      "name": "frame_05.png",
+      "matched": true,
+      "inliers": 21,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 49,
+      "inlier_ratio": 0.429,
+      "ncc": 0.734,
+      "sharpness_ratio": 1.822,
+      "corners": [
+        [
+          518.4,
+          478.5
+        ],
+        [
+          1795.0,
+          567.1
+        ],
+        [
+          1849.8,
+          2266.1
+        ],
+        [
+          467.7,
+          2443.7
+        ]
+      ]
+    },
+    {
+      "name": "frame_06.png",
+      "matched": true,
+      "inliers": 19,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 46,
+      "inlier_ratio": 0.413,
+      "ncc": 0.716,
+      "sharpness_ratio": 2.014,
+      "corners": [
+        [
+          640.9,
+          600.6
+        ],
+        [
+          1783.7,
+          487.0
+        ],
+        [
+          1827.7,
+          2231.2
+        ],
+        [
+          711.8,
+          2268.3
+        ]
+      ]
+    },
+    {
+      "name": "frame_07.png",
+      "matched": false,
+      "inliers": 12,
+      "note": "correctly located (ncc 0.887) but SOFTER than the anchor there (sharpness ratio 0.397 < 1.0) - blending it would make the page worse, so it is left out",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 51,
+      "inlier_ratio": 0.235,
+      "ncc": 0.887,
+      "sharpness_ratio": 0.397,
+      "corners": [
+        [
+          1418.8,
+          459.5
+        ],
+        [
+          1389.4,
+          2260.9
+        ],
+        [
+          2.3,
+          2407.4
+        ],
+        [
+          -28.8,
+          399.3
+        ]
+      ]
+    },
+    {
+      "name": "frame_08.png",
+      "matched": false,
+      "inliers": 0,
+      "note": "only 0 good matches (need 10 to fit)",
+      "kp_base": 4000,
+      "kp_closeup": 45,
+      "good_matches": 0,
+      "inlier_ratio": 0.0,
+      "ncc": 0.0,
+      "sharpness_ratio": 0.0,
+      "corners": null
+    },
+    {
+      "name": "frame_09.png",
+      "matched": true,
+      "inliers": 54,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 91,
+      "inlier_ratio": 0.593,
+      "ncc": 0.93,
+      "sharpness_ratio": 1.361,
+      "corners": [
+        [
+          3036.6,
+          1048.5
+        ],
+        [
+          3155.9,
+          2777.9
+        ],
+        [
+          1981.9,
+          2789.3
+        ],
+        [
+          1922.7,
+          1231.5
+        ]
+      ]
+    },
+    {
+      "name": "frame_10.png",
+      "matched": false,
+      "inliers": 183,
+      "note": "correctly located (ncc 0.837) but SOFTER than the anchor there (sharpness ratio 0.226 < 1.0) - blending it would make the page worse, so it is left out",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 239,
+      "inlier_ratio": 0.766,
+      "ncc": 0.837,
+      "sharpness_ratio": 0.226,
+      "corners": [
+        [
+          3281.7,
+          97.2
+        ],
+        [
+          3327.6,
+          2435.4
+        ],
+        [
+          1654.2,
+          2448.7
+        ],
+        [
+          1480.6,
+          -17.3
+        ]
+      ]
+    },
+    {
+      "name": "frame_11.png",
+      "matched": false,
+      "inliers": 20,
+      "note": "correctly located (ncc 0.904) but SOFTER than the anchor there (sharpness ratio 0.451 < 1.0) - blending it would make the page worse, so it is left out",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 50,
+      "inlier_ratio": 0.4,
+      "ncc": 0.904,
+      "sharpness_ratio": 0.451,
+      "corners": [
+        [
+          3094.7,
+          1027.1
+        ],
+        [
+          3235.8,
+          2721.2
+        ],
+        [
+          2048.6,
+          2656.6
+        ],
+        [
+          2064.6,
+          1140.5
+        ]
+      ]
+    },
+    {
+      "name": "frame_12.png",
+      "matched": false,
+      "inliers": 61,
+      "note": "correctly located (ncc 0.928) but SOFTER than the anchor there (sharpness ratio 0.915 < 1.0) - blending it would make the page worse, so it is left out",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 109,
+      "inlier_ratio": 0.56,
+      "ncc": 0.928,
+      "sharpness_ratio": 0.915,
+      "corners": [
+        [
+          2993.7,
+          1084.7
+        ],
+        [
+          3127.6,
+          2713.6
+        ],
+        [
+          1984.2,
+          2708.1
+        ],
+        [
+          1971.8,
+          1198.8
+        ]
+      ]
+    },
+    {
+      "name": "frame_13.png",
+      "matched": true,
+      "inliers": 30,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 65,
+      "inlier_ratio": 0.462,
+      "ncc": 0.848,
+      "sharpness_ratio": 1.054,
+      "corners": [
+        [
+          1520.4,
+          1229.0
+        ],
+        [
+          2622.6,
+          1131.3
+        ],
+        [
+          2773.0,
+          2728.9
+        ],
+        [
+          1547.3,
+          2803.7
+        ]
+      ]
+    },
+    {
+      "name": "frame_14.png",
+      "matched": false,
+      "inliers": 4,
+      "note": "only 4 inliers (need 8)",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 31,
+      "inlier_ratio": 0.129,
+      "ncc": 0.0,
+      "sharpness_ratio": 0.0,
+      "corners": null
+    },
+    {
+      "name": "frame_15.png",
+      "matched": false,
+      "inliers": 4,
+      "note": "only 4 inliers (need 8)",
+      "kp_base": 4000,
+      "kp_closeup": 1796,
+      "good_matches": 28,
+      "inlier_ratio": 0.143,
+      "ncc": 0.0,
+      "sharpness_ratio": 0.0,
+      "corners": null
+    },
+    {
+      "name": "frame_16.png",
+      "matched": false,
+      "inliers": 5,
+      "note": "only 5 inliers (need 8)",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 29,
+      "inlier_ratio": 0.172,
+      "ncc": 0.0,
+      "sharpness_ratio": 0.0,
+      "corners": null
+    },
+    {
+      "name": "frame_17.png",
+      "matched": true,
+      "inliers": 8,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 32,
+      "inlier_ratio": 0.25,
+      "ncc": 0.8,
+      "sharpness_ratio": 3.6,
+      "corners": [
+        [
+          -112.4,
+          1073.3
+        ],
+        [
+          1119.2,
+          1027.5
+        ],
+        [
+          1121.7,
+          2777.3
+        ],
+        [
+          -96.0,
+          2779.0
+        ]
+      ]
+    }
+  ]
+}

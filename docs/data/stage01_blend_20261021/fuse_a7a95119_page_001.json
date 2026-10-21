@@ -1,0 +1,40 @@
+{
+  "n_frames": 2,
+  "anchor_source": "frame_00.png",
+  "method": "sharpest+stitch",
+  "fullspread_frames": [
+    "frame_00.png"
+  ],
+  "closeups": [
+    {
+      "name": "frame_01.png",
+      "matched": true,
+      "inliers": 61,
+      "note": "ok",
+      "kp_base": 4000,
+      "kp_closeup": 4000,
+      "good_matches": 100,
+      "inlier_ratio": 0.61,
+      "ncc": 0.673,
+      "sharpness_ratio": 1.015,
+      "corners": [
+        [
+          1569.5,
+          985.3
+        ],
+        [
+          2834.7,
+          1009.5
+        ],
+        [
+          2810.0,
+          1952.1
+        ],
+        [
+          1552.2,
+          1913.6
+        ]
+      ]
+    }
+  ]
+}

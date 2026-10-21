@@ -1095,3 +1095,19 @@ rules for it:
 - Not started: reading close-ups separately and merging the text (waits on the
   owner's answer to the capture plan), placing close-ups against each other,
   and the reframing noise floor.
+
+### 2026-10-21 — Stage 01 pasted full-size close-ups into the page: fixed (v0.4.0)
+
+- **Correction to two lines above.** "Stage 01's own stitch is unaffected in
+  practice (it blends nothing anyway)" was false once close-ups arrived at full
+  size: 16 cleared the sharpness gate and were blended into 4 pages, and all 4
+  printed text twice. And "upgraded **7 of 15** pictures" was counted on those
+  blended pages; re-assembled, the sweep job upgrades 11 of 17.
+- Stage 01 now locates and records close-ups but never blends them
+  (`fuse.blend_closeups`, off). Both phone jobs re-run from Stage 00; every
+  anchor equals its source photograph. RESULTS 2026-10-21.
+- Text test (owner approved the capture plan today): reference text typed for
+  two regions of pp. 156–157, pre-registered. First finding: at today's
+  distance no close-up holds a whole paragraph, nor a whole printed line
+  (they hold about half to nine-tenths of a line), so any text merge must piece
+  lines together from several photographs. Continued below.

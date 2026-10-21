@@ -9783,3 +9783,42 @@ update: 849 passed, 1 failed (that provenance assertion); after: 850 passed.
 **Not touched:** why Stage 04 emits a scale bar as a figure under a trim at
 all. Under a 41 px trim it does, uncut it does not, and the earlier rescue trap
 (RESULTS 2026-08-26) was the same kind of object. n = 1 book for the defect.
+
+## 2026-10-21 — Full-size close-ups made Stage 01 paste text in twice; Stage 01 no longer blends close-ups (SHIPPED, v0.4.0)
+
+Found while preparing the text-reading test. The morning's phone change (close-
+ups uploaded at full size, Stage 01 v0.3.0 recognising them by name) moved
+close-ups past Stage 01's last gate. Shrunk, no close-up had ever cleared
+`min_sharpness_ratio` 1.0 (0 of 11 on the zoomset, 0 of 34 on the owner's
+book). Full size, **16 cleared it**, on 4 of the 6 phone pages of the two jobs
+(`20261021-103158` page_001: 1; `20261021-104424` page_002: 2, page_003: 5,
+page_004: 8), and were blended into the anchor.
+
+**All 4 pages printed text twice** where close-ups were laid on, by eye on the
+anchors: "reunreunification", "Ame American", "liberaation", "Bolivvia",
+"ddeaths", "11839", doubled section headings and map labels, and ghost line
+ends at footprint edges. Which of the 16 did it cannot be said: the
+footprints overlap. Evidence: `docs/data/stage01_blend_20261021/` (the four
+`fuse.json` as they were, and four anchor crops). Mechanism, already measured
+(RESULTS 2026-08-29, superres): one homography cannot lay a flat photograph onto
+a curved page.
+
+**Fix:** `fuse.blend_closeups`, off. Stage 01 still locates and records every
+close-up (`fuse.json` keeps the corners and every gate's numbers; the note says
+"passed every gate … but NOT blended") and writes the chosen whole-spread
+photograph unchanged. Not a retune of the sharpness gate. Nothing downstream
+needs the blend: `figure_hires` re-cuts pictures from the frames themselves, and
+the text plan the owner approved today reads each close-up on its own. Re-run on
+the 4 pages (Stages 00–06, then Stage 07 on both jobs): every anchor is now
+byte-identical to its source photograph, on all 6 pages. Suite 851 passed.
+
+Knock-on numbers, re-counted on the re-assembled jobs: `20261021-104424` now
+upgrades **11 of 17** pictures (was 7 of 15; the page layouts changed with the
+anchors, so the picture sets differ); `20261021-103158` 0 of 5 (was 0 of 6).
+
+**Correction to the anti-alias row above (same day):** its "today's two jobs"
+subset (21 of 178 figures) was searched on pages whose crops came from the
+blended anchors (`103158` page_001, `104424` pages 2–4). The refusal stands —
+157 of the 178 figures are the owner's book, untouched by this, and no figure
+changed in either subset — but those 21 rows describe crops of a page that no
+longer exists.

@@ -113,9 +113,12 @@ pointer is the date in `docs/STATUS.md` / `docs/RESULTS.md`.
   3–24 % of their readable words. Do not retry widths or colours.
 - **Panorama Phase 1 is not licensed**; the "flatten first, stitch second"
   reorder is refused; painting registered sources wholesale doubles text.
-- **The stitching gate that nothing could pass** (sharpness ratio 1.0) stays,
-  for a different reason than first recorded: warping a close-up down into the
-  anchor destroys the resolution before anything is written.
+- **Stage 01 never blends a close-up into the anchor** (`fuse.blend_closeups`
+  off, 2026-10-21). The sharpness gate (1.0) used to refuse every close-up
+  because the phone shrank them; full-size close-ups pass it, and all 4 pages
+  that got one printed text twice — a homography cannot lay a flat photo on a
+  curved page. Close-up detail is collected elsewhere: `figure_hires` for
+  pictures, per-close-up reading for text. Do not turn it back on.
 
 ## Measurement discipline
 

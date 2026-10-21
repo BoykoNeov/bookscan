@@ -170,6 +170,15 @@ untouched and names them ``frame_NN_closeup`` / ``frame_NN_sweep``;
 ``partition_frames`` treats a named close-up as a close-up whatever its size and
 leaves it out of the size bar. Unnamed frames partition exactly as before.
 
+**And then full-size close-ups passed the sharpness gate (v0.4.0, same day).**
+Shrunk, no close-up ever cleared ``min_sharpness_ratio``; full size, 16 did, on
+4 of the first 5 phone pages with close-ups, and every one of those 4 anchors
+printed text twice where a close-up was laid on — the cylinder a homography
+cannot express (RESULTS 2026-08-29, superres). Stage 01 now locates and records
+every close-up but blends none (``blend_closeups``, off). The resolution is
+collected where it survives: ``figure_hires`` for pictures, and reading each
+close-up on its own for text. RESULTS 2026-10-21.
+
 Usage:
     python -m pipeline.stage01_fuse jobs/<job>/<page>/ [--debug]
 """
@@ -190,7 +199,8 @@ from pydantic import BaseModel, Field
 from pipeline.page_model import StageMeta
 
 STAGE = "stage01_fuse"
-VERSION = "0.3.0"  # 0.3.0: close-ups recognised by upload name, not only size
+VERSION = "0.4.0"  # 0.4.0: close-ups located but never blended (blend_closeups off)
+# 0.3.0: close-ups recognised by upload name, not only size
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -261,6 +271,18 @@ DEFAULTS = {
     "min_sharpness_ratio": 1.0,
 
     "feather_px": 40.0,     # blend feather width at the warped close-up border
+
+    # 6. Paint accepted close-ups into the anchor at all? OFF since 2026-10-21.
+    #    Gate 5 refused every shrunk close-up the phone used to send, so blending
+    #    never happened. Full-size close-ups (v0.3.0, same day) pass it: 16 were
+    #    blended on 4 of the first 5 phone pages with close-ups, and all 4 pages
+    #    came out with the text printed twice ("reunreunification",
+    #    "liberaation") — one homography cannot lay a flat photograph onto a
+    #    curved page. Nothing downstream needs the blend: pictures are re-cut from
+    #    the frames themselves (figure_hires), and the text plan the owner chose
+    #    reads each close-up on its own. Every close-up is still located and
+    #    recorded in fuse.json. RESULTS 2026-10-21.
+    "blend_closeups": False,
 }
 
 
@@ -608,11 +630,18 @@ def run(page_dir: Path, cfg: dict, debug: bool = False) -> FuseResult:
         blended, res, note = stitch_closeup(anchor, cu, params, dest=base)
         res.name = frames[i]["name"]
         res.note = note
+        if blended is not None and not params["blend_closeups"]:
+            # Passed every gate, painted nowhere: see "blend_closeups".
+            res.matched = False
+            res.note = (f"passed every gate ({note}) but NOT blended: blend_closeups "
+                        f"is off - a flat-placed close-up doubles the text of a "
+                        f"curved page")
+            blended = None
         if blended is not None:
             base = blended
             n_stitched += 1
         else:
-            warnings.append(f"close-up {frames[i]['name']} not stitched: {note}")
+            warnings.append(f"close-up {frames[i]['name']} not stitched: {res.note}")
         stitch_results.append(res)
     stitch_ms = (time.perf_counter() - t_stitch) * 1000.0
 

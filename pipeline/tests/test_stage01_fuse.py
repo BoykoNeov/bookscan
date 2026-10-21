@@ -330,6 +330,28 @@ def test_upload_name_survives_stage00_and_keeps_a_full_size_closeup_off_the_anch
         assert result.fullspread_frames == [by_source["frame_00.jpg"]]
 
 
+def test_a_closeup_that_passes_every_gate_is_located_but_not_blended():
+    """blend_closeups (off, 2026-10-21): full-size phone close-ups pass the
+    sharpness gate, and pasting them onto a curved page printed text twice. The
+    close-up is still located and recorded; the anchor stays the photograph."""
+    with tempfile.TemporaryDirectory() as td:
+        page = Path(td) / "page_001"
+        sharp = _textured(seed=12)
+        anchor = cv2.GaussianBlur(sharp, (7, 7), 0)
+        closeup = cv2.resize(sharp[150:450, 200:600], None, fx=1.5, fy=1.5,
+                             interpolation=cv2.INTER_CUBIC)
+        _seed_ingest(page, [anchor, closeup])
+        result = S.run(page, cfg={})
+        assert result.method == "sharpest"
+        (c,) = result.closeups
+        assert not c.matched and "NOT blended" in c.note and c.corners
+        out = cv2.imread(str(page / "01_fuse" / "anchor.png"))
+        assert np.array_equal(out, anchor)
+
+        on = S.run(page, cfg={"fuse": {"blend_closeups": True}})
+        assert on.method == "sharpest+stitch" and on.closeups[0].matched
+
+
 def _run() -> int:
     fns = [v for k, v in sorted(globals().items())
            if k.startswith("test_") and callable(v)]

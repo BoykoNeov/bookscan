@@ -270,8 +270,11 @@ vlm_box:
   num_ctx: 8192        # Ollama truncates the image SILENTLY at its 4096 default
   timeout_s: 180
   # Let the box CUT the frame (owner allowed it, 2026-10-21), only when a second
-  # question about the cut agrees no edge runs through the book. Off until
-  # docs/data/vlm_cut_prereg_20261021.md's gates are read.
+  # question about the cut agrees no edge runs through the book. OFF for a
+  # measured reason (RESULTS 2026-10-21): its pre-registered gates pass, but it
+  # changes nothing on the owner's book and made 2 of 2 graded layout pages
+  # worse after trimming only strips of sofa. Turning it on without
+  # three_edge_abstain reaches no sofa spread of the owner's book.
   cut: false
 
 # --- Blocks that are not the book (Stage 07; pipeline/figure_surface.py) ---

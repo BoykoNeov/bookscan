@@ -44,8 +44,10 @@ The three things that cost the deliverable most today, in order:
    frame containing sofa. The detector has three failure modes; one is now
    caught (unstable GrabCut draws abstain, 2026-09-02), one is aimed but not cut
    (`vlm_box` as a search window), one is open. Blocked on a fixture shoot of
-   *negatives* and on the owner's postponed call about whether a model box may
-   cut. `tools/split_eval` reads **19/21 and exits 1 on purpose**.
+   *negatives*. The owner allowed a model box to cut (2026-10-21); built behind
+   a second question, it ships **off** — it reaches no sofa spread by default
+   and the downstream stages proved framing-sensitive (RESULTS 2026-10-21).
+   `tools/split_eval` reads **19/21 and exits 1 on purpose**.
 2. **Pictures split in two** (P3): 21 vertical splits found by a pre-registered
    census (2026-09-24, labels committed; the old 45 does not reproduce); the
    pixel-continuity test and a two-question local-model check were both

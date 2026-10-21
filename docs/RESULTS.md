@@ -9459,3 +9459,110 @@ site from passing, but the clause is as written.
 config.yaml. Code, tests and the importer's saved layer stay; turning it back on
 is the owner's call. What it would still do if on: ~0.60 precision, about 3 flags
 on a page with a layer, mostly notation.
+
+---
+
+## 2026-10-21 — The vision model's box may CUT (owner's decision): the registered gates PASS, an unregistered check finds a layout regression, so it ships OFF
+
+Pre-registration `docs/data/vlm_cut_prereg_20261021.md` (f956fba, committed
+before any answer). Tool `tools/vlm_cut_eval.py`; data
+`docs/data/vlm_cut_eval_20261021.json` (gates, per-row routes and text arms),
+`docs/data/vlm_cut_check_20261021.json` (the model's answers),
+`docs/data/vlm_cut_20261021/` (overlays, side-by-sides, the layout-order runs
+and the probe that made them). Model `qwen3.6:27b`, local Ollama, temperature 0.
+
+**The decision this follows.** The owner answered the question postponed on
+2026-08-29: a model's box may cut ("yes, it can"). The clipping bar was not
+changed. Cutting discards pixels, so the cut is gated by a **second, different
+question** (CLAUDE.md: two questions that agree): the padded crop is shown to
+the model with "is the book cut off at each edge?", and the cut is made only if
+every edge the cut moved inside the frame is answered false. Code:
+`vlm_box.check_cut`, `book_boundary.model_cut` (the operator path's padding, no
+new pad), Stage 02 source `"vlm"`, switch `vlm_box.cut` (default off),
+`split_eval --vlm --vlm-cut`.
+
+### The registered gates
+
+| gate | result |
+|---|---|
+| G1 split, 21 rows | **PASS** — 21/21 gutters, worst clip 0.0 %. Confirmed live with `split_eval --vlm --vlm-cut` (same 7 rows cut, same numbers) |
+| G2 does something | **PASS** — cuts `paleset_01` and `paleset_02`. Owner spreads 1 and 3: **refused** |
+| G3 text on the 7 cut rows | **PASS** — `bg_01` (GT) word accuracy 89.37 → 97.11 %, CER 6.79 → 0.85 %; pale rows +52/+77 words at conf ≥ 80; `bg_03` −4, `en_coins_02` −12, `it_geo_06` −7, `it_geo_07` −20 (all inside the 60-word floor; the diffs are garble for garble) |
+| G4 owner spreads 1, 3 | **PASS, trivially** — both refused, so Stage 02 with the cut on writes pixel-identical pages; nothing downstream can change |
+
+By the registered rule this licenses `vlm_box.cut: true`. **It was not turned on**, for the reason below.
+
+### The check that was not registered: the shipped block set gets worse
+
+`layout_order_eval` never routes through Stage 02's model path (it calls
+`find_book` only), so it would not have seen the cut. Run on the two
+block-GT rows the cut touches, with the cut forced in through `find_book`
+(probe `vlm_cut_20261021/layout_order_probe.py`), same arm (Stage 05 on) both
+times:
+
+| row | uncut | cut |
+|---|---|---|
+| `it_geo_06` caption pairs | 5/6, 0 wrong | **3/6**, 0 wrong — C26 and C28 are no longer typed as captions (their "Figura NN" opening reads differently) |
+| `it_geo_07` segmentation | 30/30 | **28/30** — D1 and T5right lost |
+| `it_geo_07` right tau | +1.00 | **+0.83** |
+
+**Nothing of the book is outside either cut** (overlays, by eye): `it_geo_06`
+loses a 41 px strip of sofa on the left, `it_geo_07` 25–41 px on each side, all
+sofa. So this is not the check passing a bad cut. It is the downstream stages
+answering differently to a slightly different framing — D1 is the
+sub-threshold figure rescued at confidence ~0.247 against a 0.25 floor, a
+knife edge. **Regression observed, n = 2 pages, not pre-registered, no
+reframing control, cause not established.** The same sensitivity is the most
+likely reading of `bg_01`'s large gain too.
+
+With the shipped defaults the cut changes **nothing** on the owner's book
+(spreads 1 and 3 refused) and measurably worsens 2 of 2 graded layout pages it
+does touch. A pre-registration forbids fitting a pass after the fact; it does
+not oblige shipping a change since measured to regress the deliverable. So:
+**`vlm_box.cut: false`**. Code, tests and tool stay.
+
+### The second question, read as an instrument
+
+| frame | moved edges | said "cut off" | truth |
+|---|---|---|---|
+| `de_02` | left, right | both | left **true** (the 1.89 % band of 2026-08-29), right false |
+| owner spread 1 | all four | left only | left **true** (the fold-out cover flap sticks out), others false — by eye |
+| `de_01` | left, right | all four edges | both false |
+| owner spreads 3, 4 | all four | all four | all false — by eye |
+| `it_geo_05` | all four | all four | unlabelled |
+| `paleset_01/02`, owner 2, 5 flat rows | — | none | no content outside the cut (labels; eye for the unlabelled) |
+
+It caught both true inward cuts it met (n = 2) and passed no bad one, but it
+answers "all four edges" on four frames where nothing is cut: safe so far, and
+blunt. **The `de_02` yes/no question for the owner (a cloth-and-tab strip) does
+not arise: the check refused that cut.** The prompt is frozen; a reworded one
+is a new pre-registration.
+
+### What switching it on (with the three-edge cue) would do to the owner's book — reported, not a gate
+
+Both arms re-run through Stages 02–06 with today's code
+(`vlm_cut_20261021/owner_0{2,4}_dewarp_compare.jpg`, text in `owner_02_text.txt`):
+
+- **Spread 2 — fixed.** The cue makes the detector abstain, the check accepts
+  the cut, and the flattened pages go from a small tilted page in a field of
+  sofa to a page that fills the frame. Left page: paragraphs that read as
+  scrambled fragments now read as sentences (conf ≥ 80: 327 → 334). Right page:
+  the second route table is typed `table`, header and section heading appear;
+  conf ≥ 80 falls 242 → 202, and route names A5–A12 appear **twice** (two
+  overlapping blocks both take them — a Stage 04/05 finding on the better page,
+  not a property of the cut).
+- **Spread 4 — worse.** The cue drops the crop, the check refuses the cut (a
+  false alarm), so the page carries sofa on four sides instead of three; the
+  right subpage is 2635 px wide, mostly sofa; left page conf ≥ 80 214 → 178.
+
+Default `split_eval` still reads **19/21, exit 1**; only the flagged run reads
+21/21. The red rows are unchanged and stay banked.
+
+**What a future turn-on needs:** a new pre-registration with
+`layout_order_eval` as a gate, that harness routed through Stage 02's model path
+(today it calls neither `search_only` nor the cut), and a reframing control (the
+same rows cropped by an equal-size strip with no model involved). Do not narrow
+the trigger to step around `it_geo_06`/`07`: that is tuning after seeing, and
+"is there a background" is a dead cue family.
+
+Suite: 841 passed (pipeline, server, tools; Ollama was running during the run).

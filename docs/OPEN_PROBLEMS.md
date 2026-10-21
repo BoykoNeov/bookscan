@@ -47,12 +47,17 @@ the route tables). It is the crop.
   darker-bordered.
 - Retuning `search_pad` (n = 1, recorded dead zone: covers −3.6 %, not −8.4 %).
 
-**POSTPONED (owner's call, 2026-08-29):** may a *model's* box ever cut, and what
-should the clipping bar grade? Three live options: an inward-only guard
-(union the model box with the detector's paper mask; no metric change), grade
-*content* rather than ink (undefined in the harness today — an ink-only bar
-would pass a trimmed photograph edge), or keep `worst_clip == 0.0` and accept
-that a model box cannot pass it. Nothing shipped depends on the answer.
+**ANSWERED (owner, 2026-10-21): a model's box may cut.** The clipping bar is
+unchanged (`worst_clip == 0.0`). Built behind a second question about the crop
+(`vlm_box.cut`, `vlm_box.check_cut`), measured, and **shipped OFF** (RESULTS
+2026-10-21): the registered gates pass (21/21, 0.0 %, `bg_01` text much better,
+both pale rows cut), but it changes nothing on the owner's book (spreads 1 and
+3 refused — the check answers "cut off on all four sides" where nothing is) and
+an unregistered layout check found 2 of 2 graded block-GT pages worse after
+trimming only strips of sofa (`it_geo_06` pairs 5/6 → 3/6, `it_geo_07`
+segmentation 30/30 → 28/30). Turning it on needs a new pre-registration with
+`layout_order_eval` as a gate, that harness routed through Stage 02's model
+path, and a reframing control.
 
 **BLOCKED ON DATA:** every automatic route for (a) and (c) needs a precondition
 calibrated against *negatives* — tightly framed handheld spreads on which the
@@ -92,6 +97,17 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
 5. Shoot the fixtures. Nothing above replaces this. The shot list should now
    include tight frames where the book fills three sides (the cue's missing
    negatives).
+6. **DONE 2026-10-21 — the model box cuts, behind a second question** (RESULTS
+   2026-10-21). Built, ships off (see ANSWERED above). On the owner's book,
+   turning on *both* `vlm_box.cut` and `three_edge_abstain` fixes spread 2
+   (a full-frame flattened page instead of a tilted page in sofa) and makes
+   spread 4 worse (the check refuses its cut, so the crop is dropped
+   altogether). The owner's call; a hand-drawn box still fixes either spread.
+   **Found on the way:** the reading-order harness never runs Stage 02's model
+   path, and the downstream stages are framing-sensitive — a 41 px strip of
+   sofa trimmed off `it_geo_06` loses two caption pairs. A reframing control
+   (same rows cut by an equal strip, no model) is the next measurement, and is
+   cheap: no model call needed.
 
 ---
 

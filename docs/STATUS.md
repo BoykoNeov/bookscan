@@ -904,3 +904,26 @@ rules for it:
   documents at ≥ 0.50 → fails. D3 lost four catches because Tesseract now reads
   them right. **Switched off in config.yaml** by the rule fixed in advance; code
   kept; owner's call to turn it back on.
+
+### 2026-10-21 — The model box may cut (owner's decision): built behind a second question, ships off
+
+- **Owner: "yes, it can"** — the 2026-08-29 postponed question about a model box
+  cutting. The clipping bar is unchanged.
+- Built: `vlm_box.check_cut` (a second, different question on the padded crop:
+  is the book cut off at each moved edge?), `book_boundary.model_cut` (operator
+  padding, no new value), Stage 02 source `"vlm"`, `vlm_box.cut` (off),
+  `split_eval --vlm --vlm-cut`, `tools/vlm_cut_eval.py`. Pre-registered first
+  (f956fba).
+- Registered gates pass: 21/21, 0.0 % clip (live and cached agree), `bg_01` word
+  accuracy 89.4 → 97.1 %, both pale rows cut, `de_02`'s inward cut refused.
+- **Not turned on:** with defaults it changes nothing on the owner's book (spreads
+  1 and 3 refused; the check says "all four edges" where nothing is cut), and an
+  unregistered `layout_order_eval` run found `it_geo_06` pairs 5/6 → 3/6 and
+  `it_geo_07` segmentation 30/30 → 28/30 after trimming only strips of sofa.
+  Cause not established (no reframing control).
+- Owner spreads with `three_edge_abstain` + cut on: spread 2 fixed (full-frame
+  flattened page), spread 4 worse (crop dropped, cut refused). Owner's call.
+- New findings: the layout harness never runs Stage 02's model path; on the
+  corrected spread 2 right page two overlapping blocks both take route names
+  A5–A12 (duplicated text).
+- Suite: 841 passed (Ollama running during the run).

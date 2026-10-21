@@ -1016,3 +1016,33 @@ rules for it:
 - Coverage at this distance: one close-up covers ~1/13 of the frame, so a
   spread needs very roughly 15–20 with overlap; the 24-frame cap should hold,
   unverified.
+
+### 2026-10-21 — First real sweeps on the S23: framing, blur and placement
+
+- Job `20261021-104424-6d43b587` (German guidebook + coin book, dark table).
+  Calibration log `sweeplog_1792579495377.csv` replayed through
+  `tools/calibrate_sweep`: 5 shots at the shipped threshold over the practice
+  pass (not yet committed under `docs/data/`).
+- **Try 1 (pages 1–2, 3 and 5 frames):** the operator filled the frame with
+  the book, as for a whole-spread shot, so the frames sat only 1.4–1.8× closer
+  than the anchor, one row, 55–75 % consecutive overlap. The gate's rate was
+  right for that distance; the distance was wrong. Told: a close-up shows a
+  patch, not the book.
+- **Try 2 (pages 3–4, 20 and 18 frames):** 2.2–2.8× closer, two rows.
+  `tools/closeup_coverage_map.py` (new; SIFT onto the anchor, one draw, a map
+  not a gate) places **12 of 19** and **13 of 17**; the misses cluster on dense
+  text (every line looks alike to a matcher working against the softer
+  anchor), so the left page of the text spread is barely covered and the right
+  page is covered many times. Union 51 % / 62 % of the anchor frame.
+- **Motion blur is real:** frame 3 of page 3 is visibly smeared (sharpness 83
+  against 387 for the best; the statistic is content-dependent, the crop is
+  not). A frame sharp in the centre goes soft toward the spine: page curvature
+  against depth of field, not motion.
+- **Owner's call:** auto-capture is not needed — the operator taps each
+  overlapping close-up. `CloseupScreen` ("Add close-up") already does this:
+  one still per tap, repeatable, no frame cap. Recommended method from here:
+  tap while holding still. The sweep screen stays, unused.
+- **Next, proposed, not started:** place close-ups against their neighbours
+  (close-up to close-up, where both carry the fine detail) rather than only
+  against the anchor — the phone-panorama way — and use the anchor only to fix
+  the whole set onto the page.

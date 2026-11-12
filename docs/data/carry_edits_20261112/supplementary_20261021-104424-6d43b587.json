@@ -1,0 +1,207 @@
+{
+  "job": "20261021-104424-6d43b587",
+  "pages": 6,
+  "full_assemble_s": 133.2,
+  "refreshes": [
+    {
+      "spread": "page_002",
+      "seconds": 36.5,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    },
+    {
+      "spread": "page_003",
+      "seconds": 47.9,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    },
+    {
+      "spread": "page_004",
+      "seconds": 32.7,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    }
+  ],
+  "edited_spread_refused": true,
+  "edit_survived": true,
+  "meta_keeps_full_record": true,
+  "meta_refreshes": [
+    [
+      "page_002"
+    ],
+    [
+      "page_003"
+    ],
+    [
+      "page_004"
+    ]
+  ],
+  "panel_reference_conf": {
+    "full": 92.9685575,
+    "refreshes": [
+      93.005146,
+      93.034988,
+      92.975304
+    ]
+  },
+  "asset_files": 17,
+  "carry": {
+    "spread": "page_001",
+    "edits": {
+      "page": "page_001__left",
+      "whole_spread": false,
+      "deleted": {
+        "block": 1,
+        "panel": false
+      },
+      "reordered": [
+        0,
+        1
+      ]
+    },
+    "A_report": {
+      "words_carried": 1,
+      "words_dropped": 0,
+      "blocks_carried": 1,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": []
+    },
+    "A_document_identical": true,
+    "A_nothing_dropped": true,
+    "A_assets_identical_to_full": true,
+    "A_pass": true,
+    "B_refused": true,
+    "B_refusal_changed_nothing": true,
+    "B_staging_removed": true,
+    "B_refusal_report": {
+      "words_carried": 0,
+      "words_dropped": 1,
+      "blocks_carried": 1,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": [
+        {
+          "kind": "word",
+          "page_id": "page_001__left",
+          "block_id": 0,
+          "text_ocr": "i",
+          "text": "i_EDIT",
+          "why": "no word with the same box and the same original reading in the re-run"
+        }
+      ]
+    },
+    "B_force_report": {
+      "words_carried": 0,
+      "words_dropped": 1,
+      "blocks_carried": 1,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": [
+        {
+          "kind": "word",
+          "page_id": "page_001__left",
+          "block_id": 0,
+          "text_ocr": "i",
+          "text": "i_EDIT",
+          "why": "no word with the same box and the same original reading in the re-run"
+        }
+      ]
+    },
+    "B_exactly_that_word_dropped": true,
+    "B_rest_identical": true,
+    "B_pass": true,
+    "seconds": 143.6
+  },
+  "carry_supplementary": {
+    "spread": "page_002",
+    "edits": {
+      "page": "page_002__single",
+      "whole_spread": true,
+      "word": "Chopmarked",
+      "text_override": 1,
+      "type_change": 6,
+      "deleted": {
+        "block": 4,
+        "panel": true
+      },
+      "caption_unpaired": 5,
+      "reordered": [
+        0,
+        1
+      ]
+    },
+    "A_report": {
+      "words_carried": 1,
+      "words_dropped": 0,
+      "blocks_carried": 4,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": []
+    },
+    "A_document_identical": true,
+    "A_nothing_dropped": true,
+    "A_assets_identical_to_full": true,
+    "A_pass": true,
+    "B_refused": true,
+    "B_refusal_changed_nothing": true,
+    "B_staging_removed": true,
+    "B_refusal_report": {
+      "words_carried": 0,
+      "words_dropped": 1,
+      "blocks_carried": 4,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": [
+        {
+          "kind": "word",
+          "page_id": "page_002__single",
+          "block_id": 0,
+          "text_ocr": "Chopmarked",
+          "text": "Chopmarked_EDIT",
+          "why": "no word with the same box and the same original reading in the re-run"
+        }
+      ]
+    },
+    "B_force_report": {
+      "words_carried": 0,
+      "words_dropped": 1,
+      "blocks_carried": 4,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": [
+        {
+          "kind": "word",
+          "page_id": "page_002__single",
+          "block_id": 0,
+          "text_ocr": "Chopmarked",
+          "text": "Chopmarked_EDIT",
+          "why": "no word with the same box and the same original reading in the re-run"
+        }
+      ]
+    },
+    "B_exactly_that_word_dropped": true,
+    "B_rest_identical": true,
+    "B_pass": true,
+    "seconds": 110.2
+  },
+  "ok": true
+}

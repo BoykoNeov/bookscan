@@ -1,0 +1,192 @@
+{
+  "job": "tablegrid_e2e",
+  "pages": 6,
+  "full_assemble_s": 22.0,
+  "refreshes": [
+    {
+      "spread": "page_004",
+      "seconds": 8.6,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    },
+    {
+      "spread": "page_005",
+      "seconds": 2.4,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    }
+  ],
+  "edited_spread_refused": true,
+  "edit_survived": true,
+  "meta_keeps_full_record": true,
+  "meta_refreshes": [
+    [
+      "page_004"
+    ],
+    [
+      "page_005"
+    ]
+  ],
+  "panel_reference_conf": {
+    "full": 92.748581,
+    "refreshes": [
+      92.748581,
+      92.748581
+    ]
+  },
+  "asset_files": 6,
+  "carry": {
+    "spread": "page_003",
+    "edits": {
+      "page": "page_003__left",
+      "whole_spread": false,
+      "deleted": {
+        "block": 15,
+        "panel": false
+      },
+      "reordered": [
+        0,
+        1
+      ]
+    },
+    "A_report": {
+      "words_carried": 1,
+      "words_dropped": 0,
+      "blocks_carried": 1,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": []
+    },
+    "A_document_identical": true,
+    "A_nothing_dropped": true,
+    "A_assets_identical_to_full": true,
+    "A_pass": true,
+    "B_refused": true,
+    "B_refusal_changed_nothing": true,
+    "B_staging_removed": true,
+    "B_refusal_report": {
+      "words_carried": 0,
+      "words_dropped": 1,
+      "blocks_carried": 1,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": [
+        {
+          "kind": "word",
+          "page_id": "page_003__left",
+          "block_id": 0,
+          "text_ocr": "RRS",
+          "text": "RRS_EDIT",
+          "why": "no word with the same box and the same original reading in the re-run"
+        }
+      ]
+    },
+    "B_force_report": {
+      "words_carried": 0,
+      "words_dropped": 1,
+      "blocks_carried": 1,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": [
+        {
+          "kind": "word",
+          "page_id": "page_003__left",
+          "block_id": 0,
+          "text_ocr": "RRS",
+          "text": "RRS_EDIT",
+          "why": "no word with the same box and the same original reading in the re-run"
+        }
+      ]
+    },
+    "B_exactly_that_word_dropped": true,
+    "B_rest_identical": true,
+    "B_pass": true,
+    "seconds": 59.4
+  },
+  "carry_supplementary": {
+    "spread": "page_004",
+    "edits": {
+      "page": "page_004__left",
+      "whole_spread": true,
+      "word": "Ly",
+      "text_override": 7,
+      "type_change": 9,
+      "deleted": {
+        "block": 1,
+        "panel": true
+      },
+      "reordered": [
+        0,
+        1
+      ]
+    },
+    "A_report": {
+      "words_carried": 1,
+      "words_dropped": 0,
+      "blocks_carried": 3,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": []
+    },
+    "A_document_identical": true,
+    "A_nothing_dropped": true,
+    "A_assets_identical_to_full": true,
+    "A_pass": true,
+    "B_refused": true,
+    "B_refusal_changed_nothing": true,
+    "B_staging_removed": true,
+    "B_refusal_report": {
+      "words_carried": 0,
+      "words_dropped": 1,
+      "blocks_carried": 3,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": [
+        {
+          "kind": "word",
+          "page_id": "page_004__left",
+          "block_id": 1,
+          "text_ocr": "Ly",
+          "text": "Ly_EDIT",
+          "why": "no word with the same box and the same original reading in the re-run"
+        }
+      ]
+    },
+    "B_force_report": {
+      "words_carried": 0,
+      "words_dropped": 1,
+      "blocks_carried": 3,
+      "blocks_dropped": 0,
+      "orders_carried": 1,
+      "orders_dropped": 0,
+      "dropped": [
+        {
+          "kind": "word",
+          "page_id": "page_004__left",
+          "block_id": 1,
+          "text_ocr": "Ly",
+          "text": "Ly_EDIT",
+          "why": "no word with the same box and the same original reading in the re-run"
+        }
+      ]
+    },
+    "B_exactly_that_word_dropped": true,
+    "B_rest_identical": true,
+    "B_pass": true,
+    "seconds": 26.4
+  },
+  "ok": true
+}

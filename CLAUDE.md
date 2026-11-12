@@ -181,6 +181,16 @@ corrected — never by a forced full re-assemble. Assemble builds into a staging
 folder and swaps at the end, so a failed run leaves the old document whole,
 and it names the pages it left out. The editor refuses a save based on a
 document that has since changed on disk.
+**That spread's own edits can come along** (Stage 07 v0.3.0, 2026-11-12):
+`--carry-edits` copies each hand edit onto the re-run page **only on an exact
+match** (same page size; same block box, automatic type and automatic order;
+same word box and original reading; a hand-set order only when the blocks match
+one for one) and refuses, changing nothing, if any edit would be lost; with
+`--force` too it keeps what matches and drops — and lists — the rest. A split
+or a merged picture is never replayed. Never loosen the match to "nearby" or
+"same text": a carried edit on the wrong word is a silent wrong correction.
+The console's "Update this spread" always asks for the carry and shows the list
+before dropping anything.
 
 **Operator-book-box exception (Stage 02).** Item 2 says a stage reads only the
 previous stage's artifacts. `<page_dir>/book_box.json` is not an artifact of any
@@ -439,7 +449,7 @@ python -m tools.book_box_editor jobs/<job>/ [--port 8011]
 # after re-running ONE page of a job that already has a (possibly edited)
 # document: rebuild just that spread, keep everything else. The console's
 # "Update this spread in the document" button does the same.
-python -m pipeline.stage07_assemble jobs/<job>/ --spread page_003 [--force]
+python -m pipeline.stage07_assemble jobs/<job>/ --spread page_003 [--carry-edits] [--force]
 
 # open the visual editor on an assembled job (edit OCR/type/order/translation,
 # then Preview / re-render). Reads+writes ONLY document.json + document_assets/.

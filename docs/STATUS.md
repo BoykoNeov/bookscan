@@ -1216,3 +1216,33 @@ changed; `split_eval` is untouched. Suite 851 → 869.
 - **What this could not check:** the console button was syntax-checked and its
   endpoints tested, but not clicked in a browser; the stale-save refusal is
   tested at the HTTP layer, not through the editor page.
+
+## 2026-11-12 (later) — A refresh keeps the spread's own hand edits when the page did not move
+
+- **Built: `--carry-edits` (Stage 07 v0.3.0).** Refreshing an edited spread
+  was all or nothing: refuse, or force and lose every correction on it. Now
+  each edit is copied onto the re-run page when its word or block is exactly
+  where it was (same page size; same block box, automatic type and automatic
+  order; same word box and original reading). A hand-set reading order is one
+  edit of the whole page and is carried only when the blocks match one for
+  one. A split or a merged picture changes a box, so it is reported, never
+  replayed. If anything would be lost the refresh refuses and changes nothing;
+  with force as well it keeps what matches and lists the rest in
+  `document.meta.json`. Handoff item 1 (`plans/handoff-2026-11-12.md`).
+- **Two departures from the handoff text**, both forced by the code: the carry
+  runs after the unreadable-panel pass (that pass rewrites the automatic type
+  and clears pairs on the blocks it converts, so carrying earlier would wipe
+  edits there and matching earlier would see every converted panel as
+  changed); and the order is carried per page, as above.
+- **Console.** "Update this spread in the document" always asks for the carry.
+  If some edits cannot be kept it shows how many can and lists the ones that
+  cannot, and only on OK keeps what matches. A refusal from the server now
+  arrives with its details instead of "[object Object]".
+- **Measured** (RESULTS 2026-11-12, carry row, pre-registered): on both real
+  jobs the unchanged re-run gives back the saved document exactly, and a word
+  box moved by 1 px is refused with every file unchanged, then dropped alone
+  under force. The registered rule reached only three of six edit kinds (the
+  chosen pages have no ordinary text); a labelled supplementary run on other
+  spreads covered the rest and passed. Suite 882 green.
+- **What this could not check:** a refresh after a real re-crop; the console
+  dialog clicked in a browser.

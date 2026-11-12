@@ -162,7 +162,10 @@ async function api(path, opts) {
   const r = await fetch(path, opts);
   if (!r.ok) {
     let d = ""; try { d = (await r.json()).detail || ""; } catch (e) {}
-    const err = new Error(d || `${r.status} ${r.statusText}`);
+    // A refusal may carry an object (assemble's carry report) — keep it whole
+    // for the caller, and show its message rather than "[object Object]".
+    const err = new Error((typeof d === "object" ? d.message : d) || `${r.status} ${r.statusText}`);
+    err.detail = d;
     // The status is the durable signal. Callers that branch on a specific
     // refusal (assemble's 409 clobber guard) must test this, never the wording
     // of `detail` — a reworded message would silently turn "ask the user" into
@@ -331,24 +334,43 @@ function leftOut(r) {
 }
 
 // Put ONE re-run spread into the existing document, keeping every other page
-// and the edits on it. The server refuses (409) only when THIS spread carries
-// hand edits; ask before discarding those, and say that nothing else is touched.
+// and the edits on it. It asks the server to CARRY this spread's own hand edits
+// too: each one is kept if its word or block is exactly where it was. If any
+// cannot be kept the server refuses (409) with the list and changes nothing;
+// show the list, and only on "OK" keep what matches and drop the rest.
+function describeDropped(d) {
+  if (d.kind === "word") return `word "${d.text_ocr ?? ""}" corrected to "${d.text}" (${d.page_id})`;
+  if (d.kind === "order") return `the hand-set reading order of ${d.page_id}`;
+  return `block #${d.block_id} on ${d.page_id}: ${d.what}`;
+}
+
 async function refreshSpread() {
-  const url = `/api/jobs/${S.jobId}/assemble?spread=${encodeURIComponent(S.page)}`;
+  const url = `/api/jobs/${S.jobId}/assemble?spread=${encodeURIComponent(S.page)}&carry=true`;
   toast("Updating this spread in the document…", 120000);
   try {
     let r;
     try {
       r = await api(url, { method: "POST" });
     } catch (err) {
-      if (err.status !== 409) throw err;
-      if (!confirm(`${S.page} has hand edits in the document (corrected text, merged `
-                 + "pictures, a changed order or caption pair).\n\nUpdating it from the "
-                 + "pipeline discards the edits on THIS spread only. Every other page "
-                 + "is kept. Continue?")) { toast("Left alone."); return; }
+      const rep = err.detail && err.detail.carry;
+      if (err.status !== 409 || !rep) throw err;
+      const kept = rep.words_carried + rep.blocks_carried + rep.orders_carried;
+      const lost = rep.dropped;
+      const shown = lost.slice(0, 12).map(d => " • " + describeDropped(d) + " — " + d.why);
+      if (lost.length > shown.length) shown.push(` • … and ${lost.length - shown.length} more`);
+      if (!confirm(`${S.page} has hand edits in the document. ${kept} can be kept; `
+                 + `${lost.length} cannot, because the re-run page is not the same there:\n\n`
+                 + shown.join("\n")
+                 + "\n\nContinue? The edits listed are lost on THIS spread only; "
+                 + "every other page is kept.")) { toast("Left alone — nothing was changed."); return; }
       r = await api(url + "&force=true", { method: "POST" });
     }
-    toast(`${S.page} updated in the document (${r.pages} pages in all). `
+    const c = r.carried;
+    const keptMsg = c && (c.words_carried + c.blocks_carried + c.orders_carried + c.dropped.length)
+      ? ` Hand edits on it: ${c.words_carried + c.blocks_carried + c.orders_carried} kept`
+        + (c.dropped.length ? `, ${c.dropped.length} dropped.` : ".")
+      : "";
+    toast(`${S.page} updated in the document (${r.pages} pages in all).${keptMsg} `
         + "Other pages and their edits were not touched. Render again to see it." + leftOut(r), 12000);
   } catch (e) {
     toast(`Could not update the document: ${e.message}`, 12000);

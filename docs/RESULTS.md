@@ -10144,3 +10144,61 @@ assemble; none did here, and n = 2 jobs.
 construction the other pages cannot be affected, but the new spread's content
 was not graded. Patch-mode crops on a real job (the unit test covers the
 copy). The console button in a browser.
+
+## 2026-11-12 — Carrying hand edits across a spread refresh: everything carries when the page did not move, and one word moved by 1 px is refused, then dropped alone (CONTROL + NEGATIVE, two real jobs)
+
+**What was built.** `stage07_assemble --spread page_NNN --carry-edits` (v0.3.0;
+console "Update this spread" and `?carry=true` always use it) copies each hand
+edit of the refreshed spread onto the re-run page only on an exact match, and
+refuses, changing nothing, if any would be lost; with `--force` too it keeps
+what matches and lists what it dropped (STATUS 2026-11-12). Pre-registered in
+`docs/data/carry_edits_prereg_20261112.md` before any run. No text or picture
+quality is measured here.
+
+**Method** (`tools/spread_refresh_check.py`, on copies of the jobs). After the
+v0.2.0 checks, the first spread gets one edit of each kind the editor makes,
+chosen by a fixed rule and saved through the editor's `normalize_edits`.
+Gate A (control): refresh that spread with carry; the trace did not change, so
+the document must come back equal to the saved one field for field, with
+nothing dropped and the assets byte-identical to the full assemble. Gate B
+(negative): move the edited word's box 1 px in that spread's `resolved.json`;
+carry alone must refuse with every file byte-identical, and carry + force must
+drop exactly that word and leave everything else as saved.
+
+| job | spread | edits exercised | A: doc identical / nothing dropped / assets identical | B: refused, files unchanged | B: force drops only that word, rest identical | carry check |
+|---|---|---|---|---|---|---|
+| `tablegrid_e2e` (owner's book) | `page_003` | word, delete, reorder | yes / yes / yes | yes | yes | 33.3 s |
+| `20261021-104424-6d43b587` (sweep job) | `page_001` | word, delete, reorder | yes / yes / yes | yes | yes | 33.3 s |
+
+Both registered gates pass on both jobs.
+
+**The registered rule reached only three of the six kinds of edit.** It edits
+the first page of the first spread, and on both jobs that page holds no
+paragraph, heading, list or caption block and no panel turned into a picture
+(the owner's `page_003__left` is 12 "other" blocks, 2 pictures, a footnote and
+a page number; the sweep job's `page_001__left` is one picture and a page
+number). So the text override, the type change, the caption ruling and an edit
+on a converted panel were not exercised by the registered run. **Supplementary
+run, NOT pre-registered**, chosen after seeing that: the same two gates on a
+spread picked because it holds those blocks, with the edits drawn from all its
+pages (`--carry-spread`):
+
+| job | spread | edits exercised | blocks carried | A | B |
+|---|---|---|---|---|---|
+| `tablegrid_e2e` | `page_004` | word, text override, type change, delete on a converted panel, reorder (the job has no captions) | 3 | pass | pass |
+| `20261021-104424-6d43b587` | `page_002` | word, text override, type change, delete on a converted panel, caption unpair, reorder | 4 | pass | pass |
+
+The registered run reproduced identically inside the supplementary invocation.
+Outputs: `docs/data/carry_edits_20261112/` (`registered_*.json`,
+`supplementary_*.json`). `jobs/` is not in the repo; the unit tests
+(`pipeline/tests/test_stage07_refresh.py`, 10 new; `server/tests/
+test_routes_assemble.py`, 3 new) cover the same rules on synthetic jobs,
+including what these jobs cannot: a page that changed size, a page that
+vanished (single re-cut into left and right), a hand pair re-pointed to a
+renumbered picture, a changed block set dropping only the hand order, and a
+split block reported, not replayed.
+
+**Not checked.** A refresh after a real re-crop (expected: almost every edit
+listed as lost, by design). A hand-set caption PAIR (only an unpair) on real
+data; the pair is in the unit tests. The console's confirm dialog in a browser
+(script syntax-checked, endpoints tested). n = 2 jobs, one edit of each kind.

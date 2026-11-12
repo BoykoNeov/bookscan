@@ -222,3 +222,249 @@ def test_page_1000_comes_after_page_999_not_after_page_100(tmp_path: Path):
     _add_page(job, "page_500")
     doc = S7.run(job, CFG, only_spreads=["page_500"])
     assert [p.source_spread for p in doc.pages][3] == "page_500"
+
+
+# --- carrying hand edits across a refresh (v0.3.0) ---------------------------
+#
+# The rule under test: an edit is carried onto the re-run page only on an EXACT
+# match, every edit that is not carried is REPORTED, and a carry that would drop
+# anything refuses and changes nothing on disk unless forced.
+
+from pipeline.editor import normalize_edits
+from pipeline.page_model import BBox, BlockRef, BlockType, PairSource
+
+
+def _w(text: str, x: int, y: int, conf: float = 90.0, bid: int = 0) -> Word:
+    return Word(text=text, bbox={"x": x, "y": y, "w": 40, "h": 20}, conf=conf,
+                decision="keep", block_id=bid)
+
+
+def _rich_blocks(shift_alpha: int = 0, id_offset: int = 0,
+                 extra_block: bool = False) -> list[Block]:
+    """Two paragraphs, a picture with its caption, and an 8-word block read at
+    confidence 20 that the unreadable-panel pass turns into a picture."""
+    o = id_offset
+    blocks = [
+        Block(id=o + 0, type="paragraph", bbox={"x": 0, "y": 0, "w": 200, "h": 40},
+              reading_order=0, words=[_w("Alpha", 10 + shift_alpha, 10, bid=o),
+                                      _w("Beta", 60, 10, bid=o)]),
+        Block(id=o + 1, type="paragraph", bbox={"x": 0, "y": 45, "w": 200, "h": 30},
+              reading_order=1, words=[_w("Gamma", 10, 50, bid=o + 1),
+                                      _w("Delta", 60, 50, bid=o + 1)]),
+        Block(id=o + 2, type="figure", bbox={"x": 0, "y": 80, "w": 100, "h": 40},
+              reading_order=2),
+        Block(id=o + 3, type="caption", bbox={"x": 100, "y": 80, "w": 100, "h": 40},
+              reading_order=3, words=[_w("Sopra", 110, 90, bid=o + 3)]),
+        Block(id=o + 4, type="paragraph", bbox={"x": 0, "y": 125, "w": 200, "h": 30},
+              reading_order=4,
+              words=[_w(f"x{i}", 2 + 24 * i, 130, conf=20.0, bid=o + 4)
+                     for i in range(8)]),
+    ]
+    if extra_block:
+        blocks.append(Block(id=o + 5, type="paragraph",
+                            bbox={"x": 0, "y": 160, "w": 200, "h": 15},
+                            reading_order=5, words=[_w("Epsilon", 10, 160, bid=o + 5)]))
+    return blocks
+
+
+def _write_page(job: Path, name: str,
+                pages: list[tuple[str, int, int, list[Block]]]) -> None:
+    """Write (or overwrite: a re-run) a page folder from (subpage file, w, h, blocks)."""
+    page = job / name
+    for sub in ("03_dewarp", "06_uncertain", "05_ocr"):
+        (page / sub).mkdir(parents=True, exist_ok=True)
+    for old in (page / "03_dewarp").glob("*.png"):
+        old.unlink()
+    (page / "05_ocr" / "meta.json").write_text(
+        json.dumps({"params": {"language": "ita"}}), encoding="utf-8")
+    rp = []
+    for fname, w, h, blocks in pages:
+        cv2.imwrite(str(page / "03_dewarp" / fname), np.full((h, w, 3), 255, np.uint8))
+        rp.append(ResolvedPage(name=fname, width=w, height=h, blocks=blocks, patches=[]))
+    resolved = UncertaintyResult(
+        mode="flag", threshold=75.0, threshold_raw=80.0, flag_rate_target=0.1,
+        conf_floor=45.0, conf_ceiling=75.0, scored_words=1, pages=rp)
+    (page / "06_uncertain" / "resolved.json").write_text(
+        resolved.model_dump_json(indent=2), encoding="utf-8")
+
+
+def _rich(job: Path, size: tuple[int, int] = (200, 180), **kw) -> None:
+    _write_page(job, "page_001", [("single.png", size[0], size[1], _rich_blocks(**kw))])
+
+
+def _every_kind_of_edit(job: Path) -> Document:
+    """Assemble two spreads, then edit page_001 the way the editor would: a word
+    correction, a type change, a text override, a reorder, a hand pair, and a
+    delete on the block the panel pass turned into a picture. Saved through the
+    editor's own normalize_edits, as a real save is."""
+    _rich(job)
+    _add_page(job, "page_002", "Milano")
+    S7.run(job, CFG)
+    d = _load(job)
+    pg = d.pages[0]
+    by = {b.id: b for b in pg.blocks}
+    assert by[4].type_auto.value == "figure" and by[4].type_promoted   # panel pass fired
+    by[0].words[0].text = "ALPHA"
+    by[0].type = BlockType.HEADING
+    by[1].text = "Translated paragraph"
+    by[0].reading_order, by[1].reading_order = 1, 0                    # a drag
+    by[3].figure_ref = BlockRef(page_id=pg.page_id, block_id=2)
+    by[3].pair_source = PairSource.USER
+    by[4].deleted = True
+    d.settings.target_language = "eng"
+    d = normalize_edits(d)
+    _save(job, d)
+    return _load(job)
+
+
+def _disk(job: Path) -> dict[str, bytes]:
+    out = {"document.json": (job / "document.json").read_bytes(),
+           "document.meta.json": (job / "document.meta.json").read_bytes()}
+    for p in sorted((job / S7.ASSETS_DIRNAME).iterdir()):
+        out[p.name] = p.read_bytes()
+    return out
+
+
+def test_identical_rerun_carries_every_kind_of_edit(tmp_path: Path):
+    job = tmp_path / "job"
+    saved = _every_kind_of_edit(job)
+    _rich(job)                                         # re-run, same result
+    doc = S7.run(job, CFG, only_spreads=["page_001"], carry=True)
+    assert doc == saved                                # every edit, exactly as saved
+    meta = json.loads((job / "document.meta.json").read_text(encoding="utf-8"))
+    rep = meta["params"]["refreshes"][-1]["params"]["carry_edits"]
+    assert rep["dropped"] == []
+    assert rep["words_carried"] == 1 and rep["orders_carried"] == 1
+    assert rep["blocks_carried"] == 4                  # type, text, pair, delete
+
+
+def test_carry_without_edits_is_a_plain_refresh(tmp_path: Path):
+    job = _build_job(tmp_path)
+    _add_page(job, "page_002", "Milano")
+    S7.run(job, CFG)
+    _add_page(job, "page_002", "Torino")
+    doc = S7.run(job, CFG, only_spreads=["page_002"], carry=True)
+    assert doc.pages[1].blocks[0].words[0].text == "Torino"
+
+
+def test_a_moved_word_refuses_and_changes_nothing_then_force_drops_only_it(
+        tmp_path: Path):
+    job = tmp_path / "job"
+    saved = _every_kind_of_edit(job)
+    before = _disk(job)
+    _rich(job, shift_alpha=1)                          # one word box moved by 1 px
+
+    with pytest.raises(S7.EditsWouldBeDropped) as ei:
+        S7.run(job, CFG, only_spreads=["page_001"], carry=True)
+    rep = ei.value.report
+    assert [(d["kind"], d["text_ocr"], d["text"]) for d in rep["dropped"]] \
+        == [("word", "Alpha", "ALPHA")]
+    assert _disk(job) == before                        # byte-identical, assets too
+    assert not (job / S7.STAGING_DIRNAME).exists()
+
+    doc = S7.run(job, CFG, only_spreads=["page_001"], carry=True, force=True)
+    by = {b.id: b for b in doc.pages[0].blocks}
+    assert by[0].words[0].text == "Alpha" and not by[0].words[0].edited
+    assert by[0].words[0].bbox.x == 11
+    assert by[0].type.value == "heading" and by[1].text == "Translated paragraph"
+    assert by[4].deleted and by[0].reading_order == 1
+    assert doc.pages[1] == saved.pages[1]              # the other spread untouched
+    assert doc.settings == saved.settings
+    meta = json.loads((job / "document.meta.json").read_text(encoding="utf-8"))
+    assert meta["params"]["refreshes"][-1]["params"]["carry_edits"]["words_dropped"] == 1
+
+
+def test_provenance_is_never_changed_by_a_carry(tmp_path: Path):
+    job = tmp_path / "job"
+    _every_kind_of_edit(job)
+    _rich(job, shift_alpha=1)
+    doc = S7.run(job, CFG, only_spreads=["page_001"], carry=True, force=True)
+    fresh = {b.id: b for b in _rich_blocks(shift_alpha=1)}
+    for b in doc.pages[0].blocks:
+        assert b.order_auto == fresh[b.id].reading_order
+        assert [w.text_ocr for w in b.words] == [w.text for w in fresh[b.id].words]
+    by = {b.id: b for b in doc.pages[0].blocks}
+    assert by[0].type_auto.value == "paragraph" and by[4].type_auto.value == "figure"
+
+
+def test_a_page_that_changed_size_carries_nothing(tmp_path: Path):
+    job = tmp_path / "job"
+    _every_kind_of_edit(job)
+    _rich(job, size=(200, 190))
+    with pytest.raises(S7.EditsWouldBeDropped):
+        S7.run(job, CFG, only_spreads=["page_001"], carry=True)
+    doc = S7.run(job, CFG, only_spreads=["page_001"], carry=True, force=True)
+    assert not S7._page_has_edits(doc.pages[0])
+    meta = json.loads((job / "document.meta.json").read_text(encoding="utf-8"))
+    rep = meta["params"]["refreshes"][-1]["params"]["carry_edits"]
+    assert rep["words_carried"] == rep["blocks_carried"] == rep["orders_carried"] == 0
+    assert all("changed size" in d["why"] for d in rep["dropped"])
+    assert {d["kind"] for d in rep["dropped"]} == {"word", "block", "order"}
+
+
+def test_edits_on_a_page_that_vanished_are_reported_not_lost_in_silence(
+        tmp_path: Path):
+    """The re-run cut the spread into left and right: page_001__single is gone."""
+    job = tmp_path / "job"
+    _every_kind_of_edit(job)
+    _write_page(job, "page_001", [("left.png", 200, 180, _rich_blocks()),
+                                  ("right.png", 200, 180, _rich_blocks())])
+    with pytest.raises(S7.EditsWouldBeDropped) as ei:
+        S7.run(job, CFG, only_spreads=["page_001"], carry=True)
+    rep = ei.value.report
+    assert rep["words_dropped"] == 1 and rep["blocks_dropped"] == 4
+    assert rep["orders_dropped"] == 1
+    assert all(d["page_id"] == "page_001__single" and "not in the re-run" in d["why"]
+               for d in rep["dropped"])
+
+
+def test_a_hand_pair_follows_its_picture_to_a_new_block_id(tmp_path: Path):
+    job = tmp_path / "job"
+    _every_kind_of_edit(job)
+    _rich(job, id_offset=10)                           # same boxes, ids renumbered
+    doc = S7.run(job, CFG, only_spreads=["page_001"], carry=True)
+    cap = next(b for b in doc.pages[0].blocks if b.id == 13)
+    assert cap.pair_source is PairSource.USER
+    assert cap.figure_ref == BlockRef(page_id="page_001__single", block_id=12)
+
+
+def test_a_changed_block_set_drops_the_hand_order_but_keeps_the_rest(tmp_path: Path):
+    job = tmp_path / "job"
+    _every_kind_of_edit(job)
+    _rich(job, extra_block=True)                       # the re-run found one more block
+    with pytest.raises(S7.EditsWouldBeDropped) as ei:
+        S7.run(job, CFG, only_spreads=["page_001"], carry=True)
+    assert [d["kind"] for d in ei.value.report["dropped"]] == ["order"]
+    doc = S7.run(job, CFG, only_spreads=["page_001"], carry=True, force=True)
+    by = {b.id: b for b in doc.pages[0].blocks}
+    assert [by[i].reading_order for i in range(6)] == [0, 1, 2, 3, 4, 5]   # automatic
+    assert by[0].words[0].text == "ALPHA" and by[0].type.value == "heading"
+    assert by[1].text == "Translated paragraph" and by[4].deleted
+
+
+def test_a_split_block_is_reported_not_replayed(tmp_path: Path):
+    job = tmp_path / "job"
+    _every_kind_of_edit(job)
+    d = _load(job)
+    pg = d.pages[0]
+    gamma_block = next(b for b in pg.blocks if b.id == 1)
+    tail = gamma_block.words[1:]
+    gamma_block.words = gamma_block.words[:1]
+    gamma_block.bbox = BBox(x=10, y=50, w=40, h=20)
+    gamma_block.structure_edited = True
+    pg.blocks.append(Block(id=5, type="paragraph",
+                           bbox={"x": 60, "y": 50, "w": 40, "h": 20},
+                           reading_order=5, words=tail, structure_edited=True))
+    _save(job, normalize_edits(d))
+    _rich(job)
+    with pytest.raises(S7.EditsWouldBeDropped) as ei:
+        S7.run(job, CFG, only_spreads=["page_001"], carry=True)
+    kinds = sorted((x["kind"], x.get("block_id") or -1) for x in ei.value.report["dropped"])
+    assert ("block", 1) in kinds and ("block", 5) in kinds and ("order", -1) in kinds
+
+
+def test_carry_is_for_a_refresh_only(tmp_path: Path):
+    job = _build_job(tmp_path)
+    S7.run(job, CFG)
+    with pytest.raises(RuntimeError, match="refresh"):
+        S7.run(job, CFG, carry=True)

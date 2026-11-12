@@ -71,6 +71,40 @@ from the whole document, but from the document *as it now stands* (panels
 already turned into pictures no longer count as text), and only the refreshed
 pages are re-typed by it.
 
+**Carrying hand edits across a refresh (``--carry-edits``, v0.3.0).** A refresh
+of an edited spread used to be all or nothing: refuse, or ``--force`` and lose
+every correction on it. That is right when the page was re-cropped (a new book
+box moves every word box) and needlessly destructive when it was re-run and came
+out the same (after a crash, or for a newer figure upgrade). ``carry`` copies
+each edit onto the re-run page **only on an exact match** (``_carry_edits``):
+
+* a page by ``page_id`` and only if its width and height are unchanged;
+* a word edit when the re-run has a word with the same block box, the same word
+  box and the same original reading (``text_ocr``);
+* a block's edits (type, deleted, surface mark, text override, order
+  confirmation, a hand-set caption pair) when the re-run has a block with the
+  same box, the same automatic type and the same automatic order; a hand pair is
+  carried only if the picture it names was matched too, and is re-pointed at
+  that picture's new id;
+* a hand-set reading order only when old and new pages match block for block —
+  one drag renumbers the whole page, so it is one edit of the page, not of a
+  block. Otherwise the page keeps the automatic order and that is reported.
+
+A split or a merged picture changes a block's box, so it does not match and is
+reported as not carried — never replayed. Nothing is matched by text alone, by
+"a few pixels", or by position in a list: a carried edit on the wrong word is a
+silent wrong correction, a dropped one is a visible loss the operator can redo.
+Pipeline fields (picture assets, plate numbers, ...) are never copied — picking
+up a newer picture is one reason to refresh. ``carry`` REFUSES if anything would
+be dropped, and changes nothing on disk; ``carry`` with ``--force`` carries what
+matches and drops the rest. The report goes into this refresh's record in
+``document.meta.json``. One deviation from the hand-off plan
+(``docs/plans/handoff-2026-11-12.md`` item 1, which said "before
+``_merge_pages``"): the carry runs AFTER the unreadable-panel pass, because that
+pass rewrites ``type``/``type_auto`` and clears a pair on the blocks it converts
+— carried first, an edit there would be wiped; matched first, every converted
+panel would look changed.
+
 **A failed assemble leaves the old document whole.** Assets are built in a
 staging folder and swapped in only after every page assembled; ``document.json``
 is written to a temp file and renamed. Before v0.2.0 ``document_assets/`` was
@@ -86,7 +120,7 @@ deletion — but its image and its word boxes may come from different runs).
 Usage:
     python -m pipeline.stage07_assemble jobs/<job>/ [--force] [--debug]
                                         [--order-mode auto|review]
-                                        [--spread page_NNN ...]
+                                        [--spread page_NNN ... [--carry-edits]]
                                         [--no-group-figures] [--no-figure-hires]
                                         [--no-figure-surface]
 """
@@ -105,8 +139,8 @@ import cv2
 import numpy as np
 
 from pipeline.page_model import (
-    Block, BlockType, Document, DocPage, DocSettings, PairSource, StageMeta, Word,
-    page_dir_sort_key,
+    Block, BlockRef, BlockType, Document, DocPage, DocSettings, PairSource,
+    StageMeta, Word, page_dir_sort_key,
 )
 from pipeline import figure_grouping as FG
 from pipeline import figure_hires as FH
@@ -117,7 +151,7 @@ from pipeline import stage06_uncertainty as S6
 from tools.gate1_harness import find_tesseract
 
 STAGE = "stage07_assemble"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -258,6 +292,211 @@ def _page_has_edits(pg: DocPage) -> bool:
     return False
 
 
+class EditsWouldBeDropped(RuntimeError):
+    """A ``carry`` refresh found hand edits it cannot place exactly on the re-run
+    page; nothing was written. ``report`` is what ``_carry_edits`` returned."""
+
+    def __init__(self, message: str, report: dict):
+        super().__init__(message)
+        self.report = report
+
+
+def _box(b) -> tuple[int, int, int, int]:
+    return (b.x, b.y, b.w, b.h)
+
+
+def _block_has_edits(blk: Block) -> bool:
+    """The block-level half of ``_page_has_edits`` (words are counted apart)."""
+    return bool(blk.structure_edited or blk.order_confirmed or blk.text is not None
+                or blk.pair_source is PairSource.USER)
+
+
+def _block_key(blk: Block) -> tuple:
+    return (_box(blk.bbox), blk.type_auto, blk.order_auto)
+
+
+def _unique(items: list, key) -> dict:
+    """``key(item) -> item`` for keys held by exactly ONE item. An ambiguous key
+    matches nothing: two candidates is not an exact match."""
+    idx: dict = {}
+    dup: set = set()
+    for it in items:
+        k = key(it)
+        if k in idx:
+            dup.add(k)
+        idx[k] = it
+    for k in dup:
+        del idx[k]
+    return idx
+
+
+def _order_edited(pg: DocPage) -> bool:
+    return any(b.order_auto is None or b.reading_order != b.order_auto
+               for b in pg.blocks)
+
+
+def _describe_block_edit(blk: Block) -> str:
+    what = []
+    if blk.text is not None:
+        what.append("text override")
+    if blk.type_auto is not None and blk.type != blk.type_auto:
+        what.append(f"type {blk.type_auto.value} -> {blk.type.value}")
+    if blk.type_auto is None:
+        what.append("block made by a split")
+    if blk.deleted:
+        what.append("deleted")
+    if blk.structure_edited and blk.is_surface:
+        what.append("marked as surface")
+    if blk.order_confirmed:
+        what.append("order confirmed")
+    if blk.pair_source is PairSource.USER:
+        what.append("caption paired by hand" if blk.figure_ref
+                    else "caption unpaired by hand")
+    return ", ".join(what) or "structure edited (box, order or merge)"
+
+
+def _only_an_order_edit(blk: Block) -> bool:
+    """A block whose sole edit is its place in a hand-set order: its loss is the
+    page's order item, not a block item of its own."""
+    return (blk.type_auto is not None and blk.type == blk.type_auto
+            and not blk.deleted and not blk.is_surface and blk.text is None
+            and not blk.order_confirmed and blk.pair_source is not PairSource.USER)
+
+
+def _carry_edits(old_pages: list[DocPage], pages: list[DocPage],
+                 refresh: list[str]) -> tuple[list[DocPage], dict]:
+    """Copy the hand edits of the refreshed spreads' OLD pages onto their re-run
+    pages, on an exact match only (module docstring). Walks the OLD edits, so an
+    edit whose page vanished (``single`` re-split into ``left``/``right``) is
+    reported, never lost in silence. Returns the page list with the refreshed
+    pages replaced by edited copies, and the report."""
+    report: dict = {"words_carried": 0, "words_dropped": 0, "blocks_carried": 0,
+                    "blocks_dropped": 0, "orders_carried": 0, "orders_dropped": 0,
+                    "dropped": []}
+    old_ref = [p for p in old_pages if p.source_spread in refresh]
+    new_by_id = {p.page_id: p.model_copy(deep=True) for p in pages
+                 if p.source_spread in refresh}
+
+    def page_problem(op: DocPage) -> str | None:
+        np_ = new_by_id.get(op.page_id)
+        if np_ is None:
+            return "this page is not in the re-run (the spread was cut differently)"
+        if (np_.width, np_.height) != (op.width, op.height):
+            return (f"the page image changed size ({op.width}x{op.height} -> "
+                    f"{np_.width}x{np_.height}), so every box moved")
+        return None
+
+    # Old block id -> its re-run block, per old page; built for every page first
+    # because a hand pair may name a picture on the facing page.
+    match: dict[str, dict[int, Block]] = {}
+    for op in old_ref:
+        if page_problem(op):
+            match[op.page_id] = {}
+            continue
+        new_idx = _unique(new_by_id[op.page_id].blocks, _block_key)
+        old_idx = _unique(op.blocks, _block_key)
+        match[op.page_id] = {
+            ob.id: new_idx[_block_key(ob)] for ob in op.blocks
+            if ob.type_auto is not None and ob.order_auto is not None
+            and _block_key(ob) in new_idx and _block_key(ob) in old_idx}
+
+    def map_ref(ref: BlockRef | None) -> tuple[bool, BlockRef | None]:
+        if ref is None:
+            return True, None                          # a deliberate unpair
+        if ref.page_id not in match:                   # a page this refresh keeps
+            return True, ref
+        nb = match[ref.page_id].get(ref.block_id)
+        return (False, None) if nb is None else (
+            True, BlockRef(page_id=ref.page_id, block_id=nb.id))
+
+    def drop(kind: str, op: DocPage, why: str, **extra) -> None:
+        report[f"{kind}s_dropped"] += 1
+        report["dropped"].append({"kind": kind, "page_id": op.page_id, **extra,
+                                  "why": why})
+
+    for op in old_ref:
+        problem = page_problem(op)
+        m = match[op.page_id]
+        np_ = new_by_id.get(op.page_id)
+
+        # -- reading order: one edit of the whole page ----------------------
+        order_carried = False
+        if _order_edited(op):
+            if problem is None and len(m) == len(op.blocks) == len(np_.blocks):
+                for ob in op.blocks:
+                    m[ob.id].reading_order = ob.reading_order
+                order_carried = True
+                report["orders_carried"] += 1
+            else:
+                drop("order", op, problem or (
+                    "the page's blocks changed (a split, a merged picture, or a "
+                    "different layout), so a hand-set order cannot be replayed"))
+
+        # -- block-level edits ------------------------------------------------
+        for ob in op.blocks:
+            if not _block_has_edits(ob):
+                continue
+            nb = m.get(ob.id)
+            if _order_edited(op) and _only_an_order_edit(ob)                     and (problem or nb is not None):
+                # Its only edit is its place in the page's order: carried with
+                # the order, or reported once as the page's order item.
+                if order_carried:
+                    nb.structure_edited = True
+                continue
+            if problem or nb is None:
+                drop("block", op, problem or (
+                    "no block with the same box, automatic type and automatic "
+                    "order in the re-run (it moved, or was split or merged by hand)"),
+                    block_id=ob.id, what=_describe_block_edit(ob))
+                continue
+            if ob.pair_source is PairSource.USER:
+                ok, ref = map_ref(ob.figure_ref)
+                if not ok:
+                    drop("block", op, "the picture it is paired with is not in the "
+                         "re-run", block_id=ob.id, what=_describe_block_edit(ob))
+                    continue
+                nb.figure_ref, nb.pair_source = ref, PairSource.USER
+            if ob.text is not None:
+                nb.text = ob.text
+            if ob.order_confirmed:
+                nb.order_confirmed = True
+            if ob.structure_edited:
+                nb.type, nb.deleted, nb.is_surface = ob.type, ob.deleted, ob.is_surface
+                nb.structure_edited = True
+            report["blocks_carried"] += 1
+
+        # -- word edits -------------------------------------------------------
+        def wkey(blk: Block, w: Word) -> tuple:
+            return (_box(blk.bbox), _box(w.bbox), w.text_ocr)
+        if problem:
+            new_words: dict = {}
+            old_words: dict = {}
+        else:
+            new_words = _unique([(nb, w) for nb in np_.blocks for w in nb.words],
+                                lambda t: wkey(*t))
+            old_words = _unique([(ob, w) for ob in op.blocks for w in ob.words],
+                                lambda t: wkey(*t))
+        for ob in op.blocks:
+            for w in ob.words:
+                if not w.edited:
+                    continue
+                k = wkey(ob, w)
+                hit = (new_words.get(k)
+                       if (w.text_ocr is not None and k in old_words) else None)
+                if hit is None:
+                    drop("word", op, problem or (
+                        "no word with the same box and the same original reading "
+                        "in the re-run"),
+                        block_id=ob.id, text_ocr=w.text_ocr, text=w.text)
+                    continue
+                hit[1].text, hit[1].edited = w.text, True
+                report["words_carried"] += 1
+
+    out = [new_by_id.get(p.page_id, p) if p.source_spread in refresh else p
+           for p in pages]
+    return out, report
+
+
 def page_readiness(job_dir: Path) -> dict[str, list[dict]]:
     """Which page folders an assemble would leave out, or take in stale.
 
@@ -386,9 +625,14 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
         order_mode: str = "auto", group_figures: bool = True,
         figure_hires: bool = True,
         figure_surface: bool = True,
-        only_spreads: list[str] | None = None) -> Document:
+        only_spreads: list[str] | None = None,
+        carry: bool = False) -> Document:
     """Assemble the whole job, or — with ``only_spreads`` — refresh just those
-    ``page_NNN`` folders inside the existing document (module docstring)."""
+    ``page_NNN`` folders inside the existing document (module docstring).
+
+    ``carry`` (refresh only) copies the refreshed spreads' hand edits onto the
+    re-run pages where they match exactly, and raises ``EditsWouldBeDropped``
+    — writing nothing — if any would be lost, unless ``force`` is also set."""
     t0 = time.perf_counter()
     warnings: list[str] = []
 
@@ -422,13 +666,16 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
         existing = Document.model_validate_json(doc_json.read_text(encoding="utf-8"))
         edited = sorted({pg.source_spread for pg in existing.pages
                          if pg.source_spread in refresh and _page_has_edits(pg)})
-        if edited and not force:
+        if edited and not force and not carry:
             raise RuntimeError(
                 f"{edited} carry edits in {doc_json} (corrected / reordered / "
                 f"paired by hand). Refreshing them discards those edits — and "
                 f"only those; the rest of the document is kept. Re-run with "
-                f"--force to go ahead.")
+                f"--carry-edits to keep every edit that still matches the "
+                f"re-run page exactly, or --force to discard them.")
         page_dirs = [p for p in page_dirs if p.name in refresh]
+    elif carry:
+        raise RuntimeError("--carry-edits applies to a refresh (--spread) only.")
     elif doc_json.exists() and not force:
         existing_full = Document.model_validate_json(
             doc_json.read_text(encoding="utf-8"))
@@ -648,6 +895,21 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                      "blocks": UP.apply_to_blocks(list(dp.blocks), panel_scan, pi)})
                  for pi, dp in enumerate(pages)]
 
+    # --- hand edits onto the re-run pages (after the panel pass: module docstring)
+    carry_report: dict | None = None
+    if existing is not None and carry:
+        pages, carry_report = _carry_edits(existing.pages, pages, refresh)
+        lost = carry_report["dropped"]
+        if lost and not force:
+            shutil.rmtree(assets_dir, ignore_errors=True)
+            raise EditsWouldBeDropped(
+                f"{len(lost)} hand edit(s) on {refresh} do not match the re-run "
+                f"page exactly and would be lost "
+                f"({carry_report['words_carried']} word and "
+                f"{carry_report['blocks_carried']} block edit(s) would be kept). "
+                f"Nothing was changed. Re-run with --force as well to keep what "
+                f"matches and drop the rest.", carry_report)
+
     if len(modes_seen) > 1:
         warnings.append(
             f"pages were resolved under differing uncertainty modes {sorted(modes_seen)}; "
@@ -754,6 +1016,8 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             # Non-empty = this run REFRESHED these spreads inside an existing
             # document; every count above is then for those spreads only.
             "refreshed_spreads": refresh,
+            # What --carry-edits kept and dropped (None: not asked to carry).
+            "carry_edits": carry_report,
         },
         timings_ms={"total": round(total_ms, 1)},
         warnings=warnings + [
@@ -817,6 +1081,10 @@ def main(argv: list[str] | None = None) -> int:
                     help="refresh only this spread inside the EXISTING document, "
                          "keeping every other page and its edits (repeatable). "
                          "--force then discards edits on these spreads only.")
+    ap.add_argument("--carry-edits", action="store_true",
+                    help="with --spread: keep each hand edit whose word or block "
+                         "is exactly where it was in the re-run page; refuse "
+                         "(changing nothing) if any would be lost, unless --force")
     ap.add_argument("--debug", action="store_true",
                     help="also write debug/07_assemble.png (blocks + reading order)")
     args = ap.parse_args(argv)
@@ -832,7 +1100,16 @@ def main(argv: list[str] | None = None) -> int:
               order_mode=args.order_mode, group_figures=not args.no_group_figures,
               figure_hires=not args.no_figure_hires,
               figure_surface=not args.no_figure_surface,
-              only_spreads=args.spread)
+              only_spreads=args.spread, carry=args.carry_edits)
+    if args.carry_edits:
+        meta = json.loads((args.job_dir / "document.meta.json").read_text(encoding="utf-8"))
+        cr = meta["params"]["refreshes"][-1]["params"]["carry_edits"] or {}
+        print(f"  edits carried: {cr.get('words_carried', 0)} word(s), "
+              f"{cr.get('blocks_carried', 0)} block(s), "
+              f"{cr.get('orders_carried', 0)} page order(s); "
+              f"dropped: {len(cr.get('dropped', []))}")
+        for d in cr.get("dropped", []):
+            print(f"    DROPPED {d['kind']} on {d['page_id']}: {d['why']}")
     for label, rows in page_readiness(args.job_dir.resolve()).items():
         for r in rows:
             print(f"  WARNING {r['page']}: "

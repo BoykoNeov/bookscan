@@ -204,3 +204,46 @@ def test_assemble_names_the_pages_it_left_out(client: TestClient, tmp_path: Path
         {"page": "page_002", "why": "still being processed"},
         {"page": "page_003", "why": "failed at 03_dewarp"}]
     assert r["stale"] == []
+
+
+def test_carry_keeps_an_edit_on_an_identical_rerun(client: TestClient, tmp_path: Path):
+    import json
+    job_id = _two_spreads_with_an_edit_on_the_first(client, tmp_path)
+    r = client.post(f"/api/jobs/{job_id}/assemble?spread=page_001&carry=true")
+    assert r.status_code == 200, r.text
+    assert r.json()["carried"]["words_carried"] == 1
+    assert r.json()["carried"]["dropped"] == []
+    d = json.loads((tmp_path / job_id / "document.json").read_text(encoding="utf-8"))
+    assert d["pages"][0]["blocks"][0]["words"][0]["text"] == "ROMA-EDITED"
+
+
+def test_carry_that_would_drop_an_edit_is_409_with_the_list_and_writes_nothing(
+        client: TestClient, tmp_path: Path):
+    import json
+    from pipeline.stage06_uncertainty import UncertaintyResult
+    job_id = _two_spreads_with_an_edit_on_the_first(client, tmp_path)
+    job = tmp_path / job_id
+    before = (job / "document.json").read_bytes()
+    # The page is re-run and the edited word's box comes out 1 px to the right.
+    rp = job / "page_001" / "06_uncertain" / "resolved.json"
+    res = UncertaintyResult.model_validate_json(rp.read_text(encoding="utf-8"))
+    res.pages[0].blocks[0].words[0].bbox.x += 1
+    rp.write_text(res.model_dump_json(), encoding="utf-8")
+
+    r = client.post(f"/api/jobs/{job_id}/assemble?spread=page_001&carry=true")
+    assert r.status_code == 409
+    detail = r.json()["detail"]
+    assert "Nothing was changed" in detail["message"]
+    assert [(x["kind"], x["text"]) for x in detail["carry"]["dropped"]] \
+        == [("word", "ROMA-EDITED")]
+    assert (job / "document.json").read_bytes() == before
+
+    r = client.post(f"/api/jobs/{job_id}/assemble?spread=page_001&carry=true&force=true")
+    assert r.status_code == 200 and r.json()["carried"]["words_dropped"] == 1
+    d = json.loads((job / "document.json").read_text(encoding="utf-8"))
+    assert d["pages"][0]["blocks"][0]["words"][0]["text"] == "Roma"
+
+
+def test_carry_without_a_spread_is_400(client: TestClient, tmp_path: Path):
+    job_id = _two_spreads_with_an_edit_on_the_first(client, tmp_path)
+    assert client.post(f"/api/jobs/{job_id}/assemble?carry=true").status_code == 400

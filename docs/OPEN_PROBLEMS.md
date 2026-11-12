@@ -530,10 +530,10 @@ It needs a Bulgarian page carrying an English/other-language block.
   which is noise there.
 - **Six hand-off items from the 2026-11-12 review**
   (`plans/handoff-2026-11-12.md`). **Done:** keeping a spread's hand edits
-  across a refresh; marking leftover stages in the console. **Not started:**
+  across a refresh; marking leftover stages in the console; pairing a caption
+  with a picture on the facing page (by hand only). **Not started:**
   Stage 00 treats an imported single page as a spread (the PORTRAIT warning
-  above, and a possible wrong 90° turn — **unmeasured**); pair a caption with
-  a picture on the facing page (the last bullet below); a focus check for
+  above, and a possible wrong 90° turn — **unmeasured**); a focus check for
   picture upgrades (P7); the fraction flag for model-read tables (P2a).
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at
   N = 3, Phase 1 pre-registered, nothing in the pipeline reads it.
@@ -542,9 +542,11 @@ It needs a Bulgarian page carrying an English/other-language block.
   marker on every caption that will print alone, shipped earlier; 2026-09-24
   added a "check this pair" marker on pairs guessed from position (`geometry`,
   `sole_figure`) with a one-click Confirm — 8 on the owner's book, besides its
-  12 unpaired captions. Number-keyed pairs are not marked. What is NOT built:
-  pairing a caption to a picture on the other page of the spread (the schema
-  can hold it; neither editor nor renderer does it).
+  12 unpaired captions. Number-keyed pairs are not marked. Since 2026-11-12 a
+  caption can also be paired BY HAND to a picture on the facing page, and the
+  PDF prints it there. Not built, on purpose: pairing across the gutter
+  automatically (nothing has measured a cross-page rule; the bar is zero wrong
+  pairs). Whether any of the owner's 12 belong to a facing picture is unlooked.
 
 ---
 

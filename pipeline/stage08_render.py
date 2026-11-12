@@ -24,9 +24,11 @@ edit round-trips. In particular:
     its (meaningless) OCR words. Its caption is the one Stage 07's grouping pass
     PAIRED to it (``Block.figure_ref`` — by printed number, else guarded
     geometry), rendered inside the same ``<figure>`` however far away it sits on
-    the page. Only when a figure has no paired caption does the old adjacency
-    rule apply, and then only to a following caption that claims no figure of its
-    own — a caption bound elsewhere is never swallowed.
+    the page — or on the FACING page of the same spread, when a person paired it
+    there in the editor (``_cross_page_bindings``). Only when a figure has no
+    paired caption does the old adjacency rule apply, and then only to a
+    following caption that claims no figure of its own — a caption bound
+    elsewhere is never swallowed.
   * **Running headers / page numbers are stripped by default** (per the CURRENT
     block type, so a user retype is honored); toggles in ``DocSettings``.
   * Output text is real text -> the HTML (and any PDF made from it) is searchable;
@@ -511,7 +513,8 @@ def _figure_html(blk: Block, page_bgr: np.ndarray | None,
     return f'<figure class="figure-block">{inner}</figure>'
 
 
-def _caption_bindings(page: DocPage, blocks: list[Block]
+def _caption_bindings(page: DocPage, blocks: list[Block],
+                      facing: list[Block] | None = None
                       ) -> tuple[dict[int, Block], set[int]]:
     """Resolve Stage 07's ``figure_ref`` pairings into (figure_id -> caption,
     bound caption ids) for this page.
@@ -521,11 +524,19 @@ def _caption_bindings(page: DocPage, blocks: list[Block]
     order — that adjacency assumption is exactly what cannot express it_geo_06,
     where the captions are a stack on the far side of the subpage.
 
+    ``facing`` are captions printed on the OTHER page of the same spread whose
+    ``figure_ref`` names a picture on this one (art books and the owner's guide
+    print captions opposite their pictures; only a person sets such a pair — the
+    automatic grouping pass stays page-scoped). They compete for the figure AFTER
+    this page's own claims in the same provenance tier, so every same-page outcome
+    is exactly what it was before cross-page pairs existed. Their ids are in the
+    other page's id space, so ``bound`` holds only THIS page's caption ids; the
+    caller learns which facing captions won from ``cap_for_fig``.
+
     Two references are deliberately left rendering in place rather than dropped:
-    a ref to a figure on ANOTHER page (the cross-gutter panorama case — the
-    schema can express it, this renderer does not yet float across pages), and a
-    second caption claiming a figure that is already spoken for. Neither can
-    silently lose text.
+    a ref to a figure on any page that is not the facing page of the same spread
+    (nothing sets one; this renderer does not float it), and a second caption
+    claiming a figure that is already spoken for. Neither can silently lose text.
 
     **A HUMAN ruling outranks an inferred one.** When two captions claim the same
     figure, ``pair_source=user`` wins regardless of reading order; only then does
@@ -541,23 +552,89 @@ def _caption_bindings(page: DocPage, blocks: list[Block]
               if b.type is BlockType.CAPTION and b.figure_ref is not None
               and b.figure_ref.page_id == page.page_id
               and b.figure_ref.block_id in fig_ids]
+    # A facing caption may only win a picture that will actually PRINT: a block
+    # marked as the surface is skipped by the page loop, and a caption bound to it
+    # would vanish from both pages. (Same-page claims keep their old rule.)
+    printable = {b.id for b in blocks
+                 if b.type is BlockType.FIGURE and not b.is_surface}
+    own = len(claims)
+    claims += sorted((b for b in (facing or ())
+                      if b.figure_ref is not None
+                      and b.figure_ref.page_id == page.page_id
+                      and b.figure_ref.block_id in printable),
+                     key=lambda b: b.reading_order)
     cap_for_fig: dict[int, Block] = {}
     bound: set[int] = set()
     for user_tier in (True, False):        # human rulings first, then inferred pairs
-        for b in claims:                   # `blocks` is reading-order sorted by the caller
+        for k, b in enumerate(claims):     # own page (reading order), then facing page
             if (b.pair_source is PairSource.USER) is not user_tier:
                 continue
             if b.figure_ref.block_id in cap_for_fig:
                 continue
             cap_for_fig[b.figure_ref.block_id] = b
-            bound.add(b.id)
+            if k < own:
+                bound.add(b.id)
     return cap_for_fig, bound
+
+
+def _facing_page(doc: Document, page: DocPage) -> DocPage | None:
+    """The other page of the same photographed spread, or None (a ``single``
+    page, or a spread one of whose pages is not in the document)."""
+    others = [p for p in doc.pages
+              if p.source_spread == page.source_spread and p.page_id != page.page_id]
+    return others[0] if len(others) == 1 else None
+
+
+def _cross_page_bindings(doc: Document
+                         ) -> tuple[dict[str, list[Block]], set[tuple[str, int]]]:
+    """For the whole document at once: (page_id -> facing-page captions that
+    claim one of its pictures, {(page_id, block_id)} of captions that WON a
+    picture on the facing page and so must not print on their own page).
+
+    Resolved before any page is written because a left caption can name a right
+    picture and a right caption a left one. A caption is hidden on its own page
+    ONLY if it won — a facing caption that lost the picture to another caption,
+    or whose picture is gone, deleted, re-typed or marked as surface, prints where
+    it stands, exactly once (text is never lost to a pairing)."""
+    facing_for: dict[str, list[Block]] = {}
+    for page in doc.pages:
+        other = _facing_page(doc, page)
+        if other is None:
+            continue
+        claims = [b for b in other.blocks
+                  if not b.deleted and not b.is_surface
+                  and b.type is BlockType.CAPTION and b.figure_ref is not None
+                  and b.figure_ref.page_id == page.page_id]
+        if claims:
+            facing_for[page.page_id] = claims
+    won: set[tuple[str, int]] = set()
+    for page in doc.pages:
+        facing = facing_for.get(page.page_id)
+        if not facing:
+            continue
+        blocks = sorted((b for b in page.blocks if not b.deleted),
+                        key=lambda b: b.reading_order)
+        cap_for_fig, _ = _caption_bindings(page, blocks, facing)
+        owner = _facing_page(doc, page).page_id
+        fids = {id(b) for b in facing}
+        for cap in cap_for_fig.values():
+            if id(cap) in fids:
+                won.add((owner, cap.id))
+    return facing_for, won
 
 
 def _page_html(page: DocPage, doc: Document, job_dir: Path,
                dictionary: set[str] | None,
-               lexicons: dict[str, object] | None = None) -> str:
-    """One physical page: blocks in reading order, stripped/figured/typed."""
+               lexicons: dict[str, object] | None = None,
+               facing: list[Block] | None = None,
+               printed_elsewhere: set[int] | frozenset = frozenset()) -> str:
+    """One physical page: blocks in reading order, stripped/figured/typed.
+
+    ``facing`` / ``printed_elsewhere`` come from ``_cross_page_bindings``: the
+    facing page's captions that claim a picture here, and this page's own
+    captions that won a picture on the facing page (printed there, not here).
+    A foreign caption is never added to this page's block list — that list also
+    feeds the figure text mask, and its box is in the other page's coordinates."""
     mode = doc.settings.uncertainty_mode
     page_bgr = cv2.imread(str(job_dir / page.image_asset), cv2.IMREAD_COLOR)
 
@@ -569,7 +646,8 @@ def _page_html(page: DocPage, doc: Document, job_dir: Path,
     # lettering, so the picture's pixels are exactly what should show there).
     blocks = sorted((b for b in page.blocks if not b.deleted),
                     key=lambda b: b.reading_order)
-    cap_for_fig, bound_caps = _caption_bindings(page, blocks)
+    cap_for_fig, bound_caps = _caption_bindings(page, blocks, facing)
+    bound_caps |= set(printed_elsewhere)
 
     parts: list[str] = [f'<section class="page" data-page="{html.escape(page.page_id)}">']
     i = 0
@@ -695,10 +773,14 @@ def render_html(doc: Document, job_dir: Path,
                 lexicons: dict[str, object] | None = None) -> str:
     title = html.escape(doc.document_id)
     body = []
+    facing_for, won = _cross_page_bindings(doc)
     for pi, page in enumerate(doc.pages):
         if pi:
             body.append('<hr class="section-sep">')
-        body.append(_page_html(page, doc, job_dir, dictionary, lexicons))
+        body.append(_page_html(
+            page, doc, job_dir, dictionary, lexicons,
+            facing=facing_for.get(page.page_id),
+            printed_elsewhere={bid for pid, bid in won if pid == page.page_id}))
     lang = doc.settings.target_language or doc.settings.source_language
     return (
         f'<!doctype html>\n<html lang="{html.escape(lang)}">\n<head>\n'

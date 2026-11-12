@@ -548,7 +548,7 @@ def test_e2e_pair_and_unpair_a_caption_via_dom(job: Path):
             # block card selects: [type, figure-pairing]
             sels = pg.query_selector_all("#inspector .card select")
             assert len(sels) == 2
-            sels[1].select_option("4")                             # pair to FIGURE id 4
+            sels[1].select_option("page_001__single|4")            # pair to FIGURE id 4
             pg.wait_for_selector("#blocklist .blockrow .dot.pair", state="detached")
 
             rows = pg.query_selector_all("#blocklist .blockrow")
@@ -597,7 +597,7 @@ def test_e2e_pairing_to_a_taken_figure_is_flagged_not_silently_dropped(job: Path
             rows = pg.query_selector_all("#blocklist .blockrow")
             rows[5].click()                                   # the loose caption
             sels = pg.query_selector_all("#inspector .card select")
-            sels[1].select_option("2")                        # figure ALREADY held by caption #3
+            sels[1].select_option("page_001__single|2")       # figure ALREADY held by caption #3
             # the user's own caption reads as cleanly paired...
             assert "figure taken" not in pg.text_content("#inspector")
             # ...and the caption it displaced is flagged, in the list and on inspection
@@ -615,6 +615,119 @@ def test_e2e_pairing_to_a_taken_figure_is_flagged_not_silently_dropped(job: Path
             assert len(pg.query_selector_all("#blocklist .blockrow .dot.pair")) == 1
         finally:
             browser.close()
+
+
+def _spread_job(tmp_path: Path) -> Path:
+    """Two pages of ONE spread. The left page has a loose caption (id 1); the
+    right page has two pictures, the first ALSO id 1 (ids repeat across pages,
+    so the editor must never compare by id alone), the second already held by a
+    right-page caption the pipeline paired by geometry."""
+    def word(t, x, y, bid):
+        return Word(text=t, text_ocr=t, bbox={"x": x, "y": y, "w": 60, "h": 18},
+                    conf=90.0, decision=WordDecision.KEEP, line_id=0, block_id=bid)
+    L = DocPage(page_id="page_001__left", source_spread="page_001", subpage="left",
+                width=200, height=200, image_asset="document_assets/L.png", blocks=[
+        Block(id=0, type=BlockType.PARAGRAPH, bbox={"x": 10, "y": 10, "w": 180, "h": 20},
+              reading_order=0, type_auto=BlockType.PARAGRAPH, order_auto=0,
+              words=[word("Body", 10, 10, 0)]),
+        Block(id=1, type=BlockType.CAPTION, bbox={"x": 10, "y": 150, "w": 180, "h": 20},
+              reading_order=1, type_auto=BlockType.CAPTION, order_auto=1,
+              words=[word("OPPOSITE", 10, 150, 1)]),
+    ])
+    R = DocPage(page_id="page_001__right", source_spread="page_001", subpage="right",
+                width=200, height=200, image_asset="document_assets/R.png", blocks=[
+        Block(id=1, type=BlockType.FIGURE, bbox={"x": 10, "y": 10, "w": 180, "h": 60},
+              reading_order=0, type_auto=BlockType.FIGURE, order_auto=0),
+        Block(id=2, type=BlockType.FIGURE, bbox={"x": 10, "y": 80, "w": 180, "h": 60},
+              reading_order=1, type_auto=BlockType.FIGURE, order_auto=1),
+        Block(id=3, type=BlockType.CAPTION, bbox={"x": 10, "y": 150, "w": 180, "h": 20},
+              reading_order=2, type_auto=BlockType.CAPTION, order_auto=2,
+              pair_source=PairSource.GEOMETRY,
+              figure_ref=BlockRef(page_id="page_001__right", block_id=2),
+              words=[word("NEARBY", 10, 150, 3)]),
+    ])
+    doc = Document(document_id="sp", job_id="sp",
+                   settings=DocSettings(source_language="eng", uncertainty_mode="flag"),
+                   pages=[L, R])
+    (tmp_path / "document_assets").mkdir()
+    for n in ("L", "R"):
+        cv2.imwrite(str(tmp_path / "document_assets" / f"{n}.png"),
+                    np.full((200, 200, 3), 230, np.uint8))
+    (tmp_path / "document.json").write_text(doc.model_dump_json(indent=2), encoding="utf-8")
+    return tmp_path
+
+
+@pytest.mark.e2e
+def test_e2e_pair_a_caption_to_a_picture_on_the_facing_page(tmp_path: Path):
+    """The picker lists the facing page's pictures; choosing one saves a
+    cross-page ref with USER provenance, the picture's side shows the caption and
+    jumps back to it, and the rendered document prints the caption once, under
+    that picture. Choosing the picture another caption holds flags THAT caption."""
+    pytest.importorskip("playwright.sync_api")
+    from playwright.sync_api import sync_playwright
+    from pipeline import stage08_render as S8
+
+    job = _spread_job(tmp_path)
+    with _Server(job) as srv, sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as e:
+            pytest.skip(f"chromium unavailable: {e}")
+        try:
+            pg = browser.new_page()
+            pg.goto(srv.url("/"), wait_until="networkidle")
+            pg.wait_for_selector("#blocklist .blockrow")
+            pg.query_selector_all("#blocklist .blockrow")[1].click()     # the loose caption
+            pg.wait_for_selector("#inspector .card select")
+            pick = pg.query_selector_all("#inspector .card select")[1]
+            opts = {o.get_attribute("value"): o.text_content()
+                    for o in pick.query_selector_all("option")}
+            assert opts["page_001__right|1"].startswith("facing page · #1")
+            assert "has caption facing page #3" in opts["page_001__right|2"]
+
+            # 1) pick the picture another caption holds: that caption is displaced
+            pick.select_option("page_001__right|2")
+            assert "figure taken" not in pg.text_content("#inspector")
+            pg.click("#next")
+            pg.wait_for_selector("#blocklist .blockrow")
+            rows = pg.query_selector_all("#blocklist .blockrow")
+            assert "⚠" in rows[2].text_content()                         # NEARBY lost it
+            rows[2].click()
+            body = pg.text_content("#inspector")
+            assert "already belongs to caption facing page #1 (also yours)" in body
+            pg.click("#inspector button:has-text('Go to caption facing page #1')")
+            pg.wait_for_function(
+                "() => document.querySelector('#pagelabel').textContent.startsWith('page_001__left')")
+
+            # 2) re-point it at the free picture #1 on the facing page
+            pg.query_selector_all("#inspector .card select")[1].select_option("page_001__right|1")
+            rows = pg.query_selector_all("#blocklist .blockrow")
+            assert "→ facing #1" in rows[1].text_content()
+            assert pg.query_selector("#blocklist .reviewbar.pair") is None
+            # the picture's side names the caption and jumps back to it
+            pg.click("#next")
+            pg.wait_for_selector("#blocklist .blockrow")
+            pg.query_selector_all("#blocklist .blockrow")[0].click()     # picture #1
+            pg.click("#inspector button:has-text('Facing page · Block #1')")
+            pg.wait_for_function(
+                "() => document.querySelector('#pagelabel').textContent.startsWith('page_001__left')")
+
+            pg.click("#save")
+            pg.wait_for_function(
+                "() => document.querySelector('#status').textContent.includes('saved')")
+        finally:
+            browser.close()
+
+    doc = ED.load_document(job)
+    cap = doc.pages[0].blocks[1]
+    assert cap.figure_ref is not None
+    assert (cap.figure_ref.page_id, cap.figure_ref.block_id) == ("page_001__right", 1)
+    assert cap.pair_source is PairSource.USER
+    html = S8.render_html(doc, job)
+    assert html.count("OPPOSITE") == 1
+    right = html[html.index('data-page="page_001__right"'):]
+    assert "OPPOSITE" in right.split("<figcaption")[1]
+    assert "NEARBY" in right                                     # its own pair is back
 
 
 # --------------------------------------------------------------------------

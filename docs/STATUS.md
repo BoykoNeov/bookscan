@@ -1281,3 +1281,37 @@ changed; `split_eval` is untouched. Suite 851 → 869.
 - **What this could not check:** the re-split case on a real page (unit test
   only); the page's "done" label still follows the worker, so a failed run
   made outside the console (as in this check) still reads "done" there.
+
+## 2026-11-12 (later) — A caption can be paired to a picture on the facing page
+
+- **Built (handoff item 4).** In the editor's "figure this caption belongs to"
+  picker, the pictures of the other page of the same spread are listed after
+  this page's, as "facing page · #id". Choosing one saves a cross-page
+  `figure_ref` with `pair_source = user`. Stage 08 then prints the caption
+  under that picture, as its `<figcaption>`, and not on its own page. No schema
+  change; the automatic grouping pass stays page-scoped (its bar is zero wrong
+  pairs and no cross-page rule has been measured).
+- **One precedence rule, in the renderer and mirrored in the editor:** a hand
+  pair beats an inferred one; within a tier the picture's own page beats the
+  facing page; then reading order. Every same-page outcome is unchanged.
+- **Text is never lost to a pairing.** A caption leaves its own page only if it
+  actually won the picture. One that lost it to another caption, or whose
+  picture is gone, deleted, re-typed or marked as surface, prints where it
+  stands, once, and the editor says why. A ref to a page that is not the facing
+  page of the same spread is still shown read-only and printed in place.
+- **The facing caption is kept out of the picture's text mask**: its box is in
+  the other page's coordinates and would otherwise paint a patch into the
+  picture (test: the picture's pixels are byte-identical paired or not).
+- **Checked on real data:** a copy of the owner's job (`20260829-084115-de3c20d3`),
+  caption `page_006__right` #1 paired by hand to picture `page_006__left` #1 (a
+  mechanics check, not a claim that this pair is right). The caption text
+  appears once before and once after, now inside that picture's `<figure>`;
+  only those two page sections of 50 changed.
+- **Already fine, no change needed:** merging pictures refuses when a caption
+  on another page points at a piece; carrying edits across a spread refresh
+  already re-maps a ref to the facing page.
+- **Limit:** an imported PDF made of single pages has no facing page under this
+  rule (each page is its own spread), so nothing there can be paired across.
+- **What this could not check:** the PDF (only the HTML it is printed from was
+  compared); whether any of the owner's 12 unpaired captions actually belongs
+  to a facing picture — that is the owner's look.

@@ -269,45 +269,84 @@ function confirmAllOnPage(){ pushUndo("confirm order on every block");
 // only thing standing between the correction and the next re-assemble (see
 // editor.py:_document_has_edits) and the only thing stopping stage08_render's
 // adjacency fallback from silently re-pairing a caption the user just detached.
-// v1 is SAME-PAGE ONLY: figure_ref is a page-scoped BlockRef and the schema can express
-// a cross-page pair (it_geo_04's gutter-split Fig.21 panorama), but neither this editor
-// nor stage08_render floats a caption across pages yet — an existing off-page ref is
-// shown read-only rather than silently rewritten or dropped.
+// CROSS-PAGE: a caption may be paired BY HAND to a picture on the FACING page — the
+// other page of the same photographed spread (same source_spread, a different page).
+// Art books and the owner's guide print captions opposite their pictures. The
+// automatic grouping pass stays page-scoped. stage08_render then prints the caption
+// under that picture and not on its own page. A ref to any OTHER page (nothing in
+// the pipeline writes one) is shown read-only rather than silently rewritten.
+// Block ids are only unique WITHIN a page, so captions and figures from the two
+// pages are compared as objects, never by id.
 function isCaption(blk){ return blk.type==="caption"; }
 function isFigure(blk){ return blk.type==="figure"; }
 // A block the operator deleted is dropped by stage08_render before pairing, masking
 // or printing, so every helper below that mirrors the renderer skips it too.
 function live(blk){ return !blk.deleted; }
-function pageFigures(){ return page().blocks.filter(b=>isFigure(b) && live(b))
-  .sort((a,b)=>a.reading_order-b.reading_order); }
-function refIsOffPage(blk){ return !!blk.figure_ref && blk.figure_ref.page_id!==page().page_id; }
-function pairedFigure(blk){                       // the figure this caption points at, this page
-  if(!blk.figure_ref || refIsOffPage(blk)) return null;
-  const f = page().blocks.find(b=>b.id===blk.figure_ref.block_id);
-  return f && isFigure(f) && live(f) ? f : null;
+function byOrder(a,b){ return a.reading_order-b.reading_order; }
+function pageFigures(){ return page().blocks.filter(b=>isFigure(b) && live(b)).sort(byOrder); }
+function pageById(id){ return state.doc.pages.find(p=>p.page_id===id) || null; }
+function pageOfBlock(blk){ return state.doc.pages.find(p=>p.blocks.includes(blk)) || null; }
+// The other page of the same spread, or null (a single page, or a spread with one
+// page in the document). Mirrors stage08_render._facing_page.
+function facingPage(p){
+  p = p || page();
+  const o = state.doc.pages.filter(q=>q.source_spread===p.source_spread && q.page_id!==p.page_id);
+  return o.length===1 ? o[0] : null;
 }
-// Paired (on this page) to a picture that is gone: deleted, or no longer a figure.
-// The renderer then prints the caption on its own, and not even the adjacency
-// fallback picks it up (that only takes captions with no pairing at all).
+// A facing picture can hold a caption only if it will print: not deleted, still a
+// picture, and not marked as the surface the book lay on.
+function facingFigures(){ const fp = facingPage();
+  return fp ? fp.blocks.filter(b=>isFigure(b) && live(b) && !b.is_surface).sort(byOrder) : []; }
+function refIsOffPage(blk){ return !!blk.figure_ref && blk.figure_ref.page_id!==page().page_id; }
+function refIsFacing(blk){ const fp = facingPage();
+  return !!blk.figure_ref && !!fp && blk.figure_ref.page_id===fp.page_id; }
+function refIsForeign(blk){ return refIsOffPage(blk) && !refIsFacing(blk); }  // read-only
+function pairedFigure(blk){      // the figure this caption points at, on this or the facing page
+  if(!blk.figure_ref || refIsForeign(blk)) return null;
+  const facing = refIsFacing(blk);
+  const fp = facing ? facingPage() : page();
+  const f = fp.blocks.find(b=>b.id===blk.figure_ref.block_id);
+  return f && isFigure(f) && live(f) && !(facing && f.is_surface) ? f : null;
+}
+// Paired to a picture that is gone: deleted, no longer a figure (or, across the
+// gutter, marked as surface). The renderer then prints the caption on its own, and
+// not even the adjacency fallback picks it up (that only takes unpaired captions).
 function refIsDead(blk){
-  return isCaption(blk) && !!blk.figure_ref && !refIsOffPage(blk) && !pairedFigure(blk);
+  return isCaption(blk) && !!blk.figure_ref && !refIsForeign(blk) && !pairedFigure(blk);
+}
+// Every caption that claims this figure, in the renderer's precedence order: the
+// figure's own page in reading order, then the facing page in reading order.
+function figureClaims(fig, figPage){
+  figPage = figPage || pageOfBlock(fig) || page();
+  const claimsFrom = (p, extra) => p.blocks.filter(b=>isCaption(b) && live(b) && extra(b) && b.figure_ref
+      && b.figure_ref.page_id===figPage.page_id && b.figure_ref.block_id===fig.id).sort(byOrder);
+  const own = claimsFrom(figPage, ()=>true);
+  const fp = facingPage(figPage);
+  const facing = (fp && !fig.is_surface) ? claimsFrom(fp, b=>!b.is_surface) : [];
+  return own.concat(facing);
 }
 // Which caption the RENDERER will actually put inside this figure. Mirrors
 // stage08_render._caption_bindings exactly: a human ruling outranks an inferred one,
-// then reading order breaks the tie. A figure holds ONE caption, so a caption that
-// loses the figure renders standalone — the UI must say so rather than show a pair
-// the deliverable ignores.
-function captionForFigure(fig){
-  const claims = page().blocks.filter(b=>isCaption(b) && live(b) && b.figure_ref
-      && b.figure_ref.page_id===page().page_id && b.figure_ref.block_id===fig.id)
-    .sort((a,b)=>a.reading_order-b.reading_order);
+// then the figure's own page before the facing one, then reading order. A figure
+// holds ONE caption, so a caption that loses the figure renders standalone — the UI
+// must say so rather than show a pair the deliverable ignores.
+function captionForFigure(fig, figPage){
+  const claims = figureClaims(fig, figPage);
   return claims.find(b=>b.pair_source==="user") || claims[0] || null;
 }
 function captionClaimLost(blk){                   // paired in the data, standalone in the output
   const f = isCaption(blk) ? pairedFigure(blk) : null;
   if(!f) return false;
   const w = captionForFigure(f);
-  return !!w && w.id!==blk.id;
+  return !!w && w!==blk;
+}
+function captionLabel(cap){
+  return `"${(cap.words||[]).slice(0,4).map(w=>w.text).join(" ")||"(no text)"}"`; }
+// Show another page and select a block on it (a facing caption or picture).
+function gotoBlock(p, id){
+  const i = state.doc.pages.indexOf(p); if(i<0) return;
+  state.pageIndex = i; state.mergeTarget = null; state.selBlock = id; state.selWord = null;
+  renderAll();
 }
 // "needs pairing" = nothing will attach this caption to a figure in the rendered
 // output: the pass abstained and no human has ruled, OR its claim lost the figure to
@@ -336,14 +375,16 @@ function confirmPair(blk){
   blk.pair_source = "user";
   markDirty(); renderPage(); renderBlockList(); renderInspector();
 }
-function partnerId(blk){                          // block to highlight alongside the selection
-  if(isCaption(blk)){ const f=pairedFigure(blk); return f ? f.id : null; }
-  if(isFigure(blk)){ const c=captionForFigure(blk); return c ? c.id : null; }
+function partnerId(blk){        // block to highlight alongside the selection — THIS page only
+  if(isCaption(blk)){ const f=pairedFigure(blk); return f && !refIsFacing(blk) ? f.id : null; }
+  if(isFigure(blk)){ const c=captionForFigure(blk); return c && page().blocks.includes(c) ? c.id : null; }
   return null;
 }
-function setPair(blk, figId){
+// Only the caption's own page changes (figure_ref lives on the caption), so the
+// page-scoped undo snapshot covers a cross-page pair too.
+function setPair(blk, figId, pageId){
   pushUndo(figId==null ? "unpair caption" : "pair caption to figure");
-  blk.figure_ref = (figId==null) ? null : { page_id: page().page_id, block_id: figId };
+  blk.figure_ref = (figId==null) ? null : { page_id: pageId || page().page_id, block_id: figId };
   blk.pair_source = "user";
   markDirty(); renderPage(); renderBlockList(); renderInspector();
 }
@@ -689,8 +730,9 @@ function drawOverlays(){
     if(blk.deleted) b.classList.add("deleted");
     if(state.selBlock===blk.id) b.classList.add("sel");
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
-    const pairMark = fig ? (captionClaimLost(blk) ? ` →#${fig.id} ⚠`
-                                                  : ` →#${fig.id}${pairNeedsCheck(blk) ? " ?" : ""}`)
+    const to = fig ? (refIsFacing(blk) ? `facing #${fig.id}` : `#${fig.id}`) : "";
+    const pairMark = fig ? (captionClaimLost(blk) ? ` →${to} ⚠`
+                                                  : ` →${to}${pairNeedsCheck(blk) ? " ?" : ""}`)
                          : (needsPair ? " ⛓" : "");
     const lbl = el("span","lbl",
       `${blk.reading_order} ${blk.type}${blk.deleted?" (deleted)":""}${blk.is_surface?" (surface)":""}${blk.structure_edited?" *":""}${needsRev?" ⚑":""}${pairMark}`);
@@ -889,10 +931,10 @@ function setDeleted(blk, on){
 function deleteConsequences(blk){
   const p = page(), out = [];
   if(isFigure(blk)){
-    const caps = p.blocks.filter(b=>isCaption(b) && live(b) && b.figure_ref
-      && b.figure_ref.page_id===p.page_id && b.figure_ref.block_id===blk.id);
+    const caps = figureClaims(blk, p);
     if(caps.length)
-      out.push(`caption ${caps.map(b=>"#"+b.id).join(", ")} is paired to this picture and will print on its own`);
+      out.push(`caption ${caps.map(b=>(p.blocks.includes(b) ? "" : "facing page ")+"#"+b.id).join(", ")}`
+        + " is paired to this picture and will print on its own");
   } else {
     const around = p.blocks.filter(b=>isFigure(b) && live(b) && b.id!==blk.id && boxInside(blk.bbox, b.bbox));
     if(around.length)
@@ -900,7 +942,8 @@ function deleteConsequences(blk){
         + " its own pixels here instead of a pale patch");
   }
   if(isCaption(blk) && pairedFigure(blk) && captionForFigure(pairedFigure(blk))===blk)
-    out.push(`picture #${pairedFigure(blk).id} will print without this caption`);
+    out.push(`picture ${refIsFacing(blk) ? "on the facing page " : ""}#${pairedFigure(blk).id}`
+      + " will print without this caption");
   return out;
 }
 
@@ -1017,8 +1060,11 @@ function pairingField(blk){
     f.appendChild(el("label","small muted","caption paired to this figure"));
     if(cap){
       const row=el("div","row");
-      const go=el("button",null,`Block #${cap.id} — "${(cap.words||[]).slice(0,4).map(w=>w.text).join(" ")||"(no text)"}"`);
-      go.onclick=()=>selectBlock(cap.id); row.appendChild(go); f.appendChild(row);
+      const capPage = pageOfBlock(cap);
+      const here = capPage===page();
+      const go=el("button",null,`${here ? "" : "Facing page · "}Block #${cap.id} — ${captionLabel(cap)}`);
+      go.onclick=()=> here ? selectBlock(cap.id) : gotoBlock(capPage, cap.id);
+      row.appendChild(go); f.appendChild(row);
       f.appendChild(el("div","small muted",`pair source: ${cap.pair_source||"—"} · edit it from that caption`));
     } else {
       f.appendChild(el("div","small muted",
@@ -1031,31 +1077,48 @@ function pairingField(blk){
 
   // --- caption side ---
   f.appendChild(el("label","small muted","figure this caption belongs to"));
-  if(refIsOffPage(blk)){
+  if(refIsForeign(blk)){
     f.appendChild(el("div","small muted",
       `paired ACROSS PAGES to ${blk.figure_ref.page_id} · block #${blk.figure_ref.block_id} — `
-      + "this editor only pairs within a page, so that ref is shown read-only."));
+      + "not the facing page of this spread, so that ref is shown read-only."));
     const un=el("button",null,"Unpair");
     un.onclick=()=>setPair(blk,null); f.appendChild(un);
     return f;
   }
-  const figs = pageFigures();
+  // Options are keyed "page_id|block_id": ids repeat across the two pages.
+  const fp = facingPage();
+  const groups = [[page(), pageFigures(), ""]];
+  if(fp) groups.push([fp, facingFigures(), "facing page · "]);
   const sel = el("select");
   const none = el("option",null,"— not paired —"); none.value=""; sel.appendChild(none);
-  for(const fg of figs){
-    const claimed = captionForFigure(fg);
-    const taken = claimed && claimed.id!==blk.id ? `  (has caption #${claimed.id})` : "";
-    const num = fg.figure_number!=null ? ` · figure ${fg.figure_number}` : "";
-    const o = el("option",null,`Block #${fg.id} · order ${fg.reading_order}${num}${taken}`);
-    o.value = String(fg.id);
-    if(blk.figure_ref && blk.figure_ref.block_id===fg.id) o.selected = true;
-    sel.appendChild(o);
+  let current = false;
+  for(const [pg, figs, prefix] of groups){
+    for(const fg of figs){
+      const claimed = captionForFigure(fg, pg);
+      const where = claimed && pageOfBlock(claimed)!==page() ? "facing page " : "";
+      const taken = claimed && claimed!==blk ? `  (has caption ${where}#${claimed.id})` : "";
+      const num = fg.figure_number!=null ? ` · figure ${fg.figure_number}` : "";
+      const o = el("option",null,`${prefix}#${fg.id} · order ${fg.reading_order}${num}${taken}`);
+      o.value = `${pg.page_id}|${fg.id}`;
+      if(blk.figure_ref && blk.figure_ref.page_id===pg.page_id && blk.figure_ref.block_id===fg.id){
+        o.selected = true; current = true; }
+      sel.appendChild(o);
+    }
   }
   if(!blk.figure_ref) none.selected = true;
-  sel.onchange = () => setPair(blk, sel.value==="" ? null : parseInt(sel.value,10));
+  else if(!current){                     // a dead ref: say so instead of showing "not paired"
+    const o = el("option",null,`${refIsFacing(blk) ? "facing page · " : ""}#${blk.figure_ref.block_id} (gone)`);
+    o.value = "__dead"; o.disabled = true; o.selected = true; sel.appendChild(o);
+  }
+  sel.onchange = () => {
+    if(sel.value===""){ setPair(blk, null); return; }
+    const k = sel.value.lastIndexOf("|");
+    setPair(blk, parseInt(sel.value.slice(k+1),10), sel.value.slice(0,k));
+  };
   f.appendChild(sel);
-  if(!figs.length)
-    f.appendChild(el("div","small muted","no FIGURE blocks on this page — re-type a block to figure first"));
+  if(!groups.some(g=>g[1].length))
+    f.appendChild(el("div","small muted",
+      `no FIGURE blocks on this page${fp ? " or the facing page" : ""} — re-type a block to figure first`));
 
   const bits = [];
   if(blk.caption_number!=null) bits.push(`printed caption number: ${blk.caption_number}`);
@@ -1067,22 +1130,26 @@ function pairingField(blk){
   f.appendChild(el("div","small muted", bits.join(" · ")));
   if(refIsDead(blk)){
     const w = el("div","small"); w.style.color="var(--pair)";
-    w.textContent = `⚠ paired to block #${blk.figure_ref.block_id}, which is deleted or no longer a picture`
+    w.textContent = `⚠ paired to block ${refIsFacing(blk) ? "on the facing page " : ""}#${blk.figure_ref.block_id},`
+      + ` which is deleted or no longer a picture${refIsFacing(blk) ? " (or is marked as surface)" : ""}`
       + " — this caption will print on its own. Pick another picture, or unpair it.";
     f.appendChild(w);
   }
   if(captionClaimLost(blk)){
     // Never let the badge/dropdown imply a pairing the renderer drops.
     const other = captionForFigure(pairedFigure(blk));
+    const otherPage = pageOfBlock(other);
+    const where = otherPage===page() ? "" : (otherPage===facingPage() ? "facing page " : `${otherPage.page_id} `);
     const warn = el("div","small");
     warn.style.color="var(--pair)";
-    warn.textContent = `⚠ that figure already belongs to caption #${other.id}`
+    warn.textContent = `⚠ that figure already belongs to caption ${where}#${other.id}`
       + `${other.pair_source==="user" ? " (also yours)" : ` (paired by ${other.pair_source||"?"})`}`
       + ", which the renderer keeps — this caption will still print on its own."
       + " Unpair that one first if this is the correction you want.";
     f.appendChild(warn);
-    const go = el("button",null,`Go to caption #${other.id}`);
-    go.style.marginTop="6px"; go.onclick=()=>selectBlock(other.id);
+    const go = el("button",null,`Go to caption ${where}#${other.id}`);
+    go.style.marginTop="6px";
+    go.onclick=()=> otherPage===page() ? selectBlock(other.id) : gotoBlock(otherPage, other.id);
     f.appendChild(go);
   }
   if(pairNeedsCheck(blk)){
@@ -1166,7 +1233,8 @@ function renderBlockList(){
     row.appendChild(el("span","grip","⋮⋮"));
     row.appendChild(el("span","ord", String(blk.reading_order)));
     const fig = isCaption(blk) ? pairedFigure(blk) : null;
-    const t=el("span","grow", blk.type + (fig?` → #${fig.id}${captionClaimLost(blk)?" ⚠":""}`:"")
+    const t=el("span","grow", blk.type
+      + (fig?` → ${refIsFacing(blk)?"facing ":""}#${fig.id}${captionClaimLost(blk)?" ⚠":""}`:"")
       + (blk.text!=null?" · translated":"") + (blk.is_surface?" · surface (not printed)":"")
       + (blk.deleted?" · deleted (not printed)":""));
     row.appendChild(t);

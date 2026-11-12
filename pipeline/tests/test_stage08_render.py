@@ -214,8 +214,9 @@ def test_adjacent_caption_bound_elsewhere_is_not_swallowed(tmp_path: Path):
 
 
 def test_caption_ref_to_another_page_still_renders_in_place(tmp_path: Path):
-    """The cross-gutter case the schema can express but this renderer cannot yet
-    float. It must render the caption where it sits — never drop the text."""
+    """A ref to a page that is not in the document (or not the facing page of
+    the same spread) is not floated. It must render the caption where it sits —
+    never drop the text."""
     blocks = [
         Block(id=0, type="figure", bbox={"x": 0, "y": 0, "w": 60, "h": 60},
               reading_order=0),
@@ -226,6 +227,135 @@ def test_caption_ref_to_another_page_still_renders_in_place(tmp_path: Path):
     page, jd = _page_with(blocks, tmp_path)
     html = S8.render_html(_doc(page), jd)
     assert "FACINGPAGECAPTION" in html
+
+
+# ---- captions paired to a picture on the FACING page (handoff 2026-11-12 item 4) ----
+
+def _spread(tmp_path: Path, left_blocks, right_blocks, right_spread="page_001"
+            ) -> Document:
+    """A two-page spread: page L (left) and page R (right) of the same photo."""
+    (tmp_path / "document_assets").mkdir(exist_ok=True)
+    img = np.zeros((200, 200, 3), np.uint8)
+    img[:, :100] = (40, 90, 160)                 # non-uniform, so a mask would show
+    img[:, 100:] = (200, 210, 220)
+    cv2.imwrite(str(tmp_path / "document_assets/L.png"), img)
+    cv2.imwrite(str(tmp_path / "document_assets/R.png"), img[:, ::-1].copy())
+    L = DocPage(page_id="L", source_spread="page_001", subpage="left", width=200,
+                height=200, image_asset="document_assets/L.png", blocks=left_blocks)
+    R = DocPage(page_id="R", source_spread=right_spread, subpage="right", width=200,
+                height=200, image_asset="document_assets/R.png", blocks=right_blocks)
+    return Document(document_id="d", job_id="d", settings=DocSettings(), pages=[L, R])
+
+
+def _section(html: str, page_id: str) -> str:
+    start = html.index(f'<section class="page" data-page="{page_id}">')
+    return html[start:html.index("</section>", start)]
+
+
+def _fig(i, order=0, **kw):
+    return Block(id=i, type="figure", bbox={"x": 20, "y": 20, "w": 120, "h": 120},
+                 reading_order=order, **kw)
+
+
+def _cap(i, word, ref=None, src="user", order=1, x=20, y=150):
+    return Block(id=i, type="caption", bbox={"x": x, "y": y, "w": 120, "h": 20},
+                 reading_order=order, words=[_w(word)], figure_ref=ref,
+                 pair_source=src)
+
+
+@pytest.mark.parametrize("cap_side", ["L", "R"])
+def test_facing_page_caption_prints_once_under_its_picture(tmp_path: Path, cap_side):
+    """Both directions: the caption leaves its own page and becomes the facing
+    picture's <figcaption>, printed exactly once."""
+    pic_side = "R" if cap_side == "L" else "L"
+    para = Block(id=0, type="paragraph", bbox={"x": 0, "y": 0, "w": 100, "h": 20},
+                 reading_order=0, words=[_w("Body")])
+    cap = _cap(1, "FACINGCAPTION", {"page_id": pic_side, "block_id": 5})
+    pic = [_fig(5)]
+    sides = {cap_side: [para, cap], pic_side: pic}
+    html = S8.render_html(_spread(tmp_path, sides["L"], sides["R"]), tmp_path)
+    assert html.count("FACINGCAPTION") == 1
+    assert "FACINGCAPTION" not in _section(html, cap_side)
+    pic_sec = _section(html, pic_side)
+    assert "<figcaption" in pic_sec and "FACINGCAPTION" in pic_sec.split("<figcaption")[1]
+    assert "Body" in _section(html, cap_side)               # the rest of the page stays
+
+
+@pytest.mark.parametrize("why", ["missing", "deleted", "retyped", "surface"])
+def test_facing_caption_with_no_printable_picture_prints_in_place(tmp_path: Path, why):
+    """A dangling cross-page pair (the picture is gone, deleted, no longer a
+    picture, or marked as the surface) falls back to today's behaviour: the
+    caption prints where it stands, once."""
+    target = {"missing": [],
+              "deleted": [_fig(5, deleted=True)],
+              "retyped": [Block(id=5, type="paragraph", reading_order=0,
+                                bbox={"x": 20, "y": 20, "w": 120, "h": 120},
+                                words=[_w("Para")])],
+              "surface": [_fig(5, is_surface=True)]}[why]
+    cap = _cap(1, "DANGLINGCAPTION", {"page_id": "R", "block_id": 5})
+    html = S8.render_html(_spread(tmp_path, [cap], target), tmp_path)
+    assert html.count("DANGLINGCAPTION") == 1
+    assert '<p class="caption">DANGLINGCAPTION' in _section(html, "L")
+
+
+def test_facing_caption_loses_to_a_same_page_hand_pair_and_prints_in_place(tmp_path):
+    """Same tier: the picture's own page wins, the facing caption still prints."""
+    cap = _cap(1, "FACINGLOSER", {"page_id": "R", "block_id": 5})
+    own = _cap(6, "OWNWINNER", {"page_id": "R", "block_id": 5})
+    html = S8.render_html(_spread(tmp_path, [cap], [_fig(5), own]), tmp_path)
+    assert html.count("FACINGLOSER") == 1 and html.count("OWNWINNER") == 1
+    assert '<p class="caption">FACINGLOSER' in _section(html, "L")
+    assert "OWNWINNER" in _section(html, "R").split("<figcaption")[1]
+
+
+def test_facing_hand_pair_outranks_a_same_page_inferred_pair(tmp_path: Path):
+    """A human ruling beats the pipeline's guess wherever the caption sits; the
+    displaced caption prints on its own, once."""
+    cap = _cap(1, "FACINGBYHAND", {"page_id": "R", "block_id": 5})
+    guess = _cap(6, "GUESSEDHERE", {"page_id": "R", "block_id": 5}, src="geometry")
+    html = S8.render_html(_spread(tmp_path, [cap], [_fig(5), guess]), tmp_path)
+    r = _section(html, "R")
+    assert "FACINGBYHAND" in r.split("<figcaption")[1]
+    assert '<p class="caption">GUESSEDHERE' in r
+    assert "FACINGBYHAND" not in _section(html, "L")
+    assert html.count("FACINGBYHAND") == 1 and html.count("GUESSEDHERE") == 1
+
+
+def test_a_pair_to_a_page_of_another_spread_prints_in_place(tmp_path: Path):
+    """Only the facing page of the SAME photographed spread is honoured."""
+    cap = _cap(1, "OTHERSPREAD", {"page_id": "R", "block_id": 5})
+    html = S8.render_html(_spread(tmp_path, [cap], [_fig(5)], right_spread="page_002"),
+                          tmp_path)
+    assert html.count("OTHERSPREAD") == 1
+    assert '<p class="caption">OTHERSPREAD' in _section(html, "L")
+
+
+def test_a_facing_caption_does_not_take_the_adjacent_caption_slot(tmp_path: Path):
+    """The picture got its caption from the facing page, so an unpaired caption
+    right after it on its own page is not ALSO swallowed into the figure."""
+    cap = _cap(1, "FACINGCAP", {"page_id": "R", "block_id": 5})
+    nxt = _cap(6, "NEXTCAP", None, src=None)
+    html = S8.render_html(_spread(tmp_path, [cap], [_fig(5), nxt]), tmp_path)
+    r = _section(html, "R")
+    assert "FACINGCAP" in r.split("<figcaption")[1]
+    assert '<p class="caption">NEXTCAP' in r and r.count("<figcaption") == 1
+
+
+def test_a_facing_caption_does_not_change_the_picture_pixels(tmp_path: Path):
+    """The caption's box is in the OTHER page's coordinates, here squarely over
+    the picture's area; it must not be painted out of the crop as if it sat
+    inside the picture."""
+    def cap(ref):
+        # lies wholly inside the picture's box (20..140) in the OTHER page's frame
+        return Block(id=1, type="caption", bbox={"x": 40, "y": 40, "w": 60, "h": 20},
+                     reading_order=1, words=[_w("OVERLAPCAP")], figure_ref=ref,
+                     pair_source="user")
+    a = S8.render_html(_spread(tmp_path, [cap({"page_id": "R", "block_id": 5})],
+                               [_fig(5)]), tmp_path)
+    b = S8.render_html(_spread(tmp_path, [cap(None)], [_fig(5)]), tmp_path)
+    src = lambda h: _section(h, "R").split('src="')[1].split('"')[0]
+    assert "OVERLAPCAP" in _section(a, "R")                  # it really was paired
+    assert src(a) == src(b)
 
 
 def test_unpaired_caption_still_groups_by_adjacency(tmp_path: Path):

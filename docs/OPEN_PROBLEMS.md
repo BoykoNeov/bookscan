@@ -90,7 +90,8 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
    every other page's hand edits. Before, it took a forced full re-assemble.
    The spread's OWN edits are kept too wherever the re-run left the word or
    block exactly where it was (`--carry-edits`, Stage 07 v0.3.0, same day);
-   after a re-crop almost every box moves, so expect them listed as lost.
+   after a re-crop almost every box moves, so expect them listed as lost —
+   **draw the box and re-run a bad-crop spread before correcting its text.**
 2. **DONE 2026-09-24**, with no new file: the committed `de_01.jpg`/`de_02.jpg`
    are pixel-identical to those anchors, so both rows now name them. Verified
    from a clean worktree with no `jobs/`: 21 of 21 rows graded, 19/21, 0.0 %.

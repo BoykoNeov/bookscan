@@ -1246,3 +1246,13 @@ changed; `split_eval` is untouched. Suite 851 → 869.
   spreads covered the rest and passed. Suite 882 green.
 - **What this could not check:** a refresh after a real re-crop; the console
   dialog clicked in a browser.
+- **Fixed the same day, after review:** a page that was both reordered and had
+  a pipeline surface mark cleared by hand would get the mark back on a carry,
+  without listing it as lost (the shortcut for "only reordered" read "not
+  marked" as "untouched"). It now compares against the re-run's mark; two unit
+  tests fail without the fix. The real-data gates never reached this case (no
+  surface mark was edited there), so the RESULTS row stands; the owner's job
+  does have 6 surface marks, so it was reachable.
+- **Order of work this implies for the operator:** on a spread whose crop is
+  wrong, draw the book box and re-run the page BEFORE correcting its text. A new
+  crop moves every word box, so no correction on that spread can carry.

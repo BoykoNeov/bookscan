@@ -468,3 +468,50 @@ def test_carry_is_for_a_refresh_only(tmp_path: Path):
     S7.run(job, CFG)
     with pytest.raises(RuntimeError, match="refresh"):
         S7.run(job, CFG, carry=True)
+
+
+def _surface_pages(order_swapped: bool, extra_block: bool = False):
+    """An old page where the operator cleared the pipeline's surface mark on
+    block 1 (and maybe reordered), and its re-run where the pipeline marks
+    block 1 as surface again."""
+    from pipeline.page_model import DocPage
+
+    def blocks(surface: bool, edited: bool) -> list[Block]:
+        out = []
+        for i in range(2 + int(extra_block and not edited)):
+            out.append(Block(id=i, type=BlockType.FIGURE,
+                             bbox=BBox(x=0, y=50 * i, w=100, h=40),
+                             reading_order=i, type_auto=BlockType.FIGURE,
+                             order_auto=i))
+        out[1].is_surface = surface
+        if edited:
+            out[1].structure_edited = True
+            if order_swapped:
+                out[0].reading_order, out[1].reading_order = 1, 0
+                out[0].structure_edited = True
+        return out
+
+    def page(bl: list[Block]) -> DocPage:
+        return DocPage(page_id="page_001__single", source_spread="page_001",
+                       subpage="single", width=200, height=200,
+                       image_asset="document_assets/page_001__single.png", blocks=bl)
+    return [page(blocks(False, True))], [page(blocks(True, False))]
+
+
+@pytest.mark.parametrize("order_swapped", [False, True])
+def test_a_cleared_surface_mark_is_carried_not_silently_undone(order_swapped: bool):
+    old, new = _surface_pages(order_swapped)
+    out, rep = S7._carry_edits(old, new, ["page_001"])
+    b1 = next(b for b in out[0].blocks if b.id == 1)
+    assert b1.is_surface is False and b1.structure_edited
+    assert rep["dropped"] == [] and rep["blocks_carried"] == 1
+
+
+def test_a_cleared_surface_mark_on_a_changed_page_is_reported_as_itself():
+    """The block set changed, so the order cannot carry; the cleared mark still
+    matches and carries, and the loss reported is the order alone."""
+    old, new = _surface_pages(order_swapped=True, extra_block=True)
+    out, rep = S7._carry_edits(old, new, ["page_001"])
+    b1 = next(b for b in out[0].blocks if b.id == 1)
+    assert b1.is_surface is False
+    assert [d["kind"] for d in rep["dropped"]] == ["order"]

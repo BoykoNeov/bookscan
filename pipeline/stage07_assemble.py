@@ -355,12 +355,18 @@ def _describe_block_edit(blk: Block) -> str:
     return ", ".join(what) or "structure edited (box, order or merge)"
 
 
-def _only_an_order_edit(blk: Block) -> bool:
+def _only_an_order_edit(blk: Block, rerun: Block) -> bool:
     """A block whose sole edit is its place in a hand-set order: its loss is the
-    page's order item, not a block item of its own."""
+    page's order item, not a block item of its own.
+
+    Judged against its matched RE-RUN block: the surface mark has no automatic
+    copy to compare with, and the pipeline sets it too, so "not marked" does
+    not mean "untouched" — an operator who cleared the pipeline's mark leaves
+    ``is_surface`` False, and only the re-run's True shows that was an edit."""
     return (blk.type_auto is not None and blk.type == blk.type_auto
-            and not blk.deleted and not blk.is_surface and blk.text is None
-            and not blk.order_confirmed and blk.pair_source is not PairSource.USER)
+            and not blk.deleted and blk.is_surface == rerun.is_surface
+            and blk.text is None and not blk.order_confirmed
+            and blk.pair_source is not PairSource.USER)
 
 
 def _carry_edits(old_pages: list[DocPage], pages: list[DocPage],
@@ -437,9 +443,11 @@ def _carry_edits(old_pages: list[DocPage], pages: list[DocPage],
             if not _block_has_edits(ob):
                 continue
             nb = m.get(ob.id)
-            if _order_edited(op) and _only_an_order_edit(ob)                     and (problem or nb is not None):
+            if (problem is None and nb is not None and _order_edited(op)
+                    and _only_an_order_edit(ob, nb)):
                 # Its only edit is its place in the page's order: carried with
-                # the order, or reported once as the page's order item.
+                # the order, or reported once as the page's order item. On a
+                # page that is lost as a whole every edited block is listed.
                 if order_carried:
                     nb.structure_edited = True
                 continue

@@ -10361,3 +10361,9 @@ end. (3) *Population completeness checked.* Lines from the 2026-08-28 phone
 session to the 2026-10-21 crop rows were searched for block-order numbers on
 the 8 rows (`layout_order_eval`, segmentation, type accuracy, pairs): none
 reported, so the 19 cells / 12 rows stand.
+
+**Clause to the re-read row (same day).** Its "hold on every trim" list
+includes two thin rows: `it_geo_04` B6L (3 of 3) and `en_coins_03`'s pairs
+(3 of 3), each from only three bottom-only trims. The registered verdicts
+already treat these rows as "cannot judge — thin"; the supplementary "holds"
+on them is tentative in the same way and needs side trims before it counts.

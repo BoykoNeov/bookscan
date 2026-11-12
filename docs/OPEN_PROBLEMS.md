@@ -516,7 +516,8 @@ It needs a Bulgarian page carrying an English/other-language block.
   C28 → F28 pair (6/10; the plate reader still reads its numbers, so not the
   reader) and the T5right re-read (7/10). Only the footnote's cause is traced.
   The figure rescues, the German order fix and the coin-book pairs hold on every
-  trim. **Next, cheapest first:** (1) run one trimmed `en_coins_01` frame to the
+  trim — but `it_geo_04` (B6L) and `en_coins_03` had only 3 bottom trims, so
+  "holds" there is weak evidence until those pages get more trims. **Next, cheapest first:** (1) run one trimmed `en_coins_01` frame to the
   rendered page and confirm the footnote is missing; (2) per fragile mechanism, a
   pre-registered on/off run over the same trims (~1 h each) — owner's call.
 

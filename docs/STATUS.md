@@ -1357,3 +1357,20 @@ Hand-off item 5 (P7). No focus number has been computed on the population.
   against itself exactly 1.0; blurred σ 2 at most 0.655) —
   `docs/data/figure_focus_20261112/control.json`.
 - **Tests:** 6 in `tools/tests/test_figure_focus.py`.
+
+## 2026-11-12 (later) — Past layout gains re-read against the framing floor
+
+Desk re-read, no pipeline run; P9 follow-on. Pre-registered
+(`docs/data/layout_floor_reread_prereg_20261112.md`, f54b6a2), outputs in
+`docs/data/layout_floor_reread_20261112/`.
+
+- **Registered verdict:** of 19 past cells, 1 can be judged and it is inside
+  the floor (footnote rung); 16 were graded on the Stage-04-only arm, 2 on
+  statistics or a date the floor cannot judge.
+- **Supplementary (not registered):** the floor's own trimmed runs show five
+  past fixes hold on only some framings (footnote typing 0/6, `it_geo_05` C2
+  pair 3/10, `it_geo_06` column-major order 6/10, C28 plate read 6/10, T5right
+  re-read 7/10); figure rescues, `de_01` order and coin pairs hold on all.
+- **Lead:** on every trim the footnote line is detected as a page number,
+  which is stripped by default. Not followed to the PDF.
+- Nothing in the pipeline changed.

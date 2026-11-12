@@ -1,0 +1,643 @@
+{
+ "verdicts": [
+  {
+   "id": "caption_parser_0703",
+   "result": "2026-07-03 Gate-4 'Figura NN' caption parser",
+   "line": 577,
+   "row": "it_geo_06",
+   "cell": null,
+   "stat_text": "caption typing 0/6 -> 6/6",
+   "before": 0,
+   "after": 6,
+   "arm": "pre0706",
+   "floor": null,
+   "verdict": "CANNOT JUDGE",
+   "why": "before the 2026-07-06 matching change (and Stage-04-only)"
+  },
+  {
+   "id": "within_column_0718",
+   "result": "2026-07-18 within-column reading order (Stage 04 v0.2.0)",
+   "line": 1352,
+   "row": "de_01",
+   "cell": "right.tau_layout",
+   "stat_text": "text tau +0.60 -> +1.00",
+   "before": 0.6,
+   "after": 1.0,
+   "arm": "stage04",
+   "floor": {
+    "base": 1.0,
+    "n_arms": 10,
+    "n_moved": 0,
+    "swing": 0.0,
+    "moved_by": []
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "grouping_0809",
+   "result": "2026-08-09 caption<->figure grouping in production",
+   "line": 1718,
+   "row": "it_geo_06",
+   "cell": "row.pairs_ok",
+   "stat_text": "pairs 2/6 -> 4/6",
+   "before": 2,
+   "after": 4,
+   "arm": "stage04",
+   "floor": {
+    "base": 5,
+    "n_arms": 10,
+    "n_moved": 4,
+    "swing": 2,
+    "moved_by": [
+     "B4",
+     "B41",
+     "L41",
+     "T41"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "phase_b_0809",
+   "result": "2026-08-09 figure separation Phase B (L-shape split)",
+   "line": 1859,
+   "row": "it_geo_06",
+   "cell": "right.pairs_ok",
+   "stat_text": "pairs 4/6 -> 3/6 (C30->F30 lost, right subpage)",
+   "before": 4,
+   "after": 3,
+   "arm": "stage04",
+   "floor": {
+    "base": 1,
+    "n_arms": 10,
+    "n_moved": 1,
+    "swing": 1,
+    "moved_by": [
+     "B4"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "column_major_0809",
+   "result": "2026-08-09 column-major order behind a spanner",
+   "line": 2013,
+   "row": "it_geo_06",
+   "cell": "left.tau_all",
+   "stat_text": "tau+figures +0.86 -> +1.00",
+   "before": 0.8571,
+   "after": 1.0,
+   "arm": "stage04",
+   "floor": {
+    "base": 1.0,
+    "n_arms": 10,
+    "n_moved": 4,
+    "swing": 0.1429,
+    "moved_by": [
+     "L4",
+     "R4",
+     "R41",
+     "T4"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "corner_label2_0809",
+   "result": "2026-08-09 corner-label OCR #2",
+   "line": 2095,
+   "row": "it_geo_06",
+   "cell": "row.pairs_ok",
+   "stat_text": "pairs 3/6 -> 4/6",
+   "before": 3,
+   "after": 4,
+   "arm": "stage04",
+   "floor": {
+    "base": 5,
+    "n_arms": 10,
+    "n_moved": 4,
+    "swing": 2,
+    "moved_by": [
+     "B4",
+     "B41",
+     "L41",
+     "T41"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "corner_label3_0810",
+   "result": "2026-08-10 corner-label OCR round 3 (F28)",
+   "line": 2193,
+   "row": "it_geo_06",
+   "cell": "row.pairs_ok",
+   "stat_text": "pairs 4/6 -> 5/6",
+   "before": 4,
+   "after": 5,
+   "arm": "stage04",
+   "floor": {
+    "base": 5,
+    "n_arms": 10,
+    "n_moved": 4,
+    "swing": 2,
+    "moved_by": [
+     "B4",
+     "B41",
+     "L41",
+     "T41"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "coins_grouping_01_0818",
+   "result": "2026-08-18 grouping on a second book (side-set captions)",
+   "line": 3592,
+   "row": "en_coins_01",
+   "cell": "row.pairs_ok",
+   "stat_text": "pairs 0/4 -> 4/4",
+   "before": 0,
+   "after": 4,
+   "arm": "stage04",
+   "floor": {
+    "base": 4,
+    "n_arms": 6,
+    "n_moved": 0,
+    "swing": 0,
+    "moved_by": []
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "coins_grouping_02_0818",
+   "result": "2026-08-18 grouping on a second book (side-set captions)",
+   "line": 3593,
+   "row": "en_coins_02",
+   "cell": "row.pairs_ok",
+   "stat_text": "pairs 0/2 -> 2/2",
+   "before": 0,
+   "after": 2,
+   "arm": "stage04",
+   "floor": {
+    "base": 2,
+    "n_arms": 6,
+    "n_moved": 0,
+    "swing": 0,
+    "moved_by": []
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "coins_grouping_03_0818",
+   "result": "2026-08-18 grouping on a second book (side-set captions)",
+   "line": 3594,
+   "row": "en_coins_03",
+   "cell": "row.pairs_ok",
+   "stat_text": "pairs 0/2 -> 2/2",
+   "before": 0,
+   "after": 2,
+   "arm": "stage04",
+   "floor": {
+    "base": 2,
+    "n_arms": 3,
+    "n_moved": 0,
+    "swing": 0,
+    "moved_by": []
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "sole_figure_04_0826",
+   "result": "2026-08-26 sole-figure pairing arm",
+   "line": 4807,
+   "row": "it_geo_04",
+   "cell": "left.pairs_ok",
+   "stat_text": "pairs 1/2 -> 2/2 (B8, left subpage)",
+   "before": 0,
+   "after": 1,
+   "arm": "stage04",
+   "floor": {
+    "base": 0,
+    "n_arms": 3,
+    "n_moved": 0,
+    "swing": 0,
+    "moved_by": []
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "sole_figure_05_0826",
+   "result": "2026-08-26 sole-figure pairing arm",
+   "line": 4808,
+   "row": "it_geo_05",
+   "cell": "right.pairs_ok",
+   "stat_text": "pairs 0/2 -> 1/2 (C3, right subpage)",
+   "before": 0,
+   "after": 1,
+   "arm": "stage04",
+   "floor": {
+    "base": 1,
+    "n_arms": 10,
+    "n_moved": 2,
+    "swing": 1,
+    "moved_by": [
+     "T4",
+     "T41"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "starved_reread_0826",
+   "result": "2026-08-26 starved-block re-read",
+   "line": 5213,
+   "row": "it_geo_07",
+   "cell": null,
+   "stat_text": "mean GT anchor recall 0.9254 -> 0.9468 over 80 blocks (T5right 0.40 -> 0.90)",
+   "before": 0.9254,
+   "after": 0.9468,
+   "arm": "stage04",
+   "floor": null,
+   "verdict": "CANNOT JUDGE",
+   "why": "statistic not carried by the floor"
+  },
+  {
+   "id": "fig_rescue_07_seg_0826",
+   "result": "2026-08-26 sub-threshold figure rescue (D1)",
+   "line": 5528,
+   "row": "it_geo_07",
+   "cell": "left.seg",
+   "stat_text": "seg 15/17 -> 16/17",
+   "before": 15,
+   "after": 16,
+   "arm": "stage04",
+   "floor": {
+    "base": 17,
+    "n_arms": 10,
+    "n_moved": 3,
+    "swing": 1,
+    "moved_by": [
+     "B4",
+     "L4",
+     "all41"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "fig_rescue_07_type_0826",
+   "result": "2026-08-26 sub-threshold figure rescue (D1)",
+   "line": 5528,
+   "row": "it_geo_07",
+   "cell": "left.type_acc",
+   "stat_text": "type 14/15 -> 15/16",
+   "before": 0.9333,
+   "after": 0.9375,
+   "arm": "stage04",
+   "floor": {
+    "base": 0.9412,
+    "n_arms": 10,
+    "n_moved": 5,
+    "swing": 0.0625,
+    "moved_by": [
+     "B4",
+     "L4",
+     "R4",
+     "R41",
+     "all41"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "fig_rescue_07_tau_0826",
+   "result": "2026-08-26 sub-threshold figure rescue (D1)",
+   "line": 5528,
+   "row": "it_geo_07",
+   "cell": "left.tau_all",
+   "stat_text": "tau+figures +0.943 -> +0.950",
+   "before": 0.943,
+   "after": 0.95,
+   "arm": "stage04",
+   "floor": {
+    "base": 0.9559,
+    "n_arms": 10,
+    "n_moved": 5,
+    "swing": 0.05,
+    "moved_by": [
+     "B4",
+     "L4",
+     "R4",
+     "R41",
+     "all41"
+    ]
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "fig_rescue_04_seg_0826",
+   "result": "2026-08-26 sub-threshold figure rescue (B6L)",
+   "line": 5529,
+   "row": "it_geo_04",
+   "cell": "left.seg",
+   "stat_text": "seg 4/5 -> 5/5",
+   "before": 4,
+   "after": 5,
+   "arm": "stage04",
+   "floor": {
+    "base": 5,
+    "n_arms": 3,
+    "n_moved": 0,
+    "swing": 0,
+    "moved_by": []
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "fig_rescue_04_pairs_0826",
+   "result": "2026-08-26 sub-threshold figure rescue (B6L)",
+   "line": 5529,
+   "row": "it_geo_04",
+   "cell": "left.pairs_ok",
+   "stat_text": "pairs 1/1 -> 0/1 (B8 abstains)",
+   "before": 1,
+   "after": 0,
+   "arm": "stage04",
+   "floor": {
+    "base": 0,
+    "n_arms": 3,
+    "n_moved": 0,
+    "swing": 0,
+    "moved_by": []
+   },
+   "verdict": "CANNOT JUDGE",
+   "why": "graded on the Stage-04-only arm (a different quantity)"
+  },
+  {
+   "id": "rescued_footnote_0826",
+   "result": "2026-08-26 rescued-block typing (footnote rung)",
+   "line": 5935,
+   "row": "en_coins_01",
+   "cell": "left.type_acc",
+   "stat_text": "type acc 0.667 -> 0.750 (FN1 typed footnote)",
+   "before": 0.6667,
+   "after": 0.75,
+   "arm": "default",
+   "floor": {
+    "base": 0.75,
+    "n_arms": 6,
+    "n_moved": 6,
+    "swing": 0.0833,
+    "moved_by": [
+     "B4",
+     "B41",
+     "T4",
+     "T41",
+     "all25",
+     "all41"
+    ]
+   },
+   "verdict": "INSIDE",
+   "why": "|delta| 0.0833 <= reframing swing 0.0833"
+  }
+ ],
+ "supplementary_block_checks": [
+  {
+   "id": "de01R_order",
+   "past_change": "within_column_0718",
+   "row": "de_01",
+   "subpage": "right",
+   "what": "text order exact (tau +1.00)",
+   "holds_uncut": true,
+   "holds_on": 10,
+   "n_trims": 10,
+   "fails_on": []
+  },
+  {
+   "id": "it06L_F26_last",
+   "past_change": "column_major_0809",
+   "row": "it_geo_06",
+   "subpage": "left",
+   "what": "F26 ordered after F25/F27/F28 (the column-major fix)",
+   "holds_uncut": true,
+   "holds_on": 6,
+   "n_trims": 10,
+   "fails_on": [
+    "L4",
+    "R4",
+    "R41",
+    "T4"
+   ]
+  },
+  {
+   "id": "it06L_number_pairs",
+   "past_change": "grouping_0809 / corner_label*",
+   "row": "it_geo_06",
+   "subpage": "left",
+   "what": "C25-C28 all paired to their figures by number",
+   "holds_uncut": true,
+   "holds_on": 6,
+   "n_trims": 10,
+   "fails_on": [
+    "B4",
+    "B41",
+    "L41",
+    "T41"
+   ]
+  },
+  {
+   "id": "it06L_C28",
+   "past_change": "corner_label3_0810",
+   "row": "it_geo_06",
+   "subpage": "left",
+   "what": "C28 -> F28 (the round-3 plate read)",
+   "holds_uncut": true,
+   "holds_on": 6,
+   "n_trims": 10,
+   "fails_on": [
+    "B4",
+    "B41",
+    "L41",
+    "T41"
+   ]
+  },
+  {
+   "id": "it06R_C29",
+   "past_change": "grouping_0809 / phase_b_0809",
+   "row": "it_geo_06",
+   "subpage": "right",
+   "what": "C29 -> F29 correct",
+   "holds_uncut": true,
+   "holds_on": 9,
+   "n_trims": 10,
+   "fails_on": [
+    "B4"
+   ]
+  },
+  {
+   "id": "it06R_no_wrong",
+   "past_change": "zero-wrong bar",
+   "row": "it_geo_06",
+   "subpage": "right",
+   "what": "no wrong pair",
+   "holds_uncut": true,
+   "holds_on": 9,
+   "n_trims": 10,
+   "fails_on": [
+    "B4"
+   ]
+  },
+  {
+   "id": "coins01_pairs",
+   "past_change": "coins_grouping_01_0818",
+   "row": "en_coins_01",
+   "subpage": "left+right",
+   "what": "C96-C99 paired",
+   "holds_uncut": true,
+   "holds_on": 6,
+   "n_trims": 6,
+   "fails_on": []
+  },
+  {
+   "id": "coins02_pairs",
+   "past_change": "coins_grouping_02_0818",
+   "row": "en_coins_02",
+   "subpage": "right",
+   "what": "C101/C102 paired",
+   "holds_uncut": true,
+   "holds_on": 6,
+   "n_trims": 6,
+   "fails_on": []
+  },
+  {
+   "id": "coins03_pairs",
+   "past_change": "coins_grouping_03_0818",
+   "row": "en_coins_03",
+   "subpage": "right",
+   "what": "C104/C105 paired",
+   "holds_uncut": true,
+   "holds_on": 3,
+   "n_trims": 3,
+   "fails_on": []
+  },
+  {
+   "id": "it05R_C3",
+   "past_change": "sole_figure_05_0826",
+   "row": "it_geo_05",
+   "subpage": "right",
+   "what": "C3 -> F3 (sole-figure arm)",
+   "holds_uncut": true,
+   "holds_on": 8,
+   "n_trims": 10,
+   "fails_on": [
+    "T4",
+    "T41"
+   ]
+  },
+  {
+   "id": "it05L_C2_found",
+   "past_change": "caption_eject (2026-08-10)",
+   "row": "it_geo_05",
+   "subpage": "left",
+   "what": "caption C2 matched",
+   "holds_uncut": true,
+   "holds_on": 8,
+   "n_trims": 10,
+   "fails_on": [
+    "R4",
+    "R41"
+   ]
+  },
+  {
+   "id": "it05L_C2_pair",
+   "past_change": "caption_eject (2026-08-10)",
+   "row": "it_geo_05",
+   "subpage": "left",
+   "what": "C2 -> F2 paired",
+   "holds_uncut": true,
+   "holds_on": 3,
+   "n_trims": 10,
+   "fails_on": [
+    "L4",
+    "L41",
+    "R4",
+    "R41",
+    "T4",
+    "all25",
+    "all41"
+   ]
+  },
+  {
+   "id": "it07L_D1",
+   "past_change": "fig_rescue_07_*",
+   "row": "it_geo_07",
+   "subpage": "left",
+   "what": "picture D1 matched",
+   "holds_uncut": true,
+   "holds_on": 10,
+   "n_trims": 10,
+   "fails_on": []
+  },
+  {
+   "id": "it07L_T5right",
+   "past_change": "starved_reread_0826",
+   "row": "it_geo_07",
+   "subpage": "left",
+   "what": "paragraph T5right matched",
+   "holds_uncut": true,
+   "holds_on": 7,
+   "n_trims": 10,
+   "fails_on": [
+    "B4",
+    "L4",
+    "all41"
+   ]
+  },
+  {
+   "id": "it04L_B6L",
+   "past_change": "fig_rescue_04_*",
+   "row": "it_geo_04",
+   "subpage": "left",
+   "what": "picture B6L matched (thin: 3 trims)",
+   "holds_uncut": true,
+   "holds_on": 3,
+   "n_trims": 3,
+   "fails_on": []
+  },
+  {
+   "id": "coins01L_FN1",
+   "past_change": "rescued_footnote_0826",
+   "row": "en_coins_01",
+   "subpage": "left",
+   "what": "FN1 typed footnote",
+   "holds_uncut": true,
+   "holds_on": 0,
+   "n_trims": 6,
+   "fails_on": [
+    "B4",
+    "B41",
+    "T4",
+    "T41",
+    "all25",
+    "all41"
+   ]
+  }
+ ],
+ "_note": "verdicts = pre-registered rule; supplementary_block_checks = NOT pre-registered"
+}

@@ -503,8 +503,19 @@ It needs a Bulgarian page carrying an English/other-language block.
   all 8 rows 2026-10-21** (RESULTS, framing floor): per-row ranges are in
   `data/framing_floor_20261021/summary.json`. Read them per row and per
   statistic: e.g. on `it_geo_06` pairs and tau+figures move but segmentation
-  and text tau never do, so a lost block there is outside the floor. Not yet
-  done: re-reading earlier rows' layout deltas against those ranges.
+  and text tau never do, so a lost block there is outside the floor.
+  **Earlier rows re-read 2026-11-12** (RESULTS same day, pre-registered): only
+  1 of 19 past cells can be judged (the rest were graded on the Stage-04-only
+  arm), and it is inside — the footnote rung. Read off the floor's own trimmed
+  runs, five past fixes hold on only part of the framings: the footnote typing
+  (0 of 6 trims — the detector then boxes the line as a *page number*, which is
+  stripped, so the footnote text may be deleted; unchecked to the PDF),
+  `it_geo_05` C2's pair (3/10), the column-major order on `it_geo_06`-left (6/10,
+  the old defect comes back exactly), the C28 plate read (6/10) and the T5right
+  re-read (7/10). The figure rescues, the German order fix and the coin-book
+  pairs hold on every trim. **Next, cheapest first:** (1) does the footnote's
+  `page_number` call reach the rendered document on a trimmed frame; (2) per
+  fragile mechanism, a pre-registered on/off run over the same trims (~1 h each).
 
 ---
 

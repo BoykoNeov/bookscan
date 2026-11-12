@@ -10256,3 +10256,80 @@ its render is committed as `docs/data/single_page_osd_20261112/D1_p140_thumb.png
 inexact: D2 p.16 and D1 p.148 got no OSD answer at all; D1 p.1 (the cover) got
 the right answer on both turned copies but at confidence 0.23 and 0.16, under
 the 2.0 floor, so it was left as it came. Neither changes the verdict.
+
+## 2026-11-12 — Past layout gains re-read against the framing floor: one judgeable, and it is inside; the floor's own runs show five past fixes that a few pixels of background undo
+
+Pre-registration `docs/data/layout_floor_reread_prereg_20261112.md` (f54b6a2,
+committed before any past row was read against the floor). Desk re-read, no
+pipeline run. Transcribed deltas, script and outputs:
+`docs/data/layout_floor_reread_20261112/` (`deltas.json` with the RESULTS line
+of every number, `reread.py`, `verdicts.json`, `verdicts.md`). Floor:
+`docs/data/framing_floor_20261021/summary.json` and its per-trim eval outputs.
+
+**Population.** 19 cells from 12 past rows that report a block-order number
+changing on the 8 block-GT rows because of a pipeline change. Five more rows
+are in scope but changed no graded number (sole-figure size floor,
+`figure_text`, the geometric thinness floor, `caption_eject` and the icon
+sidebar, the last two invisible to the eval of their day). Six instrument
+changes excluded by kind (07-06 matching, 08-09 tau+figures metric, the 08-26
+matcher tie-break and both 08-26 harness rows, the 07-03 first measurements).
+
+**Pre-registered verdicts.**
+
+| verdict | cells | which |
+|---|---|---|
+| OUTSIDE the floor | 0 | — |
+| INSIDE the floor | **1** | footnote rung (08-26): `en_coins_01`-left type accuracy 0.667 → 0.750; every one of the 6 trims moves that cell by exactly that much |
+| CANNOT JUDGE — Stage-04-only arm | 16 | every pairing, order and segmentation gain from 07-18 to the 08-26 figure rescue |
+| CANNOT JUDGE — statistic not carried | 1 | starved-block re-read (anchor recall) |
+| CANNOT JUDGE — before 07-06 | 1 | caption parser 0/6 → 6/6 |
+
+So the registered answer is thin: almost every past layout number was graded on
+the arm the floor was not measured on, and CLAUDE.md forbids comparing the two.
+Pointers only, for those cells (floor cell today: trims that moved it / trims,
+swing): `de_01`-right text tau 0/10 (never moves); `en_coins_01/02` pairs 0/6,
+`en_coins_03` 0/3 (never move); `it_geo_06` pairs 4/10, swing 2 (each of its
+four one-pair steps and the 2 → 4 step fit inside); `it_geo_06`-left
+tau+figures 4/10, swing 0.143 (the column-major gain was 0.14);
+`it_geo_07`-left segmentation 3/10, swing 1; `it_geo_05`-right pairs 2/10.
+
+**Supplementary, NOT pre-registered (thought of while reading the cells): does
+the specific block each past change was about survive the trims?** Read off the
+floor's own 58 trimmed eval outputs, current code, default arm — so this half
+does not have the arm problem. It answers a different question from the
+verdicts: whether the thing each fix fixed still holds when the framing moves.
+
+| the fix and what it fixed | uncut | holds on trims |
+|---|---|---|
+| footnote rung (08-26): `en_coins_01` FN1 typed footnote | yes | **0 / 6** |
+| caption ejection (08-10): `it_geo_05` C2 paired to its map | yes | **3 / 10** (C2 found on 8; on 5 more the pair abstains) |
+| column-major order (08-09): `it_geo_06`-left F26 after F25/F27/F28 | yes | **6 / 10** — L4, R4, R41, T4 give back exactly the old defect (F26 second, tau+figures 0.86) |
+| corner-label round 3 (08-10): `it_geo_06` C28 → F28 | yes | **6 / 10** (B4, B41, L41, T41 lose it) |
+| starved-block re-read (08-26): `it_geo_07` T5right found | yes | **7 / 10** |
+| sole-figure arm (08-26): `it_geo_05` C3 → F3 | yes | 8 / 10 |
+| grouping (08-09): `it_geo_06` C29 → F29, no wrong pair | yes | 9 / 10 (B4: the known wrong pair) |
+| within-column order (07-18): `de_01`-right exact | yes | 10 / 10 |
+| side-set grouping (08-18): all 8 coin pairs | yes | 6/6, 6/6, 3/3 |
+| figure rescue (08-26): `it_geo_07` D1 found | yes | 10 / 10 |
+| figure rescue (08-26): `it_geo_04` B6L found | yes | 3 / 3 (thin) |
+
+**The footnote, looked at.** Uncut, the detector draws no box over the
+footnote line, so its words are rescued as orphans and the rung types the
+orphan block `footnote`. Under all six trims the detector *does* box that line,
+and calls it `page_number` — so the rung never runs, and page numbers are
+stripped from the document by default. On every reframing measured, the
+footnote's text would be deleted from the output, not merely mistyped. Not
+checked here end to end (the eval stops before Stage 08); recorded as a lead.
+
+**Reading.** The pipeline is deterministic (repeat = base), so none of this
+says a past fix was false. It says which fixes were shown on one framing only
+and are as fragile as the framing: the footnote rung, the C2 pair, the
+column-major order, the C28 plate read and the T5right re-read. The gains that
+held on every trim are the two figure rescues, the German order fix and the
+coin-book pairing. n = one photograph per row, three books.
+
+**Next (named, not run).** The paired test that would settle the five fragile
+ones: run the same trims with each mechanism switched off (the "on" half is the
+floor folder). Pre-register per mechanism; about an hour each at the floor's
+pace. For the footnote, the first question is cheaper: does the detector's
+`page_number` call on that line survive to the rendered document?

@@ -1,0 +1,39 @@
+{
+  "_about": "Past layout deltas transcribed from docs/RESULTS.md for the re-read pre-registered in docs/data/layout_floor_reread_prereg_20261112.md. One entry per cell. 'arm' is the layout_order_eval arm the row was graded on: 'stage04' = before the 2026-08-26 harness change (eval stopped after Stage 04), 'default' = Stage 04 + 05 (the floor's arm), 'pre0706' = before the 2026-07-06 figure-matching change. 'cell' is the summary.json key, or null when the floor carries no such statistic. 'line' is the RESULTS.md line of the number.",
+  "deltas": [
+    {"id": "caption_parser_0703", "result": "2026-07-03 Gate-4 'Figura NN' caption parser", "line": 577, "row": "it_geo_06", "cell": null, "stat_text": "caption typing 0/6 -> 6/6", "before": 0, "after": 6, "arm": "pre0706"},
+    {"id": "within_column_0718", "result": "2026-07-18 within-column reading order (Stage 04 v0.2.0)", "line": 1352, "row": "de_01", "cell": "right.tau_layout", "stat_text": "text tau +0.60 -> +1.00", "before": 0.60, "after": 1.00, "arm": "stage04"},
+    {"id": "grouping_0809", "result": "2026-08-09 caption<->figure grouping in production", "line": 1718, "row": "it_geo_06", "cell": "row.pairs_ok", "stat_text": "pairs 2/6 -> 4/6", "before": 2, "after": 4, "arm": "stage04"},
+    {"id": "phase_b_0809", "result": "2026-08-09 figure separation Phase B (L-shape split)", "line": 1859, "row": "it_geo_06", "cell": "right.pairs_ok", "stat_text": "pairs 4/6 -> 3/6 (C30->F30 lost, right subpage)", "before": 4, "after": 3, "arm": "stage04"},
+    {"id": "column_major_0809", "result": "2026-08-09 column-major order behind a spanner", "line": 2013, "row": "it_geo_06", "cell": "left.tau_all", "stat_text": "tau+figures +0.86 -> +1.00", "before": 0.8571, "after": 1.00, "arm": "stage04"},
+    {"id": "corner_label2_0809", "result": "2026-08-09 corner-label OCR #2", "line": 2095, "row": "it_geo_06", "cell": "row.pairs_ok", "stat_text": "pairs 3/6 -> 4/6", "before": 3, "after": 4, "arm": "stage04"},
+    {"id": "corner_label3_0810", "result": "2026-08-10 corner-label OCR round 3 (F28)", "line": 2193, "row": "it_geo_06", "cell": "row.pairs_ok", "stat_text": "pairs 4/6 -> 5/6", "before": 4, "after": 5, "arm": "stage04"},
+    {"id": "coins_grouping_01_0818", "result": "2026-08-18 grouping on a second book (side-set captions)", "line": 3592, "row": "en_coins_01", "cell": "row.pairs_ok", "stat_text": "pairs 0/4 -> 4/4", "before": 0, "after": 4, "arm": "stage04"},
+    {"id": "coins_grouping_02_0818", "result": "2026-08-18 grouping on a second book (side-set captions)", "line": 3593, "row": "en_coins_02", "cell": "row.pairs_ok", "stat_text": "pairs 0/2 -> 2/2", "before": 0, "after": 2, "arm": "stage04"},
+    {"id": "coins_grouping_03_0818", "result": "2026-08-18 grouping on a second book (side-set captions)", "line": 3594, "row": "en_coins_03", "cell": "row.pairs_ok", "stat_text": "pairs 0/2 -> 2/2", "before": 0, "after": 2, "arm": "stage04"},
+    {"id": "sole_figure_04_0826", "result": "2026-08-26 sole-figure pairing arm", "line": 4807, "row": "it_geo_04", "cell": "left.pairs_ok", "stat_text": "pairs 1/2 -> 2/2 (B8, left subpage)", "before": 0, "after": 1, "arm": "stage04"},
+    {"id": "sole_figure_05_0826", "result": "2026-08-26 sole-figure pairing arm", "line": 4808, "row": "it_geo_05", "cell": "right.pairs_ok", "stat_text": "pairs 0/2 -> 1/2 (C3, right subpage)", "before": 0, "after": 1, "arm": "stage04"},
+    {"id": "starved_reread_0826", "result": "2026-08-26 starved-block re-read", "line": 5213, "row": "it_geo_07", "cell": null, "stat_text": "mean GT anchor recall 0.9254 -> 0.9468 over 80 blocks (T5right 0.40 -> 0.90)", "before": 0.9254, "after": 0.9468, "arm": "stage04"},
+    {"id": "fig_rescue_07_seg_0826", "result": "2026-08-26 sub-threshold figure rescue (D1)", "line": 5528, "row": "it_geo_07", "cell": "left.seg", "stat_text": "seg 15/17 -> 16/17", "before": 15, "after": 16, "arm": "stage04"},
+    {"id": "fig_rescue_07_type_0826", "result": "2026-08-26 sub-threshold figure rescue (D1)", "line": 5528, "row": "it_geo_07", "cell": "left.type_acc", "stat_text": "type 14/15 -> 15/16", "before": 0.9333, "after": 0.9375, "arm": "stage04"},
+    {"id": "fig_rescue_07_tau_0826", "result": "2026-08-26 sub-threshold figure rescue (D1)", "line": 5528, "row": "it_geo_07", "cell": "left.tau_all", "stat_text": "tau+figures +0.943 -> +0.950", "before": 0.943, "after": 0.950, "arm": "stage04"},
+    {"id": "fig_rescue_04_seg_0826", "result": "2026-08-26 sub-threshold figure rescue (B6L)", "line": 5529, "row": "it_geo_04", "cell": "left.seg", "stat_text": "seg 4/5 -> 5/5", "before": 4, "after": 5, "arm": "stage04"},
+    {"id": "fig_rescue_04_pairs_0826", "result": "2026-08-26 sub-threshold figure rescue (B6L)", "line": 5529, "row": "it_geo_04", "cell": "left.pairs_ok", "stat_text": "pairs 1/1 -> 0/1 (B8 abstains)", "before": 1, "after": 0, "arm": "stage04"},
+    {"id": "rescued_footnote_0826", "result": "2026-08-26 rescued-block typing (footnote rung)", "line": 5935, "row": "en_coins_01", "cell": "left.type_acc", "stat_text": "type acc 0.667 -> 0.750 (FN1 typed footnote)", "before": 0.6667, "after": 0.75, "arm": "default"}
+  ],
+  "in_population_no_graded_delta": [
+    {"result": "2026-08-26 sole-figure size floor", "line": 5033, "why": "the eight block-GT rows re-graded identically; its one gain is on it_geo_02 (no block GT)"},
+    {"result": "2026-08-28 figure-edge text absorption (figure_text)", "line": 6025, "why": "every graded column unchanged in both arms; the one changed pair is on an ungraded subpage"},
+    {"result": "2026-10-21 thinness floor on the geometric arm", "line": 9764, "why": "no uncut number changed; the row was itself graded on 12 reframings (wrong pairs 2 -> 0)"},
+    {"result": "2026-08-10 caption printed inside a figure (caption_eject)", "line": 2314, "why": "the Stage-04-only eval could not see Stage 05; its gain (it_geo_05-left C2, seg 1/2 -> 2/2, a pair) first appeared in the 2026-08-26 harness row, which is excluded as an instrument change"},
+    {"result": "2026-08-18 icon sidebar re-typed as a picture", "line": 3725, "why": "the eval cannot see it (the sidebar is scoped out of de_01's GT)"}
+  ],
+  "excluded_instrument_changes": [
+    {"result": "2026-07-06 figure matching -> bbox overlap, tau over text only", "line": 767},
+    {"result": "2026-08-09 figure-inclusive reading order metric (its V-split on/off demo)", "line": 1874},
+    {"result": "2026-08-26 the heading that ate the paragraph (matcher tie-break)", "line": 5357},
+    {"result": "2026-08-26 the harness measures the stage it stops at", "line": 5605},
+    {"result": "2026-08-26 the harness had its own copy of the OCR call", "line": 5758},
+    {"result": "2026-07-03 Gate 3 block-order evals (first measurements, no before/after)", "line": 377}
+  ]
+}

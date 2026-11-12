@@ -1256,3 +1256,28 @@ changed; `split_eval` is untouched. Suite 851 → 869.
 - **Order of work this implies for the operator:** on a spread whose crop is
   wrong, draw the book box and re-run the page BEFORE correcting its text. A new
   crop moves every word box, so no correction on that spread can carry.
+
+## 2026-11-12 (later) — The console marks stages left over from an earlier run
+
+- **Built (handoff item 2).** `run_all.json` now records `started_at`, taken
+  before the first stage. The server marks a stage `stale` when the last run
+  failed before writing it and its `meta.json` is older than that start
+  (`run_failed`), or when it is older than a stage before it in the chain
+  (`older_than_upstream`). The console draws such a stage's mark hollow, with
+  the reason in its tooltip, and the page view says in one line above the tabs
+  why some of what it shows is old.
+- **Beyond the handoff text:** the second reason. The book-box editor's "Save
+  & re-split" runs Stage 02 alone, so 03–06 are cut from the old crop and no
+  failed run records it — on the operator's path for the biggest open problem
+  (P1). A stage the run summary lists as succeeded is never marked, so a disk
+  clock behind the machine clock cannot paint fresh output hollow; both rules
+  allow 2 s of clock and copy jitter.
+- **Checked for real:** a copy of `jobs/bg_01` re-run with Stage 03 forced to
+  fail; Stages 00–02 came out current and 03–06 marked; a separate console on
+  the copy showed four hollow marks and the line "The last run stopped at
+  03_dewarp…" (headless browser screenshot). The new marks only ever add keys;
+  an up-to-date stage's record is unchanged, so the Android app and older
+  clients see nothing new.
+- **What this could not check:** the re-split case on a real page (unit test
+  only); the page's "done" label still follows the worker, so a failed run
+  made outside the console (as in this check) still reads "done" there.

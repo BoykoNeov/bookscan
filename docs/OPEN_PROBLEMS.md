@@ -483,9 +483,12 @@ It needs a Bulgarian page carrying an English/other-language block.
 - **Leftover stages after a failed re-run (found 2026-11-12).** `run_all`
   stops at the first failing stage, so a re-run that fails at Stage 03 leaves
   the previous run's 04–06 in place, and they look current. Stage 07 now names
-  such a page and warns when the page image and the word boxes differ in size;
-  the console page view does not yet mark the leftover stages
-  (`plans/handoff-2026-11-12.md` item 2).
+  such a page and warns when the page image and the word boxes differ in size.
+  **Since 2026-11-12 the console marks them** (hollow stage marks, one line
+  above the page view's tabs), and also the case the handoff missed: a stage
+  re-run alone (the book-box editor's re-split) leaves the later stages older
+  than it, marked the same way. Still not marked: the page's "done" label,
+  which follows the worker.
 - **Framing is a draw too (found 2026-10-21).** Every `layout_order_eval` row
   grades one framing of each photograph, and a sofa-only trim of 4–41 px moves
   caption typing, segmentation, order and even makes a wrong pair (RESULTS
@@ -526,9 +529,8 @@ It needs a Bulgarian page carrying an English/other-language block.
   Every imported single page carries Stage 00's "result is PORTRAIT" warning,
   which is noise there.
 - **Six hand-off items from the 2026-11-12 review**
-  (`plans/handoff-2026-11-12.md`), none started: keep hand edits across a
-  spread refresh when the page did not move (today a refresh of an edited
-  spread discards that spread's edits); mark leftover stages in the console;
+  (`plans/handoff-2026-11-12.md`). **Done:** keeping a spread's hand edits
+  across a refresh; marking leftover stages in the console. **Not started:**
   Stage 00 treats an imported single page as a spread (the PORTRAIT warning
   above, and a possible wrong 90° turn — **unmeasured**); pair a caption with
   a picture on the facing page (the last bullet below); a focus check for

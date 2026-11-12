@@ -126,6 +126,28 @@ def test_failure_result_is_also_persisted(tmp_path: Path, monkeypatch):
     assert on_disk["failed_stage"] == "05_ocr"
 
 
+def test_started_at_is_recorded_and_precedes_every_stage(tmp_path: Path, monkeypatch):
+    """The console tells a leftover stage folder from a fresh one by comparing
+    its meta.json time with when the run began; that only works if the start
+    is taken BEFORE the first stage writes anything."""
+    from datetime import datetime
+    _install_stubs(monkeypatch)
+    page_dir = tmp_path / "page_001"
+
+    RA.run_page(page_dir, cfg={})
+
+    on_disk = json.loads((page_dir / "run_all.json").read_text())
+    started = datetime.fromisoformat(on_disk["started_at"])
+    assert started.tzinfo is not None
+    first_meta = (page_dir / "00_ingest" / "meta.json").stat().st_mtime
+    assert started.timestamp() <= first_meta + 1.0
+
+
+def test_old_summary_without_started_at_still_parses():
+    old = {"page_dir": "x", "ok": False, "failed_stage": "03_dewarp", "stages": []}
+    assert RA.PageRunResult.model_validate(old).started_at is None
+
+
 # ---- CLI page_dir resolution ---------------------------------------------
 
 

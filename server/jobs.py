@@ -263,6 +263,67 @@ def _stage_status(page_dir: Path, name: str) -> dict | None:
     return {"ok": True, "warnings": meta.warnings, "timings_ms": meta.timings_ms}
 
 
+def _meta_mtime(page_dir: Path, name: str) -> float | None:
+    try:
+        return (page_dir / name / "meta.json").stat().st_mtime
+    except OSError:
+        return None
+
+
+# A stage's meta.json must be at least this much older than the thing it is
+# compared with before it is called left over. Clocks and filesystems round
+# (FAT keeps 2 s); a real leftover is minutes to days older, never seconds.
+_STALE_SLACK_S = 2.0
+
+
+def _mark_stale(page_dir: Path, stages: dict, run_all: dict | None) -> None:
+    """Mark, in place, the stage folders that still hold an EARLIER run's output.
+
+    Two ways a stage folder outlives the run it belongs to — both leave the
+    folder untouched by the stage contract, so the console used to show it as
+    fine:
+
+    ``run_failed``: the last ``run_all`` stopped at a failing stage, so that
+    stage and every one after it were not written by it. Only those are
+    candidates (a stage the summary lists as succeeded was written by this run
+    and is never stale, whatever the clocks say); a candidate is stale when its
+    ``meta.json`` is older than the run's ``started_at``. A summary without
+    ``started_at`` (written before 2026-11-12) marks nothing.
+
+    ``older_than_upstream``: a stage is older than one before it in the chain.
+    This is how one stage gets re-run on its own — the book-box editor's "Save
+    & re-split" runs Stage 02 alone — leaving 03-06 cut from the old crop.
+
+    Only ever ADDS ``stale``/``stale_reason`` keys to a stage that has run; an
+    up-to-date stage's dict is exactly what it was. Never raises."""
+    candidates: set[str] = set()
+    started: float | None = None
+    if isinstance(run_all, dict) and run_all.get("ok") is False:
+        try:
+            started = datetime.fromisoformat(str(run_all["started_at"])).timestamp()
+        except (KeyError, TypeError, ValueError):
+            started = None
+        done_ok = {s.get("name") for s in run_all.get("stages") or []
+                   if isinstance(s, dict) and s.get("ok") is True}
+        candidates = {n for n in STAGE_ORDER if n not in done_ok}
+
+    newest_upstream: tuple[float, str] | None = None
+    for name in STAGE_ORDER:
+        mt = _meta_mtime(page_dir, name)
+        st = stages.get(name)
+        if mt is None or st is None:
+            continue
+        if started is not None and name in candidates and mt < started - _STALE_SLACK_S:
+            st["stale"] = True
+            st["stale_reason"] = "run_failed"
+        elif newest_upstream is not None and mt < newest_upstream[0] - _STALE_SLACK_S:
+            st["stale"] = True
+            st["stale_reason"] = "older_than_upstream"
+            st["stale_since"] = newest_upstream[1]
+        if newest_upstream is None or mt > newest_upstream[0]:
+            newest_upstream = (mt, name)
+
+
 def page_status(page_dir: Path) -> dict:
     # Never raises: run_all.py rewrites this file at the end of every run, and
     # a poll that lands mid-write must show "no summary yet", not 500 the whole
@@ -271,9 +332,14 @@ def page_status(page_dir: Path) -> dict:
         run_all = json.loads((page_dir / "run_all.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         run_all = None
+    stages = {name: _stage_status(page_dir, name) for name in STAGE_ORDER}
+    try:
+        _mark_stale(page_dir, stages, run_all)
+    except Exception:   # a staleness hint must never 500 the job view
+        pass
     return {
         "name": page_dir.name,
-        "stages": {name: _stage_status(page_dir, name) for name in STAGE_ORDER},
+        "stages": stages,
         "run_all": run_all,
         # None until a worker touches the page. Distinguishes "queued, nothing
         # has happened yet" from "the subprocess died before run_all.py could

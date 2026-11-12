@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import argparse
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
@@ -92,6 +93,11 @@ class PageRunResult(BaseModel):
     ok: bool                       # True iff every stage in the chain succeeded
     failed_stage: str | None = None
     stages: list[StageOutcome] = Field(default_factory=list)
+    # When this run began (UTC, ISO 8601), taken before the first stage. A stage
+    # folder whose meta.json is OLDER than this was not written by this run: the
+    # run stopped before reaching it, so it is left over from an earlier one
+    # (the console draws it hollow). None in summaries written before 2026-11-12.
+    started_at: str | None = None
 
 
 def _stage_warnings(page_dir: Path, dirname: str) -> list[str]:
@@ -132,6 +138,7 @@ def run_page(page_dir: Path, cfg: dict, *, src: Path | None = None,
     ]
     assert tuple(name for name, _ in steps) == STAGE_ORDER
 
+    started_at = datetime.now(timezone.utc).isoformat()
     outcomes: list[StageOutcome] = []
     failed_stage: str | None = None
     for name, call in steps:
@@ -149,7 +156,8 @@ def run_page(page_dir: Path, cfg: dict, *, src: Path | None = None,
             timing_ms=round((time.perf_counter() - t0) * 1000.0, 1)))
 
     result = PageRunResult(page_dir=str(page_dir), ok=failed_stage is None,
-                            failed_stage=failed_stage, stages=outcomes)
+                            failed_stage=failed_stage, stages=outcomes,
+                            started_at=started_at)
     page_dir.mkdir(parents=True, exist_ok=True)
     (page_dir / "run_all.json").write_text(
         result.model_dump_json(indent=2), encoding="utf-8")

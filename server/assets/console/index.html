@@ -93,6 +93,8 @@
   .pip { width: 15px; height: 5px; border-radius: 2px; background: #333c4c; }
   .pip.done { background: var(--ok); }
   .pip.warn { background: var(--warn); }
+  /* ran, but not in the latest run: hollow, so it no longer reads as fine */
+  .pip.stale { background: transparent; border: 1px solid var(--ok); box-sizing: border-box; }
 
   .viewwrap { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
   @media (max-width: 1100px) { .viewwrap { grid-template-columns: 1fr; } }
@@ -200,6 +202,7 @@ function stageState(st, name) {
   // operator nothing. The notes are still shown, verbatim, in the page panel.
   const s = st.stages?.[name];
   if (!s) return "";
+  if (s.stale) return "stale";
   return s.ok ? "done" : "bad";
 }
 
@@ -216,9 +219,34 @@ function pageChip(st) {
   return `<span class="chip">${done}/${total}</span>`;
 }
 
+// Why a stage's output is older than it should be, in words; "" when it is not.
+function staleWhy(s) {
+  if (!s?.stale) return "";
+  if (s.stale_reason === "older_than_upstream")
+    return `older than ${s.stale_since || "an earlier stage"}, which was re-run after it`;
+  return "left over from an earlier run";
+}
+
 function stagePips(st, order) {
-  return `<div class="stagebar">` + order.map(n =>
-    `<div class="pip ${stageState(st, n)}" title="${esc(n)}"></div>`).join("") + `</div>`;
+  return `<div class="stagebar">` + order.map(n => {
+    const why = staleWhy(st.stages?.[n]);
+    return `<div class="pip ${stageState(st, n)}" title="${esc(why ? `${n} — ${why}` : n)}"></div>`;
+  }).join("") + `</div>`;
+}
+
+// One line above the page view's tabs when some of what it shows is old.
+function staleNote(st) {
+  const order = S.job?.stage_order || Object.keys(st.stages || {});
+  const old = order.filter(n => st.stages?.[n]?.stale);
+  if (!old.length) return "";
+  const ra = st.run_all;
+  if (ra && ra.ok === false && old.some(n => st.stages[n].stale_reason === "run_failed"))
+    return `<p class="muted" style="color:var(--warn)">The last run stopped at ${esc(ra.failed_stage || "a stage")}.
+      Stages after it are from an earlier run (hollow marks). Re-run the page.</p>`;
+  const since = st.stages[old[0]].stale_since;
+  return `<p class="muted" style="color:var(--warn)">${esc(since || "An earlier stage")} was re-run after
+    ${esc(old.join(", "))}, so ${old.length === 1 ? "that stage still shows" : "those stages still show"}
+    the old result (hollow marks). Re-run the page to bring them up to date.</p>`;
 }
 
 // ---------------------------------------------------------------- sidebar
@@ -438,6 +466,7 @@ function renderPage() {
       ${fu ? `<div class="card"><div class="n">${fu.closeups_used}/${fu.closeups_total}</div>
         <div class="k">close-ups used</div></div>` : ""}
     </div>
+    ${staleNote(st)}
     <div class="tabs">${tabs.map(t =>
       `<div class="tab ${t.key === S.tab ? "sel" : ""}" data-k="${esc(t.key)}">${esc(t.label)}</div>`).join("")}</div>
     <div id="view"></div>`;

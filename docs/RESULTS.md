@@ -10202,3 +10202,47 @@ split block reported, not replayed.
 listed as lost, by design). A hand-set caption PAIR (only an unpair) on real
 data; the pair is in the unit tests. The console's confirm dialog in a browser
 (script syntax-checked, endpoints tested). n = 2 jobs, one edit of each kind.
+
+## 2026-11-12 — Stage 00 on imported PDF pages: no upright page is turned sideways; only the "should be landscape" warning was wrong (hand-off item 3)
+
+Pre-registered in `docs/data/single_page_osd_prereg_20261112.md` (committed
+ff9c7f9 before any page was run). Instrument `tools/single_page_osd_check.py`;
+per-page numbers, the by-eye verdict and the summary in
+`docs/data/single_page_osd_20261112/` (`raw.json`, `adjudication.json`,
+`result.json`).
+
+**Question.** Stage 00 accepts a 90°/270° Tesseract OSD turn at confidence
+≥ 2.0 because, on a phone spread, a wrong turn makes the frame portrait and a
+warning fires. On a portrait single page that check points the wrong way. Does
+the cascade turn an upright imported page sideways?
+
+**Population.** 81 pages: up to 20 evenly spaced pages from each of the six
+scanned PDFs of the 2026-09-24 text-layer row that are still on disk with the
+same SHA-256 (D1–D4, D6, D7; D5 is gone; our own re-typeset PDF excluded by
+decision), rendered exactly as the importer does (300 dpi), plus the two raw
+frames of `jobs/pdfimp_import_en_coins_01`. The importer calls 80 of them
+single and 1 spread. Stage 00's own Tesseract, tessdata and floors (2.0 / 5.0).
+
+| | single (n = 80) | spread (n = 1) |
+|---|---|---|
+| upright pages turned 90/270 by the cascade | **0 of 79** | 0 of 1 |
+| upright pages turned 180 | 0 | 0 |
+| non-zero OSD proposals on an upright page | 0 | 0 |
+| OSD gave no answer (blank / near-blank page) | 2 | 0 |
+| pages printed sideways in the book (by eye, angle hidden) | 1 — turned correctly (D1 p.140, a landscape table, 90° at 16.89) | 0 |
+| PORTRAIT warning on an upright page | **79 of 79** | 0 |
+| control: page turned 90° either way on purpose, restored | 152 of 158; correct calls min 3.49, median 27.3 | 2 of 2 (min 13.63) |
+| control: wrong calls | 0 (the 6 misses are 3 pages where OSD found too little text and abstained) | 0 |
+
+**Verdict, by the pre-registered rule: fix the warning only.** Stage 00 v0.2.0
+reads `<page_dir>/page_layout.json` and drops the PORTRAIT warning when the
+page is declared `single`; pixels and rotation decisions are unchanged
+(checked: both real imported frames re-ingest pixel-identical; the declared
+single page no longer warns). The 90/270 branch stays on for imported pages —
+skipping it would have left the one sideways table sideways. Neither floor
+changed.
+
+**Not checked.** A photographed book bound into a PDF; non-English PDFs; other
+dpi. n is pages from six documents; zero wrong turns means "not seen in this
+sample", and the lowest correct-call confidence (3.49) shows a weak page can sit
+close to the 2.0 floor.

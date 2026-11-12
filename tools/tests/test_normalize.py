@@ -150,6 +150,37 @@ def test_confident_osd_applies_rotation():
     assert np.array_equal(out, N._rotate_cw(a, 90))
 
 
+def test_portrait_warning_only_when_a_spread_is_expected():
+    """Layer 5 warns on a portrait result by default (a spread must be
+    landscape); ``expect_landscape=False`` (a page declared single) silences it
+    and changes nothing else — same pixels, same rotation decision."""
+    a = np.zeros((5, 3, 3), np.uint8)              # portrait
+    orig = N.osd_rotation
+    N.osd_rotation = lambda bgr, b, t: (0, 20.0)
+    try:
+        out1, i1 = N.orient_upright(a, "x", "y")
+        out2, i2 = N.orient_upright(a, "x", "y", expect_landscape=False)
+    finally:
+        N.osd_rotation = orig
+    assert any("PORTRAIT" in w for w in i1.warnings)
+    assert not any("PORTRAIT" in w for w in i2.warnings)
+    assert np.array_equal(out1, out2) and i1.applied_rotate == i2.applied_rotate == 0
+
+
+def test_declared_single_page_is_still_turned_90():
+    """Measured 2026-11-12 (RESULTS, single-page OSD row): on imported pages the
+    90/270 branch turned 0 of 79 upright pages and correctly turned the one
+    table printed sideways, so a declared single page keeps the 90/270 branch."""
+    a = np.arange(2 * 4 * 3, dtype=np.uint8).reshape(2, 4, 3)
+    orig = N.osd_rotation
+    N.osd_rotation = lambda bgr, b, t: (90, 16.9)
+    try:
+        out, info = N.orient_upright(a, "x", "y", expect_landscape=False)
+    finally:
+        N.osd_rotation = orig
+    assert info.applied_rotate == 90 and out.shape == (4, 2, 3)
+
+
 def test_pure_rotation_tag_is_distrusted_kept_landscape():
     """A JPEG tagged orientation=6 on already-upright LANDSCAPE pixels must stay
     landscape when OSD can't confirm — the pure-rotation tag is distrusted, not

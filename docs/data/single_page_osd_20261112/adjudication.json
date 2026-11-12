@@ -1,0 +1,4 @@
+{
+ "_how": "Judged by Claude from a 500 px render on a contact sheet that showed only the page id, not OSD's angle (tools/single_page_osd_check.py run). Only pages whose U arm got a non-zero OSD proposal need a verdict; all others default to upright.",
+ "D1_p140": "sideways_in_source"
+}

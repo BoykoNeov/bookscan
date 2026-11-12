@@ -235,9 +235,12 @@ named by the new `SubPage.source` — with the mode off that is always
 verbatim. Default is off for a **measured** reason, not caution (RESULTS
 2026-08-26); do not turn it on without reading that row.
 
-**Declared-page-layout exception (Stage 02).** `<page_dir>/page_layout.json` is
+**Declared-page-layout exception (Stages 00 and 02).** `<page_dir>/page_layout.json` is
 **input**, like `book_box.json`: no stage writes it, it sits at the page-dir
-root, Stage 02 reads it. `pipeline/pdf_import.py` writes one per imported page
+root, Stage 02 reads it. Stage 00 (v0.2.0) reads only its `layout`, to drop the
+"a spread should be landscape" warning on a `single` page; its 90/270 turns stay
+on for imported pages (measured: 0 of 79 upright pages turned, one sideways table
+turned correctly; RESULTS 2026-11-12). `pipeline/pdf_import.py` writes one per imported page
 (a PDF page may be one book page or a whole spread; phone pages never have one),
 with its provenance: `pdf_import_aspect` (a guess from the page's shape) or
 `operator`. `single` means Stage 02 emits the whole frame as `single.png` with no

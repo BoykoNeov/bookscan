@@ -1,0 +1,51 @@
+{
+ "n_pages": 81,
+ "by_verdict": {
+  "single": {
+   "n": 80,
+   "n_upright": 79,
+   "n_sideways_in_source": 1,
+   "U_applied_90_270": [],
+   "U_applied_180": [],
+   "U_wrong_proposals_conf": [],
+   "U_wrong_proposal_conf_max": null,
+   "U_n_applied_any": 0,
+   "U_n_osd_unavailable": 2,
+   "U_n_portrait_warning": 79,
+   "control_restored": 152,
+   "control_not_restored": 6,
+   "control_correct_conf_min": 3.49,
+   "control_correct_conf_median": 27.325000000000003,
+   "control_wrong_call_conf": [],
+   "sideways_in_source": [
+    {
+     "id": "D1_p140",
+     "osd_rotate": 90,
+     "osd_conf": 16.89,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": false
+    }
+   ]
+  },
+  "spread": {
+   "n": 1,
+   "n_upright": 1,
+   "n_sideways_in_source": 0,
+   "U_applied_90_270": [],
+   "U_applied_180": [],
+   "U_wrong_proposals_conf": [],
+   "U_wrong_proposal_conf_max": null,
+   "U_n_applied_any": 0,
+   "U_n_osd_unavailable": 0,
+   "U_n_portrait_warning": 0,
+   "control_restored": 2,
+   "control_not_restored": 0,
+   "control_correct_conf_min": 13.63,
+   "control_correct_conf_median": 15.015,
+   "control_wrong_call_conf": [],
+   "sideways_in_source": []
+  }
+ },
+ "decision": "warning_fix_only"
+}

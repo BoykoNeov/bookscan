@@ -1,0 +1,2687 @@
+{
+ "prereg": "docs/data/single_page_osd_prereg_20261112.md",
+ "dpi": 300,
+ "floors": {
+  "min_osd_conf": 2.0,
+  "min_osd_conf_180": 5.0
+ },
+ "tesseract": "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+ "tessdata": "M:\\claud_projects\\bookscan\\models\\tessdata_best",
+ "notes": [
+  "D5: file gone (ADA431357.pdf); excluded by rule",
+  "C: excluded by decision (prereg)"
+ ],
+ "pages": [
+  {
+   "id": "D1_p001",
+   "doc": "D1",
+   "pdf_page": 1,
+   "verdict": "single",
+   "size": [
+    1809,
+    2784
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 1.0,
+     "applied": 0,
+     "method": "osd_low_conf",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 0.23,
+     "applied": 0,
+     "method": "osd_low_conf",
+     "result_portrait": false
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 0.16,
+     "applied": 0,
+     "method": "osd_low_conf",
+     "result_portrait": false
+    }
+   }
+  },
+  {
+   "id": "D1_p009",
+   "doc": "D1",
+   "pdf_page": 9,
+   "verdict": "single",
+   "size": [
+    1917,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 25.48,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 25.8,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 26.16,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p016",
+   "doc": "D1",
+   "pdf_page": 16,
+   "verdict": "single",
+   "size": [
+    1917,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 33.98,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 32.62,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 31.17,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p024",
+   "doc": "D1",
+   "pdf_page": 24,
+   "verdict": "single",
+   "size": [
+    1913,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 36.34,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 35.04,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 35.48,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p032",
+   "doc": "D1",
+   "pdf_page": 32,
+   "verdict": "single",
+   "size": [
+    1913,
+    2713
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 32.37,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 34.12,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 33.29,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p040",
+   "doc": "D1",
+   "pdf_page": 40,
+   "verdict": "single",
+   "size": [
+    1913,
+    2713
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 31.51,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 32.0,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 33.71,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p047",
+   "doc": "D1",
+   "pdf_page": 47,
+   "verdict": "single",
+   "size": [
+    1913,
+    2713
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 23.76,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 25.08,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 29.55,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p055",
+   "doc": "D1",
+   "pdf_page": 55,
+   "verdict": "single",
+   "size": [
+    1913,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 23.62,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 24.83,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 19.99,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p063",
+   "doc": "D1",
+   "pdf_page": 63,
+   "verdict": "single",
+   "size": [
+    1921,
+    2721
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 25.54,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 26.87,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 22.77,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p071",
+   "doc": "D1",
+   "pdf_page": 71,
+   "verdict": "single",
+   "size": [
+    1913,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 25.28,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 27.89,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 28.58,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p078",
+   "doc": "D1",
+   "pdf_page": 78,
+   "verdict": "single",
+   "size": [
+    1913,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 28.02,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 30.91,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 30.35,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p086",
+   "doc": "D1",
+   "pdf_page": 86,
+   "verdict": "single",
+   "size": [
+    1913,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 30.42,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 31.24,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 29.63,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p094",
+   "doc": "D1",
+   "pdf_page": 94,
+   "verdict": "single",
+   "size": [
+    1913,
+    2713
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 33.58,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 29.65,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 33.07,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p102",
+   "doc": "D1",
+   "pdf_page": 102,
+   "verdict": "single",
+   "size": [
+    1913,
+    2713
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 23.13,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 25.8,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 23.71,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p109",
+   "doc": "D1",
+   "pdf_page": 109,
+   "verdict": "single",
+   "size": [
+    1913,
+    2713
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 24.96,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 27.03,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 24.84,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p117",
+   "doc": "D1",
+   "pdf_page": 117,
+   "verdict": "single",
+   "size": [
+    1913,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 17.89,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 20.81,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 18.92,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p125",
+   "doc": "D1",
+   "pdf_page": 125,
+   "verdict": "single",
+   "size": [
+    1913,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 21.93,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 20.64,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 23.32,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p133",
+   "doc": "D1",
+   "pdf_page": 133,
+   "verdict": "single",
+   "size": [
+    1917,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 15.19,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 12.63,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 9.22,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D1_p140",
+   "doc": "D1",
+   "pdf_page": 140,
+   "verdict": "single",
+   "size": [
+    1913,
+    2717
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 90,
+     "osd_conf": 16.89,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": false
+    },
+    "Rcw": {
+     "osd_rotate": 0,
+     "osd_conf": 18.82,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": false
+    },
+    "Rccw": {
+     "osd_rotate": 180,
+     "osd_conf": 15.45,
+     "applied": 180,
+     "method": "osd",
+     "result_portrait": false
+    }
+   }
+  },
+  {
+   "id": "D1_p148",
+   "doc": "D1",
+   "pdf_page": 148,
+   "verdict": "single",
+   "size": [
+    1786,
+    2748
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": null,
+     "osd_conf": null,
+     "applied": 0,
+     "method": "osd_unavailable",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": null,
+     "osd_conf": null,
+     "applied": 0,
+     "method": "osd_unavailable",
+     "result_portrait": false
+    },
+    "Rccw": {
+     "osd_rotate": null,
+     "osd_conf": null,
+     "applied": 0,
+     "method": "osd_unavailable",
+     "result_portrait": false
+    }
+   }
+  },
+  {
+   "id": "D2_p001",
+   "doc": "D2",
+   "pdf_page": 1,
+   "verdict": "single",
+   "size": [
+    1567,
+    2427
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 7.57,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 8.27,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 8.36,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p016",
+   "doc": "D2",
+   "pdf_page": 16,
+   "verdict": "single",
+   "size": [
+    1437,
+    2394
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": null,
+     "osd_conf": null,
+     "applied": 0,
+     "method": "osd_unavailable",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": null,
+     "osd_conf": null,
+     "applied": 0,
+     "method": "osd_unavailable",
+     "result_portrait": false
+    },
+    "Rccw": {
+     "osd_rotate": null,
+     "osd_conf": null,
+     "applied": 0,
+     "method": "osd_unavailable",
+     "result_portrait": false
+    }
+   }
+  },
+  {
+   "id": "D2_p031",
+   "doc": "D2",
+   "pdf_page": 31,
+   "verdict": "single",
+   "size": [
+    1460,
+    2407
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 30.49,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 31.32,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 31.3,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p046",
+   "doc": "D2",
+   "pdf_page": 46,
+   "verdict": "single",
+   "size": [
+    1447,
+    2410
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 22.87,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 24.43,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 24.7,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p061",
+   "doc": "D2",
+   "pdf_page": 61,
+   "verdict": "single",
+   "size": [
+    1447,
+    2387
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 30.2,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 25.9,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 29.43,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p076",
+   "doc": "D2",
+   "pdf_page": 76,
+   "verdict": "single",
+   "size": [
+    1449,
+    2373
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 29.24,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 31.77,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 33.92,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p091",
+   "doc": "D2",
+   "pdf_page": 91,
+   "verdict": "single",
+   "size": [
+    1474,
+    2400
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 25.76,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 27.07,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 26.55,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p106",
+   "doc": "D2",
+   "pdf_page": 106,
+   "verdict": "single",
+   "size": [
+    1460,
+    2405
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 26.45,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 27.96,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 27.66,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p121",
+   "doc": "D2",
+   "pdf_page": 121,
+   "verdict": "single",
+   "size": [
+    1504,
+    2428
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 28.24,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 24.47,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 22.22,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p136",
+   "doc": "D2",
+   "pdf_page": 136,
+   "verdict": "single",
+   "size": [
+    1460,
+    2405
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 25.23,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 24.32,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 30.85,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p151",
+   "doc": "D2",
+   "pdf_page": 151,
+   "verdict": "single",
+   "size": [
+    1504,
+    2428
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 27.6,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 24.74,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 26.75,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p166",
+   "doc": "D2",
+   "pdf_page": 166,
+   "verdict": "single",
+   "size": [
+    1481,
+    2405
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 29.35,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 28.95,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 30.76,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p181",
+   "doc": "D2",
+   "pdf_page": 181,
+   "verdict": "single",
+   "size": [
+    1504,
+    2428
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 29.51,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 26.3,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 26.71,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p196",
+   "doc": "D2",
+   "pdf_page": 196,
+   "verdict": "single",
+   "size": [
+    1481,
+    2405
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 14.68,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 15.16,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 15.18,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p211",
+   "doc": "D2",
+   "pdf_page": 211,
+   "verdict": "single",
+   "size": [
+    1470,
+    2428
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 3.88,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 6.11,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 3.49,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p226",
+   "doc": "D2",
+   "pdf_page": 226,
+   "verdict": "single",
+   "size": [
+    1481,
+    2405
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 6.97,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 6.06,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 6.73,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p241",
+   "doc": "D2",
+   "pdf_page": 241,
+   "verdict": "single",
+   "size": [
+    1470,
+    2428
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 30.84,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 30.05,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 28.51,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p256",
+   "doc": "D2",
+   "pdf_page": 256,
+   "verdict": "single",
+   "size": [
+    1481,
+    2405
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 23.15,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 25.03,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 27.72,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p271",
+   "doc": "D2",
+   "pdf_page": 271,
+   "verdict": "single",
+   "size": [
+    1470,
+    2428
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 28.9,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 30.92,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 27.39,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D2_p286",
+   "doc": "D2",
+   "pdf_page": 286,
+   "verdict": "single",
+   "size": [
+    1584,
+    2485
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 9.29,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 8.38,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 9.17,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p001",
+   "doc": "D3",
+   "pdf_page": 1,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 25.15,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 24.87,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 27.25,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p002",
+   "doc": "D3",
+   "pdf_page": 2,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 25.83,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 26.84,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 28.22,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p003",
+   "doc": "D3",
+   "pdf_page": 3,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 33.9,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 31.19,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 36.7,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p004",
+   "doc": "D3",
+   "pdf_page": 4,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 32.78,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 35.17,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 31.83,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p005",
+   "doc": "D3",
+   "pdf_page": 5,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 29.73,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 26.57,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 27.09,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p006",
+   "doc": "D3",
+   "pdf_page": 6,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 27.06,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 28.79,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 27.74,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p007",
+   "doc": "D3",
+   "pdf_page": 7,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 26.02,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 29.51,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 25.91,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p008",
+   "doc": "D3",
+   "pdf_page": 8,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 34.78,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 36.31,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 34.2,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p009",
+   "doc": "D3",
+   "pdf_page": 9,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 29.21,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 33.02,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 31.48,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D3_p010",
+   "doc": "D3",
+   "pdf_page": 10,
+   "verdict": "single",
+   "size": [
+    2398,
+    3154
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 29.92,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 28.02,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 28.3,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p001",
+   "doc": "D4",
+   "pdf_page": 1,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 12.13,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 5.23,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 5.07,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p045",
+   "doc": "D4",
+   "pdf_page": 45,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 31.73,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 28.51,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 32.84,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p089",
+   "doc": "D4",
+   "pdf_page": 89,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 31.42,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 31.12,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 28.1,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p133",
+   "doc": "D4",
+   "pdf_page": 133,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 32.98,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 27.47,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 30.9,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p177",
+   "doc": "D4",
+   "pdf_page": 177,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 30.31,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 33.93,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 26.65,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p221",
+   "doc": "D4",
+   "pdf_page": 221,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 8.44,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 9.44,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 8.35,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p265",
+   "doc": "D4",
+   "pdf_page": 265,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 30.41,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 29.24,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 30.02,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p309",
+   "doc": "D4",
+   "pdf_page": 309,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 29.82,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 26.47,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 25.5,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p353",
+   "doc": "D4",
+   "pdf_page": 353,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 30.28,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 31.77,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 31.14,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p397",
+   "doc": "D4",
+   "pdf_page": 397,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 23.63,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 30.01,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 28.9,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p440",
+   "doc": "D4",
+   "pdf_page": 440,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 10.68,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 9.61,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 9.01,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p484",
+   "doc": "D4",
+   "pdf_page": 484,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 31.87,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 33.29,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 35.33,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p528",
+   "doc": "D4",
+   "pdf_page": 528,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 30.9,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 33.63,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 33.99,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p572",
+   "doc": "D4",
+   "pdf_page": 572,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 35.38,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 38.09,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 36.25,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p616",
+   "doc": "D4",
+   "pdf_page": 616,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 23.75,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 27.63,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 33.02,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p660",
+   "doc": "D4",
+   "pdf_page": 660,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 29.96,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 28.26,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 31.78,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p704",
+   "doc": "D4",
+   "pdf_page": 704,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 26.12,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 27.26,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 27.54,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p748",
+   "doc": "D4",
+   "pdf_page": 748,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 26.56,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 21.58,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 28.93,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p792",
+   "doc": "D4",
+   "pdf_page": 792,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 25.9,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 24.23,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 28.85,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D4_p836",
+   "doc": "D4",
+   "pdf_page": 836,
+   "verdict": "single",
+   "size": [
+    1574,
+    2588
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 20.74,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 21.81,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 21.95,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D6_p001",
+   "doc": "D6",
+   "pdf_page": 1,
+   "verdict": "single",
+   "size": [
+    2020,
+    2882
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 14.4,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 17.24,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 16.26,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D6_p002",
+   "doc": "D6",
+   "pdf_page": 2,
+   "verdict": "single",
+   "size": [
+    2020,
+    2882
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 14.36,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 13.47,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 16.06,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D6_p003",
+   "doc": "D6",
+   "pdf_page": 3,
+   "verdict": "single",
+   "size": [
+    2020,
+    2882
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 13.52,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 15.55,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 12.44,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D6_p004",
+   "doc": "D6",
+   "pdf_page": 4,
+   "verdict": "single",
+   "size": [
+    2020,
+    2882
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 13.97,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 14.82,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 13.68,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D6_p005",
+   "doc": "D6",
+   "pdf_page": 5,
+   "verdict": "single",
+   "size": [
+    2020,
+    2882
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 11.5,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 12.32,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 13.1,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D6_p006",
+   "doc": "D6",
+   "pdf_page": 6,
+   "verdict": "single",
+   "size": [
+    2020,
+    2882
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 14.47,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 13.31,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 16.31,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D6_p007",
+   "doc": "D6",
+   "pdf_page": 7,
+   "verdict": "single",
+   "size": [
+    2020,
+    2882
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 6.7,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 8.15,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 12.67,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D7_p001",
+   "doc": "D7",
+   "pdf_page": 1,
+   "verdict": "single",
+   "size": [
+    1863,
+    2850
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 33.1,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 30.84,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 31.71,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "D7_p002",
+   "doc": "D7",
+   "pdf_page": 2,
+   "verdict": "single",
+   "size": [
+    1863,
+    2850
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 27.5,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 30.05,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 32.07,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  },
+  {
+   "id": "pdfimp_en_coins_01/page_001",
+   "doc": "pdfimp_en_coins_01",
+   "verdict": "spread",
+   "size": [
+    4000,
+    3000
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 13.9,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": false
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 13.63,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": false
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 16.4,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": false
+    }
+   }
+  },
+  {
+   "id": "pdfimp_en_coins_01/page_002",
+   "doc": "pdfimp_en_coins_01",
+   "verdict": "single",
+   "size": [
+    2000,
+    3000
+   ],
+   "arms": {
+    "U": {
+     "osd_rotate": 0,
+     "osd_conf": 13.47,
+     "applied": 0,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rcw": {
+     "osd_rotate": 270,
+     "osd_conf": 15.48,
+     "applied": 270,
+     "method": "osd",
+     "result_portrait": true
+    },
+    "Rccw": {
+     "osd_rotate": 90,
+     "osd_conf": 14.11,
+     "applied": 90,
+     "method": "osd",
+     "result_portrait": true
+    }
+   }
+  }
+ ]
+}

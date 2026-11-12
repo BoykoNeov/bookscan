@@ -25,6 +25,16 @@ ordered by filename; ``frame_00`` is the anchor candidate. Sharpness
 (variance-of-Laplacian) is recorded per frame so Stage 01 (fuse) can pick the
 sharpest without re-reading pixels.
 
+Declared page layout (v0.2.0, 2026-11-12). ``<page_dir>/page_layout.json`` is
+operator/importer INPUT at the page-dir root — the same file Stage 02 reads (the
+"declared-page-layout exception" in CLAUDE.md), never written by a stage. Stage
+00 reads only its ``layout``: a page declared ``single`` (every portrait page of
+an imported PDF) is portrait by nature, so the cascade's "a spread should be
+landscape" warning is switched off for it. Nothing else changes — the 90/270
+branch stays on for imported pages because it was measured there: 0 of 79
+upright pages turned, the one table printed sideways turned correctly (RESULTS
+2026-11-12). An absent or corrupt file runs exactly as before.
+
 RAW decode (.dng/.cr2/.nef/...) needs ``rawpy``, which is not yet installed and
 has no test image — the branch is present but guarded: it warns and skips rather
 than crashing. JPEG/PNG/TIFF is the validated path.
@@ -51,7 +61,7 @@ from pipeline.page_model import StageMeta
 from tools import normalize as N
 
 STAGE = "stage00_ingest"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -194,6 +204,16 @@ def run(page_dir: Path, cfg: dict, src: Path | None = None,
 
     sources = gather_sources(page_dir, src)
 
+    # Declared page layout (input at the page-dir root, written by the PDF
+    # importer or an operator; the same file Stage 02 reads). A page declared
+    # ``single`` is portrait by nature, so the cascade's "a spread should be
+    # landscape" warning is switched off for it. Absent/corrupt: as before.
+    from pipeline.stage02_split import load_page_layout
+    layout, layout_problem = load_page_layout(page_dir)
+    if layout_problem:
+        warnings.append(layout_problem)
+    declared_single = layout is not None and layout.layout == "single"
+
     out_dir = page_dir / "00_ingest"
     out_dir.mkdir(parents=True, exist_ok=True)
     # Clear any stale frames from a prior run so the folder reflects ONLY this
@@ -221,12 +241,14 @@ def run(page_dir: Path, cfg: dict, src: Path | None = None,
             bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
             t_o = time.perf_counter()
             bgr, info = N.orient_upright(bgr, binary, tessdata, min_conf=min_conf,
-                                         min_conf_180=min_conf_180)
+                                         min_conf_180=min_conf_180,
+                                         expect_landscape=not declared_single)
             orient_ms += (time.perf_counter() - t_o) * 1000.0
         else:
             t_o = time.perf_counter()
             bgr, info = N.load_upright_bgr(sp, binary, tessdata, min_conf=min_conf,
-                                           min_conf_180=min_conf_180)
+                                           min_conf_180=min_conf_180,
+                                           expect_landscape=not declared_single)
             orient_ms += (time.perf_counter() - t_o) * 1000.0
 
         name = f"frame_{i:02d}.png"
@@ -263,7 +285,8 @@ def run(page_dir: Path, cfg: dict, src: Path | None = None,
     total_ms = (time.perf_counter() - t0) * 1000.0
     meta = StageMeta(
         stage=STAGE, version=VERSION,
-        params={"min_osd_conf": min_conf, "min_osd_conf_180": min_conf_180},
+        params={"min_osd_conf": min_conf, "min_osd_conf_180": min_conf_180,
+                "declared_layout": (layout.layout if layout is not None else None)},
         timings_ms={"orient": round(orient_ms, 1), "total": round(total_ms, 1)},
         warnings=warnings + [
             "orientation via shared tools.normalize (priority cascade: capture-hint"

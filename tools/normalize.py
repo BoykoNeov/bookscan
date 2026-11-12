@@ -217,8 +217,14 @@ def orient_upright(
     exif_orientation: int | None = None,
     hint_rotate: int | None = None,
     min_conf_180: float = DEFAULT_MIN_OSD_CONF_180,
+    expect_landscape: bool = True,
 ) -> tuple[np.ndarray, OrientInfo]:
     """Resolve ``bgr`` to upright via the priority cascade (mirror already baked).
+
+    ``expect_landscape=False`` switches off layer 5's PORTRAIT warning, for a
+    frame declared to be ONE page (an imported PDF page, ``page_layout.json``
+    ``single``): a single page is portrait, so the warning there is noise. It
+    changes no pixels and no rotation.
 
     Operates on an already-loaded buffer, so it runs cascade layers 1 (capture
     hint), 2 (text-baseline), 3 (OSD) and 5 (landscape prior). The EXIF layer (4)
@@ -283,7 +289,7 @@ def orient_upright(
     # the correct direction to force, so FLAG (not rotate) a portrait result so a
     # genuine mis-orientation stays visible in the stage warnings.
     h, w = out.shape[:2]
-    if h > w:
+    if expect_landscape and h > w:
         info.warnings.append(
             "result is PORTRAIT, but a book spread should be landscape — "
             "orientation may be wrong (OSD weak + EXIF rotation distrusted). "
@@ -299,6 +305,7 @@ def load_upright_bgr(
     min_conf: float = DEFAULT_MIN_OSD_CONF,
     hint_rotate: int | None = None,
     min_conf_180: float = DEFAULT_MIN_OSD_CONF_180,
+    expect_landscape: bool = True,
 ) -> tuple[np.ndarray, OrientInfo]:
     """Load an image file → upright BGR array + orientation provenance.
 
@@ -321,6 +328,7 @@ def load_upright_bgr(
         bgr, binary, tessdata_dir, min_conf=min_conf,
         exif_orientation=(orientation if exif_tag else None),
         hint_rotate=hint_rotate, min_conf_180=min_conf_180,
+        expect_landscape=expect_landscape,
     )
     info.exif_mirror_baked = mirror
     return out, info

@@ -111,6 +111,48 @@ def test_stale_frames_cleared_on_rerun():
     assert [p.name for p in frames] == ["frame_00.png"], "stale frame_01 not cleared"
 
 
+def _run_portrait(layout_json: str | None) -> dict:
+    """Run Stage 00 on a portrait frame with OSD stubbed to 'upright, confident';
+    return its meta.json. ``layout_json`` is written as page_layout.json."""
+    orig = N.osd_rotation
+    N.osd_rotation = lambda bgr, b, t: (0, 20.0)
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            src = root / "cap.png"
+            cv2.imwrite(str(src), _sharp_image(w=300, h=400))
+            page = root / "page_001"
+            page.mkdir()
+            if layout_json is not None:
+                (page / "page_layout.json").write_text(layout_json, encoding="utf-8")
+            # a binary that "exists" so the cascade reaches the (stubbed) OSD
+            S.run(page, cfg={"tesseract": {"binary": str(src)}}, src=src)
+            return json.loads((page / "00_ingest" / "meta.json").read_text())
+    finally:
+        N.osd_rotation = orig
+
+
+def test_declared_single_page_gets_no_portrait_warning():
+    meta = _run_portrait('{"layout": "single", "source": "pdf_import_aspect", '
+                         '"origin": "pdf_import"}')
+    assert not any("PORTRAIT" in w for w in meta["warnings"]), meta["warnings"]
+    assert meta["params"]["declared_layout"] == "single"
+
+
+def test_spread_still_gets_the_portrait_warning():
+    for layout in (None, '{"layout": "spread", "source": "operator"}',
+                   '{"layout": "detect", "source": "operator"}'):
+        meta = _run_portrait(layout)
+        assert any("PORTRAIT" in w for w in meta["warnings"]), layout
+
+
+def test_corrupt_page_layout_warns_and_runs_as_before():
+    meta = _run_portrait("{not json")
+    assert any("page_layout.json unreadable" in w for w in meta["warnings"])
+    assert any("PORTRAIT" in w for w in meta["warnings"])
+    assert meta["params"]["declared_layout"] is None
+
+
 def test_raw_without_rawpy_is_skipped_not_crashed():
     # A .dng source with rawpy absent must warn+skip, not raise.
     try:

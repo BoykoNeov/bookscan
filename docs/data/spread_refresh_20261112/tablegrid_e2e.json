@@ -1,0 +1,47 @@
+{
+  "job": "tablegrid_e2e",
+  "pages": 6,
+  "full_assemble_s": 21.9,
+  "refreshes": [
+    {
+      "spread": "page_004",
+      "seconds": 8.6,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    },
+    {
+      "spread": "page_005",
+      "seconds": 2.4,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    }
+  ],
+  "edited_spread_refused": true,
+  "edit_survived": true,
+  "meta_keeps_full_record": true,
+  "meta_refreshes": [
+    [
+      "page_004"
+    ],
+    [
+      "page_005"
+    ]
+  ],
+  "panel_reference_conf": {
+    "full": 92.748581,
+    "refreshes": [
+      92.748581,
+      92.748581
+    ]
+  },
+  "asset_files": 6,
+  "ok": true
+}

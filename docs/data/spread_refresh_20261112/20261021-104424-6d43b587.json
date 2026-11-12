@@ -1,0 +1,61 @@
+{
+  "job": "20261021-104424-6d43b587",
+  "pages": 6,
+  "full_assemble_s": 121.8,
+  "refreshes": [
+    {
+      "spread": "page_002",
+      "seconds": 30.9,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    },
+    {
+      "spread": "page_003",
+      "seconds": 41.4,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    },
+    {
+      "spread": "page_004",
+      "seconds": 31.3,
+      "page_order_kept": true,
+      "other_pages_identical": true,
+      "refreshed_pages_equal_full_assemble": true,
+      "settings_kept": true,
+      "assets_identical_to_full": true,
+      "on_disk_equals_returned": true
+    }
+  ],
+  "edited_spread_refused": true,
+  "edit_survived": true,
+  "meta_keeps_full_record": true,
+  "meta_refreshes": [
+    [
+      "page_002"
+    ],
+    [
+      "page_003"
+    ],
+    [
+      "page_004"
+    ]
+  ],
+  "panel_reference_conf": {
+    "full": 92.9685575,
+    "refreshes": [
+      93.005146,
+      93.034988,
+      92.975304
+    ]
+  },
+  "asset_files": 17,
+  "ok": true
+}

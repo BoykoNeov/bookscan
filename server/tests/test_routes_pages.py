@@ -195,6 +195,26 @@ def test_rerun_goes_through_the_worker_and_does_not_run_a_stage_itself(client):
     assert json.loads((d / "worker.json").read_text(encoding="utf-8"))["state"] == "queued"
 
 
+def test_rerun_of_a_page_already_queued_does_not_queue_it_twice(client):
+    """A double click used to run the page twice — two GPU passes for one result."""
+    d = _page(client)
+    seen = []
+    client.app.state.worker.enqueue = seen.append
+    assert client.post("/api/jobs/j1/pages/page_001/rerun").json()["already_queued"] is False
+    r = client.post("/api/jobs/j1/pages/page_001/rerun")
+    assert r.status_code == 200 and r.json()["already_queued"] is True
+    assert seen == [d]
+
+
+def test_a_half_written_run_all_json_does_not_500_the_job_view(client):
+    """run_all.py rewrites the file at the end of a run; a poll can land mid-write."""
+    d = _page(client)
+    (d / "run_all.json").write_text('{"page_dir": "x", "ok"', encoding="utf-8")
+    r = client.get("/api/jobs/j1")
+    assert r.status_code == 200
+    assert r.json()["pages"][0]["run_all"] is None
+
+
 # --------------------------------------------------------------------------
 # The console itself
 # --------------------------------------------------------------------------

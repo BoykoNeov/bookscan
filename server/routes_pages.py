@@ -247,6 +247,13 @@ def rerun(job_id: str, page: str, request: Request) -> dict:
     own folder, so this is idempotent on the trace.
     """
     page_dir = _page_dir(request, job_id, page)
+    # Already waiting in the queue: a second click must not run the page twice
+    # (each run is a GPU pass of a minute or more, and the second one changes
+    # nothing). A page that is RUNNING is still accepted — the operator may have
+    # drawn a book box since it started, and the run in flight will not see it.
+    state = (J.read_worker_state(page_dir) or {}).get("state")
+    if state == "queued":
+        return {"ok": True, "queued": page_dir.name, "already_queued": True}
     request.app.state.worker.enqueue(page_dir)
     J.write_worker_state(page_dir, "queued")
-    return {"ok": True, "queued": page_dir.name}
+    return {"ok": True, "queued": page_dir.name, "already_queued": False}

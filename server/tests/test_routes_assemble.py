@@ -134,3 +134,73 @@ def test_assemble_force_overwrites_edits(client: TestClient, tmp_path: Path):
     assert r.status_code == 200
     reassembled = json.loads(doc_path.read_text(encoding="utf-8"))
     assert reassembled["pages"][0]["blocks"][0]["words"][0]["text"] == "Roma"
+
+
+# --------------------------------------------------------------------------
+# Refreshing one spread, and saying which pages were left out
+# --------------------------------------------------------------------------
+
+
+def _two_spreads_with_an_edit_on_the_first(client: TestClient, tmp_path: Path) -> str:
+    import json
+    import shutil
+    job_id = client.post("/api/jobs").json()["job_id"]
+    job = tmp_path / job_id
+    _seed_page(job)
+    shutil.copytree(job / "page_001", job / "page_002")
+    assert client.post(f"/api/jobs/{job_id}/assemble").json()["pages"] == 2
+    doc_path = job / "document.json"
+    d = json.loads(doc_path.read_text(encoding="utf-8"))
+    d["pages"][0]["blocks"][0]["words"][0].update(text="ROMA-EDITED", edited=True)
+    doc_path.write_text(json.dumps(d), encoding="utf-8")
+    return job_id
+
+
+def test_refreshing_an_unedited_spread_keeps_the_edits_elsewhere(
+        client: TestClient, tmp_path: Path):
+    import json
+    job_id = _two_spreads_with_an_edit_on_the_first(client, tmp_path)
+    r = client.post(f"/api/jobs/{job_id}/assemble?spread=page_002")
+    assert r.status_code == 200, r.text
+    assert r.json()["refreshed"] == ["page_002"] and r.json()["pages"] == 2
+    d = json.loads((tmp_path / job_id / "document.json").read_text(encoding="utf-8"))
+    assert d["pages"][0]["blocks"][0]["words"][0]["text"] == "ROMA-EDITED"
+
+
+def test_refreshing_an_edited_spread_is_409_until_forced(
+        client: TestClient, tmp_path: Path):
+    import json
+    job_id = _two_spreads_with_an_edit_on_the_first(client, tmp_path)
+    r = client.post(f"/api/jobs/{job_id}/assemble?spread=page_001")
+    assert r.status_code == 409 and "page_001" in r.json()["detail"]
+    r = client.post(f"/api/jobs/{job_id}/assemble?spread=page_001&force=true")
+    assert r.status_code == 200
+    d = json.loads((tmp_path / job_id / "document.json").read_text(encoding="utf-8"))
+    assert d["pages"][0]["blocks"][0]["words"][0]["text"] == "Roma"
+
+
+def test_refresh_rejects_a_name_that_is_not_a_page(client: TestClient, tmp_path: Path):
+    job_id = _two_spreads_with_an_edit_on_the_first(client, tmp_path)
+    assert client.post(
+        f"/api/jobs/{job_id}/assemble?spread=../x").status_code == 400
+    # a real page name with nothing to assemble is the client's to fix, not a 500
+    assert client.post(
+        f"/api/jobs/{job_id}/assemble?spread=page_077").status_code == 400
+
+
+def test_assemble_names_the_pages_it_left_out(client: TestClient, tmp_path: Path):
+    import json
+    job_id = client.post("/api/jobs").json()["job_id"]
+    job = tmp_path / job_id
+    _seed_page(job)
+    (job / "page_002" / "raw").mkdir(parents=True)
+    (job / "page_002" / "worker.json").write_text(
+        json.dumps({"state": "running"}), encoding="utf-8")
+    (job / "page_003").mkdir()
+    (job / "page_003" / "run_all.json").write_text(
+        json.dumps({"ok": False, "failed_stage": "03_dewarp"}), encoding="utf-8")
+    r = client.post(f"/api/jobs/{job_id}/assemble").json()
+    assert r["not_in_document"] == [
+        {"page": "page_002", "why": "still being processed"},
+        {"page": "page_003", "why": "failed at 03_dewarp"}]
+    assert r["stale"] == []

@@ -361,6 +361,19 @@ class Page(BaseModel):
     blocks: list[Block] = Field(default_factory=list)
 
 
+def page_dir_sort_key(name: str) -> tuple[int, str]:
+    """Order ``page_NNN`` folder names by their NUMBER, not as text.
+
+    Names are zero-padded to three digits, so a plain sort is right up to
+    ``page_999`` and then puts ``page_1000`` between ``page_100`` and
+    ``page_101`` — a 1,200-page PDF import assembled with pages 1000-1199
+    scattered through the first third of the book. Not part of the schema; it
+    lives here because every layer that lists page folders already imports this
+    module."""
+    digits = name.rsplit("_", 1)[-1]
+    return (int(digits) if digits.isdigit() else 10**12, name)
+
+
 class StageMeta(BaseModel):
     """Contents of every stage's ``meta.json`` (stage contract, item 3)."""
 

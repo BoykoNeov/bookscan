@@ -37,6 +37,14 @@ abstain does. ``text_ocr``/``*_auto`` provenance is NEVER touched.
 cheap; the Chromium/Playwright PDF path is slow/flaky, so it stays a separate
 explicit export, not the live-preview loop.
 
+**A save never silently overwrites a newer document.** ``document_rev`` is a
+token for the file as it is on disk; the editor page receives it with the
+document (``X-Document-Rev``) and sends it back with a save (``If-Match``). If
+the file changed in between — a second editor tab saved, or a spread was
+refreshed / the job re-assembled from the console — the save is refused (409)
+instead of replacing that newer document with this tab's older copy. A save
+with no ``If-Match`` is accepted as before (scripts, old pages).
+
 Endpoints:
   GET  /                     the editor SPA (pipeline/assets/editor/index.html)
   GET  /api/document         current document.json
@@ -89,6 +97,33 @@ def load_document(job_dir: Path) -> Document:
         raise FileNotFoundError(
             f"missing {doc_json} — run stage07_assemble on this job first.")
     return Document.model_validate_json(doc_json.read_text(encoding="utf-8"))
+
+
+def document_rev(job_dir: Path) -> str:
+    """A token that changes whenever ``document.json`` is rewritten ("" when
+    there is none). Size and modification time, not a content hash: it is asked
+    for on every load and save of a file that reaches tens of megabytes, and
+    every writer here replaces the file whole."""
+    try:
+        st = (job_dir / "document.json").stat()
+    except OSError:
+        return ""
+    return f"{st.st_mtime_ns:x}-{st.st_size:x}"
+
+
+class StaleDocument(Exception):
+    """A save was based on a document that has since been replaced on disk."""
+
+
+def check_rev(job_dir: Path, if_match: str | None) -> None:
+    """Raise ``StaleDocument`` when the caller named the revision it edited and
+    that is no longer the one on disk. No ``If-Match`` -> no check."""
+    if if_match is not None and if_match.strip('" ') != document_rev(job_dir):
+        raise StaleDocument(
+            "the document changed on disk since this page loaded it (another "
+            "editor tab saved, or it was re-assembled / a spread was refreshed). "
+            "Reload the page to get the current document; this save was NOT "
+            "written.")
 
 
 def normalize_edits(doc: Document) -> Document:
@@ -163,9 +198,12 @@ class _Handler(BaseHTTPRequestHandler):
     server_version = "bookscan-editor/0.1"
 
     # ---- helpers ----
-    def _send(self, code: int, body: bytes, ctype: str) -> None:
+    def _send(self, code: int, body: bytes, ctype: str,
+              extra: dict[str, str] | None = None) -> None:
         self.send_response(code)
         self.send_header("Content-Type", ctype)
+        for k, v in (extra or {}).items():
+            self.send_header(k, v)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
@@ -199,7 +237,8 @@ class _Handler(BaseHTTPRequestHandler):
                 self._json(404, {"error": str(e)})
                 return
             self._send(200, doc.model_dump_json().encode("utf-8"),
-                       "application/json; charset=utf-8")
+                       "application/json; charset=utf-8",
+                       extra={"X-Document-Rev": document_rev(self.job_dir)})
         elif route == "/api/meta":
             self._json(200, {"job_dir": str(self.job_dir),
                              "job": self.job_dir.name})
@@ -232,9 +271,15 @@ class _Handler(BaseHTTPRequestHandler):
         except Exception as e:  # pydantic ValidationError or JSON error
             self._json(400, {"error": "invalid document", "detail": str(e)[:2000]})
             return
+        try:
+            check_rev(self.job_dir, self.headers.get("If-Match"))
+        except StaleDocument as e:
+            self._json(409, {"error": "stale document", "detail": str(e)})
+            return
         save_document(self.job_dir, doc)  # normalizes edit flags + atomic write + .bak
         has_edits = _document_has_edits(doc)
-        self._json(200, {"ok": True, "has_edits": has_edits})
+        self._json(200, {"ok": True, "has_edits": has_edits,
+                         "rev": document_rev(self.job_dir)})
 
     def do_POST(self) -> None:  # noqa: N802
         route = unquote(urlparse(self.path).path)

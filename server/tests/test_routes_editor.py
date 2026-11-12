@@ -109,6 +109,33 @@ def test_put_document_round_trips_edit(client: TestClient, tmp_path: Path):
     assert w["text_ocr"] == "Roma"             # provenance untouched
 
 
+def test_put_refuses_to_overwrite_a_document_that_changed_since_it_was_loaded(
+        client: TestClient, tmp_path: Path):
+    """Two tabs, or a re-assemble behind an open editor: the older copy must not
+    silently replace the newer document."""
+    job_id = _make_job(client, tmp_path)
+    url = f"/jobs/{job_id}/api/document"
+    got = client.get(url)
+    rev = got.headers["X-Document-Rev"]
+    assert rev
+
+    # this tab saves with the revision it loaded: accepted, and told the new one
+    r = client.put(url, content=got.content, headers={"If-Match": rev})
+    assert r.status_code == 200 and r.json()["rev"] == client.get(url).headers["X-Document-Rev"]
+
+    # the document is then replaced behind the tab's back
+    doc_path = tmp_path / job_id / "document.json"
+    doc_path.write_text(doc_path.read_text(encoding="utf-8") + " ", encoding="utf-8")
+    newer = doc_path.read_bytes()
+
+    stale = client.put(url, content=got.content, headers={"If-Match": r.json()["rev"]})
+    assert stale.status_code == 409
+    assert doc_path.read_bytes() == newer                      # not written
+
+    # no If-Match (a script, an old page) is accepted exactly as before
+    assert client.put(url, content=got.content).status_code == 200
+
+
 def test_put_document_rejects_malformed_body(client: TestClient, tmp_path: Path):
     job_id = _make_job(client, tmp_path)
     r = client.put(f"/jobs/{job_id}/api/document", content="not json")

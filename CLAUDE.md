@@ -105,6 +105,9 @@ pointer is the date in `docs/STATUS.md` / `docs/RESULTS.md`.
   even make a wrong pair on `it_geo_06`/`07` (most such trims pass); a single
   uncut baseline cannot tell a bad crop from that noise. (2026-10-21,
   reframing control)
+- **A re-run page goes into an edited document by `--spread`, never by a
+  forced full re-assemble** — the latter discards every hand edit in the book
+  to fix one spread. (2026-11-12)
 - **Verify pictures by checkerboard, never side by side** — a sharper crop
   reveals text the blurry one hid, which reads as a framing change.
 - **n counts scenes, not frames.** Thirty-one photographs of one sofa are n = 1;
@@ -169,6 +172,15 @@ baking a PDF). Stage 07 `assemble` builds it from the whole job; Stage 08
 + `document_assets/` — never the per-page folders — so a saved document survives
 upstream re-runs (self-containment). Assemble won't clobber an edited document
 without `--force`. See `docs/GATE4_SPEC.md`.
+**One spread can be refreshed on its own** (Stage 07 v0.2.0, 2026-11-12):
+`--spread page_NNN` rebuilds that spread's pages inside the existing document
+and leaves every other page, with its edits, exactly as saved; the guard then
+refuses only if *that spread* carries edits. This is how a re-run page (new
+book box, new layout, new language) gets into a document someone has already
+corrected — never by a forced full re-assemble. Assemble builds into a staging
+folder and swaps at the end, so a failed run leaves the old document whole,
+and it names the pages it left out. The editor refuses a save based on a
+document that has since changed on disk.
 
 **Operator-book-box exception (Stage 02).** Item 2 says a stage reads only the
 previous stage's artifacts. `<page_dir>/book_box.json` is not an artifact of any
@@ -423,6 +435,11 @@ python -m pipeline.pdf_import book.pdf [--lang deu] [--layout detect|single|spre
 # draw the book box by hand when the detector could not find the book
 # (writes <page>/book_box.json; "Save & re-split" re-runs Stage 02 only)
 python -m tools.book_box_editor jobs/<job>/ [--port 8011]
+
+# after re-running ONE page of a job that already has a (possibly edited)
+# document: rebuild just that spread, keep everything else. The console's
+# "Update this spread in the document" button does the same.
+python -m pipeline.stage07_assemble jobs/<job>/ --spread page_003 [--force]
 
 # open the visual editor on an assembled job (edit OCR/type/order/translation,
 # then Preview / re-render). Reads+writes ONLY document.json + document_assets/.

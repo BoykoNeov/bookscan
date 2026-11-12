@@ -123,7 +123,7 @@
   .wlist div:hover { background: var(--panel2); }
   .wlist div.sel { background: #26324a; }
   .wlist .c { color: var(--dim); font-variant-numeric: tabular-nums; font-size: 12px; }
-  #toast { position: fixed; right: 16px; bottom: 16px; background: var(--panel2);
+  #toast { white-space: pre-line; position: fixed; right: 16px; bottom: 16px; background: var(--panel2);
            border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px;
            display: none; max-width: 460px; }
   code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
@@ -319,6 +319,42 @@ function renderJob() {
   document.getElementById("b-render").onclick = () => runJobAction("render", "Rendering (this can take a minute)…");
 }
 
+// What an assemble left out or took in from an earlier run. The server names
+// them; saying nothing here is how a book used to come out three spreads short.
+function leftOut(r) {
+  const out = [];
+  const miss = r.not_in_document || [], stale = r.stale || [];
+  if (miss.length) out.push(`NOT in the document: ${miss.map(m => `${m.page} (${m.why})`).join(", ")}.`);
+  if (stale.length) out.push(`From an earlier run, because the last run failed: ${
+    stale.map(m => `${m.page} (${m.failed_stage})`).join(", ")} — re-run them.`);
+  return out.length ? "\n" + out.join("\n") : "";
+}
+
+// Put ONE re-run spread into the existing document, keeping every other page
+// and the edits on it. The server refuses (409) only when THIS spread carries
+// hand edits; ask before discarding those, and say that nothing else is touched.
+async function refreshSpread() {
+  const url = `/api/jobs/${S.jobId}/assemble?spread=${encodeURIComponent(S.page)}`;
+  toast("Updating this spread in the document…", 120000);
+  try {
+    let r;
+    try {
+      r = await api(url, { method: "POST" });
+    } catch (err) {
+      if (err.status !== 409) throw err;
+      if (!confirm(`${S.page} has hand edits in the document (corrected text, merged `
+                 + "pictures, a changed order or caption pair).\n\nUpdating it from the "
+                 + "pipeline discards the edits on THIS spread only. Every other page "
+                 + "is kept. Continue?")) { toast("Left alone."); return; }
+      r = await api(url + "&force=true", { method: "POST" });
+    }
+    toast(`${S.page} updated in the document (${r.pages} pages in all). `
+        + "Other pages and their edits were not touched. Render again to see it." + leftOut(r), 12000);
+  } catch (e) {
+    toast(`Could not update the document: ${e.message}`, 12000);
+  }
+}
+
 async function runJobAction(what, msg) {
   const btns = document.querySelectorAll("#headact button");
   btns.forEach(b => b.disabled = true);
@@ -339,8 +375,9 @@ async function runJobAction(what, msg) {
       r = await api(`/api/jobs/${S.jobId}/assemble?force=true`, { method: "POST" });
     }
     toast(what === "assemble"
-      ? `Document built: ${r.pages ?? "?"} pages, ${r.words ?? "?"} words.`
-      : `Rendered ${r.pages ?? "?"} pages${r.wrote_pdf ? ", PDF included" : " (HTML only)"}.`);
+      ? `Document built: ${r.pages ?? "?"} pages, ${r.words ?? "?"} words.` + leftOut(r)
+      : `Rendered ${r.pages ?? "?"} pages${r.wrote_pdf ? ", PDF included" : " (HTML only)"}.`,
+      what === "assemble" && leftOut(r) ? 20000 : 3500);
     await render();
   } catch (e) {
     toast(`${what} failed: ${e.message}`, 12000);
@@ -358,8 +395,13 @@ function renderPage() {
   tabs.push({ key: "__words", label: "Text & certainty" });
   if (!S.tab || !tabs.some(t => t.key === S.tab)) S.tab = tabs[tabs.length - 1].key;
 
+  const st = ins.status || {};
+  const finished = st.worker ? st.worker.state === "done" : !!(st.run_all && st.run_all.ok);
   document.getElementById("headact").innerHTML =
-    `<button id="b-rerun">Re-run this page</button>`;
+    `<button id="b-rerun">Re-run this page</button>` +
+    (S.job?.has_document && finished
+      ? `<button id="b-refresh" title="Rebuild only this spread inside the existing document. `
+        + `Every other page keeps its edits.">Update this spread in the document</button>` : "");
 
   const flagRate = u ? pct(u.counts?.flag || 0, u.scored_words || 0) : null;
   m.innerHTML = `
@@ -383,11 +425,15 @@ function renderPage() {
   });
   document.getElementById("b-rerun").onclick = async () => {
     try {
-      await api(`/api/jobs/${S.jobId}/pages/${S.page}/rerun`, { method: "POST" });
-      toast("Queued. The worker runs one page at a time; this view refreshes itself.");
+      const r = await api(`/api/jobs/${S.jobId}/pages/${S.page}/rerun`, { method: "POST" });
+      toast(r.already_queued
+        ? "Already waiting in the queue — not queued a second time."
+        : "Queued. The worker runs one page at a time; this view refreshes itself.");
       startPolling();
     } catch (e) { toast(`Could not queue: ${e.message}`, 8000); }
   };
+  const bRefresh = document.getElementById("b-refresh");
+  if (bRefresh) bRefresh.onclick = refreshSpread;
 
   if (S.tab === "__words") renderWordsTab();
   else renderOverlayTab();

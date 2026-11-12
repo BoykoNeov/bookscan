@@ -10106,3 +10106,41 @@ the rescue's text gate" was inferred; now computed
 (`scalebar_diag_20261021/gate_check.py`, uncut left subpage): the 0.230 box has
 claimed cover 0.000 (gate > 0.20, passes) and text cover 1.000 (gate > 0.50,
 refuses). The text gate is what refuses it, as written.
+
+## 2026-11-12 — Refreshing one spread inside an assembled document: nothing else moves, and the spread equals a full assemble (CONTROL, two real jobs)
+
+**What was built.** `stage07_assemble --spread page_NNN` (v0.2.0) rebuilds one
+spread's pages and swaps them into the existing `document.json`, keeping every
+other page with its hand edits (STATUS 2026-11-12). This row is the check that
+it does only that. No text or picture quality is measured here.
+
+**Method** (`tools/spread_refresh_check.py`, on a *copy* of the job): full
+assemble; then a hand edit on the first spread (one word) and a translation
+target on the document; then refresh each *other* spread in turn. The trace on
+disk does not change, so the refresh of a spread is a control: it must
+reproduce the full assemble's pages for that spread, and the asset folder must
+end byte-identical to the full assemble's.
+
+| job | spreads / pages | asset files | refreshes | other pages identical | refreshed pages = full assemble | assets identical | settings kept | edited spread refused | full assemble | one refresh |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `tablegrid_e2e` (owner's book, 3 spreads) | 3 / 6 | 6 | 2 | 2 of 2 | 2 of 2 | 2 of 2 | yes | yes | 21.9 s | 2.4–8.6 s |
+| `20261021-104424-6d43b587` (sweep job, 11 picture upgrades) | 4 / 6 | 17 | 3 | 3 of 3 | 3 of 3 | 3 of 3 | yes | yes | 121.8 s | 30.9–41.4 s |
+
+Outputs: `docs/data/spread_refresh_20261112/`. `jobs/` is not in the repo, so
+the rows reproduce only on a machine holding those two jobs; the unit tests
+(`pipeline/tests/test_stage07_refresh.py`, 11) cover the same properties on
+synthetic jobs and run anywhere.
+
+**The one place a refresh is not a full assemble, and what it did.** The
+unreadable-panel pass takes "normal confidence for this document" from the
+whole job. On a refresh that reference is computed from the document as it
+stands, where panels already turned into pictures no longer count as text. On
+the sweep job the reference moved from 92.97 to 92.98–93.03; no block changed
+type. On `tablegrid_e2e` it did not move. A block sitting within that margin of
+the cutoff could come out differently from a refresh than from a full
+assemble; none did here, and n = 2 jobs.
+
+**Not checked.** A refresh after a real re-crop (the trace changing) — by
+construction the other pages cannot be affected, but the new spread's content
+was not graded. Patch-mode crops on a real job (the unit test covers the
+copy). The console button in a browser.

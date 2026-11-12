@@ -30,8 +30,8 @@ from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.responses import FileResponse, RedirectResponse
 
 from pipeline.editor import (
-    ASSETS_DIRNAME, EDITOR_DIR, _document_has_edits, _safe_child,
-    load_document, render_preview, save_document,
+    ASSETS_DIRNAME, EDITOR_DIR, StaleDocument, _document_has_edits, _safe_child,
+    check_rev, document_rev, load_document, render_preview, save_document,
 )
 from pipeline.page_model import Document
 from server import jobs as J
@@ -70,7 +70,9 @@ def get_document(job_id: str, request: Request) -> Response:
         doc = load_document(job_dir)
     except FileNotFoundError as e:
         raise HTTPException(404, str(e))
-    return Response(doc.model_dump_json(), media_type="application/json")
+    return Response(doc.model_dump_json(), media_type="application/json",
+                    headers={"X-Document-Rev": document_rev(job_dir),
+                             "Cache-Control": "no-store"})
 
 
 @router.put("/api/document")
@@ -80,8 +82,15 @@ async def put_document(job_id: str, request: Request) -> dict:
         doc = Document.model_validate_json(await request.body())
     except Exception as e:  # pydantic ValidationError or malformed JSON
         raise HTTPException(400, f"invalid document: {str(e)[:2000]}")
+    # Refuse to replace a document that changed since this page loaded it
+    # (another tab, a re-assemble, a refreshed spread) — see pipeline.editor.
+    try:
+        check_rev(job_dir, request.headers.get("if-match"))
+    except StaleDocument as e:
+        raise HTTPException(409, str(e))
     save_document(job_dir, doc)  # normalizes edit flags + atomic write + .bak
-    return {"ok": True, "has_edits": _document_has_edits(doc)}
+    return {"ok": True, "has_edits": _document_has_edits(doc),
+            "rev": document_rev(job_dir)}
 
 
 @router.post("/api/render")

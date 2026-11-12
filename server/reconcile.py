@@ -31,6 +31,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from pipeline.page_model import page_dir_sort_key
 from server import jobs as J
 
 
@@ -55,8 +56,9 @@ def pages_needing_work(jobs_root: Path) -> list[Path]:
         return []
     out: list[Path] = []
     for job_dir in sorted(p for p in jobs_root.iterdir() if p.is_dir()):
-        for page_dir in sorted(p for p in job_dir.iterdir()
-                               if p.is_dir() and J.PAGE_DIR_RE.match(p.name)):
+        for page_dir in sorted((p for p in job_dir.iterdir()
+                                if p.is_dir() and J.PAGE_DIR_RE.match(p.name)),
+                               key=lambda p: page_dir_sort_key(p.name)):
             if page_needs_work(page_dir):
                 out.append(page_dir)
     return out

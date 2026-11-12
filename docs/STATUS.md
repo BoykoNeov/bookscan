@@ -1167,3 +1167,52 @@ rules for it:
   the floor is read per row and per statistic, not as "one block on
   `it_geo_05`–`07` is noise" (on `it_geo_06` a lost block is outside it). The
   scale-bar row's text-gate claim is now computed, not inferred (holds).
+
+### 2026-11-12 — One spread can be refreshed without losing the rest of the document; assemble made safe; a design and bug review
+
+A review of the whole project (design first, then the server and the
+job-level stages line by line). No measurement of text or picture quality
+changed; `split_eval` is untouched. Suite 851 → 869.
+
+- **The two operator levers no longer destroy each other** (Stage 07 v0.2.0).
+  Every repair for a bad spread — a hand-drawn book box, a changed page layout,
+  another language — ends in re-running that page folder. Until now the only
+  way to get the new reading into the document was a full re-assemble, which
+  with `--force` discarded every hand edit on every page (text corrections,
+  the 15 picture merges, deleted blocks, confirmed caption pairs). Now
+  `stage07_assemble --spread page_NNN`, `POST .../assemble?spread=page_NNN`
+  and the console's **Update this spread in the document** rebuild that spread
+  only. The guard narrows with it: it refuses only when the spread being
+  refreshed carries edits, and `--force` discards those and nothing else.
+  Checked on copies of two real jobs (`tools/spread_refresh_check.py`, RESULTS
+  2026-11-12): other pages, settings and assets identical; the refreshed
+  spread equals a full assemble's field for field.
+- **A failed assemble no longer destroys the previous document.** It deleted
+  `document_assets/` before building, so dying on page 40 left the old
+  `document.json` pointing at nothing. Assets are now built in a staging
+  folder and swapped in at the end; `document.json` is written by rename.
+- **Pages left out of a document are named.** Assemble takes every page that
+  has Stage 06 output and used to skip the rest silently — a book came out
+  three spreads short with no message. It now lists them (unfinished, failed
+  at which stage, still being processed), lists pages assembled from an
+  earlier run because their last run failed, and warns when a page image and
+  its word boxes are different sizes (the trace of a re-run that died between
+  Stage 03 and Stage 06). Console toast, API response, `document.meta.json`.
+- **The editor refuses to overwrite a newer document** (409, nothing written)
+  when the file changed since the page loaded it — a second tab, a
+  re-assemble, a refreshed spread. Before, the older copy silently won.
+- Smaller fixes: `source_language` and the uncertainty mode of a mixed job are
+  now the ones most pages used (was: alphabetically first, described as "the
+  first"); page folders sort by number, so `page_1000` follows `page_999` (a
+  1,000-page PDF import assembled out of order); a second "Re-run this page"
+  click on a queued page no longer runs it twice; a half-written `run_all.json`
+  no longer fails the whole job view; `worker.json` is written by rename (a
+  poll during the write used to show the page as failed).
+- **Not done, written as plans** (`plans/handoff-2026-11-12.md`): carrying
+  edits across a refresh when the page did not move; marking leftover stages
+  in the console; Stage 00 and declared single pages (a possible wrong
+  rotation on imported PDFs, unmeasured); captions paired to the facing page;
+  a focus check for picture upgrades; the fraction flag for model-read tables.
+- **What this could not check:** the console button was syntax-checked and its
+  endpoints tested, but not clicked in a browser; the stale-save refusal is
+  tested at the HTTP layer, not through the editor page.

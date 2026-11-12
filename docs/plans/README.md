@@ -17,6 +17,7 @@ these plans feed are ranked in `../OPEN_PROBLEMS.md`.
 | `max-quality-fusion.md` | **SUPERSEDED by measurement.** Stage 01 stitching registers 6/317 close-ups with ORB (227/317 with SIFT) and painting them doubles text; the resolution is collected at Stage 07 instead (`figure_hires`). See `panorama-and-next-steps.md` for the live version of this idea. | The original multi-zoom fusion design. |
 | `multiview-curvature.md` + `multiview-phase1-prereg.md` | **RESEARCH, not shipped.** Phase 0 passed at N=3; Phase 1 pre-registered; nothing in the pipeline reads it. | Correcting page curvature from several angles. |
 | `pdf-import.md` | **Slices 1 and 2 BUILT** 2026-09-24 (CLI importer + declared single pages in Stage 02; the console's Import PDF button). Slice 3 (text layer as a second opinion): built 2026-09-24, then switched OFF — re-judged on unflattened pages it fails its per-document clause. Imported pages are no longer flattened (shipped; white border refused). | Importing a PDF as if it were scanned pages. |
+| `handoff-2026-11-12.md` | **OPEN — six independent items, written 2026-11-12 for a smaller model.** None started. Items 1–4 need no new photographs; 5 needs the owner's by-eye verdicts; 6 waits for the table shoot. | Keeping hand edits across a spread refresh; showing which stages are left over from a failed re-run; orientation of imported single pages; captions paired to the facing page; a focus check for picture upgrades; the fraction flag for model-read tables. |
 
 Two documents that are not plans but are read like one:
 

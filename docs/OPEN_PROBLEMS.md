@@ -84,6 +84,10 @@ rule must NOT fire — and the corpus has two pale scenes and no such negatives.
    real `de_02` anchor is unstable (12.9 %) and abstains; sofa spreads 2 and 4
    do **not** jitter (0.0 over 8 seeds). Mode (c) is real. **The fix available
    today for those two spreads is a hand-drawn box** (`tools/book_box_editor`).
+   **Since 2026-11-12 that fix no longer costs the rest of the document:**
+   after the page is re-run, "Update this spread in the document" (console) or
+   `stage07_assemble --spread page_NNN` rebuilds that spread only and keeps
+   every other page's hand edits. Before, it took a forced full re-assemble.
 2. **DONE 2026-09-24**, with no new file: the committed `de_01.jpg`/`de_02.jpg`
    are pixel-identical to those anchors, so both rows now name them. Verified
    from a clean worktree with no `jobs/`: 21 of 21 rows graded, 19/21, 0.0 %.
@@ -472,6 +476,12 @@ It needs a Bulgarian page carrying an English/other-language block.
 - **The clipping metric divides by the label area**, so a 20 px label error
   reads as 3 % on the paleset rows. Any clip under ~2 % in an edge band is
   adjudicated by looking at the band, and the adjudication is written down.
+- **Leftover stages after a failed re-run (found 2026-11-12).** `run_all`
+  stops at the first failing stage, so a re-run that fails at Stage 03 leaves
+  the previous run's 04–06 in place, and they look current. Stage 07 now names
+  such a page and warns when the page image and the word boxes differ in size;
+  the console page view does not yet mark the leftover stages
+  (`plans/handoff-2026-11-12.md` item 2).
 - **Framing is a draw too (found 2026-10-21).** Every `layout_order_eval` row
   grades one framing of each photograph, and a sofa-only trim of 4–41 px moves
   caption typing, segmentation, order and even makes a wrong pair (RESULTS
@@ -511,6 +521,14 @@ It needs a Bulgarian page carrying an English/other-language block.
   Imports made before 2026-09-24 have no `origin` and are still flattened.
   Every imported single page carries Stage 00's "result is PORTRAIT" warning,
   which is noise there.
+- **Six hand-off items from the 2026-11-12 review**
+  (`plans/handoff-2026-11-12.md`), none started: keep hand edits across a
+  spread refresh when the page did not move (today a refresh of an edited
+  spread discards that spread's edits); mark leftover stages in the console;
+  Stage 00 treats an imported single page as a spread (the PORTRAIT warning
+  above, and a possible wrong 90° turn — **unmeasured**); pair a caption with
+  a picture on the facing page (the last bullet below); a focus check for
+  picture upgrades (P7); the fraction flag for model-read tables (P2a).
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at
   N = 3, Phase 1 pre-registered, nothing in the pipeline reads it.
 - ~~Caption↔figure grouping review in the editor~~ — **BUILT** (stale line

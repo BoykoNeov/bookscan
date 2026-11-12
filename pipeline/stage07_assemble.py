@@ -53,9 +53,40 @@ geometry second, ABSTAIN when ambiguous — and records the result on the blocks
 automatic caption promotion lands in ``type_auto`` too and is never mistaken for
 a user override. Stage 08 then floats the pair; the editor can correct it.
 
+**Refreshing ONE spread (``--spread page_NNN``, v0.2.0).** Every repair the
+operator has for a bad spread — a hand-drawn book box, a corrected page layout,
+a re-run in another language — ends in re-running that page folder, and until
+this existed the only way to get the new reading into the document was a full
+re-assemble, which (with ``--force``) threw away every hand edit on EVERY page:
+the fix for spread 2 cost the corrections on spreads 3-80. A refresh rebuilds
+only the named spreads' pages and swaps them into the existing document; every
+other page, the settings and the translation target are left exactly as saved.
+The clobber guard narrows with it: it refuses only when the spreads BEING
+REFRESHED carry edits (those refer to the old reading and cannot be carried
+over), and ``--force`` then discards those and nothing else. A spread that is
+not in the document yet (a page scanned after the first assemble) is inserted
+in folder-name order. One honest difference from a full assemble: the
+unreadable-panel pass still takes its "normal for this document" confidence
+from the whole document, but from the document *as it now stands* (panels
+already turned into pictures no longer count as text), and only the refreshed
+pages are re-typed by it.
+
+**A failed assemble leaves the old document whole.** Assets are built in a
+staging folder and swapped in only after every page assembled; ``document.json``
+is written to a temp file and renamed. Before v0.2.0 ``document_assets/`` was
+deleted first, so an assemble that died on page 40 left the previous
+``document.json`` pointing at images that no longer existed.
+
+**Pages that are not in the document are named, not silently dropped**
+(``page_readiness``): a page folder with no Stage 06 output is listed as
+missing, and a page whose LAST run failed but which still has an earlier run's
+Stage 06 output is listed as stale (it is still assembled — a flag, not a
+deletion — but its image and its word boxes may come from different runs).
+
 Usage:
     python -m pipeline.stage07_assemble jobs/<job>/ [--force] [--debug]
                                         [--order-mode auto|review]
+                                        [--spread page_NNN ...]
                                         [--no-group-figures] [--no-figure-hires]
                                         [--no-figure-surface]
 """
@@ -64,6 +95,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import re
 import shutil
 import time
 from pathlib import Path
@@ -73,6 +106,7 @@ import numpy as np
 
 from pipeline.page_model import (
     Block, BlockType, Document, DocPage, DocSettings, PairSource, StageMeta, Word,
+    page_dir_sort_key,
 )
 from pipeline import figure_grouping as FG
 from pipeline import figure_hires as FH
@@ -83,11 +117,13 @@ from pipeline import stage06_uncertainty as S6
 from tools.gate1_harness import find_tesseract
 
 STAGE = "stage07_assemble"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 ASSETS_DIRNAME = "document_assets"
+STAGING_DIRNAME = "document_assets.staging"
+_PAGE_DIR_RE = re.compile(r"^page_\d+$")
 
 
 # --------------------------------------------------------------------------
@@ -206,15 +242,102 @@ def _document_has_edits(doc: Document) -> bool:
     untouched and be silently discarded."""
     if doc.settings.target_language:
         return True
-    for pg in doc.pages:
-        for blk in pg.blocks:
-            if blk.structure_edited or blk.order_confirmed or blk.text is not None:
-                return True
-            if blk.pair_source is PairSource.USER:
-                return True
-            if any(w.edited for w in blk.words):
-                return True
+    return any(_page_has_edits(pg) for pg in doc.pages)
+
+
+def _page_has_edits(pg: DocPage) -> bool:
+    """The per-page half of ``_document_has_edits`` — what a refresh of this
+    page's spread would discard. Keep in lockstep with ``pipeline.editor``."""
+    for blk in pg.blocks:
+        if blk.structure_edited or blk.order_confirmed or blk.text is not None:
+            return True
+        if blk.pair_source is PairSource.USER:
+            return True
+        if any(w.edited for w in blk.words):
+            return True
     return False
+
+
+def page_readiness(job_dir: Path) -> dict[str, list[dict]]:
+    """Which page folders an assemble would leave out, or take in stale.
+
+    ``missing``: a ``page_NNN`` folder with no ``06_uncertain/resolved.json`` —
+    never finished, or failed before Stage 06. Assemble skips it, and before
+    this function existed it did so without a word: a 200-spread book with
+    three failed pages produced a document that was simply three spreads short.
+
+    ``stale``: the page HAS Stage 06 output but its last ``run_all.json`` says
+    the run failed. ``run_all`` stops at the first failing stage and (by the
+    stage contract) touches nothing else, so the later folders still hold an
+    EARLIER run's output — possibly word boxes measured on a page image that
+    Stage 03 has since replaced. Such a page is still assembled (a flag is not
+    a deletion); the caller is told so it can say so.
+
+    Reads only ``run_all.json`` — the pipeline's own summary. Whether a page is
+    queued or running right now is the server's knowledge (``worker.json``),
+    and the server adds it."""
+    missing: list[dict] = []
+    stale: list[dict] = []
+    for pd in sorted((p for p in job_dir.iterdir()
+                      if p.is_dir() and _PAGE_DIR_RE.match(p.name)),
+                     key=lambda p: page_dir_sort_key(p.name)):
+        failed_stage = None
+        try:
+            ra = json.loads((pd / "run_all.json").read_text(encoding="utf-8"))
+            if isinstance(ra, dict) and ra.get("ok") is False:
+                failed_stage = ra.get("failed_stage") or "unknown stage"
+        except (OSError, ValueError):
+            pass
+        if not (pd / "06_uncertain" / "resolved.json").exists():
+            missing.append({"page": pd.name, "failed_stage": failed_stage})
+        elif failed_stage is not None:
+            stale.append({"page": pd.name, "failed_stage": failed_stage})
+    return {"missing": missing, "stale": stale}
+
+
+def _most_common(values: list[str], default: str) -> str:
+    """The value most pages carry; ties go to the alphabetically first so the
+    answer never depends on folder iteration order."""
+    if not values:
+        return default
+    counts: dict[str, int] = {}
+    for v in values:
+        counts[v] = counts.get(v, 0) + 1
+    return sorted(counts, key=lambda k: (-counts[k], k))[0]
+
+
+def _merge_pages(existing: list[DocPage], fresh: list[DocPage],
+                 spreads: list[str]) -> list[DocPage]:
+    """Swap the refreshed spreads' pages into the existing page list.
+
+    A spread already in the document is replaced where it stands (so a page
+    order the document already has is never disturbed); a spread that is new to
+    the document is inserted before the first spread whose folder name sorts
+    after it — the order a full assemble would have given it."""
+    fresh_by: dict[str, list[DocPage]] = {s: [] for s in spreads}
+    for dp in fresh:
+        fresh_by[dp.source_spread].append(dp)
+    out: list[DocPage] = []
+    placed: set[str] = set()
+    for dp in existing:
+        if dp.source_spread in fresh_by:
+            if dp.source_spread not in placed:
+                out.extend(fresh_by[dp.source_spread])
+                placed.add(dp.source_spread)
+            continue
+        out.append(dp)
+    for s in sorted(set(spreads) - placed, key=page_dir_sort_key):
+        at = next((i for i, dp in enumerate(out)
+                   if page_dir_sort_key(dp.source_spread) > page_dir_sort_key(s)),
+                  len(out))
+        out[at:at] = fresh_by[s]
+    return out
+
+
+def _write_text_atomic(path: Path, text: str) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
 
 
 # --------------------------------------------------------------------------
@@ -262,7 +385,10 @@ def _assemble_panel(bgr: np.ndarray, page: DocPage, panel_w: int = 1100) -> np.n
 def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
         order_mode: str = "auto", group_figures: bool = True,
         figure_hires: bool = True,
-        figure_surface: bool = True) -> Document:
+        figure_surface: bool = True,
+        only_spreads: list[str] | None = None) -> Document:
+    """Assemble the whole job, or — with ``only_spreads`` — refresh just those
+    ``page_NNN`` folders inside the existing document (module docstring)."""
     t0 = time.perf_counter()
     warnings: list[str] = []
 
@@ -271,30 +397,75 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
         raise FileNotFoundError(f"job dir not found: {job_dir}")
 
     page_dirs = sorted(
-        p for p in job_dir.iterdir()
-        if p.is_dir() and (p / "06_uncertain" / "resolved.json").exists())
+        (p for p in job_dir.iterdir()
+         if p.is_dir() and (p / "06_uncertain" / "resolved.json").exists()),
+        key=lambda p: page_dir_sort_key(p.name))
     if not page_dirs:
         raise RuntimeError(
             f"no page folders with 06_uncertain/resolved.json under {job_dir} — "
             f"run Stage 06 on this job's pages first.")
 
     doc_json = job_dir / "document.json"
-    if doc_json.exists() and not force:
+    existing: Document | None = None
+    refresh = sorted(set(only_spreads)) if only_spreads else []
+    if refresh:
+        if not doc_json.exists():
+            raise RuntimeError(
+                f"no {doc_json} to refresh a spread in — assemble the whole "
+                f"job first (without --spread).")
+        ready = {p.name for p in page_dirs}
+        absent = [s for s in refresh if s not in ready]
+        if absent:
+            raise RuntimeError(
+                f"cannot refresh {absent}: no 06_uncertain/resolved.json there "
+                f"— run those pages through the pipeline first.")
         existing = Document.model_validate_json(doc_json.read_text(encoding="utf-8"))
-        if _document_has_edits(existing):
+        edited = sorted({pg.source_spread for pg in existing.pages
+                         if pg.source_spread in refresh and _page_has_edits(pg)})
+        if edited and not force:
+            raise RuntimeError(
+                f"{edited} carry edits in {doc_json} (corrected / reordered / "
+                f"paired by hand). Refreshing them discards those edits — and "
+                f"only those; the rest of the document is kept. Re-run with "
+                f"--force to go ahead.")
+        page_dirs = [p for p in page_dirs if p.name in refresh]
+    elif doc_json.exists() and not force:
+        existing_full = Document.model_validate_json(
+            doc_json.read_text(encoding="utf-8"))
+        if _document_has_edits(existing_full):
             raise RuntimeError(
                 f"{doc_json} already exists and carries edits (translated / "
                 f"reordered / corrected). Refusing to overwrite. Re-run with "
                 f"--force to discard those edits and re-assemble from the pipeline.")
 
-    assets_dir = job_dir / ASSETS_DIRNAME
+    readiness = page_readiness(job_dir)
+    for m in readiness["missing"]:
+        if refresh:
+            continue                    # a refresh makes no claim about other pages
+        why = (f"its run failed at {m['failed_stage']}" if m["failed_stage"]
+               else "it has not finished the pipeline")
+        warnings.append(f"{m['page']} is NOT in the document: {why}.")
+    for st in readiness["stale"]:
+        if refresh and st["page"] not in refresh:
+            continue
+        warnings.append(
+            f"{st['page']}: its last run FAILED at {st['failed_stage']}; the "
+            f"document uses what an earlier run left, and the page image and "
+            f"the word boxes may come from different runs. Re-run the page.")
+
+    # Everything is built in a staging folder and swapped in only once every
+    # page assembled, so a failure below leaves the previous document whole.
+    live_assets_dir = job_dir / ASSETS_DIRNAME
+    assets_dir = job_dir / STAGING_DIRNAME
     if assets_dir.exists():
-        shutil.rmtree(assets_dir)      # rebuild is authoritative (edits already cleared)
+        shutil.rmtree(assets_dir)      # a previous run died mid-build
     assets_dir.mkdir(parents=True)
 
     reco = cfg.get("reconstruct", {}) or {}
     modes_seen: set[str] = set()
     langs_seen: set[str] = set()
+    page_modes: list[str] = []
+    page_langs: list[str] = []
     pages: list[DocPage] = []
     panels: list[np.ndarray] = []
     n_blocks = n_words = n_patches = 0
@@ -326,6 +497,8 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             (pd / "06_uncertain" / "resolved.json").read_text(encoding="utf-8"))
         modes_seen.add(resolved.mode)
         langs_seen.add(_ocr_language(pd))
+        page_modes.append(resolved.mode)
+        page_langs.append(_ocr_language(pd))
         dewarp_dir = pd / "03_dewarp"
         uncertain_dir = pd / "06_uncertain"
         # The spread's own captures, indexed once and shared by both subpages —
@@ -344,6 +517,16 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
                     f"cannot make the document self-contained.")
             img_name = f"{pd.name}__{rp.name}"
             shutil.copy2(src_img, assets_dir / img_name)
+            # Stage 06's boxes are in this image's pixels. If the sizes differ,
+            # 03_dewarp was rewritten after 06_uncertain (a re-run that failed in
+            # between) and every word box is in the wrong place.
+            probe = cv2.imread(str(src_img), cv2.IMREAD_COLOR)
+            if probe is not None and (probe.shape[1], probe.shape[0]) != (rp.width, rp.height):
+                warnings.append(
+                    f"{pd.name}/{rp.name}: the flattened page is "
+                    f"{probe.shape[1]}x{probe.shape[0]} px but its words were "
+                    f"read on a {rp.width}x{rp.height} px page — the two come "
+                    f"from different runs. Re-run the page.")
 
             # --- copy patch crops, mapping (block_id, word_index) -> rel path ---
             patch_map: dict[tuple[int, int], str] = {}
@@ -453,33 +636,64 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
     # "normal for this document" — a per-page reference would let a page that is
     # all panel declare itself normal. It only ever re-TYPES; block order is
     # untouched (de_01's panel is already correctly placed leftmost-first).
+    # On a refresh the reference comes from the whole document as it stands and
+    # only the refreshed pages are re-typed (module docstring).
+    if existing is not None:
+        pages = _merge_pages(existing.pages, pages, refresh)
     panel_scan = UP.scan([dp.blocks for dp in pages],
                          params=(reco.get("unreadable_panels") or None))
     if panel_scan.converted:
-        pages = [dp.model_copy(update={
+        pages = [dp if (existing is not None and dp.source_spread not in refresh)
+                 else dp.model_copy(update={
                      "blocks": UP.apply_to_blocks(list(dp.blocks), panel_scan, pi)})
                  for pi, dp in enumerate(pages)]
 
     if len(modes_seen) > 1:
         warnings.append(
             f"pages were resolved under differing uncertainty modes {sorted(modes_seen)}; "
-            f"the document records the first. Re-run Stage 06 uniformly if unintended.")
+            f"the document records the one most pages used. Re-run Stage 06 "
+            f"uniformly if unintended.")
     if len(langs_seen) > 1:
         warnings.append(f"mixed OCR languages across pages {sorted(langs_seen)}; "
-                        f"document source_language records the first.")
+                        f"document source_language records the one most pages used.")
 
-    settings = DocSettings(
-        source_language=sorted(langs_seen)[0] if langs_seen else "eng",
-        target_language=None,
-        uncertainty_mode=sorted(modes_seen)[0] if modes_seen else "flag",
-        order_mode=order_mode,
-        strip_running_headers=bool(reco.get("strip_running_headers", True)),
-        strip_page_numbers=bool(reco.get("strip_page_numbers", True)),
-        fonts=list(reco.get("fonts", []) or []),
-    )
-    doc = Document(document_id=job_dir.name, job_id=job_dir.name,
-                   settings=settings, pages=pages)
-    doc_json.write_text(doc.model_dump_json(indent=2), encoding="utf-8")
+    if existing is not None:
+        # A refresh never touches the settings: the translation target, the
+        # review mode and the strip toggles are the operator's.
+        settings = existing.settings
+        if modes_seen - {settings.uncertainty_mode}:
+            warnings.append(
+                f"refreshed spread(s) were resolved in mode {sorted(modes_seen)} "
+                f"but the document is '{settings.uncertainty_mode}'.")
+        doc = existing.model_copy(update={"pages": pages})
+    else:
+        settings = DocSettings(
+            source_language=_most_common(page_langs, "eng"),
+            target_language=None,
+            uncertainty_mode=_most_common(page_modes, "flag"),
+            order_mode=order_mode,
+            strip_running_headers=bool(reco.get("strip_running_headers", True)),
+            strip_page_numbers=bool(reco.get("strip_page_numbers", True)),
+            fonts=list(reco.get("fonts", []) or []),
+        )
+        doc = Document(document_id=job_dir.name, job_id=job_dir.name,
+                       settings=settings, pages=pages)
+
+    # --- commit: assets first, then the document that points at them --------
+    if existing is None:
+        if live_assets_dir.exists():
+            shutil.rmtree(live_assets_dir)
+        os.replace(assets_dir, live_assets_dir)
+    else:
+        live_assets_dir.mkdir(parents=True, exist_ok=True)
+        prefixes = tuple(f"{s}__" for s in refresh)
+        for old in live_assets_dir.iterdir():
+            if old.is_file() and old.name.startswith(prefixes):
+                old.unlink()
+        for new in assets_dir.iterdir():
+            os.replace(new, live_assets_dir / new.name)
+        shutil.rmtree(assets_dir, ignore_errors=True)
+    _write_text_atomic(doc_json, doc.model_dump_json(indent=2))
 
     if debug and panels:
         debug_dir = job_dir / "debug"
@@ -533,6 +747,13 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             "reads": ["page_*/06_uncertain/resolved.json",
                       "page_*/03_dewarp/<subpage>", "page_*/06_uncertain/patches/"],
             "force": force,
+            # Page folders left out of the document, and ones taken in from an
+            # earlier run because the last run failed (page_readiness).
+            "pages_missing": readiness["missing"],
+            "pages_stale": readiness["stale"],
+            # Non-empty = this run REFRESHED these spreads inside an existing
+            # document; every count above is then for those spreads only.
+            "refreshed_spreads": refresh,
         },
         timings_ms={"total": round(total_ms, 1)},
         warnings=warnings + [
@@ -543,8 +764,24 @@ def run(job_dir: Path, cfg: dict, force: bool = False, debug: bool = False,
             "edited document without --force.",
         ],
     )
-    (job_dir / "document.meta.json").write_text(
-        meta.model_dump_json(indent=2), encoding="utf-8")
+    meta_path = job_dir / "document.meta.json"
+    if refresh:
+        # Keep the full assemble's record (it is what traces a wrong picture to
+        # its frame for every OTHER spread) and append this refresh to it.
+        try:
+            base = json.loads(meta_path.read_text(encoding="utf-8"))
+            if not isinstance(base, dict):
+                raise ValueError("not an object")
+        except (OSError, ValueError):
+            base = {"stage": STAGE, "version": VERSION, "params": {},
+                    "timings_ms": {}, "warnings": []}
+        base.setdefault("params", {}).setdefault("refreshes", []).append({
+            "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "version": VERSION,
+            "params": meta.params, "warnings": warnings,
+        })
+        _write_text_atomic(meta_path, json.dumps(base, indent=2, ensure_ascii=False))
+    else:
+        _write_text_atomic(meta_path, meta.model_dump_json(indent=2))
     return doc
 
 
@@ -576,6 +813,10 @@ def main(argv: list[str] | None = None) -> int:
                          "printed-number/geometry pairing). Diagnostic escape hatch: "
                          "the document then carries no figure_ref and Stage 08 falls "
                          "back to adjacency-only grouping.")
+    ap.add_argument("--spread", action="append", default=None, metavar="page_NNN",
+                    help="refresh only this spread inside the EXISTING document, "
+                         "keeping every other page and its edits (repeatable). "
+                         "--force then discards edits on these spreads only.")
     ap.add_argument("--debug", action="store_true",
                     help="also write debug/07_assemble.png (blocks + reading order)")
     args = ap.parse_args(argv)
@@ -590,7 +831,15 @@ def main(argv: list[str] | None = None) -> int:
     doc = run(args.job_dir, cfg, force=args.force, debug=args.debug,
               order_mode=args.order_mode, group_figures=not args.no_group_figures,
               figure_hires=not args.no_figure_hires,
-              figure_surface=not args.no_figure_surface)
+              figure_surface=not args.no_figure_surface,
+              only_spreads=args.spread)
+    for label, rows in page_readiness(args.job_dir.resolve()).items():
+        for r in rows:
+            print(f"  WARNING {r['page']}: "
+                  + ("not in the document" if label == "missing"
+                     else "assembled from an earlier run")
+                  + (f" (last run failed at {r['failed_stage']})"
+                     if r["failed_stage"] else " (pipeline not finished)"))
     nword = sum(bool(w.text.strip()) for pg in doc.pages for blk in pg.blocks
                 for w in blk.words)
     nflag = sum(w.flag_visible for pg in doc.pages for blk in pg.blocks

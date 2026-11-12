@@ -13,12 +13,13 @@ Job id is exactly the folder name under ``jobs/`` (matches
 from __future__ import annotations
 
 import json
+import os
 import re
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from pipeline.page_model import StageMeta
+from pipeline.page_model import StageMeta, page_dir_sort_key
 from pipeline.run_all import STAGE_ORDER
 
 JOB_ID_RE = re.compile(r"^[A-Za-z0-9_-]+$")
@@ -169,7 +170,12 @@ def write_worker_state(page_dir: Path, state: str, **fields) -> dict:
     rec = read_worker_state(page_dir) or {}
     rec.update(state=state, updated_at=now_iso(), **fields)
     page_dir.mkdir(parents=True, exist_ok=True)
-    (page_dir / WORKER_FILE).write_text(json.dumps(rec, indent=1), encoding="utf-8")
+    # Temp file + rename: the console polls this file while the worker rewrites
+    # it, and a plain write truncates first — a poll landing in that window read
+    # an empty file and reported the page as FAILED ("unreadable worker.json").
+    tmp = page_dir / (WORKER_FILE + ".tmp")
+    tmp.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+    os.replace(tmp, page_dir / WORKER_FILE)
     return rec
 
 
@@ -258,9 +264,13 @@ def _stage_status(page_dir: Path, name: str) -> dict | None:
 
 
 def page_status(page_dir: Path) -> dict:
-    run_all_path = page_dir / "run_all.json"
-    run_all = (json.loads(run_all_path.read_text(encoding="utf-8"))
-               if run_all_path.exists() else None)
+    # Never raises: run_all.py rewrites this file at the end of every run, and
+    # a poll that lands mid-write must show "no summary yet", not 500 the whole
+    # job view (this used to be an unguarded json.loads).
+    try:
+        run_all = json.loads((page_dir / "run_all.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        run_all = None
     return {
         "name": page_dir.name,
         "stages": {name: _stage_status(page_dir, name) for name in STAGE_ORDER},
@@ -275,7 +285,7 @@ def page_status(page_dir: Path) -> dict:
 def job_status(job_dir: Path) -> dict:
     pages = sorted(
         (p for p in job_dir.iterdir() if p.is_dir() and PAGE_DIR_RE.match(p.name)),
-        key=lambda p: p.name,
+        key=lambda p: page_dir_sort_key(p.name),
     )
     return {
         "job_id": job_dir.name,

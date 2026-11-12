@@ -626,10 +626,18 @@ function mergeFigures(head, target){
 }
 
 // ---- load ----
+// The revision of document.json this page is editing. Sent back with every save
+// so the server can refuse to overwrite a document that changed underneath us
+// (a second tab, a re-assemble, a spread refreshed from the console).
+async function fetchDoc(){
+  const r = await fetch("api/document", { cache:"no-store" });
+  state.rev = r.headers.get("X-Document-Rev");
+  state.doc = await r.json();
+}
 async function load(){
   const meta = await (await fetch("api/meta")).json();
   $("#jobname").textContent = meta.job;
-  state.doc = await (await fetch("api/document")).json();
+  await fetchDoc();
   state.pageIndex = 0; state.selBlock=null; state.selWord=null;
   renderAll(); setStatus("loaded", "ok");
 }
@@ -1219,11 +1227,18 @@ function renderSettings(){
 // ---- save / preview ----
 async function save(){
   setStatus("saving…");
-  const res = await fetch("api/document", { method:"PUT",
-    headers:{"Content-Type":"application/json"}, body: JSON.stringify(state.doc) });
+  const headers = {"Content-Type":"application/json"};
+  if(state.rev) headers["If-Match"] = state.rev;
+  const res = await fetch("api/document", { method:"PUT", headers, body: JSON.stringify(state.doc) });
+  if(res.status===409){
+    // Not written. Keep this tab's edits on screen so nothing is lost by the refusal.
+    setStatus("NOT saved — the document was changed elsewhere (another tab, or re-assembled). "
+            + "Reload to get the current version; unsaved edits here will be lost on reload.","err");
+    return false;
+  }
   if(!res.ok){ const e=await res.json().catch(()=>({})); setStatus("save failed: "+(e.detail||e.error||res.status),"err"); return false; }
   const j = await res.json();
-  state.doc = await (await fetch("api/document")).json();   // pick up server-normalized flags
+  await fetchDoc();   // pick up server-normalized flags + the new revision
   state.dirty=false; renderAll();
   setStatus(j.has_edits ? "saved · edits protected from re-assemble" : "saved", "ok");
   return true;

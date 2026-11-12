@@ -466,7 +466,7 @@
    "past_change": "corner_label3_0810",
    "row": "it_geo_06",
    "subpage": "left",
-   "what": "C28 -> F28 (the round-3 plate read)",
+   "what": "C28 -> F28 paired (cause of losses not examined)",
    "holds_uncut": true,
    "holds_on": 6,
    "n_trims": 10,
@@ -566,7 +566,7 @@
   },
   {
    "id": "it05L_C2_pair",
-   "past_change": "caption_eject (2026-08-10)",
+   "past_change": "sole-figure route (uncut pair_source)",
    "row": "it_geo_05",
    "subpage": "left",
    "what": "C2 -> F2 paired",

@@ -29,7 +29,7 @@
 | text order exact (tau +1.00) | within_column_0718 | `de_01` right | yes | 10/10 | — |
 | F26 ordered after F25/F27/F28 (the column-major fix) | column_major_0809 | `it_geo_06` left | yes | 6/10 | L4, R4, R41, T4 |
 | C25-C28 all paired to their figures by number | grouping_0809 / corner_label* | `it_geo_06` left | yes | 6/10 | B4, B41, L41, T41 |
-| C28 -> F28 (the round-3 plate read) | corner_label3_0810 | `it_geo_06` left | yes | 6/10 | B4, B41, L41, T41 |
+| C28 -> F28 paired (cause of losses not examined) | corner_label3_0810 | `it_geo_06` left | yes | 6/10 | B4, B41, L41, T41 |
 | C29 -> F29 correct | grouping_0809 / phase_b_0809 | `it_geo_06` right | yes | 9/10 | B4 |
 | no wrong pair | zero-wrong bar | `it_geo_06` right | yes | 9/10 | B4 |
 | C96-C99 paired | coins_grouping_01_0818 | `en_coins_01` left+right | yes | 6/6 | — |
@@ -37,7 +37,7 @@
 | C104/C105 paired | coins_grouping_03_0818 | `en_coins_03` right | yes | 3/3 | — |
 | C3 -> F3 (sole-figure arm) | sole_figure_05_0826 | `it_geo_05` right | yes | 8/10 | T4, T41 |
 | caption C2 matched | caption_eject (2026-08-10) | `it_geo_05` left | yes | 8/10 | R4, R41 |
-| C2 -> F2 paired | caption_eject (2026-08-10) | `it_geo_05` left | yes | 3/10 | L4, L41, R4, R41, T4, all25, all41 |
+| C2 -> F2 paired | sole-figure route (uncut pair_source) | `it_geo_05` left | yes | 3/10 | L4, L41, R4, R41, T4, all25, all41 |
 | picture D1 matched | fig_rescue_07_* | `it_geo_07` left | yes | 10/10 | — |
 | paragraph T5right matched | starved_reread_0826 | `it_geo_07` left | yes | 7/10 | B4, L4, all41 |
 | picture B6L matched (thin: 3 trims) | fig_rescue_04_* | `it_geo_04` left | yes | 3/3 | — |

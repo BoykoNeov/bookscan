@@ -1374,3 +1374,9 @@ Desk re-read, no pipeline run; P9 follow-on. Pre-registered
 - **Lead:** on every trim the footnote line is detected as a page number,
   which is stripped by default. Not followed to the PDF.
 - Nothing in the pipeline changed.
+- **Correction, same day (RESULTS clause):** only the footnote's cause was
+  traced; the other four fragile cells show the block missing or unpaired, cause
+  not examined (C28: plate reader still reads 4 numbers on 3 of the 4 trims;
+  C2: the fragile part is the sole-figure route, not ejection). The footnote's
+  stripping is confirmed by reading the code, still not run end to end. The
+  population was re-searched and is complete.

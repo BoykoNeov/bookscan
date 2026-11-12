@@ -10333,3 +10333,31 @@ ones: run the same trims with each mechanism switched off (the "on" half is the
 floor folder). Pre-register per mechanism; about an hour each at the floor's
 pace. For the footnote, the first question is cheaper: does the detector's
 `page_number` call on that line survive to the rendered document?
+
+**Corrections to the re-read row above (same day, after review; no number
+changes).** (1) *Only the footnote was traced to a cause.* For the other four
+fragile cells the row shows only that the block the fix produced is missing
+or unpaired on N trims; the cause was not examined, and the labels claimed more
+than that. Two facts sharpen them. **C28 → F28:** the plate reader still finds
+4 numbers on B4, L41 and T41 (3 on B41), so "the C28 plate read" is not shown
+to be what fails; the 2026-10-21 reframing control traced two such losses to C28
+losing its *caption type* (this file, that row: "both by C28 losing its caption
+type"). L41 also loses C26. **`it_geo_05` C2:** caption ejection (08-10) finds
+C2 on 8 of 10 trims; what fails is the pair, which uncut comes from the
+sole-figure arm (`pair_source=sole_figure`, starved-block row) and on the
+failing trims falls to the geometric arm, which abstains ("no figure shares this
+caption's column"). The fragile part is that route, not ejection.
+"Undo" in the heading is too strong: these fixes *do not hold on* those trims.
+(2) *"The footnote's text would be deleted" is now read from the code, not run.*
+Stage 04 maps the detector's catch-all class in the bottom fifth of the page to
+`page_number` (`pipeline/stage04_layout.py:_map_abandon`); Stage 08 skips every
+block of that type while `strip_page_numbers` is on
+(`pipeline/stage08_render.py:102-105`, `:656`), the default
+(`pipeline/stage07_assemble.py:946`); the later re-typing steps touch only
+paragraph/other/list (caption promotion) or turn a block into a figure
+(unreadable panel). So on those trims the footnote would be left out of the
+rendered page unless someone re-types it in the editor. Still not run end to
+end. (3) *Population completeness checked.* Lines from the 2026-08-28 phone
+session to the 2026-10-21 crop rows were searched for block-order numbers on
+the 8 rows (`layout_order_eval`, segmentation, type accuracy, pairs): none
+reported, so the 19 cells / 12 rows stand.

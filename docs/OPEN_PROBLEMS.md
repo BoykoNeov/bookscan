@@ -507,15 +507,18 @@ It needs a Bulgarian page carrying an English/other-language block.
   **Earlier rows re-read 2026-11-12** (RESULTS same day, pre-registered): only
   1 of 19 past cells can be judged (the rest were graded on the Stage-04-only
   arm), and it is inside — the footnote rung. Read off the floor's own trimmed
-  runs, five past fixes hold on only part of the framings: the footnote typing
-  (0 of 6 trims — the detector then boxes the line as a *page number*, which is
-  stripped, so the footnote text may be deleted; unchecked to the PDF),
-  `it_geo_05` C2's pair (3/10), the column-major order on `it_geo_06`-left (6/10,
-  the old defect comes back exactly), the C28 plate read (6/10) and the T5right
-  re-read (7/10). The figure rescues, the German order fix and the coin-book
-  pairs hold on every trim. **Next, cheapest first:** (1) does the footnote's
-  `page_number` call reach the rendered document on a trimmed frame; (2) per
-  fragile mechanism, a pre-registered on/off run over the same trims (~1 h each).
+  runs, five past fixes do not hold on part of the framings: the footnote typing
+  (0 of 6 trims — the detector then boxes the line as a *page number*, and by
+  the code Stage 08 leaves page numbers out by default, so the footnote text
+  would vanish from the PDF; not run end to end), `it_geo_05` C2's pair (3/10;
+  the sole-figure route fails, ejection still finds C2 on 8), the column-major
+  order on `it_geo_06`-left (6/10, the old defect comes back exactly), the
+  C28 → F28 pair (6/10; the plate reader still reads its numbers, so not the
+  reader) and the T5right re-read (7/10). Only the footnote's cause is traced.
+  The figure rescues, the German order fix and the coin-book pairs hold on every
+  trim. **Next, cheapest first:** (1) run one trimmed `en_coins_01` frame to the
+  rendered page and confirm the footnote is missing; (2) per fragile mechanism, a
+  pre-registered on/off run over the same trims (~1 h each) — owner's call.
 
 ---
 

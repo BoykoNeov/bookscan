@@ -1315,3 +1315,44 @@ changed; `split_eval` is untouched. Suite 851 → 869.
 - **What this could not check:** the PDF (only the HTML it is printed from was
   compared); whether any of the owner's 12 unpaired captions actually belongs
   to a facing picture — that is the owner's look.
+
+## 2026-11-12 (later) — Stage 00 no longer warns "should be landscape" on an imported single page
+
+Hand-off item 3, measured before building (RESULTS 2026-11-12, single-page OSD
+row; pre-registration committed first).
+
+- **Measured:** on 79 upright single pages from six real scanned PDFs, the
+  orientation cascade turned none; the one page printed sideways in its book (a
+  landscape table) was turned correctly. Every upright single page carried the
+  PORTRAIT warning. Control: pages turned on purpose came back 152 of 158 times,
+  0 wrong calls.
+- **Built (Stage 00 v0.2.0):** Stage 00 reads `page_layout.json` (input at the
+  page-dir root, the same file Stage 02 reads) and, for a page declared
+  `single`, switches off the cascade's landscape warning
+  (`tools.normalize.orient_upright(expect_landscape=False)`). It records
+  `declared_layout` in its `meta.json` params. Nothing else changes; a missing
+  or corrupt file runs as before (a corrupt one adds a warning).
+- **Not built, by the measurement:** skipping 90/270 turns on imported pages.
+- **Tests:** 3 new in `pipeline/tests/test_stage00_ingest.py`, 2 in
+  `tools/tests/test_normalize.py`.
+
+## 2026-11-12 (later) — A focus check for picture upgrades: pre-registered, labelling page built, waiting on the owner
+
+Hand-off item 5 (P7). No focus number has been computed on the population.
+
+- **Pre-registration** `docs/data/figure_focus_prereg_20261112.md`: the 11
+  upgrades of the sweep job, judged by the owner first; statistic = mean Sobel
+  gradient of the upgrade (shrunk to the crop's size) ÷ that of the page crop,
+  ship at ≥ 1.0, untuned; pass = ≥ 90 % agreement on the pictures told apart and
+  no upgrade shipped that the owner called worse.
+- **Labelling page** `tools/figure_focus_labels.py`: two unlabeled tiles in a
+  seeded random order (the page crop enlarged to the upgrade's size, and the
+  upgrade), left / right / cannot tell, a 1:1 view that scrolls both together;
+  which side is which stays on the server and is written with each answer.
+  Smoke-tested on the owner's book (not the population): page, tiles and save
+  work, a half-done session resumes.
+- **Statistic** `tools/figure_focus_eval.py`: `score` refuses until every
+  verdict is in. **Control** on the owner's book, 24 of 24 pass (a picture
+  against itself exactly 1.0; blurred σ 2 at most 0.655) —
+  `docs/data/figure_focus_20261112/control.json`.
+- **Tests:** 6 in `tools/tests/test_figure_focus.py`.

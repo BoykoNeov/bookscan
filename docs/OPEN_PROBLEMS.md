@@ -439,6 +439,12 @@ gradient ratio) on a population that was not read here — another book, or the
 owner's own by-eye verdicts collected before any number — then decide whether
 the upgrade must beat the crop to ship. Until then an upgrade can be a
 downgrade, and the owner is the check.
+**Pre-registered 2026-11-12, waiting on the owner** (`data/figure_focus_prereg_20261112.md`):
+the owner judges the sweep job's 11 upgrades blind on a local page
+(`python -m tools.figure_focus_labels jobs/20261021-104424-6d43b587/`, about
+five minutes); only then is the gradient ratio computed and graded against
+those answers (≥ 90 % agreement and never ships one the owner called worse).
+The instrument's control passed on the owner's book.
 **Sharp close-ups refused by the likeness check — not moiré (2026-10-21).**
 Smoothing the close-up before the per-source check (σ from theory) gains at
 most +0.05 NCC, changes 0 of 178 pictures, and lets more deliberately shifted
@@ -526,14 +532,14 @@ It needs a Bulgarian page carrying an English/other-language block.
   crooked or curved page inside a PDF (a photographed book bound into a file) is
   no longer straightened — the next thing to check when such a PDF turns up.
   Imports made before 2026-09-24 have no `origin` and are still flattened.
-  Every imported single page carries Stage 00's "result is PORTRAIT" warning,
-  which is noise there.
+  Stage 00 no longer warns "result is PORTRAIT" on a page declared single
+  (v0.2.0, 2026-11-12); its 90° turns were measured on imported pages and kept
+  (0 of 79 upright pages turned, one sideways table turned correctly).
 - **Six hand-off items from the 2026-11-12 review**
   (`plans/handoff-2026-11-12.md`). **Done:** keeping a spread's hand edits
   across a refresh; marking leftover stages in the console; pairing a caption
-  with a picture on the facing page (by hand only). **Not started:**
-  Stage 00 treats an imported single page as a spread (the PORTRAIT warning
-  above, and a possible wrong 90° turn — **unmeasured**); a focus check for
+  with a picture on the facing page (by hand only); Stage 00 on imported
+  single pages (measured: no wrong turn; warning fixed). **Waiting on the owner:** a focus check for
   picture upgrades (P7); the fraction flag for model-read tables (P2a).
 - **Multi-view curvature** (`plans/multiview-curvature.md`): Phase 0 passed at
   N = 3, Phase 1 pre-registered, nothing in the pipeline reads it.

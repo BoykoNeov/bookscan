@@ -1,4 +1,4 @@
 {
- "_how": "Judged by Claude from a 500 px render on a contact sheet that showed only the page id, not OSD's angle (tools/single_page_osd_check.py run). Only pages whose U arm got a non-zero OSD proposal need a verdict; all others default to upright.",
+ "_how": "Judged by Claude from a 500 px render (D1_p140_thumb.png, committed) on a contact sheet that showed only the page id. Correction (same day): OSD's proposal for this page (90 at 16.89) had already been printed in the run log before the look, so the verdict was NOT blind to the angle. It is the only page judged and is unambiguous (a table whose title runs bottom to top). All other pages default to upright.",
  "D1_p140": "sideways_in_source"
 }

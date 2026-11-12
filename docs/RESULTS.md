@@ -10246,3 +10246,13 @@ changed.
 dpi. n is pages from six documents; zero wrong turns means "not seen in this
 sample", and the lowest correct-call confidence (3.49) shows a weak page can sit
 close to the 2.0 floor.
+
+**Correction (same day) to the row above.** (1) The by-eye verdict on D1 p.140
+was not blind to OSD's angle as the pre-registration intended: the run log had
+already printed the 90° proposal before the contact sheet was opened. It is the
+only page judged and is unambiguous (a table whose title runs bottom to top;
+its render is committed as `docs/data/single_page_osd_20261112/D1_p140_thumb.png`).
+(2) "The 6 misses are 3 pages where OSD found too little text and abstained" is
+inexact: D2 p.16 and D1 p.148 got no OSD answer at all; D1 p.1 (the cover) got
+the right answer on both turned copies but at confidence 0.23 and 0.16, under
+the 2.0 floor, so it was left as it came. Neither changes the verdict.

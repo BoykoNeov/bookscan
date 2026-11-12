@@ -1350,7 +1350,8 @@ Hand-off item 5 (P7). No focus number has been computed on the population.
   upgrade), left / right / cannot tell, a 1:1 view that scrolls both together;
   which side is which stays on the server and is written with each answer.
   Smoke-tested on the owner's book (not the population): page, tiles and save
-  work, a half-done session resumes.
+  work, a half-done session resumes; loaded in a headless browser
+  (Playwright): an answer saves and advances, the 1:1 view switches, no script errors.
 - **Statistic** `tools/figure_focus_eval.py`: `score` refuses until every
   verdict is in. **Control** on the owner's book, 24 of 24 pass (a picture
   against itself exactly 1.0; blurred σ 2 at most 0.655) —
